@@ -1,0 +1,7 @@
+/*
+    Styles needed for storybook
+*/
+@import "tailwindcss";
+@import "../src/styles/index.css";
+@import "../src/styles/components.css";
+@source "../src/components/**/*.{vue,js,ts,html}";

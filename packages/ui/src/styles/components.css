@@ -1,0 +1,22 @@
+@layer components {
+    @theme {
+        /* NuiButton */
+        --nui-button-font-size-small: var(--text-xs);
+        --nui-button-font-size-medium: var(--text-base);
+        --nui-button-font-size-large: var(--text-xl);
+        --nui-button-border-size: var(--border-base);
+        --nui-button-font-weight: var(--font-weight-medium);
+        --nui-button-padding-x: calc(var(--spacing-sm) - var(--nui-button-border-size));
+        --nui-button-padding-y: calc(var(--spacing-xs) - var(--nui-button-border-size));
+        --nui-button-padding-rounded: var(--spacing-base);
+        --nui-button-radius: var(--radius-element);                
+        --nui-button-icon-only-size-small: calc(var(--nui-button-font-size-small) * 2);
+        --nui-button-icon-only-size-medium: calc(var(--nui-button-font-size-medium) * 2);
+        --nui-button-icon-only-size-large: calc(var(--nui-button-font-size-large) * 2);
+    }
+
+    /* Focus ring */
+    * {
+        @apply outline-0 focus:ring-2 focus:ring-offset-2 focus:ring-current/50;
+    }
+}

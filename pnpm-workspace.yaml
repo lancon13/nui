@@ -1,0 +1,10 @@
+packages:
+  - packages/*
+onlyBuiltDependencies:
+  - '@parcel/watcher'
+  - esbuild
+  - supabase
+  - vue-demi
+  - pngquant-bin
+  - sharp
+  
