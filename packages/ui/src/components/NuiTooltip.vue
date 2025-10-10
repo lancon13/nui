@@ -1,19 +1,32 @@
 <template>
-    <div
-        ref="tooltipRef"
-        role="tooltip"
-        :class="compClasses"
-        :style="compStyles"
-    >
-        <slot>
-            <div v-if="html" v-html="html" />
-            <div v-else>{{ text }}</div>
-        </slot>
-    </div>
+    <div ref="placeholderRef" style="display: none" />
+    <teleport to="body">
+        <div
+            ref="tooltipRef"
+            role="tooltip"
+            :class="compClasses"
+            :style="compStyles"
+            @mouseenter="cancelHide"
+            @mouseleave="startHide"
+            @focusin="handleFocusIn"
+            @focusout="handleFocusOut($event)" >
+            <slot>
+                <div v-if="html" v-html="html" />
+                <div v-else>{{ text }}</div>
+            </slot>
+        </div>
+    </teleport>
 </template>
 
 <script lang="ts" setup>
-    import { computed, ref, watch, onMounted, onUnmounted } from 'vue'
+    import {
+        computed,
+        ref,
+        watch,
+        onMounted,
+        onUnmounted,
+        nextTick,
+    } from 'vue'
 
     export interface NuiTooltipProps {
         text?: string
@@ -25,8 +38,9 @@
         persistent?: boolean
         triggerParent?: HTMLElement | string | null
         attachParent?: HTMLElement | string | null
-        offset?: [string|number, string|number]
+        offset?: [string | number, string | number]
         size?: 'small' | 'medium' | 'large'
+        focusable?: boolean
     }
 
     const props = withDefaults(defineProps<NuiTooltipProps>(), {
@@ -41,96 +55,23 @@
         attachParent: null,
         offset: () => [0, 0],
         size: 'medium',
+        focusable: false,
     })
 
     const emit = defineEmits(['update:modelValue'])
 
     const tooltipRef = ref<HTMLElement>()
+    const placeholderRef = ref<HTMLElement>()
     const isVisible = ref(false)
+    const tooltipTop = ref(0)
+    const tooltipLeft = ref(0)
     let showTimeoutId: number | undefined
     let hideTimeoutId: number | undefined
 
     let triggerEl: HTMLElement | null = null
     let attachEl: HTMLElement | null = null
-    let placeholder: HTMLElement | null = null
-    let originalParent: Node | null = null
-    let originalNextSibling: Node | null = null
-    let originalPosition: string | undefined
 
-    const attachEvents = (element: HTMLElement) => {
-        element.addEventListener('mouseenter', handleMouseEnter)
-        element.addEventListener('mouseleave', handleMouseLeave)
-    }
-
-    const detachEvents = (element: HTMLElement) => {
-        element.removeEventListener('mouseenter', handleMouseEnter)
-        element.removeEventListener('mouseleave', handleMouseLeave)
-    }
-
-    onMounted(() => {
-        // Determine trigger element
-        if (props.triggerParent)
-            if (typeof props.triggerParent === 'string')
-                triggerEl = document.querySelector(props.triggerParent)
-            else
-                triggerEl = props.triggerParent
-        else
-            triggerEl = tooltipRef.value?.parentElement || null
-        
-
-        // Determine attach element
-        if (props.attachParent)
-            if (typeof props.attachParent === 'string')
-                attachEl = document.querySelector(props.attachParent)
-            else
-                attachEl = props.attachParent
-        else
-            attachEl = tooltipRef.value?.parentElement || null
-        
-
-        if (triggerEl)
-            attachEvents(triggerEl)
-        
-        if (attachEl) {
-            const tooltipEl = tooltipRef.value
-            if (tooltipEl) {
-                originalParent = tooltipEl.parentNode
-                originalNextSibling = tooltipEl.nextSibling
-
-                originalPosition = attachEl.style.position
-                if (window.getComputedStyle(attachEl).position === 'static')
-                    attachEl.style.position = 'relative'
-                
-                placeholder = document.createElement('div')
-                placeholder.className = 'nui-tooltip-placeholder'
-                
-                placeholder.appendChild(tooltipEl)
-                attachEl.appendChild(placeholder)
-            }
-        }
-    })
-
-    onUnmounted(() => {
-        if (triggerEl)
-            detachEvents(triggerEl)
-        
-        if (attachEl && originalPosition !== undefined)
-            attachEl.style.position = originalPosition
-        
-        
-        const tooltipEl = tooltipRef.value
-        if (placeholder && tooltipEl && originalParent) {
-            originalParent.insertBefore(tooltipEl, originalNextSibling)
-            placeholder.parentNode?.removeChild(placeholder)
-        }
-    })
-
-    watch(() => props.modelValue, (value) => {
-        if (value !== null)
-            isVisible.value = value
-    })
-
-    const handleMouseEnter = () => {
+    const startShow = () => {
         if (props.modelValue !== null) return
 
         if (hideTimeoutId) clearTimeout(hideTimeoutId)
@@ -142,7 +83,7 @@
         }, props.showDelay)
     }
 
-    const handleMouseLeave = () => {
+    const startHide = () => {
         if (props.modelValue !== null) return
         if (props.persistent) return
 
@@ -155,21 +96,132 @@
         }, props.hideDelay)
     }
 
+    const cancelHide = () => {
+        if (hideTimeoutId) clearTimeout(hideTimeoutId)
+    }
+
+    const handleFocusIn = () => {
+        if (props.focusable)
+            cancelHide()
+    }
+
+    const handleFocusOut = (event: FocusEvent) => {
+        if (props.focusable) {
+            const relatedTarget = event.relatedTarget as HTMLElement | null
+            if (!tooltipRef.value?.contains(relatedTarget))
+                startHide()
+        }
+    }
+
+    const attachEvents = (element: HTMLElement) => {
+        element.addEventListener('mouseenter', startShow)
+        element.addEventListener('mouseleave', startHide)
+        element.addEventListener('focus', startShow)
+        element.addEventListener('blur', startHide)
+    }
+
+    const detachEvents = (element: HTMLElement) => {
+        element.removeEventListener('mouseenter', startShow)
+        element.removeEventListener('mouseleave', startHide)
+        element.removeEventListener('focus', startShow)
+        element.removeEventListener('blur', startHide)
+    }
+
+    const updatePosition = () => {
+        if (!attachEl || !tooltipRef.value) return
+
+        const attachRect = attachEl.getBoundingClientRect()
+        const tooltipEl = tooltipRef.value
+        const margin = 4 // From tailwind 'xs'
+
+        const { position } = props
+
+        let top = 0
+        let left = 0
+
+        if (position === 'top') {
+            top = attachRect.top + window.scrollY - tooltipEl.offsetHeight - margin
+            left = attachRect.left + window.scrollX + attachRect.width / 2
+        } else if (position === 'bottom') {
+            top = attachRect.bottom + window.scrollY + margin
+            left = attachRect.left + window.scrollX + attachRect.width / 2
+        } else if (position === 'left') {
+            top = attachRect.top + window.scrollY + attachRect.height / 2
+            left = attachRect.left + window.scrollX - tooltipEl.offsetWidth - margin
+        } else if (position === 'right') {
+            top = attachRect.top + window.scrollY + attachRect.height / 2
+            left = attachRect.right + window.scrollX + margin
+        }
+
+        tooltipTop.value = top
+        tooltipLeft.value = left
+    }
+
+    onMounted(() => {
+        // Determine trigger element
+        if (props.triggerParent)
+            if (typeof props.triggerParent === 'string')
+                triggerEl = document.querySelector(props.triggerParent)
+            else triggerEl = props.triggerParent
+        else triggerEl = placeholderRef.value?.parentElement || null
+
+        // Determine attach element
+        if (props.attachParent)
+            if (typeof props.attachParent === 'string')
+                attachEl = document.querySelector(props.attachParent)
+            else attachEl = props.attachParent
+        else attachEl = placeholderRef.value?.parentElement || null
+
+        if (triggerEl) attachEvents(triggerEl)
+
+        window.addEventListener('resize', updatePosition)
+        window.addEventListener('scroll', updatePosition, true)
+    })
+
+    onUnmounted(() => {
+        if (triggerEl) detachEvents(triggerEl)
+
+        window.removeEventListener('resize', updatePosition)
+        window.removeEventListener('scroll', updatePosition, true)
+    })
+
+    watch(
+        () => props.modelValue,
+        (value) => {
+            if (value !== null) isVisible.value = value
+        },
+    )
+
+    watch(isVisible, (value) => {
+        if (value)
+            nextTick(() => {
+                updatePosition()
+                if (props.focusable)
+                    tooltipRef.value?.focus()
+      
+            })
+  
+    })
+
     const compClasses = computed(() => [
         'nui-tooltip',
         `nui-tooltip--position-${props.position}`,
         `nui-tooltip--size-${props.size}`,
         {
-            'nui-tooltip--visible': isVisible.value
-        }
+            'nui-tooltip--visible': isVisible.value,
+        },
     ])
 
     const compStyles = computed(() => {
         const [offsetX, offsetY] = props.offset
+        const formatOffset = (val: string | number) =>
+            typeof val === 'number' ? `${val}px` : val
 
         return {
-            '--tw-translate-x-offset': `${offsetX}px`,
-            '--tw-translate-y-offset': `${offsetY}px`,
+            'top': `${tooltipTop.value}px`,
+            'left': `${tooltipLeft.value}px`,
+            '--tw-translate-x-offset': formatOffset(offsetX),
+            '--tw-translate-y-offset': formatOffset(offsetY),
         }
     })
 
@@ -183,70 +235,65 @@
         emit('update:modelValue', false)
     }
     defineExpose({ show, hide })
-
 </script>
 
 <style lang="css">
-@import "tailwindcss";
-@import "../styles/index.css";
-@import "../styles/components.css";
+@import 'tailwindcss';
+@import '../styles/index.css';
+@import '../styles/components.css';
 
 @layer components {
-    .nui-tooltip {
-        @apply absolute z-10
-            bg-[var(--nui-tooltip-background)] text-[var(--nui-tooltip-text-color)]
-            rounded-[var(--nui-tooltip-radius)]
-            text-[length:var(--nui-tooltip-font-size)] leading-base
-            px-[var(--nui-tooltip-padding-x)] py-[var(--nui-tooltip-padding-y)]
-            font-normal
-            whitespace-nowrap
-            opacity-0
-            transition duration-200 ease-in-out;
+  .nui-tooltip {
+    @apply absolute z-10
+      bg-[var(--nui-tooltip-background)] text-[var(--nui-tooltip-text-color)]
+      rounded-[var(--nui-tooltip-radius)]
+      text-[length:var(--nui-tooltip-font-size)] leading-base
+      px-[var(--nui-tooltip-padding-x)] py-[var(--nui-tooltip-padding-y)]
+      font-normal
+      whitespace-nowrap
+      opacity-0
+      transition duration-200 ease-in-out;
 
-        /* Visible */
-        &.nui-tooltip--visible {
-            @apply opacity-100;
-        }
-
-        /* Top */
-        &.nui-tooltip--position-top {
-            @apply bottom-full left-1/2 mb-xs;
-            @apply translate-x-[calc(-50%+var(--tw-translate-x-offset,0px))] translate-y-[calc(var(--tw-translate-y-offset,0px)+10px)];
-
-            &.nui-tooltip--visible {
-                @apply translate-x-[calc(-50%+var(--tw-translate-x-offset,0px))] translate-y-[var(--tw-translate-y-offset,0px)];
-            }
-        }
-
-        /* Bottom */
-        &.nui-tooltip--position-bottom {
-            @apply top-full left-1/2 mt-xs;
-            @apply translate-x-[calc(-50%+var(--tw-translate-x-offset,0px))] translate-y-[calc(var(--tw-translate-y-offset,0px)-10px)];
-
-            &.nui-tooltip--visible {
-                @apply translate-x-[calc(-50%+var(--tw-translate-x-offset,0px))] translate-y-[var(--tw-translate-y-offset,0px)];
-            }
-        }
-
-        /* Left */
-        &.nui-tooltip--position-left {
-            @apply right-full top-1/2 mr-xs;
-            @apply translate-x-[calc(var(--tw-translate-x-offset,0px)+10px)] translate-y-[calc(-50%+var(--tw-translate-y-offset,0px))];
-
-            &.nui-tooltip--visible {
-                @apply translate-x-[var(--tw-translate-x-offset,0px)] translate-y-[calc(-50%+var(--tw-translate-y-offset,0px))];
-            }
-        }
-
-        /* Right */
-        &.nui-tooltip--position-right {
-            @apply left-full top-1/2 ml-xs;
-            @apply translate-x-[calc(var(--tw-translate-x-offset,0px)-10px)] translate-y-[calc(-50%+var(--tw-translate-y-offset,0px))];
-
-            &.nui-tooltip--visible {
-                @apply translate-x-[var(--tw-translate-x-offset,0px)] translate-y-[calc(-50%+var(--tw-translate-y-offset,0px))];
-            }
-        }
+    /* Visible */
+    &.nui-tooltip--visible {
+      @apply opacity-100;
     }
+
+    /* Top */
+    &.nui-tooltip--position-top {
+      @apply translate-x-[calc(-50%+var(--tw-translate-x-offset,0px))] translate-y-[calc(var(--tw-translate-y-offset,0px)+10px)];
+
+      &.nui-tooltip--visible {
+        @apply translate-x-[calc(-50%+var(--tw-translate-x-offset,0px))] translate-y-[var(--tw-translate-y-offset,0px)];
+      }
+    }
+
+    /* Bottom */
+    &.nui-tooltip--position-bottom {
+      @apply translate-x-[calc(-50%+var(--tw-translate-x-offset,0px))] translate-y-[calc(var(--tw-translate-y-offset,0px)-10px)];
+
+      &.nui-tooltip--visible {
+        @apply translate-x-[calc(-50%+var(--tw-translate-x-offset,0px))] translate-y-[var(--tw-translate-y-offset,0px)];
+      }
+    }
+
+    /* Left */
+    &.nui-tooltip--position-left {
+      @apply translate-x-[calc(var(--tw-translate-x-offset,0px)+10px)] translate-y-[calc(-50%+var(--tw-translate-y-offset,0px))];
+
+      &.nui-tooltip--visible {
+        @apply translate-x-[var(--tw-translate-x-offset,0px)] translate-y-[calc(-50%+var(--tw-translate-y-offset,0px))];
+      }
+    }
+
+    /* Right */
+    &.nui-tooltip--position-right {
+      @apply translate-x-[calc(var(--tw-translate-x-offset,0px)-10px)] translate-y-[calc(-50%+var(--tw-translate-y-offset,0px))];
+
+      &.nui-tooltip--visible {
+        @apply translate-x-[var(--tw-translate-x-offset,0px)] translate-y-[calc(-50%+var(--tw-translate-y-offset,0px))];
+      }
+    }
+  }
 }
 </style>

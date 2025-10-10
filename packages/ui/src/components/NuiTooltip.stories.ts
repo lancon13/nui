@@ -23,6 +23,7 @@ const meta = {
         showDelay: { control: 'number' },
         hideDelay: { control: 'number' },
         persistent: { control: 'boolean' },
+        focusable: { control: 'boolean' },
         offset: { control: 'object' },
         size: {
             control: 'select',
@@ -122,8 +123,8 @@ export const RichContent: Story = {
             <NuiButton label="Hover for rich content">
             <NuiTooltip v-bind="args">
                 <div class="p-2">
-                <h3 class="text-lg font-bold text-white">Hello World</h3>
-                <p class="text-white/80">This is some rich content.</p>
+                <h3 class="text-lg font-bold text-bg">Hello World</h3>
+                <p class="text-bg/80">This is some rich content.</p>
                 </div>
             </NuiTooltip>
         </div>
@@ -160,7 +161,7 @@ export const SeparateTriggerAndAttach: Story = {
             <div class="text-center">
                 <NuiButton label="This is the trigger" id="my-trigger-button-2" />
 
-                <div id="my-attach-point" class="p-sm mt-md border border-dashed border-primary-200 bg-primary-50 relative">
+                <div id="my-attach-point" class="p-sm mt-md border border-dashed border-primary-200 bg-primary-50 text-neutral relative">
                     The tooltip will be attached here.
                 </div>
 
@@ -205,6 +206,38 @@ export const Persistent: Story = {
             <NuiButton label="Hover me">
                 <NuiTooltip v-bind="args" />
             </NuiButton>`,
+    }),
+}
+
+export const Focusable: Story = {
+    args: {
+        focusable: true,
+        hideDelay: 200,
+    },
+    render: (args) => ({
+        components: { NuiTooltip, NuiButton },
+        setup() {
+            return { args }
+        },
+        template: `
+        <div class="text-center">
+            <NuiButton label="Hover for focusable tooltip">
+                <NuiTooltip v-bind="args">
+                    <div class="p-2 text-left">
+                        <h3 class="text-md font-bold text-white">Focusable Tooltip</h3>
+                        <p class="text-white/80">
+                            This tooltip will stay open as long as it has focus.
+                        </p>
+                        <div class="mt-2">
+                            <a href="#" class="text-primary-400 hover:underline" @click.prevent>
+                                A link
+                            </a>
+                        </div>
+                    </div>
+                </NuiTooltip>
+            </NuiButton>
+        </div>
+    `,
     }),
 }
 
