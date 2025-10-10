@@ -126,7 +126,6 @@
                 px-[var(--nui-button-padding-x)] py-[var(--nui-button-padding-y)]
                 rounded-[var(--nui-button-radius)]
                 border-[length:var(--nui-button-border-size)]
-                gap-[var(--spacing-xs)]
                 cursor-pointer
                 transition-all duration-200 ease-in-out
                 disabled:cursor-not-allowed;
@@ -173,12 +172,12 @@
             }
             &.nui-button--variant-outlined {
                 @apply bg-transparent;
-                &.nui-button--color-primary { @apply border-primary text-primary/80 hover:bg-primary/15 hover:text-primary; }
-                &.nui-button--color-success { @apply border-success text-success/80 hover:bg-success/15 hover:text-success; }
-                &.nui-button--color-error { @apply border-error text-error/80 hover:bg-error/15 hover:text-error; }
-                &.nui-button--color-warning { @apply border-warning text-warning/80 hover:bg-warning/15 hover:text-warning; }
-                &.nui-button--color-info { @apply border-info text-info/80 hover:bg-info/15 hover:text-info; }
-                &.nui-button--color-current { @apply border-current text-current/80 hover:bg-current/15 hover:text-current; }
+                &.nui-button--color-primary { @apply border-primary/80 text-primary/80 hover:bg-primary/15 hover:text-primary hover:border-primary; }
+                &.nui-button--color-success { @apply border-success/80 text-success/80 hover:bg-success/15 hover:text-success hover:border-success; }
+                &.nui-button--color-error { @apply border-error/80 text-error/80 hover:bg-error/15 hover:text-error hover:border-error; }
+                &.nui-button--color-warning { @apply border-warning/80 text-warning/80 hover:bg-warning/15 hover:text-warning hover:border-warning; }
+                &.nui-button--color-info { @apply border-info/80 text-info/80 hover:bg-info/15 hover:text-info hover:border-info; }
+                &.nui-button--color-current { @apply border-current/80 text-current/80 hover:bg-current/15 hover:text-current hover:border-current; }
             }
             &.nui-button--variant-flat {
                 @apply border-transparent;
@@ -192,12 +191,12 @@
 
             &.nui-button--variant-text {
                 @apply border-transparent bg-transparent;
-                &.nui-button--color-primary { @apply text-primary hover:bg-primary/15; }
-                &.nui-button--color-success { @apply text-success hover:bg-success/15; }
-                &.nui-button--color-error { @apply text-error hover:bg-error/15; }
-                &.nui-button--color-warning { @apply text-warning hover:bg-warning/15; }
-                &.nui-button--color-info { @apply text-info hover:bg-info/15; }
-                &.nui-button--color-current { @apply text-current hover:bg-current/15; }
+                &.nui-button--color-primary { @apply text-primary/95 hover:bg-primary/5 hover:text-primary; }
+                &.nui-button--color-success { @apply text-success/95 hover:bg-success/5 hover:text-success; }
+                &.nui-button--color-error { @apply text-error/95 hover:bg-error/5 hover:text-error; }
+                &.nui-button--color-warning { @apply text-warning/95 hover:bg-warning/5 hover:text-warning; }
+                &.nui-button--color-info { @apply text-info/95 hover:bg-info/5 hover:text-info; }
+                &.nui-button--color-current { @apply text-current/95 hover:bg-current/5 hover:text-current; }
             }
 
             /* Disabled */
@@ -206,6 +205,14 @@
             }
 
             .nui-icon {
+                @apply mx-[var(--spacing-xs)];
+                &:first-child {
+                    @apply ml-0;
+                }
+                &:last-child {
+                    @apply mr-0;
+                }
+                
                 
                 &.nui-icon--size-small {
                     @apply text-[length:var(--nui-button-font-size-small)] leading-[var(--nui-button-font-size-small)];

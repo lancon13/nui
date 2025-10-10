@@ -117,14 +117,16 @@ export const Sizes: Story = {
             return { args, colors, sizes }
         },
         template: `
-            <div class="grid grid-cols-3 gap-sm">
+            <div class="grid grid-cols-3 gap-sm place-content-center">
                 <template v-for="color in colors" :key="color">
-                    <NuiButton v-for="size in sizes" :key="size"
-                        v-bind="args"
-                        :color="color"
-                        :size="size"
-                        :label="size.charAt(0).toUpperCase() + size.slice(1)"
-                    />
+                    <div v-for="size in sizes" :key="size" class="flex flex-col justify-center text-center">
+                        <NuiButton
+                            v-bind="args"
+                            :color="color"
+                            :size="size"
+                            :label="size.charAt(0).toUpperCase() + size.slice(1)"
+                        />
+                    </div>
                 </template>
             </div>`,
     }),

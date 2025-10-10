@@ -27,6 +27,14 @@
         --nui-card-padding: var(--spacing-sm);
         --nui-card-border-width: var(--border-thin);
         --nui-card-border-color: var(--color-border);
+
+        /* WTooltip */
+        --nui-tooltip-radius: var(--radius-element);
+        --nui-tooltip-padding-x: var(--spacing-sm);
+        --nui-tooltip-padding-y: var(--spacing-xs);
+        --nui-tooltip-background: var(--color-bg-invert);
+        --nui-tooltip-text-color: var(--color-fg-invert);
+        --nui-tooltip-font-size: var(--text-xs);
     }
 
     /* Focus ring */
