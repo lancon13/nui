@@ -30,6 +30,7 @@
         "storybook:build": "storybook build"
     },
     "dependencies": {
+        "@mdi/font": "^7.4.47",
         "@tailwindcss/vite": "^4.1.13",
         "@vueuse/components": "^13.5.0",
         "@vueuse/core": "^13.5.0",

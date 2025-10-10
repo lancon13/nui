@@ -1,3 +1,5 @@
+@import "@mdi/font/css/materialdesignicons.css";
+
 @layer base, components, theme, app;
 
 @custom-variant dark (&:where(body.body--dark, body.body--dark *));
@@ -205,7 +207,7 @@
         --color-input: var(--color-input);           
 
         /* Spacing */
-        --spacing-none: 0;
+        --spacing-0: 0;
         --spacing-xxs: 0.25rem;
         --spacing-xs: 0.5rem;
         --spacing-sm: 1rem;

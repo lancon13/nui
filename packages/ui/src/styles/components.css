@@ -13,6 +13,11 @@
         --nui-button-icon-only-size-small: calc(var(--nui-button-font-size-small) * 2);
         --nui-button-icon-only-size-medium: calc(var(--nui-button-font-size-medium) * 2);
         --nui-button-icon-only-size-large: calc(var(--nui-button-font-size-large) * 2);
+
+        /* NuiIcon */
+        --nui-icon-size-small: var(--text-lg);
+        --nui-icon-size-medium: var(--text-2xl);
+        --nui-icon-size-large: var(--text-4xl);
     }
 
     /* Focus ring */

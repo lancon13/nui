@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/vue3-vite'
 // import { fn } from '@storybook/test'
 import NuiButton from './NuiButton.vue'
 
-const colors = ['primary', 'success', 'error', 'warning', 'current']
+const colors = ['primary', 'success', 'error', 'warning', 'info', 'current']
 const variants = ['solid', 'outlined', 'flat', 'text']
 const sizes = ['small', 'medium', 'large']
 
@@ -61,7 +61,7 @@ const meta = {
         tag: 'button',
         loading: false,
         loadingLabel: 'Loading...',
-        loadingIcon: 'nui-spinner animate-spin',
+        loadingIcon: 'loading',
         rounded: false,
         pilled: false,
         to: undefined,
@@ -95,7 +95,7 @@ export const Variants: Story = {
             return { args, colors, variants }
         },
         template: `
-        <div class="grid grid-cols-5 gap-sm">
+        <div class="grid grid-cols-6 gap-sm">
             <template v-for="variant in variants" :key="variant">
                 <NuiButton
                     v-for="color in colors"
@@ -132,8 +132,8 @@ export const Sizes: Story = {
 
 export const Icons: Story = {
     args: {
-        prependIcon: 'nui-person',
-        appendIcon: 'nui-arrow-right',
+        prependIcon: 'account',
+        appendIcon: 'arrow-right',
     },
     render: (args) => ({
         components: { NuiButton },
@@ -171,7 +171,7 @@ export const IconOnly: Story = {
                             v-bind="args"
                             :variant="variant"
                             :size="size"
-                            icon="nui-add"                        
+                            icon="plus"                        
                         />
                     </div>
                     <div v-for="variant in variants" :key="variant" class="justify-self-center-safe">
@@ -179,7 +179,7 @@ export const IconOnly: Story = {
                             v-bind="args"
                             :variant="variant"
                             :size="size"
-                            icon="nui-add"
+                            icon="plus"
                             rounded
                         />
                     </div>
@@ -245,7 +245,7 @@ export const Pilled: Story = {
         },
 
         template: `
-        <div class="grid grid-cols-5 gap-sm">
+        <div class="grid grid-cols-6 gap-sm">
             <template v-for="variant in variants" :key="variant">
                 <NuiButton
                     v-for="color in colors"

@@ -2,6 +2,8 @@
 
 This guide provides instructions for creating new primitive UI components for the `@nui/ui` package, ensuring consistency with the existing codebase.
 
+**Note:** All components should be prefixed with `Nui`.
+
 ## 1. File Structure
 
 For any new component, for example `NuiInput`, you must create the following files:

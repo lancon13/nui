@@ -11,7 +11,10 @@
     >
         <template v-if="props.loading">
             <slot name="loading">
-                <i v-if="props.loadingIcon" :class="['nui-button--loading-icon', 'nui-icon', props.loadingIcon]" />
+                <nui-icon v-if="props.loadingIcon"
+                          :name="props.loadingIcon"
+                          :size="props.size"
+                          class="nui-button--loading-icon animate-spin" />
                 <span v-if="props.loadingLabel" class="nui-button--loading-label">{{ props.loadingLabel }}</span>
                 <slot name="default" />
             </slot>
@@ -19,15 +22,18 @@
         
         <template v-else>
             <slot v-if="$slots['prepend'] || props.prependIcon" name="prepend">
-                <i :class="['nui-button--prepend-icon', 'nui-icon', props.prependIcon]" />
+                <nui-icon :name="props.prependIcon as string" :size="props.size" class="nui-button--prepend-icon" />
             </slot>
             
-            <i v-if="props.icon" :class="['nui-button--icon', 'nui-icon', props.icon]" />
+            <nui-icon v-if="props.icon"
+                      :name="props.icon"
+                      :size="props.size"
+                      class="nui-button--icon" />
             {{ props.label }}
             <slot name="default" />
             
             <slot v-if="$slots['append'] || props.appendIcon" name="append">
-                <i :class="['nui-button--append-icon', 'nui-icon', props.appendIcon]" />
+                <nui-icon :name="props.appendIcon as string" :size="props.size" class="nui-button--append-icon" />
             </slot>
         </template>
     </component>
@@ -35,9 +41,10 @@
 
 <script setup lang="ts">
     import { computed } from 'vue'
+    import NuiIcon from './NuiIcon.vue'
 
     export type NuiButtonSize = 'small' | 'medium' | 'large';
-    export type NuiButtonColor = 'primary' | 'success' | 'error' | 'warning' | 'current';
+    export type NuiButtonColor = 'primary' | 'success' | 'error' | 'warning' | 'info' | 'current';
 
     export interface NuiButtonProps {
         type?: 'button' | 'submit' | 'reset';
@@ -73,7 +80,7 @@
         icon: undefined,
         loading: false,
         loadingLabel: 'Loading...',
-        loadingIcon: 'wds-spinner animate-spin',
+        loadingIcon: 'loading',
         rounded: false,
         pilled: false,
         to: undefined,
@@ -88,7 +95,7 @@
         `nui-button--variant-${props.variant}`,
         {
             [`nui-button--size-${props.size}`]: props.size && ['small', 'medium', 'large'].includes(props.size as string),
-            [`nui-button--color-${props.color}`]: props.color && ['primary', 'success', 'error', 'warning', 'current'].includes(props.color as string),
+            [`nui-button--color-${props.color}`]: props.color && ['primary', 'success', 'error', 'warning', 'info', 'current'].includes(props.color as string),
             'nui-button--icon-only': isIconOnly.value,
             'nui-button--rounded': props.rounded,
             'nui-button--pilled': props.pilled,
@@ -161,6 +168,7 @@
                 &.nui-button--color-success { @apply bg-success text-white focus:ring-success/50 hover:opacity-80 }
                 &.nui-button--color-error { @apply bg-error text-white focus:ring-error/50 hover:opacity-80 }
                 &.nui-button--color-warning { @apply  bg-warning text-white focus:ring-warning/50 hover:opacity-80 }
+                &.nui-button--color-info { @apply  bg-info text-white focus:ring-info/50 hover:opacity-80 }
                 &.nui-button--color-current { @apply bg-fg text-white focus:ring-fg/50 hover:opacity-80 }
             }
             &.nui-button--variant-outlined {
@@ -169,6 +177,7 @@
                 &.nui-button--color-success { @apply border-success text-success hover:bg-success/5; }
                 &.nui-button--color-error { @apply border-error text-error hover:bg-error/5; }
                 &.nui-button--color-warning { @apply border-warning text-warning hover:bg-warning/5; }
+                &.nui-button--color-info { @apply border-info text-info hover:bg-info/5; }
                 &.nui-button--color-current { @apply border-current text-current hover:bg-current/5; }
             }
             &.nui-button--variant-flat {
@@ -177,6 +186,7 @@
                 &.nui-button--color-success { @apply text-success bg-success/10 hover:bg-success/5; }
                 &.nui-button--color-error { @apply text-error bg-error/10 hover:bg-error/5;  }
                 &.nui-button--color-warning { @apply text-warning bg-warning/10 hover:bg-warning/5; }
+                &.nui-button--color-info { @apply text-info bg-info/10 hover:bg-info/5; }
                 &.nui-button--color-current { @apply text-current bg-current/10 hover:bg-current/5; }
             }
 
@@ -186,12 +196,28 @@
                 &.nui-button--color-success { @apply text-success hover:bg-success/5; }
                 &.nui-button--color-error { @apply text-error hover:bg-error/5; }
                 &.nui-button--color-warning { @apply text-warning hover:bg-warning/5; }
+                &.nui-button--color-info { @apply text-info hover:bg-info/5; }
                 &.nui-button--color-current { @apply text-current hover:bg-current/5; }
             }
 
             /* Disabled */
             &.nui-button--disabled {
                 @apply disabled:opacity-50;
+            }
+
+            .nui-icon {
+                
+                &.nui-icon--size-small {
+                    @apply text-[length:var(--nui-button-font-size-small)] leading-[var(--nui-button-font-size-small)];
+                }
+
+                &.nui-icon--size-medium {
+                    @apply text-[length:var(--nui-button-font-size-medium)] leading-[var(--nui-button-font-size-medium)];
+                }
+
+                &.nui-icon--size-large {
+                    @apply text-[length:var(--nui-button-font-size-large)] leading-[var(--nui-button-font-size-large)];
+                }
             }
         }
     }
