@@ -1,5 +1,6 @@
 import { setup } from '@storybook/vue3-vite'
 import './main.css'
+import { withThemeByClassName } from '@storybook/addon-themes'
 
 setup(() => {
     // app.use(MyPlugin)
@@ -17,3 +18,13 @@ export const parameters = {
         // test: 'todo'
     }
 }
+
+export const decorators = [
+    withThemeByClassName({
+        themes: {
+            light: 'html--light',
+            dark: 'html--dark',
+        },
+        defaultTheme: 'light',
+    }),
+]

@@ -18,10 +18,19 @@
         --nui-icon-size-small: var(--text-lg);
         --nui-icon-size-medium: var(--text-2xl);
         --nui-icon-size-large: var(--text-4xl);
+
+        /* NuiCard */
+        --nui-card-background-color: var(--color-surface);
+        --nui-card-radius: var(--radius-container);
+        --nui-card-shadow: var(--drop-shadow-md);
+        --nui-card-shadow-hover: var(--drop-shadow-lg);
+        --nui-card-padding: var(--spacing-sm);
+        --nui-card-border-width: var(--border-thin);
+        --nui-card-border-color: var(--color-border);
     }
 
     /* Focus ring */
     * {
-        @apply outline-0 focus:ring-2 focus:ring-offset-2 focus:ring-current/50;
+        @apply outline-0 focus:ring-2 focus:ring-current/50 focus:ring-offset-2 focus:ring-offset-bg/50;
     }
 }

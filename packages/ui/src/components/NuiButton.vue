@@ -70,7 +70,7 @@
     const props = withDefaults(defineProps<NuiButtonProps>(), {
         type: 'button',
         variant: 'solid',
-        color: 'primary',
+        color: 'current',
         size: 'medium',
         disabled: false,
         label: '',
@@ -169,35 +169,35 @@
                 &.nui-button--color-error { @apply bg-error text-white focus:ring-error/50 hover:opacity-80 }
                 &.nui-button--color-warning { @apply  bg-warning text-white focus:ring-warning/50 hover:opacity-80 }
                 &.nui-button--color-info { @apply  bg-info text-white focus:ring-info/50 hover:opacity-80 }
-                &.nui-button--color-current { @apply bg-fg text-white focus:ring-fg/50 hover:opacity-80 }
+                &.nui-button--color-current { @apply bg-fg text-bg focus:ring-fg/50 hover:opacity-80 }
             }
             &.nui-button--variant-outlined {
                 @apply bg-transparent;
-                &.nui-button--color-primary { @apply border-primary text-primary hover:bg-primary/5; }
-                &.nui-button--color-success { @apply border-success text-success hover:bg-success/5; }
-                &.nui-button--color-error { @apply border-error text-error hover:bg-error/5; }
-                &.nui-button--color-warning { @apply border-warning text-warning hover:bg-warning/5; }
-                &.nui-button--color-info { @apply border-info text-info hover:bg-info/5; }
-                &.nui-button--color-current { @apply border-current text-current hover:bg-current/5; }
+                &.nui-button--color-primary { @apply border-primary text-primary/80 hover:bg-primary/15 hover:text-primary; }
+                &.nui-button--color-success { @apply border-success text-success/80 hover:bg-success/15 hover:text-success; }
+                &.nui-button--color-error { @apply border-error text-error/80 hover:bg-error/15 hover:text-error; }
+                &.nui-button--color-warning { @apply border-warning text-warning/80 hover:bg-warning/15 hover:text-warning; }
+                &.nui-button--color-info { @apply border-info text-info/80 hover:bg-info/15 hover:text-info; }
+                &.nui-button--color-current { @apply border-current text-current/80 hover:bg-current/15 hover:text-current; }
             }
             &.nui-button--variant-flat {
                 @apply border-transparent;
-                &.nui-button--color-primary { @apply text-primary bg-primary/10 hover:bg-primary/5; }
-                &.nui-button--color-success { @apply text-success bg-success/10 hover:bg-success/5; }
-                &.nui-button--color-error { @apply text-error bg-error/10 hover:bg-error/5;  }
-                &.nui-button--color-warning { @apply text-warning bg-warning/10 hover:bg-warning/5; }
-                &.nui-button--color-info { @apply text-info bg-info/10 hover:bg-info/5; }
-                &.nui-button--color-current { @apply text-current bg-current/10 hover:bg-current/5; }
+                &.nui-button--color-primary { @apply text-primary/80 bg-primary/15 hover:bg-primary/30 hover:text-primary; }
+                &.nui-button--color-success { @apply text-success/80 bg-success/15 hover:bg-success/30 hover:text-success; }
+                &.nui-button--color-error { @apply text-error/80 bg-error/15 hover:bg-error/30 hover:text-error;  }
+                &.nui-button--color-warning { @apply text-warning/80 bg-warning/15 hover:bg-warning/30 hover:text-warning; }
+                &.nui-button--color-info { @apply text-info/80 bg-info/15 hover:bg-info/30 hover:text-info; }
+                &.nui-button--color-current { @apply text-current/80 bg-current/15 hover:bg-current/30 hover:text-current; }
             }
 
             &.nui-button--variant-text {
                 @apply border-transparent bg-transparent;
-                &.nui-button--color-primary { @apply text-primary hover:bg-primary/5; }
-                &.nui-button--color-success { @apply text-success hover:bg-success/5; }
-                &.nui-button--color-error { @apply text-error hover:bg-error/5; }
-                &.nui-button--color-warning { @apply text-warning hover:bg-warning/5; }
-                &.nui-button--color-info { @apply text-info hover:bg-info/5; }
-                &.nui-button--color-current { @apply text-current hover:bg-current/5; }
+                &.nui-button--color-primary { @apply text-primary hover:bg-primary/15; }
+                &.nui-button--color-success { @apply text-success hover:bg-success/15; }
+                &.nui-button--color-error { @apply text-error hover:bg-error/15; }
+                &.nui-button--color-warning { @apply text-warning hover:bg-warning/15; }
+                &.nui-button--color-info { @apply text-info hover:bg-info/15; }
+                &.nui-button--color-current { @apply text-current hover:bg-current/15; }
             }
 
             /* Disabled */

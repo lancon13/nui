@@ -1,6 +1,5 @@
 @import "@mdi/font/css/materialdesignicons.css";
 
-@layer base, components, theme, app;
 
 @custom-variant dark (&:where(body.body--dark, body.body--dark *));
 @custom-variant light (&:where(body.body--light, body.body--light *));
@@ -79,21 +78,45 @@
         --color-text-subtle-light: oklch(var(--color-neutral-800-light) / 0.5);
         --color-border-light: var(--color-neutral-300-light);
         --color-surface-light: var(--color-neutral-50-light);
-        --color-layer-light: var(--color-neutral-150-light);
+        --color-layer-light: var(--color-neutral-100-light);
 
         /* -- Theme (Dark) -- */
         --color-primary-dark: var(--color-primary-500-dark);
         --color-neutral-dark: var(--color-neutral-500-dark);
-        --color-bg-dark: var(--color-neutral-100-dark);
-        --color-fg-dark: var(--color-neutral-900-dark);
+        --color-bg-dark: var(--color-neutral-900-dark);
+        --color-fg-dark: var(--color-neutral-100-dark);
         --color-text-dark: var(--color-neutral-200-dark);
         --color-text-subtle-dark: oklch(var(--color-neutral-200-dark) / 0.5);
-        --color-border-dark: var(--color-neutral-300-dark);
-        --color-surface-dark: var(--color-neutral-50-dark);
-        --color-layer-dark: var(--color-neutral-150-dark);
+        --color-border-dark: var(--color-neutral-600-dark);
+        --color-surface-dark: var(--color-neutral-800-dark);
+        --color-layer-dark: var(--color-neutral-700-dark);
+
+
+        /* Spacing */
+        --spacing-0: 0;
+        --spacing-xxs: 0.25rem;
+        --spacing-xs: 0.5rem;
+        --spacing-sm: 1rem;
+        --spacing-md: 2rem;
+        --spacing-lg: 4rem;
+        --spacing-xl: 8rem;
+        --spacing-xxl: 16rem;
+
+        /* Base */
+        --spacing-base: var(--spacing-sm);
+        --border-base: calc(var(--text-base)/12);
+
+        /* Radius variants */
+        --radius-element: var(--radius-sm);
+        --radius-container: var(--radius-lg);        
+
+        /* Border variants */
+        --border-thin: calc(var(--text-base)/12); 
+        --border-thick: calc(var(--text-base)/8); 
+        --border-focus: var(--border-base); 
     }
 
-    body, body.body--light {
+    html, html.html--light {
         --color-primary: var(--color-primary-light);
         --color-neutral: var(--color-neutral-light);
 
@@ -129,8 +152,12 @@
         --color-surface: var(--color-surface-light);
         --color-layer: var(--color-layer-light);
         --color-input: var(--color-input-light);
+
+        & body {
+            @apply bg-[var(--color-bg-light)] text-[var(--color-fg-light)] text-[length:calc(var(--text-base)*var(--font-ratio))];            
+        }        
     }
-    body.body--dark {
+    html.html--dark {
         --color-primary: var(--color-primary-dark);
         --color-neutral: var(--color-neutral-dark);
 
@@ -166,10 +193,13 @@
         --color-surface: var(--color-surface-dark);
         --color-layer: var(--color-layer-dark);
         --color-input: var(--color-input-dark);
+
+        & body {
+            @apply bg-[var(--color-bg-dark)] text-[var(--color-fg-dark)] text-[length:calc(var(--text-base)*var(--font-ratio))];
+        } 
     }
 
     @theme {
-        /* Set variables by theme */
         --color-primary: var(--color-primary);
         --color-neutral: var(--color-neutral);
 
@@ -204,29 +234,7 @@
         --color-border: var(--color-border);
         --color-surface: var(--color-surface);
         --color-layer: var(--color-layer);
-        --color-input: var(--color-input);           
-
-        /* Spacing */
-        --spacing-0: 0;
-        --spacing-xxs: 0.25rem;
-        --spacing-xs: 0.5rem;
-        --spacing-sm: 1rem;
-        --spacing-md: 2rem;
-        --spacing-lg: 4rem;
-        --spacing-xl: 8rem;
-        --spacing-xxl: 16rem;
-
-        /* Base */
-        --spacing-base: var(--spacing-sm);
-        --border-base: calc(var(--text-base)/12);
-
-        /* Radius variants */
-        --radius-element: var(--radius-sm);
-        --radius-container: var(--radius-md);        
-
-        /* Border variants */
-        --border-thin: calc(var(--text-base)/16); 
-        --border-thick: calc(var(--text-base)/8); 
-        --border-focus: var(--border-base); 
+        --color-input: var(--color-input);
     }
+    
 }
