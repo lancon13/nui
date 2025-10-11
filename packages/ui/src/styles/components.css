@@ -48,7 +48,7 @@
         --nui-input-label-text-color: var(--color-text);
         --nui-input-label-font-size: var(--text-sm);
         --nui-input-label-font-weight: var(--font-weight-semibold);
-        --nui-input-helper-text-color: var(--color-text);        
+        --nui-input-helper-text-color: var(--color-text-subtle);        
         --nui-input-helper-font-size: var(--text-sm);        
         --nui-input-helper-font-weight: var(--font-weight-normal);        
         --nui-input-font-size-small: var(--text-xs);

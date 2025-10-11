@@ -29,7 +29,6 @@ const meta = {
         placeholder: { control: 'text' },
         helperText: { control: 'text' },
         loading: { control: 'boolean' },
-        rounded: { control: 'boolean' },
         pilled: { control: 'boolean' },
         // v-model
         modelValue: { control: 'text' }
@@ -43,7 +42,6 @@ const meta = {
         placeholder: 'Placeholder',
         helperText: 'This is a helper text.',
         loading: false,
-        rounded: false,
         pilled: false,
         modelValue: '',
     },
@@ -131,7 +129,6 @@ export const Shapes: Story = {
         template: `
             <div class="flex flex-col gap-md items-start">
                 <NuiInput v-bind="args" label="Default" class="w-64" />
-                <NuiInput v-bind="args" rounded label="Rounded" class="w-64" />
                 <NuiInput v-bind="args" pilled label="Pilled" class="w-64" />
             </div>
         `,
@@ -151,7 +148,7 @@ export const WithSlots: Story = {
         <div class="flex flex-col gap-md w-80">
             <NuiInput v-bind="args" v-model="model1" label="Prepend slot">
                 <template #prepend>
-                    <NuiIcon name="search" />
+                    <NuiIcon name="account" />
                 </template>
             </NuiInput>
             <NuiInput v-bind="args" v-model="model2" label="Append slot">
@@ -161,10 +158,50 @@ export const WithSlots: Story = {
             </NuiInput>
             <NuiInput v-bind="args" v-model="model3" label="Prepend and Append slots">
                 <template #prepend>
-                    <NuiIcon name="search" />
+                    <NuiIcon name="magnify" />
                 </template>
                 <template #append>
                     <NuiButton label="Submit" size="small" />
+                </template>
+            </NuiInput>
+        </div>
+    `,
+    }),
+}
+
+export const WithBeforeAfter: Story = {
+    render: (args) => ({
+        components: { NuiInput, NuiIcon, NuiButton },
+        setup() {
+            const model1 = ref('before slot')
+            const model2 = ref('after slot')
+            const model3 = ref('all slots')
+            return { args, model1, model2, model3 }
+        },
+        template: `
+        <div class="flex flex-col gap-md w-96">
+            <NuiInput v-bind="args" v-model="model1" label="Before slot">
+                <template #before>
+                    <NuiIcon name="magnify" />
+                </template>
+            </NuiInput>
+            <NuiInput v-bind="args" v-model="model2" label="After slot">
+                <template #after>
+                    <NuiButton icon="arrow-right" variant="flat" />
+                </template>
+            </NuiInput>
+            <NuiInput v-bind="args" v-model="model3" label="All slots">
+                <template #before>
+                    <NuiIcon name="account" />
+                </template>
+                <template #prepend>
+                    <NuiIcon name="magnify" />
+                </template>
+                <template #append>
+                    <NuiIcon name="arrow-right" />
+                </template>
+                <template #after>
+                    <NuiButton rounded  icon="close" />
                 </template>
             </NuiInput>
         </div>

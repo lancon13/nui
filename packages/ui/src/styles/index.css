@@ -78,7 +78,7 @@
         --color-fg-invert-light: var(--color-neutral-100-light);
         --color-text-light: var(--color-neutral-900-light);
         --color-text-invert-light: var(--color-neutral-100-light);
-        --color-text-subtle-light: oklch(var(--color-neutral-800-light) / 0.5);
+        --color-text-subtle-light: oklch(from var(--color-neutral-800-light) l c h / calc(alpha - 0.5));
         --color-border-light: var(--color-neutral-300-light);
         --color-surface-light: var(--color-neutral-50-light);
         --color-layer-light: var(--color-neutral-100-light);
@@ -93,11 +93,11 @@
         --color-fg-invert-dark: var(--color-neutral-900-dark);
         --color-text-dark: var(--color-neutral-100-dark);
         --color-text-invert-dark: var(--color-neutral-900-light);
-        --color-text-subtle-dark: oklch(var(--color-neutral-200-dark) / 0.5);
+        --color-text-subtle-dark: oklch(from var(--color-neutral-200-dark) l c h / calc(alpha - 0.5));
         --color-border-dark: var(--color-neutral-600-dark);
         --color-surface-dark: var(--color-neutral-800-dark);
         --color-layer-dark: var(--color-neutral-700-dark);
-        --color-input-dark: var(--color-neutral-900-dark);
+        --color-input-dark: var(--color-neutral-950-dark);
 
 
         /* Spacing */
