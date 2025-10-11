@@ -25,16 +25,35 @@
         --nui-card-shadow: var(--drop-shadow-md);
         --nui-card-shadow-hover: var(--drop-shadow-lg);
         --nui-card-padding: var(--spacing-sm);
-        --nui-card-border-width: var(--border-thin);
+        --nui-card-border-size: var(--border-thin);
         --nui-card-border-color: var(--color-border);
 
-        /* WTooltip */
+        /* NuiTooltip */
         --nui-tooltip-radius: var(--radius-element);
         --nui-tooltip-padding-x: var(--spacing-sm);
         --nui-tooltip-padding-y: var(--spacing-xs);
-        --nui-tooltip-background: var(--color-bg-invert);
-        --nui-tooltip-text-color: var(--color-fg-invert);
+        --nui-tooltip-background-color: var(--color-bg-invert);
+        --nui-tooltip-text-color: var(--color-text-invert);
         --nui-tooltip-font-size: var(--text-xs);
+
+        /* NuiInput */
+        --nui-input-radius: var(--radius-element);
+        --nui-input-border-size: var(--border-thin);
+        --nui-input-border-color: var(--color-border);
+        --nui-input-border-color-hover: var(--color-primary);
+        --nui-input-border-color-focus: var(--color-primary);
+        --nui-input-background-color: var(--color-input);
+        --nui-input-padding-x: calc(var(--spacing-sm) - var(--nui-input-border-size));
+        --nui-input-padding-y: calc(var(--spacing-xs) - var(--nui-input-border-size));        
+        --nui-input-label-text-color: var(--color-text);
+        --nui-input-label-font-size: var(--text-sm);
+        --nui-input-label-font-weight: var(--font-weight-semibold);
+        --nui-input-helper-text-color: var(--color-text);        
+        --nui-input-helper-font-size: var(--text-sm);        
+        --nui-input-helper-font-weight: var(--font-weight-normal);        
+        --nui-input-font-size-small: var(--text-xs);
+        --nui-input-font-size-medium: var(--text-base);
+        --nui-input-font-size-large: var(--text-lg);
     }
 
     /* Focus ring */

@@ -23,7 +23,6 @@ const meta = {
         showDelay: { control: 'number' },
         hideDelay: { control: 'number' },
         persistent: { control: 'boolean' },
-        focusable: { control: 'boolean' },
         offset: { control: 'object' },
         size: {
             control: 'select',
@@ -211,7 +210,6 @@ export const Persistent: Story = {
 
 export const Focusable: Story = {
     args: {
-        focusable: true,
         hideDelay: 200,
     },
     render: (args) => ({

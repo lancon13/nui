@@ -40,7 +40,6 @@
         attachParent?: HTMLElement | string | null
         offset?: [string | number, string | number]
         size?: 'small' | 'medium' | 'large'
-        focusable?: boolean
     }
 
     const props = withDefaults(defineProps<NuiTooltipProps>(), {
@@ -49,13 +48,12 @@
         position: 'bottom',
         modelValue: null,
         showDelay: 0,
-        hideDelay: 0,
+        hideDelay: 125,
         persistent: false,
         triggerParent: null,
         attachParent: null,
         offset: () => [0, 0],
         size: 'medium',
-        focusable: false,
     })
 
     const emit = defineEmits(['update:modelValue'])
@@ -101,16 +99,13 @@
     }
 
     const handleFocusIn = () => {
-        if (props.focusable)
-            cancelHide()
+        cancelHide()
     }
 
     const handleFocusOut = (event: FocusEvent) => {
-        if (props.focusable) {
-            const relatedTarget = event.relatedTarget as HTMLElement | null
-            if (!tooltipRef.value?.contains(relatedTarget))
-                startHide()
-        }
+        const relatedTarget = event.relatedTarget as HTMLElement | null
+        if (!tooltipRef.value?.contains(relatedTarget))
+            startHide()
     }
 
     const attachEvents = (element: HTMLElement) => {
@@ -196,9 +191,6 @@
         if (value)
             nextTick(() => {
                 updatePosition()
-                if (props.focusable)
-                    tooltipRef.value?.focus()
-      
             })
   
     })
@@ -245,7 +237,7 @@
 @layer components {
   .nui-tooltip {
     @apply absolute z-10
-      bg-[var(--nui-tooltip-background)] text-[var(--nui-tooltip-text-color)]
+      bg-[var(--nui-tooltip-background-color)] text-[var(--nui-tooltip-text-color)]
       rounded-[var(--nui-tooltip-radius)]
       text-[length:var(--nui-tooltip-font-size)] leading-base
       px-[var(--nui-tooltip-padding-x)] py-[var(--nui-tooltip-padding-y)]
