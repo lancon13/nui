@@ -1,8 +1,10 @@
 <template>
     <div :class="wrapperClasses">
-        <label v-if="props.label" :for="inputId" class="nui-input-label">
-            {{ props.label }}
-        </label>
+        <slot v-if="props.label || $slots['label']" name="label">
+            <label :for="inputId" class="nui-input-label">
+                {{ props.label }}
+            </label>
+        </slot>
         <div class="nui-input-host">
             <div v-if="$slots.before" class="nui-input-before">
                 <slot name="before" />
@@ -15,6 +17,7 @@
                 <input
                     :id="inputId"
                     v-model="model"
+                    :name="props.name"
                     :type="props.type"
                     :placeholder="props.placeholder"
                     :disabled="props.disabled || props.loading"
@@ -33,9 +36,11 @@
                 <slot name="after" />
             </div>
         </div>
-        <p v-if="props.helperText" class="nui-input-helper">
-            {{ props.helperText }}
-        </p>
+        <slot v-if="props.helperText || $slots['helper']" name="helper">
+            <p class="nui-input-helper">
+                {{ props.helperText }}
+            </p>
+        </slot>
     </div>
 </template>
 <script setup lang="ts">
@@ -52,6 +57,7 @@
     export type NuiInputSize = 'small' | 'medium' | 'large'
     export type NuiInputColor = 'primary' | 'success' | 'error' | 'warning' | 'current'
     export interface NuiInputProps {
+        name?: string
         type?: string
         color?: NuiInputColor
         size?: NuiInputSize
@@ -63,6 +69,7 @@
         loading?: boolean
     }
     const props = withDefaults(defineProps<NuiInputProps>(), {
+        name: undefined,
         type: 'text',
         color: 'current',
         size: 'medium',

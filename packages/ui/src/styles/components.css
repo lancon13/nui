@@ -39,9 +39,7 @@
         /* NuiInput */
         --nui-input-radius: var(--radius-element);
         --nui-input-border-size: var(--border-thin);
-        --nui-input-border-color: var(--color-border);
-        --nui-input-border-color-hover: var(--color-primary);
-        --nui-input-border-color-focus: var(--color-primary);
+        --nui-input-border-color: var(--color-border);        
         --nui-input-background-color: var(--color-input);
         --nui-input-padding-x: calc(var(--spacing-sm) - var(--nui-input-border-size));
         --nui-input-padding-y: calc(var(--spacing-xs) - var(--nui-input-border-size));        
@@ -54,6 +52,28 @@
         --nui-input-font-size-small: var(--text-xs);
         --nui-input-font-size-medium: var(--text-base);
         --nui-input-font-size-large: var(--text-lg);
+
+        /* NuiCheckbox */
+        --nui-checkbox-radius: var(--radius-element);
+        --nui-checkbox-border-size: var(--border-thin);
+        --nui-checkbox-border-color: var(--color-border);
+        --nui-checkbox-background-color: var(--color-input);
+        --nui-checkbox-label-text-color: var(--color-text);
+        --nui-checkbox-label-font-size: var(--text-sm);
+        --nui-checkbox-label-font-weight: var(--font-weight-semibold);
+        --nui-checkbox-helper-text-color: var(--color-text-subtle);
+        --nui-checkbox-helper-font-size: var(--text-sm);        
+        --nui-checkbox-helper-font-weight: var(--font-weight-normal);        
+        --nui-checkbox-description-font-size: var(--text-base);
+        --nui-checkbox-description-font-weight: var(--font-weight-normal);
+        --nui-checkbox-description-color: var(--color-text-subtle);
+        --nui-checkbox-size-small: var(--text-base);
+        --nui-checkbox-size-medium: var(--text-xl);
+        --nui-checkbox-size-large: var(--text-2xl);
+        --nui-checkbox-description-font-size-small: var(--text-xs);
+        --nui-checkbox-description-font-size-medium: var(--text-base);
+        --nui-checkbox-description-font-size-large: var(--text-lg);
+
     }
 
     /* Focus ring */
