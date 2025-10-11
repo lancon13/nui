@@ -34,9 +34,6 @@
         if (props.size && !['small', 'medium', 'large'].includes(props.size as string))
             styles['font-size'] = props.size
         
-        if (props.color === 'current')
-            styles.color = 'currentColor'
-        
         return styles
     })
 </script>

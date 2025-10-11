@@ -61,18 +61,51 @@
         --nui-checkbox-label-text-color: var(--color-text);
         --nui-checkbox-label-font-size: var(--text-sm);
         --nui-checkbox-label-font-weight: var(--font-weight-semibold);
+        --nui-checkbox-tick-color: var(--color-bg);
         --nui-checkbox-helper-text-color: var(--color-text-subtle);
         --nui-checkbox-helper-font-size: var(--text-sm);        
         --nui-checkbox-helper-font-weight: var(--font-weight-normal);        
         --nui-checkbox-description-font-size: var(--text-base);
         --nui-checkbox-description-font-weight: var(--font-weight-normal);
-        --nui-checkbox-description-color: var(--color-text-subtle);
+        --nui-checkbox-description-color: var(--color-text);
         --nui-checkbox-size-small: var(--text-base);
         --nui-checkbox-size-medium: var(--text-xl);
         --nui-checkbox-size-large: var(--text-2xl);
-        --nui-checkbox-description-font-size-small: var(--text-xs);
-        --nui-checkbox-description-font-size-medium: var(--text-base);
-        --nui-checkbox-description-font-size-large: var(--text-lg);
+        --nui-checkbox-icon-size-small: var(--text-xs);
+        --nui-checkbox-icon-size-medium: var(--text-base);
+        --nui-checkbox-icon-size-large: var(--text-lg);
+
+        /* NuiToggle */
+        --nui-toggle-radius: var(--radius-full);
+        --nui-toggle-border-size: var(--border-thin);
+        --nui-toggle-background-color: var(--color-input);
+        --nui-toggle-border-color: var(--color-border);        
+        --nui-toggle-label-text-color: var(--color-text);
+        --nui-toggle-label-font-size: var(--text-sm);
+        --nui-toggle-label-font-weight: var(--font-weight-semibold);
+        --nui-toggle-helper-text-color: var(--color-text-subtle);
+        --nui-toggle-helper-font-size: var(--text-sm);
+        --nui-toggle-helper-font-weight: var(--font-weight-normal);
+        --nui-toggle-description-font-size: var(--text-base);
+        --nui-toggle-description-font-weight: var(--font-weight-normal);
+        --nui-toggle-description-color: var(--color-text);
+        --nui-toggle-slot-font-size-small: var(--text-xs);
+        --nui-toggle-slot-font-size-medium: var(--text-sm);
+        --nui-toggle-slot-font-size-large: var(--text-base);
+        --nui-toggle-thumb-background-color: var(--color-border);
+        --nui-toggle-thumb-translate-x-start: calc(var(--spacing-xxs) * 0.75);
+        --nui-toggle-thumb-size-small: calc(var(--text-xs) * 1);        
+        --nui-toggle-thumb-size-medium: calc(var(--text-base) * 1);    
+        --nui-toggle-thumb-size-large: calc(var(--text-xl) * 1);    
+        --nui-toggle-track-height-small: calc(var(--nui-toggle-thumb-size-small) + (var(--nui-toggle-thumb-translate-x-start) * 2));
+        --nui-toggle-track-width-small: calc(var(--nui-toggle-track-height-small) * 2 );
+        --nui-toggle-thumb-translate-x-end-small: calc(var(--nui-toggle-track-width-small) - var(--nui-toggle-thumb-size-small) - (var(--nui-toggle-thumb-translate-x-start) * 2));
+        --nui-toggle-track-height-medium: calc(var(--nui-toggle-thumb-size-medium) + (var(--nui-toggle-thumb-translate-x-start) * 2));
+        --nui-toggle-track-width-medium: calc(var(--nui-toggle-track-height-medium) * 2 );
+        --nui-toggle-thumb-translate-x-end-medium: calc(var(--nui-toggle-track-width-medium) - var(--nui-toggle-thumb-size-medium) - (var(--nui-toggle-thumb-translate-x-start) * 2));
+        --nui-toggle-track-height-large: calc(var(--nui-toggle-thumb-size-large) + (var(--nui-toggle-thumb-translate-x-start) * 2));
+        --nui-toggle-track-width-large: calc(var(--nui-toggle-track-height-large) * 2 );
+        --nui-toggle-thumb-translate-x-end-large: calc(var(--nui-toggle-track-width-large) - var(--nui-toggle-thumb-size-large) - (var(--nui-toggle-thumb-translate-x-start) * 2));
 
     }
 

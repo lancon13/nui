@@ -106,6 +106,10 @@
                 @apply flex items-center gap-xs self-start cursor-pointer;
             }
 
+            .nui-checkbox-host:has(.nui-checkbox-input:focus-visible) .nui-checkbox-display {
+                @apply text-[--nui-checkbox-label-text-color] ring-2 ring-current/50;
+            }
+
             .nui-checkbox-input {
                 @apply sr-only;
             }
@@ -133,7 +137,7 @@
             }
 
             .nui-checkbox-description {
-                @apply text-[length:var(--nui-checkbox-description-font-size)] font-[var(--nui-checkbox-description-font-weight)] text-[var(--nui-checkbox-label-description-color)] cursor-pointer;
+                @apply text-[length:var(--nui-checkbox-description-font-size)] font-[var(--nui-checkbox-description-font-weight)] text-[var(--nui-checkbox-description-color)] cursor-pointer;
                 .nui-checkbox-wrapper--disabled & {
                     @apply cursor-not-allowed;
                 }
@@ -155,10 +159,7 @@
                 }
                 .nui-checkbox-icon-checked,
                 .nui-checkbox-icon-indeterminate {
-                    @apply text-[length:var(--nui-checkbox-description-font-size-small)] leading-[var(--nui-checkbox-description-font-size-small)];
-                }
-                .nui-checkbox-label {
-                    @apply text-[var(--nui-checkbox-label-font-size-small)];
+                    @apply text-[length:var(--nui-checkbox-icon-size-small)] leading-[var(--nui-checkbox-icon-size-small)];
                 }
             }
             &.nui-checkbox-wrapper--size-medium {
@@ -167,10 +168,7 @@
                 }
                 .nui-checkbox-icon-checked,
                 .nui-checkbox-icon-indeterminate {
-                    @apply text-[length:var(--nui-checkbox-description-font-size-medium)] leading-[var(--nui-checkbox-description-font-size-medium)];
-                }
-                .nui-checkbox-label {
-                    @apply text-[var(--nui-checkbox-label-font-size-medium)];
+                    @apply text-[length:var(--nui-checkbox-icon-size-medium)] leading-[var(--nui-checkbox-icon-size-medium)];
                 }
             }
             &.nui-checkbox-wrapper--size-large {
@@ -179,10 +177,7 @@
                 }
                 .nui-checkbox-icon-checked,
                 .nui-checkbox-icon-indeterminate {
-                    @apply text-[length:var(--nui-checkbox-description-font-size-large)] leading-[var(--nui-checkbox-description-font-size-large)];
-                }
-                .nui-checkbox-label {
-                    @apply text-[var(--nui-checkbox-label-font-size-large)];
+                    @apply text-[length:var(--nui-checkbox-icon-size-large)] leading-[var(--nui-checkbox-icon-size-large)];
                 }
             }
 
@@ -192,9 +187,15 @@
                 .nui-checkbox-description { @apply text-primary/95; }
                 .nui-checkbox-input:checked ~ .nui-checkbox-display,
                 .nui-checkbox-input:indeterminate ~ .nui-checkbox-display {
-                    @apply bg-primary border-primary text-white;
+                    @apply bg-primary/80 border-primary;
+                    .nui-checkbox-icon-checked, .nui-checkbox-icon-indeterminate {
+                        @apply text-[var(--nui-checkbox-tick-color)];
+                    }
                 }
                 .nui-checkbox-helper {
+                    @apply text-primary;
+                }
+                .nui-checkbox-host:has(.nui-checkbox-input:focus-visible) .nui-checkbox-display {
                     @apply text-primary;
                 }
             }
@@ -203,9 +204,15 @@
                 .nui-checkbox-description { @apply text-success/95; }
                 .nui-checkbox-input:checked ~ .nui-checkbox-display,
                 .nui-checkbox-input:indeterminate ~ .nui-checkbox-display {
-                    @apply bg-success border-success text-white;
+                    @apply bg-success/80 border-success;
+                    .nui-checkbox-icon-checked, .nui-checkbox-icon-indeterminate {
+                        @apply text-[var(--nui-checkbox-tick-color)];
+                    }
                 }
                 .nui-checkbox-helper {
+                    @apply text-success;
+                }
+                .nui-checkbox-host:has(.nui-checkbox-input:focus-visible) .nui-checkbox-display {
                     @apply text-success;
                 }
             }
@@ -214,9 +221,15 @@
                 .nui-checkbox-description { @apply text-error/95; }
                 .nui-checkbox-input:checked ~ .nui-checkbox-display,
                 .nui-checkbox-input:indeterminate ~ .nui-checkbox-display {
-                    @apply bg-error border-error text-white;
+                    @apply bg-error/80 border-error;
+                    .nui-checkbox-icon-checked, .nui-checkbox-icon-indeterminate {
+                        @apply text-[var(--nui-checkbox-tick-color)];
+                    }
                 }
                 .nui-checkbox-helper {
+                    @apply text-error;
+                }
+                .nui-checkbox-host:has(.nui-checkbox-input:focus-visible) .nui-checkbox-display {
                     @apply text-error;
                 }
             }
@@ -225,9 +238,15 @@
                 .nui-checkbox-description { @apply text-warning/95; }
                 .nui-checkbox-input:checked ~ .nui-checkbox-display,
                 .nui-checkbox-input:indeterminate ~ .nui-checkbox-display {
-                    @apply bg-warning border-warning text-white;
+                    @apply bg-warning/80 border-warning;
+                    .nui-checkbox-icon-checked, .nui-checkbox-icon-indeterminate {
+                        @apply text-[var(--nui-checkbox-tick-color)];
+                    }
                 }
                 .nui-checkbox-helper {
+                    @apply text-warning;
+                }
+                .nui-checkbox-host:has(.nui-checkbox-input:focus-visible) .nui-checkbox-display {
                     @apply text-warning;
                 }
             }
@@ -235,7 +254,7 @@
                 .nui-checkbox-label { @apply text-current/95; }
                 .nui-checkbox-input:checked ~ .nui-checkbox-display,
                 .nui-checkbox-input:indeterminate ~ .nui-checkbox-display {
-                    @apply bg-text text-text-invert;
+                    @apply bg-text text-[var(--nui-checkbox-tick-color)] ring-text/50;
                 }
             }
         }

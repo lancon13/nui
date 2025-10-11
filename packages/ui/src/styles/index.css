@@ -117,6 +117,7 @@
         /* Radius variants */
         --radius-element: var(--radius-sm);
         --radius-container: var(--radius-lg);        
+        --radius-full: calc(infinity * 1px);       
 
         /* Border variants */
         --border-thin: calc(var(--text-base)/12); 

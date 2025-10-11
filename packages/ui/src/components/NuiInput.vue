@@ -119,7 +119,7 @@
                 py-[var(--nui-input-padding-y)] px-[var(--nui-input-padding-x)]
                 rounded-[var(--nui-input-radius)]
                 border-[length:var(--nui-input-border-size)] border-[var(--nui-input-border-color)]
-                outline-0 focus-within:ring-[length:var(--nui-input-border-size)] focus-within:ring-current/50
+                outline-0 focus-within:ring-2 focus-within:ring-current/50
                 transition-all duration-250 ease-in-out;
 
             &:has(input:is(:disabled)) {
