@@ -113,11 +113,6 @@
             /* Main interactive element */
             .nui-checkbox-host {
                 @apply flex items-center gap-xs self-start cursor-pointer;
-
-                /* Focus state */
-                &:has(.nui-checkbox-input:focus) .nui-checkbox-display {
-                    @apply ring-2 ring-fg/50 ring-offset-2 ring-offset-bg;
-                }
             }
 
             /* Visually hidden input */
@@ -159,7 +154,6 @@
             }
             
             /* --- SIZES --- */
-            /* Note: Size variants are kept explicit for clarity */
             &.nui-checkbox-wrapper--size-small {
                 .nui-checkbox-display {
                     @apply h-[var(--nui-checkbox-size-small)] w-[var(--nui-checkbox-size-small)];
@@ -188,43 +182,41 @@
                 }
             }
 
-            /* --- COLORS --- */
-            /* Define a CSS variable for each color variant */
-            &.nui-checkbox-wrapper--color-primary { --nui-active-color: var(--color-primary); }
-            &.nui-checkbox-wrapper--color-success { --nui-active-color: var(--color-success); }
-            &.nui-checkbox-wrapper--color-error { --nui-active-color: var(--color-error); }
-            &.nui-checkbox-wrapper--color-warning { --nui-active-color: var(--color-warning); }
-            &.nui-checkbox-wrapper--color-info { --nui-active-color: var(--color-info); }
+            /* --- COLORS (Expanded but Optimized) --- */
 
-            /* Apply styles to common color variants using the variable */
-            &:is(
-                &.nui-checkbox-wrapper--color-primary,
-                &.nui-checkbox-wrapper--color-success,
-                &.nui-checkbox-wrapper--color-error,
-                &.nui-checkbox-wrapper--color-warning,
-                &.nui-checkbox-wrapper--color-info
-            ) {
-                .nui-checkbox-label,
-                .nui-checkbox-description,
-                .nui-checkbox-helper {
-                    @apply text-[var(--nui-active-color)];
-                }
-                &:has(.nui-checkbox-input:focus) .nui-checkbox-display {
-                    @apply ring-[var(--nui-active-color)]/50;
-                }
-                .nui-checkbox-input:is(:checked, :indeterminate) ~ .nui-checkbox-display {
-                    @apply bg-[var(--nui-active-color)] border-[var(--nui-active-color)];
-                    .nui-checkbox-icon-checked,
-                    .nui-checkbox-icon-indeterminate {
-                        @apply text-[var(--nui-checkbox-tick-color)];
-                    }
-                }
+            /* Text colors for label, description, and helper */
+            .nui-checkbox-label,
+            .nui-checkbox-description,
+            .nui-checkbox-helper {
+                .nui-checkbox-wrapper--color-primary & { @apply text-primary; }
+                .nui-checkbox-wrapper--color-success & { @apply text-success; }
+                .nui-checkbox-wrapper--color-error & { @apply text-error; }
+                .nui-checkbox-wrapper--color-warning & { @apply text-warning; }
+                .nui-checkbox-wrapper--color-info & { @apply text-info; }
             }
 
-            /* Special case for 'current' color */
-            &.nui-checkbox-wrapper--color-current {
-                .nui-checkbox-input:is(:checked, :indeterminate) ~ .nui-checkbox-display {
-                    @apply bg-text text-[var(--nui-checkbox-tick-color)];
+            /* Focus ring colors */
+            .nui-checkbox-host:has(.nui-checkbox-input:focus) .nui-checkbox-display {
+                .nui-checkbox-wrapper--color-primary & { @apply ring-primary/50; }
+                .nui-checkbox-wrapper--color-success & { @apply ring-success/50; }
+                .nui-checkbox-wrapper--color-error & { @apply ring-error/50; }
+                .nui-checkbox-wrapper--color-warning & { @apply ring-warning/50; }
+                .nui-checkbox-wrapper--color-info & { @apply ring-info/50; }
+            }
+
+            /* Checked/Indeterminate state colors */
+            .nui-checkbox-input:is(:checked, :indeterminate) ~ .nui-checkbox-display {
+                .nui-checkbox-wrapper--color-primary & { @apply bg-primary border-primary; }
+                .nui-checkbox-wrapper--color-success & { @apply bg-success border-success; }
+                .nui-checkbox-wrapper--color-error & { @apply bg-error border-error; }
+                .nui-checkbox-wrapper--color-warning & { @apply bg-warning border-warning; }
+                .nui-checkbox-wrapper--color-info & { @apply bg-info border-info; }
+                .nui-checkbox-wrapper--color-current & { @apply bg-text; }
+
+                /* Tick color is consistent across variants */
+                .nui-checkbox-icon-checked,
+                .nui-checkbox-icon-indeterminate {
+                    @apply text-[var(--nui-checkbox-tick-color)];
                 }
             }
         }

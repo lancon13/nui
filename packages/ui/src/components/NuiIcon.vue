@@ -15,7 +15,7 @@
     }
 
     const props = withDefaults(defineProps<NuiIconProps>(), {
-        size: 'medium',
+        size: undefined,
         color: 'current',
     })
 

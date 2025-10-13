@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import NuiToggle from './NuiToggle.vue'
 import NuiIcon from './NuiIcon.vue'
 
-const colors = ['primary', 'success', 'error', 'warning', 'current']
+const colors = ['primary', 'success', 'error', 'warning', 'info', 'current']
 const sizes = ['small', 'medium', 'large']
 
 const meta: Meta<typeof NuiToggle> = {
@@ -201,6 +201,29 @@ export const WithIcons: Story = {
                 </template>
                 <template #off>
                     <NuiIcon name="weather-sunny" class="text-primary" />
+                </template>
+            </NuiToggle>
+        `,
+    }),
+}
+
+export const WithThumbIcon: Story = {
+    args: {
+        label: 'Icon in thumb',
+        description: 'Show an icon inside the thumb',
+        size: 'large',
+        color: 'primary',
+    },
+    render: (args) => ({
+        components: { NuiToggle, NuiIcon },
+        setup() {
+            const model = ref(false)
+            return { args, model }
+        },
+        template: `
+            <NuiToggle v-bind="args" v-model="model">
+                <template #thumb>
+                    <NuiIcon name="power" />
                 </template>
             </NuiToggle>
         `,
