@@ -27,7 +27,7 @@ const meta = {
         },
         color: {
             control: 'select',
-            options: ['current', 'primary', 'success', 'error', 'warning', 'surface'],
+            options: ['current', 'primary', 'success', 'error', 'warning'],
             description: 'The color of the icon.',
         },
     },

@@ -15,9 +15,9 @@
         --nui-button-icon-only-size-large: calc(var(--nui-button-font-size-large) * 2);
 
         /* NuiIcon */
-        --nui-icon-size-small: var(--text-base);
-        --nui-icon-size-medium: var(--text-2xl);
-        --nui-icon-size-large: var(--text-4xl);
+        --nui-icon-size-small: var(--text-xs);
+        --nui-icon-size-medium: var(--text-base);
+        --nui-icon-size-large: var(--text-xl);
 
         /* NuiCard */
         --nui-card-background-color: var(--color-surface);

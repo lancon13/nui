@@ -6,7 +6,7 @@
     import { computed } from 'vue'
 
     export type NuiIconSize = 'small' | 'medium' | 'large';
-    export type NuiIconColor = 'primary' | 'success' | 'error' | 'warning' | 'info' | 'surface' | 'current';
+    export type NuiIconColor = 'primary' | 'success' | 'error' | 'warning' | 'info' | 'current';
 
     export interface NuiIconProps {
         name: string;
@@ -15,14 +15,30 @@
     }
 
     const props = withDefaults(defineProps<NuiIconProps>(), {
-        size: '',
+        size: 'medium',
         color: 'current',
+    })
+
+    const iconClasses = computed(() => {
+        const name = props.name
+        const parts = name.split('-')
+
+        // Assume short prefixes (e.g., 'fs', 'mdi', 'fa') for icon sets
+        if (parts.length > 1 ) {
+            if (parts[0] === 'mdi')
+                return ['mdi', name]
+            
+            // For other sets like 'fs-icon', just use the name as the class
+            return [name]
+        }
+
+        // Default to MDI for names without a recognizable prefix
+        return ['mdi', `mdi-${name}`]
     })
 
     const compClasses = computed(() => [
         'nui-icon',
-        'mdi',
-        `mdi-${props.name}`,
+        ...iconClasses.value,
         {
             [`nui-icon--size-${props.size}`]: props.size && ['small', 'medium', 'large'].includes(props.size as string),
             [`nui-icon--color-${props.color}`]: props.color && props.color !== 'current',
@@ -46,19 +62,8 @@
     @layer components {
         .nui-icon {
             @apply flex-shrink-0 inline-flex aspect-square leading-none;
-            
-            &.nui-icon--size-small {
-                @apply text-[length:var(--nui-icon-size-small)] leading-[var(--nui-icon-size-small)];
-            }
 
-            &.nui-icon--size-medium {
-                @apply text-[length:var(--nui-icon-size-medium)] leading-[var(--nui-icon-size-medium)];
-            }
-
-            &.nui-icon--size-large {
-                @apply text-[length:var(--nui-icon-size-large)] leading-[var(--nui-icon-size-large)];
-            }
-
+            /* Colors */
             &.nui-icon--color-primary {
                 @apply text-primary
             }
@@ -74,9 +79,22 @@
             &.nui-icon--color-info {
                 @apply text-info
             }
-            &.nui-icon--color-surface {
-                @apply text-surface
+            &.nui-icon--color-current {
+                @apply text-current
             }
+            
+            /* Sizes */
+            &.nui-icon--size-small {
+                @apply text-[length:var(--nui-icon-size-small)] leading-[var(--nui-icon-size-small)];
+            }
+            &.nui-icon--size-medium {
+                @apply text-[length:var(--nui-icon-size-medium)] leading-[var(--nui-icon-size-medium)];
+            }
+            &.nui-icon--size-large {
+                @apply text-[length:var(--nui-icon-size-large)] leading-[var(--nui-icon-size-large)];
+            }
+
+            
         }
     }
 </style>
