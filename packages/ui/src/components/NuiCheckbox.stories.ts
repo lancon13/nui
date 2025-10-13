@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/vue3-vite'
 import { ref } from 'vue'
 import NuiCheckbox from './NuiCheckbox.vue'
 
-const colors = ['primary', 'success', 'error', 'warning', 'current']
+const colors = ['primary', 'success', 'error', 'warning', 'info', 'current']
 const sizes = ['small', 'medium', 'large']
 
 const meta: Meta<typeof NuiCheckbox> = {
@@ -86,6 +86,7 @@ export const Checked: Story = {
 export const Disabled: Story = {
     args: {
         label: 'Disabled Checkbox',
+        description: 'I am disabled.',
         disabled: true,
     },
 }

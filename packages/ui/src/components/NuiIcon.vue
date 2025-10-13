@@ -24,14 +24,9 @@
         const parts = name.split('-')
 
         // Assume short prefixes (e.g., 'fs', 'mdi', 'fa') for icon sets
-        if (parts.length > 1 ) {
-            if (parts[0] === 'mdi')
-                return ['mdi', name]
-            
-            // For other sets like 'fs-icon', just use the name as the class
-            return [name]
-        }
-
+        if (parts.length > 1 && parts[0] === 'mdi' )
+            return ['mdi', name]
+        
         // Default to MDI for names without a recognizable prefix
         return ['mdi', `mdi-${name}`]
     })
