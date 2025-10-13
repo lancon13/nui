@@ -63,9 +63,9 @@
         --color-neutral-950-dark: oklch(0.200 0.000 0.00);
 
         /* -- Semantic Colors -- */
-        --color-success: #04b34f;
+        --color-success: #009d44;
         --color-error: #a6192e;
-        --color-warning: #ff9900;
+        --color-warning: #d58000;
         --color-info: #0057b8;
 
 
@@ -74,8 +74,6 @@
         --color-neutral-light: var(--color-neutral-500-light);
         --color-bg-light: var(--color-neutral-100-light);
         --color-fg-light: var(--color-neutral-900-light);
-        --color-bg-invert-light: var(--color-neutral-900-light);
-        --color-fg-invert-light: var(--color-neutral-100-light);
         --color-text-light: var(--color-neutral-900-light);
         --color-text-invert-light: var(--color-neutral-100-light);
         --color-text-subtle-light: oklch(from var(--color-neutral-800-light) l c h / calc(alpha - 0.5));
@@ -83,14 +81,14 @@
         --color-surface-light: var(--color-neutral-50-light);
         --color-layer-light: var(--color-neutral-100-light);
         --color-input-light: var(--color-neutral-50-light);
+        --color-input-highlight-light: var(--color-white);
+
 
         /* -- Theme (Dark) -- */
         --color-primary-dark: var(--color-primary-400-dark);
         --color-neutral-dark: var(--color-neutral-400-dark);
         --color-bg-dark: var(--color-neutral-900-dark);
         --color-fg-dark: var(--color-neutral-100-dark);
-        --color-bg-invert-dark: var(--color-neutral-100-dark);
-        --color-fg-invert-dark: var(--color-neutral-900-dark);
         --color-text-dark: var(--color-neutral-100-dark);
         --color-text-invert-dark: var(--color-neutral-900-light);
         --color-text-subtle-dark: oklch(from var(--color-neutral-200-dark) l c h / calc(alpha - 0.5));
@@ -98,6 +96,7 @@
         --color-surface-dark: var(--color-neutral-800-dark);
         --color-layer-dark: var(--color-neutral-700-dark);
         --color-input-dark: var(--color-neutral-950-dark);
+        --color-input-highlight-dark: var(--color-black);
 
 
         /* Spacing */
@@ -155,8 +154,6 @@
 
         --color-bg: var(--color-bg-light);
         --color-fg: var(--color-fg-light);
-        --color-bg-invert: var(--color-bg-invert-light);
-        --color-fg-invert: var(--color-fg-invert-light);
         --color-text: var(--color-text-light);
         --color-text-invert: var(--color-text-invert-light);
         --color-text-subtle: var(--color-text-subtle-light);
@@ -164,6 +161,7 @@
         --color-surface: var(--color-surface-light);
         --color-layer: var(--color-layer-light);
         --color-input: var(--color-input-light);
+        --color-input-highlight: var(--color-input-highlight-light);
 
         & body {
             @apply bg-[var(--color-bg-light)] text-[var(--color-fg-light)] text-[length:calc(var(--text-base)*var(--font-ratio))];            
@@ -208,6 +206,7 @@
         --color-surface: var(--color-surface-dark);
         --color-layer: var(--color-layer-dark);
         --color-input: var(--color-input-dark);
+        --color-input-highlight: var(--color-input-highlight-dark);
 
         & body {
             @apply bg-[var(--color-bg-dark)] text-[var(--color-fg-dark)] text-[length:calc(var(--text-base)*var(--font-ratio))];
@@ -244,8 +243,6 @@
 
         --color-bg: var(--color-bg);
         --color-fg: var(--color-fg);
-        --color-bg-invert: var(--color-bg-invert);
-        --color-fg-invert: var(--color-fg-invert);
         --color-text: var(--color-text);
         --color-text-invert: var(--color-text-invert);
         --color-text-subtle: var(--color-text-subtle);
@@ -253,6 +250,7 @@
         --color-surface: var(--color-surface);
         --color-layer: var(--color-layer);
         --color-input: var(--color-input);
+        --color-input-highlight: var(--color-input-highlight);
     }
     
 }

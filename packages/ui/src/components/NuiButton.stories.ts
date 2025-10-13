@@ -95,12 +95,11 @@ export const Variants: Story = {
             return { args, colors, variants }
         },
         template: `
-        <div class="grid grid-cols-6 gap-sm">
+        <div class="grid grid-cols-6 gap-sm place-content-center">
             <template v-for="variant in variants" :key="variant">
                 <NuiButton
-                    v-for="color in colors"
+                    v-for="color in colors" :key="color" 
                     v-bind="args"
-                    :key="color"
                     :variant="variant"
                     :color="color"
                     :label="color.charAt(0).toUpperCase() + color.slice(1)"

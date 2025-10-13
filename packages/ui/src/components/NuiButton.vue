@@ -14,8 +14,8 @@
                 <nui-icon v-if="props.loadingIcon"
                           :name="props.loadingIcon"
                           :size="props.size"
-                          class="nui-button--loading-icon animate-spin" />
-                <span v-if="props.loadingLabel" class="nui-button--loading-label">{{ props.loadingLabel }}</span>
+                          class="nui-button-loading-icon animate-spin" />
+                <span v-if="props.loadingLabel" class="nui-button-loading-label">{{ props.loadingLabel }}</span>
                 <slot name="default" />
             </slot>
         </template>
@@ -28,7 +28,7 @@
             <nui-icon v-if="props.icon"
                       :name="props.icon"
                       :size="props.size"
-                      class="nui-button--icon" />
+                      class="nui-button-icon" />
             {{ props.label }}
             <slot name="default" />
             
@@ -121,13 +121,14 @@
 
     @layer components {
         .nui-button {
-            @apply relative inline-flex items-center justify-center text-center no-underline whitespace-nowrap
-                text-[length:var(--nui-button-font-size-medium)] font-[var(--nui-button-font-weight)]
+            @apply relative box-border inline-flex items-center justify-center shrink truncate
+                text-center no-underline whitespace-nowrap
                 px-[var(--nui-button-padding-x)] py-[var(--nui-button-padding-y)]
                 rounded-[var(--nui-button-radius)]
                 border-[length:var(--nui-button-border-size)]
                 cursor-pointer
-                transition-all duration-200 ease-in-out
+                transition-all duration-250 ease-in-out
+                hover:opacity-70
                 disabled:cursor-not-allowed;
 
             /* Sizes */
@@ -155,48 +156,55 @@
                 @apply rounded-s-full rounded-e-full;
             }
 
-             /* Rounded */
+             /* Rounded (Circle) */
             &.nui-button--rounded {
                 @apply rounded-full p-[var(--nui-button-padding-rounded)];
             }
 
+            /* Colors */
+            &.nui-button--color-primary { @apply focus:ring-primary/50; }
+            &.nui-button--color-success { @apply focus:ring-success/50; }
+            &.nui-button--color-error { @apply focus:ring-error/50; }
+            &.nui-button--color-warning { @apply focus:ring-warning/50; }
+            &.nui-button--color-info { @apply focus:ring-info/50; }
+
             /* Variants */
             &.nui-button--variant-solid {
                 @apply border-transparent;
-                &.nui-button--color-primary { @apply bg-primary text-white focus:ring-primary/50 hover:opacity-80 }
-                &.nui-button--color-success { @apply bg-success text-white focus:ring-success/50 hover:opacity-80 }
-                &.nui-button--color-error { @apply bg-error text-white focus:ring-error/50 hover:opacity-80 }
-                &.nui-button--color-warning { @apply  bg-warning text-white focus:ring-warning/50 hover:opacity-80 }
-                &.nui-button--color-info { @apply  bg-info text-white focus:ring-info/50 hover:opacity-80 }
-                &.nui-button--color-current { @apply bg-fg text-bg focus:ring-fg/50 hover:opacity-80 }
+                &.nui-button--color-primary { @apply bg-primary text-input-highlight; }
+                &.nui-button--color-success { @apply bg-success text-input-highlight; }
+                &.nui-button--color-error { @apply bg-error text-input-highlight; }
+                &.nui-button--color-warning { @apply  bg-warning text-input-highlight; }
+                &.nui-button--color-info { @apply  bg-info text-input-highlight; }
+                &.nui-button--color-current { @apply bg-fg text-input-highlight; }
             }
             &.nui-button--variant-outlined {
                 @apply bg-transparent;
-                &.nui-button--color-primary { @apply border-primary/80 text-primary/80 hover:bg-primary/15 hover:text-primary hover:border-primary; }
-                &.nui-button--color-success { @apply border-success/80 text-success/80 hover:bg-success/15 hover:text-success hover:border-success; }
-                &.nui-button--color-error { @apply border-error/80 text-error/80 hover:bg-error/15 hover:text-error hover:border-error; }
-                &.nui-button--color-warning { @apply border-warning/80 text-warning/80 hover:bg-warning/15 hover:text-warning hover:border-warning; }
-                &.nui-button--color-info { @apply border-info/80 text-info/80 hover:bg-info/15 hover:text-info hover:border-info; }
-                &.nui-button--color-current { @apply border-current/80 text-current/80 hover:bg-current/15 hover:text-current hover:border-current; }
+                &.nui-button--color-primary { @apply border-primary text-primary hover:bg-primary/15; }
+                &.nui-button--color-success { @apply border-success text-success hover:bg-success/15; }
+                &.nui-button--color-error { @apply border-error text-error hover:bg-error/15; }
+                &.nui-button--color-warning { @apply border-warning text-warning hover:bg-warning/15; }
+                &.nui-button--color-info { @apply border-info text-info hover:bg-info/15; }
+                &.nui-button--color-current { @apply border-current text-current hover:bg-current/15; }
             }
             &.nui-button--variant-flat {
                 @apply border-transparent;
-                &.nui-button--color-primary { @apply text-primary/80 bg-primary/15 hover:bg-primary/30 hover:text-primary; }
-                &.nui-button--color-success { @apply text-success/80 bg-success/15 hover:bg-success/30 hover:text-success; }
-                &.nui-button--color-error { @apply text-error/80 bg-error/15 hover:bg-error/30 hover:text-error;  }
-                &.nui-button--color-warning { @apply text-warning/80 bg-warning/15 hover:bg-warning/30 hover:text-warning; }
-                &.nui-button--color-info { @apply text-info/80 bg-info/15 hover:bg-info/30 hover:text-info; }
-                &.nui-button--color-current { @apply text-current/80 bg-current/15 hover:bg-current/30 hover:text-current; }
+                &.nui-button--color-primary { @apply text-primary bg-primary/20; }
+                &.nui-button--color-success { @apply text-success bg-success/20; }
+                &.nui-button--color-error { @apply text-error bg-error/20;  }
+                &.nui-button--color-warning { @apply text-warning bg-warning/20; }
+                &.nui-button--color-info { @apply text-info bg-info/20; }
+                &.nui-button--color-current { @apply text-current bg-current/20; }
             }
 
             &.nui-button--variant-text {
                 @apply border-transparent bg-transparent;
-                &.nui-button--color-primary { @apply text-primary/95 hover:bg-primary/5 hover:text-primary; }
-                &.nui-button--color-success { @apply text-success/95 hover:bg-success/5 hover:text-success; }
-                &.nui-button--color-error { @apply text-error/95 hover:bg-error/5 hover:text-error; }
-                &.nui-button--color-warning { @apply text-warning/95 hover:bg-warning/5 hover:text-warning; }
-                &.nui-button--color-info { @apply text-info/95 hover:bg-info/5 hover:text-info; }
-                &.nui-button--color-current { @apply text-current/95 hover:bg-current/5 hover:text-current; }
+                &.nui-button--color-primary { @apply text-primary hover:bg-primary/15; }
+                &.nui-button--color-success { @apply text-success hover:bg-success/15; }
+                &.nui-button--color-error { @apply text-error hover:bg-error/15; }
+                &.nui-button--color-warning { @apply text-warning hover:bg-warning/15; }
+                &.nui-button--color-info { @apply text-info hover:bg-info/15; }
+                &.nui-button--color-current { @apply text-current hover:bg-current/15; }
             }
 
             /* Disabled */
@@ -204,6 +212,7 @@
                 @apply disabled:opacity-50;
             }
 
+            /* Icons */
             .nui-icon {
                 @apply mx-[var(--spacing-xs)];
                 &:first-child {
@@ -212,8 +221,6 @@
                 &:last-child {
                     @apply mr-0;
                 }
-                
-                
                 &.nui-icon--size-small {
                     @apply text-[length:var(--nui-button-font-size-small)] leading-[var(--nui-button-font-size-small)];
                 }

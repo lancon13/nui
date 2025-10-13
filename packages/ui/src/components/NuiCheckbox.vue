@@ -83,8 +83,8 @@
         `nui-checkbox-wrapper--size-${props.size}`,
         `nui-checkbox-wrapper--color-${props.color}`,
         {
-            'nui-checkbox-wrapper--disabled': props.disabled,
             'nui-checkbox-wrapper--indeterminate': props.indeterminate,
+            'nui-checkbox-wrapper--disabled': props.disabled,
         },
     ])
 </script>

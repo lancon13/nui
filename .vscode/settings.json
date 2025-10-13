@@ -103,6 +103,6 @@
         "whispli"
     ],
     "[tailwindcss]": {
-        "editor.defaultFormatter": "numso.prettier-standard-vscode"
+        "editor.defaultFormatter": "vscode.css-language-features"
     }
 }

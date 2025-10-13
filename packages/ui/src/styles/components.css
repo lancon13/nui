@@ -6,8 +6,8 @@
         --nui-button-font-size-large: var(--text-xl);
         --nui-button-border-size: var(--border-base);
         --nui-button-font-weight: var(--font-weight-medium);
-        --nui-button-padding-x: calc(var(--spacing-sm) - var(--nui-button-border-size));
-        --nui-button-padding-y: calc(var(--spacing-xs) - var(--nui-button-border-size));
+        --nui-button-padding-x: var(--spacing-sm);
+        --nui-button-padding-y: var(--spacing-xs);
         --nui-button-padding-rounded: var(--spacing-base);
         --nui-button-radius: var(--radius-element);                
         --nui-button-icon-only-size-small: calc(var(--nui-button-font-size-small) * 2);
@@ -15,7 +15,7 @@
         --nui-button-icon-only-size-large: calc(var(--nui-button-font-size-large) * 2);
 
         /* NuiIcon */
-        --nui-icon-size-small: var(--text-lg);
+        --nui-icon-size-small: var(--text-base);
         --nui-icon-size-medium: var(--text-2xl);
         --nui-icon-size-large: var(--text-4xl);
 
@@ -111,6 +111,6 @@
 
     /* Focus ring */
     * {
-        @apply outline-0 focus:ring-2 focus:ring-current/50 focus:ring-offset-2 focus:ring-offset-bg/50;
+        @apply outline-0 focus:ring-2 focus:ring-fg/50 focus:ring-offset-2 focus:ring-offset-bg;
     }
 }

@@ -103,7 +103,7 @@ export const Dialog: Story = {
             </div>
 
             <template #footer>
-                <NuiButton variant="outlined">Cancel</NuiButton>
+                <NuiButton variant="flat">Cancel</NuiButton>
                 <NuiButton variant="solid">Confirm</NuiButton>
             </template>
         </NuiCard>
