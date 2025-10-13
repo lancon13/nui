@@ -4,7 +4,7 @@ import NuiInput from './NuiInput.vue'
 import NuiIcon from './NuiIcon.vue'
 import NuiButton from './NuiButton.vue'
 
-const colors = ['primary', 'success', 'error', 'warning', 'current']
+const colors = ['primary', 'success', 'error', 'warning', 'info', 'current']
 const sizes = ['small', 'medium', 'large']
 
 const meta = {

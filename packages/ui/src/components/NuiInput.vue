@@ -55,7 +55,7 @@
         .slice(2)}`)
 
     export type NuiInputSize = 'small' | 'medium' | 'large'
-    export type NuiInputColor = 'primary' | 'success' | 'error' | 'warning' | 'current'
+    export type NuiInputColor = 'primary' | 'success' | 'error' | 'warning' | 'info' | 'current'
     export interface NuiInputProps {
         name?: string
         type?: string
@@ -106,60 +106,59 @@
     .nui-input-wrapper {
         @apply flex flex-col gap-xs;
 
+        /* Label, helper text */
         .nui-input-label {
-            @apply text-[length:var(--nui-input-label-font-size)] font-[var(--nui-input-label-font-weight)] text-[var(--nui-input-label-text-color)];
+            @apply text-[length:var(--nui-input-label-font-size)] font-[var(--nui-input-label-font-weight)];
         }
-
+        .nui-input-helper {
+            @apply text-[length:var(--nui-input-helper-font-size)] font-[var(--nui-input-helper-font-weight)];
+        }
+    
         .nui-input-host {
             @apply flex items-center gap-xs;
         }
 
         .nui-input-outer {
-            @apply flex flex-nowrap items-center bg-[var(--nui-input-background-color)] gap-xs grow
-                py-[var(--nui-input-padding-y)] px-[var(--nui-input-padding-x)]
-                rounded-[var(--nui-input-radius)]
-                border-[length:var(--nui-input-border-size)] border-[var(--nui-input-border-color)]
-                outline-0 focus-within:ring-2 focus-within:ring-current/50
-                transition-all duration-250 ease-in-out;
+            @apply flex flex-nowrap items-center gap-xs grow
+                    bg-[var(--nui-input-background-color)]
+                    py-[var(--nui-input-padding-y)] px-[var(--nui-input-padding-x)]
+                    rounded-[var(--nui-input-radius)]
+                    border-[length:var(--nui-input-border-size)] border-[var(--nui-input-border-color)]
+                    transition-all duration-250 ease-in-out;
+
+            /* Focus */
+            &:has(.nui-input:focus) {
+                @apply ring-2 ring-fg/50 ring-offset-2 ring-offset-bg;
+            }
 
             &:has(input:is(:disabled)) {
-                @apply border-[var(--nui-input-border-color)];
+                @apply cursor-not-allowed;
             }
 
             .nui-input {
                 @apply grow w-auto bg-transparent
-                    text-text
-                    border-none ring-0
-                    focus:ring-0 focus:ring-offset-0 outline-none;
+                       text-text
+                       border-none ring-0 ring-offset-0 outline-none appearance-none;
             }
 
-            /* Pilled */
+            /* --- Shape --- */
             &.nui-input-outer--pilled {
                 @apply rounded-full;
             }
 
-            /* Sizes */
-            &.nui-input-outer--size-small {
-                .nui-input {
-                    @apply text-[length:var(--nui-input-font-size-small)] leading-[var(--nui-input-font-size-small)];
-                }
+            /* --- Sizes --- */
+            &.nui-input-outer--size-small .nui-input {
+                @apply text-[length:var(--nui-input-size-small)] leading-[var(--nui-input-size-small)];
             }
-            &.nui-input-outer--size-medium {
-                .nui-input {
-                    @apply text-[length:var(--nui-input-font-size-medium)] leading-[var(--nui-input-font-size-medium)];
-                }
+            &.nui-input-outer--size-medium .nui-input {
+                @apply text-[length:var(--nui-input-size-medium)] leading-[var(--nui-input-size-medium)];
             }
-            &.nui-input-outer--size-large {
-                .nui-input {
-                    @apply text-[length:var(--nui-input-font-size-large)] leading-[var(--nui-input-font-size-large)];
-                }
+            &.nui-input-outer--size-large .nui-input {
+                @apply text-[length:var(--nui-input-size-large)] leading-[var(--nui-input-size-large)];
             }
         }
-        
-        .nui-input-helper {
-            @apply text-[length:var(--nui-input-helper-font-size)] font-[var(--nui-input-helper-font-weight)] text-[var(--nui-input-helper-text-color)];
-        }
-
+    
+        /* Before, Prepend, Append, After slots */
         .nui-input-before,
         .nui-input-prepend,
         .nui-input-append,
@@ -167,40 +166,106 @@
             @apply flex items-center;
         }
 
-        /* Disabled */
+        /* --- Disabled State --- */
         &.nui-input-wrapper--disabled {
             @apply opacity-50 cursor-not-allowed;
+            .nui-input {
+               @apply cursor-not-allowed;
+            }
         }
 
-        /* Colors */
+        /* --- Colors --- */
         &.nui-input-wrapper--color-primary {
-            @apply text-primary;
-            .nui-input-label { @apply text-primary/95; }
-            .nui-input-outer { @apply border-primary; }
-            .nui-input-helper { @apply text-primary; }
+            .nui-input-label,
+            .nui-input-helper,
+            .nui-input-before,
+            .nui-input-prepend,
+            .nui-input-append,
+            .nui-input-after {
+                @apply text-primary;
+            }
+            .nui-input-outer {
+                @apply border-primary text-primary;
+                &:has(.nui-input:focus) {
+                    @apply ring-primary/50;
+                }
+            }
         }
         &.nui-input-wrapper--color-success {
-            @apply text-success;
-            .nui-input-label { @apply text-success/95; }
-            .nui-input-outer { @apply border-success; }
-            .nui-input-helper { @apply text-success; }
+            .nui-input-label,
+            .nui-input-helper,
+            .nui-input-before,
+            .nui-input-prepend,
+            .nui-input-append,
+            .nui-input-after {
+                @apply text-success;
+            }
+            .nui-input-outer {
+                @apply border-success text-success;
+                &:has(.nui-input:focus) {
+                    @apply ring-success/50;
+                }
+            }
         }
         &.nui-input-wrapper--color-error {
-            @apply text-error;
-            .nui-input-label { @apply text-error/95; }
-            .nui-input-outer { @apply border-error; }
-            .nui-input-helper { @apply text-error; }
+            .nui-input-label,
+            .nui-input-helper,
+            .nui-input-before,
+            .nui-input-prepend,
+            .nui-input-append,
+            .nui-input-after {
+                @apply text-error;
+            }
+            .nui-input-outer {
+                @apply border-error text-error;
+                &:has(.nui-input:focus) {
+                    @apply ring-error/50;
+                }
+            }
         }
         &.nui-input-wrapper--color-warning {
-            @apply text-warning;
-            .nui-input-label { @apply text-warning/95; }
-            .nui-input-outer { @apply border-warning; }
-            .nui-input-helper { @apply text-warning; }
+            .nui-input-label,
+            .nui-input-helper,
+            .nui-input-before,
+            .nui-input-prepend,
+            .nui-input-append,
+            .nui-input-after {
+                @apply text-warning;
+            }
+            .nui-input-outer {
+                @apply border-warning text-warning;
+                &:has(.nui-input:focus) {
+                    @apply ring-warning/50;
+                }
+            }
+        }
+        &.nui-input-wrapper--color-info {
+            .nui-input-label,
+            .nui-input-helper,
+            .nui-input-before,
+            .nui-input-prepend,
+            .nui-input-append,
+            .nui-input-after {
+                @apply text-info;
+            }
+            .nui-input-outer {
+                @apply border-info text-info;
+                &:has(.nui-input:focus) {
+                    @apply ring-info/50;
+                }
+            }
         }
         &.nui-input-wrapper--color-current {
-            @apply text-current;
-            .nui-input-label { @apply text-current/95; }
+            .nui-input-label,
+            .nui-input-helper,
+            .nui-input-before,
+            .nui-input-prepend,
+            .nui-input-append,
+            .nui-input-after {
+                @apply text-current;
+            }
         }
     }
 }
 </style>
+

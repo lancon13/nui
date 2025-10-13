@@ -113,6 +113,9 @@
             /* Main interactive element */
             .nui-checkbox-host {
                 @apply flex items-center gap-xs self-start cursor-pointer;
+                &:has(.nui-checkbox-input:focus) .nui-checkbox-display {
+                    @apply ring-2 ring-fg/50 ring-offset-2 ring-offset-bg;
+                }
             }
 
             /* Visually hidden input */
@@ -153,7 +156,7 @@
                 }
             }
             
-            /* --- SIZES --- */
+            /* --- Sizes --- */
             &.nui-checkbox-wrapper--size-small {
                 .nui-checkbox-display {
                     @apply h-[var(--nui-checkbox-size-small)] w-[var(--nui-checkbox-size-small)];
@@ -182,8 +185,7 @@
                 }
             }
 
-            /* --- COLORS (Expanded but Optimized) --- */
-
+            /* --- Colors --- */
             /* Text colors for label, description, and helper */
             .nui-checkbox-label,
             .nui-checkbox-description,

@@ -41,17 +41,15 @@
         --nui-input-border-size: var(--border-thin);
         --nui-input-border-color: var(--color-border);        
         --nui-input-background-color: var(--color-input);
-        --nui-input-padding-x: calc(var(--spacing-sm) - var(--nui-input-border-size));
-        --nui-input-padding-y: calc(var(--spacing-xs) - var(--nui-input-border-size));        
-        --nui-input-label-text-color: var(--color-text);
+        --nui-input-padding-x: var(--spacing-sm);
+        --nui-input-padding-y: var(--spacing-xs);        
         --nui-input-label-font-size: var(--text-sm);
         --nui-input-label-font-weight: var(--font-weight-semibold);
-        --nui-input-helper-text-color: var(--color-text-subtle);        
         --nui-input-helper-font-size: var(--text-sm);        
         --nui-input-helper-font-weight: var(--font-weight-normal);        
-        --nui-input-font-size-small: var(--text-xs);
-        --nui-input-font-size-medium: var(--text-base);
-        --nui-input-font-size-large: var(--text-lg);
+        --nui-input-size-small: var(--text-xs);
+        --nui-input-size-medium: var(--text-base);
+        --nui-input-size-large: var(--text-lg);
 
         /* NuiCheckbox */
         --nui-checkbox-radius: var(--radius-element);

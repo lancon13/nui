@@ -165,10 +165,7 @@
             .nui-toggle-input:disabled ~ .nui-toggle-display {
                 @apply cursor-not-allowed;
             }
-
-            /* --- VARIANTS --- */
-
-            /* --- Sizes (Explicit) --- */
+            /* --- Sizes --- */
             &.nui-toggle-wrapper--size-small {
                 --nui-toggle-thumb-translate-x-end: var(--nui-toggle-thumb-translate-x-end-small);
                 .nui-toggle-display {
@@ -209,7 +206,7 @@
                 }
             }
 
-            /* --- Colors (Expanded but Optimized) --- */
+            /* --- Colors --- */
             /* Text colors for label, description, and helper */
             .nui-toggle-label,
             .nui-toggle-description,
