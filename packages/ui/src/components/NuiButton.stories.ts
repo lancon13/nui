@@ -396,4 +396,4 @@ export const TextShadow: Story = {
             </template>
         </div>`,
     }),
-};
+}
