@@ -129,13 +129,14 @@
         --nui-chip-padding-y: var(--spacing-xxs);
         --nui-chip-radius: var(--radius-element);
         --nui-chip-border-size: var(--border-thin);
-
-        /* NuiModal */
-        --nui-modal-overlay-z-index: 50;
-        --nui-modal-content-z-index: 51;
-        --nui-modal-overlay-background-color: rgb(0 0 0 / 0.5);
         --nui-chip-shadow: var(--drop-shadow-md);
         --nui-chip-text-shadow: var(--text-shadow-md);
+
+        /* NuiModal */
+        --nui-modal-z-index: 50;
+        --nui-modal-content-padding: var(--spacing-md);
+        --nui-modal-overlay-background-color: oklch(from var(--color-fg) l c h / calc(alpha - 0.35));
+        
     }
 
     /* Focus ring */
