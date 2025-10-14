@@ -8,6 +8,7 @@
         :disabled="props.disabled || props.loading"
         :class="compClasses"
         :style="compStyles"
+        @click="handleClick"
     >
         <template v-if="props.loading">
             <slot name="loading">
@@ -43,12 +44,17 @@
     import { computed } from 'vue'
     import NuiIcon from './NuiIcon.vue'
 
+    const model = defineModel<boolean>()
+
     export type NuiButtonSize = 'small' | 'medium' | 'large';
     export type NuiButtonColor = 'primary' | 'success' | 'error' | 'warning' | 'info' | 'current';
+    export type NuiButtonVariant = 'solid' | 'outlined' | 'flat' | 'text';
 
     export interface NuiButtonProps {
+        modelValue?: boolean;
+        toggle?: boolean;
         type?: 'button' | 'submit' | 'reset';
-        variant?: 'solid' | 'outlined' | 'flat' | 'text';
+        variant?: NuiButtonVariant;
         color?: NuiButtonColor;
         size?: NuiButtonSize | string;
         disabled?: boolean;
@@ -65,9 +71,12 @@
         to?: string | object;
         href?: string;
         target?: string;
+        shadow?: boolean;
     }
 
     const props = withDefaults(defineProps<NuiButtonProps>(), {
+        modelValue: undefined,
+        toggle: false,
         type: 'button',
         variant: 'solid',
         color: 'current',
@@ -86,7 +95,21 @@
         to: undefined,
         href: undefined,
         target: undefined,
+        shadow: false,
     })
+
+    const emit = defineEmits(['click'])
+
+    const isOn = computed(() => props.toggle ? (model.value ?? true) : false)
+
+    const handleClick = (e: MouseEvent) => {
+        emit('click', e)
+        if (props.toggle)
+            if (!props.disabled && !props.loading)
+                model.value = !isOn.value
+            
+        
+    }
 
     const isIconOnly = computed(() => props.icon && !props.label)
 
@@ -101,6 +124,10 @@
             'nui-button--pilled': props.pilled,
             'nui-button--loading': props.loading,
             'nui-button--disabled': props.disabled,
+            'nui-button--shadow': props.shadow,
+            'nui-button-toggle': props.toggle,
+            'nui-button-toggle--is-on': props.toggle && isOn.value,
+            'nui-button-toggle--is-off': props.toggle && !isOn.value,
         },
     ])
 
@@ -207,6 +234,11 @@
                 &.nui-button--color-current { @apply text-current hover:bg-current/15; }
             }
 
+            /* Shadow */
+            &.nui-button--shadow {
+                @apply drop-shadow-[var(--nui-button-shadow)];
+            }
+
             /* Disabled */
             &.nui-button--disabled {
                 @apply disabled:opacity-50;
@@ -214,23 +246,38 @@
 
             /* Icons */
             .nui-icon {
-                @apply mx-[var(--spacing-xs)];
-                &:first-child {
-                    @apply ml-0;
-                }
-                &:last-child {
-                    @apply mr-0;
+                @apply mr-[var(--spacing-xs)];
+                &:last-of-type {
+                    @apply mr-0 ml-[var(--spacing-xs)];
                 }
                 &.nui-icon--size-small {
                     @apply text-[length:var(--nui-button-font-size-small)] leading-[var(--nui-button-font-size-small)];
                 }
-
                 &.nui-icon--size-medium {
                     @apply text-[length:var(--nui-button-font-size-medium)] leading-[var(--nui-button-font-size-medium)];
                 }
-
                 &.nui-icon--size-large {
                     @apply text-[length:var(--nui-button-font-size-large)] leading-[var(--nui-button-font-size-large)];
+                }
+            }
+            &.nui-button--icon-only {
+                .nui-icon {
+                    @apply mx-0;
+                }
+            }
+
+            /* Toggle styles */
+            &.nui-button-toggle {
+                &.nui-button-toggle--is-off {
+                    @apply inset-shadow-black/25 inset-shadow-[0_0.125rem_0.125rem_0]
+                        pt-[calc(var(--nui-button-padding-y)*1.125)]
+                        pb-[calc(var(--nui-button-padding-y)*0.875)]
+                        brightness-80 contrast-80;
+                }
+                &.nui-button-toggle--is-on {
+                    @apply inset-shadow-none
+                        py-[var(--nui-button-padding-y)]
+                        brightness-100 contrast-100;
                 }
             }
         }

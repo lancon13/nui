@@ -10,9 +10,10 @@
         --nui-button-padding-y: var(--spacing-xs);
         --nui-button-padding-rounded: var(--spacing-base);
         --nui-button-radius: var(--radius-element);                
+        --nui-button-shadow: var(--drop-shadow-md);
         --nui-button-icon-only-size-small: calc(var(--nui-button-font-size-small) * 2);
         --nui-button-icon-only-size-medium: calc(var(--nui-button-font-size-medium) * 2);
-        --nui-button-icon-only-size-large: calc(var(--nui-button-font-size-large) * 2);
+        --nui-button-icon-only-size-large: calc(var(--nui-button-font-size-large) * 2);        
 
         /* NuiIcon */
         --nui-icon-size-small: var(--text-xs);
@@ -69,6 +70,26 @@
         --nui-checkbox-icon-size-small: var(--text-xs);
         --nui-checkbox-icon-size-medium: var(--text-base);
         --nui-checkbox-icon-size-large: var(--text-lg);
+
+        /* NuiRadio */
+        --nui-radio-radius: var(--radius-full);
+        --nui-radio-border-size: var(--border-thin);
+        --nui-radio-border-color: var(--color-border);
+        --nui-radio-label-font-size: var(--text-sm);
+        --nui-radio-label-font-weight: var(--font-weight-semibold);
+        --nui-radio-helper-font-size: var(--text-sm);
+        --nui-radio-helper-font-weight: var(--font-weight-normal);
+        --nui-radio-description-font-size: var(--text-base);
+        --nui-radio-description-font-weight: var(--font-weight-normal);
+        --nui-radio-background-color: var(--color-input);
+        --nui-radio-size-small: var(--text-base);
+        --nui-radio-size-medium: var(--text-xl);
+        --nui-radio-size-large: var(--text-2xl);
+        --nui-radio-dot-size-small: calc(var(--nui-radio-size-small) / 2);
+        --nui-radio-dot-size-medium: calc(var(--nui-radio-size-medium) / 2);
+        --nui-radio-dot-size-large: calc(var(--nui-radio-size-large) / 2);
+
+
 
         /* NuiToggle */
         --nui-toggle-radius: var(--radius-full);

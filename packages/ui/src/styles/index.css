@@ -112,6 +112,9 @@
         /* Base */
         --spacing-base: var(--spacing-sm);
         --border-base: calc(var(--text-base)/12);
+        
+        /* Shadow */
+        --shadow-inset: var(--inset-shadow-lg);
 
         /* Radius variants */
         --radius-element: var(--radius-sm);

@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite'
+import { ref } from 'vue'
 // import { fn } from '@storybook/test'
 import NuiButton from './NuiButton.vue'
 
@@ -48,12 +49,14 @@ const meta = {
             control: 'select',
             options: ['_self', '_blank', '_parent', '_top'],
         },
+        toggle: { control: 'boolean' },
+        shadow: { control: 'boolean' },
         // Events
         // onClick: { action: 'clicked' },
     },
     args: {
         type: 'button',
-        color: 'primary',
+        color: 'current',
         variant: 'solid',
         size: 'medium',
         disabled: false,
@@ -67,6 +70,8 @@ const meta = {
         to: undefined,
         href: undefined,
         target: undefined,
+        toggle: false,
+        shadow: false,
         // onClick: fn(),
     },
 } satisfies Meta<typeof NuiButton>
@@ -301,5 +306,69 @@ export const CurrentColor: Story = {
                 </div>
             </div>
         `,
+    }),
+}
+
+export const Toggle: Story = {
+    args: {
+        toggle: true,
+        label: 'Toggle Me',
+    },
+    render: (args) => ({
+        components: { NuiButton },
+        setup() {
+            const toggled = ref(true)
+            return { args, toggled }
+        },
+        template: '<NuiButton v-bind="args" v-model="toggled" />',
+    }),
+}
+
+export const ToggleOff: Story = {
+    args: {
+        toggle: true,
+        modelValue: false,
+    },
+    render: (args) => ({
+        components: { NuiButton },
+        setup() {
+            return { args, colors, sizes }
+        },
+        template: `
+        <div class="grid grid-cols-6 gap-sm place-content-center">
+            <template v-for="size in sizes" :key="size">
+                <NuiButton
+                    v-for="color in colors" :key="color" 
+                    v-bind="args"
+                    :size="size"
+                    :color="color"
+                    :label="color"
+                />
+            </template>
+        </div>`,
+    }),
+}
+
+export const Shadow: Story = {
+    args: {
+        shadow: true,
+    },
+    render: (args) => ({
+        components: { NuiButton },
+        setup() {
+            return { args, colors, sizes }
+        },
+        template: `
+        <div class="grid grid-cols-6 gap-sm place-content-center">
+            <template v-for="size in sizes" :key="size">
+                <NuiButton
+                    v-for="color in colors" :key="color" 
+                    v-bind="args"
+                    :size="size"
+                    :color="color"
+                    :label="color"
+                />
+            </template>
+        </div>`,
     }),
 }
