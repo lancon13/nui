@@ -372,3 +372,28 @@ export const Shadow: Story = {
         </div>`,
     }),
 }
+
+export const TextShadow: Story = {
+    args: {
+        shadow: true,
+        variant: 'text',
+    },
+    render: (args) => ({
+        components: { NuiButton },
+        setup() {
+            return { args, colors, sizes }
+        },
+        template: `
+        <div class="grid grid-cols-6 gap-sm place-content-center">
+            <template v-for="size in sizes" :key="size">
+                <NuiButton
+                    v-for="color in colors" :key="color" 
+                    v-bind="args"
+                    :size="size"
+                    :color="color"
+                    :label="color"
+                />
+            </template>
+        </div>`,
+    }),
+};

@@ -13,18 +13,81 @@ For any new component, for example `NuiInput`, you must create the following fil
 
 ## 2. Component Implementation (`NuiInput.vue`)
 
-Follow the pattern established by `NuiButton.vue`.
+Follow the pattern established by existing components like `NuiButton.vue` and `NuiInput.vue`.
 
 ### Script (`<script setup lang="ts">`)
 
-*   **Props:**
-    *   Define and export a TypeScript interface for the component's props (e.g., `export interface NuiInputProps { ... }`).
-    *   Define props using `withDefaults(defineProps<NuiInputProps>(), { ... })` to provide default values.
-    *   Export common `type` definitions related to props (e.g., `export type NuiInputVariant = 'solid' | 'outlined';`).
-*   **Dynamic Classes & Styles:**
-    *   Use `computed` from `vue` to create a `compClasses` computed property. This should return an array of classes, including the base component class (e.g., `'nui-input'`), variant classes, size classes, and state-based classes (e.g., `nui-input--disabled`).
-    *   Use a `compStyles` computed property if you need to apply dynamic inline styles that can't be handled by classes (e.g., a custom size passed as a string like `'3rem'`).
-*   **Logic:** Keep the component logic minimal and focused on presentation. Use computed properties to react to prop changes.
+#### Props & Types
+
+Always export reusable `type` aliases for props that have a fixed set of options. This promotes consistency and reusability across the design system.
+
+**Good Example:**
+```typescript
+// In NuiButton.vue
+export type NuiButtonVariant = 'solid' | 'outlined' | 'flat' | 'text';
+
+export interface NuiButtonProps {
+  variant?: NuiButtonVariant;
+  // ...
+}
+```
+
+**Bad Example:**
+```typescript
+// Avoid defining types inline where they cannot be reused.
+export interface NuiButtonProps {
+  variant?: 'solid' | 'outlined' | 'flat' | 'text'; // Not reusable
+  // ...
+}
+```
+
+#### State Management (`v-model`)
+
+For components that require two-way data binding (like form inputs or toggleable components), use the `defineModel<Type>()` macro for a clean and standard implementation.
+
+**Good Example:**
+```typescript
+// In a component like NuiCheckbox.vue
+const model = defineModel<boolean>()
+```
+
+**Bad Example:**
+```typescript
+// Avoid manually implementing v-model unless necessary.
+const props = defineProps<{ modelValue: boolean }>()
+const emit = defineEmits(['update:modelValue'])
+```
+
+#### Dynamic Classes
+
+Use a `computed` property (typically named `compClasses`) to build the class array. This keeps the `<template>` clean and centralizes the component's styling logic.
+
+**Good Example:**
+```typescript
+const compClasses = computed(() => [
+    'nui-button',
+    `nui-button--variant-${props.variant}`,
+    {
+        'nui-button--loading': props.loading,
+        'nui-button--disabled': props.disabled,
+    },
+])
+```
+
+**Bad Example:**
+```html
+<!-- Avoid complex conditional logic directly in the :class binding -->
+<button
+  :class="[
+    'nui-button',
+    `nui-button--variant-${variant}`,
+    loading ? 'nui-button--loading' : '',
+    disabled ? 'nui-button--disabled' : '',
+  ]"
+>
+  ...
+</button>
+```
 
 ### Template (`<template>`)
 
@@ -43,40 +106,59 @@ Follow the pattern established by `NuiButton.vue`.
 *   **Scoping & Layers:**
     *   Do NOT use the `scoped` attribute.
     *   All styles must be within the `@layer components { ... }` block.
-*   **Tailwind CSS & Nesting:**
-    *   Use `@apply` to apply Tailwind CSS utilities.
-    *   Reference the project's theme variables from `packages/ui/src/styles/index.css`.
-    *   Use a nested CSS structure for component modifiers (e.g., `&.nui-input--variant`) and elements. This improves readability and organization.
 
-    > **Note on Theme-Aware Utilities:** The Tailwind CSS integration is configured to generate utility classes directly from the CSS variables defined in `packages/ui/src/styles/index.css`. For example, to apply a small padding, use the `.p-sm` class, which corresponds to the `--spacing-sm` variable. Standard Tailwind numerical sizing classes (e.g., `p-4`) will not work. Always refer to `index.css` for the available scale (e.g., `xxs`, `xs`, `sm`, `md`).
-*   **CSS Variables:**
-    *   If the component requires specific styling values (e.g., padding, font-size), first check if an existing base variable from `index.css` can be used.
-    *   Add new component-specific CSS variables to `packages/ui/src/styles/components.css` inside the `@layer components { @theme { ... } }` block.
-    *   **Important:** When defining new component variables, they should reference existing base variables (e.g., `var(--spacing-sm)`, `var(--border-thin)`). Avoid using hardcoded, "arbitrary" values like `1px` or `#FFF`.
+#### CSS Variables & `@apply`
 
-        **Good Example:**
-        ```css
-        /* NuiInput */
-        --nui-input-padding-x: var(--spacing-sm);
-        --nui-input-radius: var(--radius-xxs);
-        --nui-input-border-width: var(--border-thin);
-        ```
-        **Bad Example:**
-        ```css
-        /* NuiInput */
-        --nui-input-padding-x: 1rem; /* Use var(--spacing-sm) instead */
-        --nui-input-border-width: 1px; /* Use var(--border-thin) instead */
-        ```
-    *   Use these variables within your component's style block. For example:
-        ```css
-        .nui-input {
-            @apply p-[var(--nui-input-padding-y)] px-[var(--nui-input-padding-x)] rounded-[var(--nui-input-radius)];
+Always prefer using CSS variables from the theme over arbitrary or "magic" numbers. This ensures that components adhere to the design system's tokens.
 
-            &.nui-input--bordered {
-                @apply border-[var(--nui-input-border-width)];
-            }
-        }
-        ```
+**Good Example:**
+```css
+.nui-button {
+  @apply px-[var(--nui-button-padding-x)] rounded-[var(--nui-button-radius)];
+}
+```
+
+**Bad Example:**
+```css
+.nui-button {
+  /* Avoid arbitrary values that are not part of the theme */
+  @apply px-[11px] rounded-[7px];
+}
+```
+
+#### Class Naming & Structure
+
+Use a nested BEM-like CSS structure for component modifiers and elements. This improves readability and prevents style conflicts.
+
+**Good Example:**
+```css
+.nui-button {
+    @apply inline-flex; // Base styles
+
+    /* Modifier for variant */
+    &.nui-button--variant-solid {
+        @apply bg-primary;
+    }
+
+    /* Child element */
+    .nui-button-icon {
+        @apply mx-xs;
+    }
+}
+```
+
+**Bad Example:**
+```css
+/* Avoid overly specific or non-reusable selectors */
+div > .nui-button.primary {
+    background-color: blue;
+}
+
+/* Avoid style definitions outside the main component class */
+.nui-button-icon-style {
+    margin-left: 4px;
+}
+```
 
 ## 3. Storybook Integration (`NuiInput.stories.ts`)
 
@@ -95,6 +177,6 @@ Follow the pattern established by `NuiButton.vue`.
 ## 4. Exporting the Component
 
 *   Open `packages/ui/src/components/index.ts`.
-*   Add a new line to export your component: `export { default as NuiInput } from './NuiInput.vue'`.
+*   Add a new line to export your component, keeping the list alphabetized: `export { default as NuiInput } from './NuiInput.vue'`.
 
 By following these steps, the new component will integrate seamlessly into the existing design system architecture and tooling.

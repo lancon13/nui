@@ -58,7 +58,7 @@ Here are some examples of how components are structured in this project.
 
 ### `NuiButton.vue`
 
-This is an example of a basic button component.
+This is an example of a versatile button component that can also function as a link or a toggle.
 
 ```vue
 <template>
@@ -71,34 +71,9 @@ This is an example of a basic button component.
         :disabled="props.disabled || props.loading"
         :class="compClasses"
         :style="compStyles"
+        @click="handleClick"
     >
-        <template v-if="props.loading">
-            <slot name="loading">
-                <nui-icon v-if="props.loadingIcon"
-                          :name="props.loadingIcon"
-                          :size="props.size"
-                          class="nui-button--loading-icon animate-spin" />
-                <span v-if="props.loadingLabel" class="nui-button--loading-label">{{ props.loadingLabel }}</span>
-                <slot name="default" />
-            </slot>
-        </template>
-        
-        <template v-else>
-            <slot v-if="$slots['prepend'] || props.prependIcon" name="prepend">
-                <nui-icon :name="props.prependIcon as string" :size="props.size" class="nui-button--prepend-icon" />
-            </slot>
-            
-            <nui-icon v-if="props.icon"
-                      :name="props.icon"
-                      :size="props.size"
-                      class="nui-button--icon" />
-            {{ props.label }}
-            <slot name="default" />
-            
-            <slot v-if="$slots['append'] || props.appendIcon" name="append">
-                <nui-icon :name="props.appendIcon as string" :size="props.size" class="nui-button--append-icon" />
-            </slot>
-        </template>
+        <!-- ... template logic for loading/default states and slots ... -->
     </component>
 </template>
 
@@ -106,166 +81,87 @@ This is an example of a basic button component.
     import { computed } from 'vue'
     import NuiIcon from './NuiIcon.vue'
 
+    const model = defineModel<boolean>()
+
     export type NuiButtonSize = 'small' | 'medium' | 'large';
-    export type NuiButtonColor = 'primary' | 'success' | 'error' | 'warning' | 'current';
+    export type NuiButtonColor = 'primary' | 'success' | 'error' | 'warning' | 'info' | 'current';
+    export type NuiButtonVariant = 'solid' | 'outlined' | 'flat' | 'text';
 
     export interface NuiButtonProps {
-        type?: 'button' | 'submit' | 'reset';
-        variant?: 'solid' | 'outlined' | 'flat' | 'text';
-        color?: NuiButtonColor;
-        size?: NuiButtonSize | string;
-        disabled?: boolean;
-        label?: string;
-        tag?: string;
-        prependIcon?: string;
-        appendIcon?: string;
-        icon?: string;
-        loading?: boolean;
-        loadingLabel?: string;
-        loadingIcon?: string;
-        rounded?: boolean;
-        pilled?: boolean;
-        to?: string | object;
-        href?: string;
-        target?: string;
+        modelValue?: boolean;
+        toggle?: boolean;
+        // ... other props
     }
 
     const props = withDefaults(defineProps<NuiButtonProps>(), {
-        type: 'button',
-        variant: 'solid',
-        color: 'primary',
-        size: 'medium',
-        disabled: false,
-        label: '',
-        tag: 'button',
-        prependIcon: undefined,
-        appendIcon: undefined,
-        icon: undefined,
-        loading: false,
-        loadingLabel: 'Loading...',
-        loadingIcon: 'loading',
-        rounded: false,
-        pilled: false,
-        to: undefined,
-        href: undefined,
-        target: undefined,
+        // ... default values
     })
 
-    const isIconOnly = computed(() => props.icon && !props.label)
+    const emit = defineEmits(['click'])
+    const handleClick = (e: MouseEvent) => {
+        emit('click', e)
+        if (props.toggle) {
+            // ... toggle logic
+        }
+    }
 
     const compClasses = computed(() => [
         'nui-button',
-        `nui-button--variant-${props.variant}`,
-        {
-            [`nui-button--size-${props.size}`]: props.size && ['small', 'medium', 'large'].includes(props.size as string),
-            [`nui-button--color-${props.color}`]: props.color && ['primary', 'success', 'error', 'warning', 'current'].includes(props.color as string),
-            'nui-button--icon-only': isIconOnly.value,
-            'nui-button--rounded': props.rounded,
-            'nui-button--pilled': props.pilled,
-            'nui-button--loading': props.loading,
-            'nui-button--disabled': props.disabled,
-        },
+        // ... dynamic classes
     ])
-
-    const compStyles = computed(() => {
-        const styles: Record<string, string> = {}
-        if (props.size && !['small', 'medium', 'large'].includes(props.size as string))
-            styles['font-size'] = props.size
-
-        return styles
-    })
-
 </script>
 ```
 
-### `NuiButton.stories.ts`
+### `NuiInput.vue`
 
-This is an example of a Storybook story for the `NuiButton` component.
+This is an example of a form input component that uses `v-model` and has slots for icons.
 
-```typescript
-import type { Meta, StoryObj } from '@storybook/vue3-vite'
-import NuiButton from './NuiButton.vue'
+```vue
+<template>
+    <div :class="wrapperClasses">
+        <label v-if="props.label" :for="inputId" class="nui-input-label">
+            {{ props.label }}
+        </label>
+        <div class="nui-input-host">
+            <div v-if="$slots.prepend" class="nui-input-prepend">
+                <slot name="prepend" />
+            </div>
+            <input
+                :id="inputId"
+                v-model="model"
+                :disabled="props.disabled || props.loading"
+                class="nui-input"
+                v-bind="$attrs"
+            />
+            <div v-if="$slots.append" class="nui-input-append">
+                <slot name="append" />
+            </div>
+        </div>
+        <p v-if="props.helperText" class="nui-input-helper">
+            {{ props.helperText }}
+        </p>
+    </div>
+</template>
 
-const colors = ['primary', 'success', 'error', 'warning', 'current']
-const variants = ['solid', 'outlined', 'flat', 'text']
-const sizes = ['small', 'medium', 'large']
+<script setup lang="ts">
+    import { computed, useAttrs } from 'vue'
+    import NuiIcon from './NuiIcon.vue'
 
-const meta = {
-    title: 'UI/NuiButton',
-    component: NuiButton,
-    parameters: {
-        layout: 'centered',
-    },
-    tags: ['autodocs'],
-    argTypes: {
-        // Props
-        type: {
-            control: 'select',
-            options: ['button', 'submit', 'reset'],
-        },
-        color: {
-            control: 'select',
-            options: colors,
-        },
-        variant: {
-            control: 'select',
-            options: variants,
-        },
-        size: {
-            control: 'select',
-            options: sizes,
-        },
-        disabled: { control: 'boolean' },
-        label: { control: 'text' },
-        tag: { control: 'text' },
-        prependIcon: { control: 'text' },
-        appendIcon: { control: 'text' },
-        icon: { control: 'text' },
-        loading: { control: 'boolean' },
-        loadingLabel: { control: 'text' },
-        loadingIcon: { control: 'text' },
-        rounded: { control: 'boolean' },
-        pilled: { control: 'boolean' },
-        to: { control: 'text' },
-        href: { control: 'text' },
-        target: {
-            control: 'select',
-            options: ['_self', '_blank', '_parent', '_top'],
-        },
-    },
-    args: {
-        type: 'button',
-        color: 'primary',
-        variant: 'solid',
-        size: 'medium',
-        disabled: false,
-        label: 'Button',
-        tag: 'button',
-        loading: false,
-        loadingLabel: 'Loading...',
-        loadingIcon: 'loading',
-        rounded: false,
-        pilled: false,
-        to: undefined,
-        href: undefined,
-        target: undefined,
-    },
-} satisfies Meta<typeof NuiButton>
+    defineOptions({ inheritAttrs: false })
+    const model = defineModel<string | number>()
+    const attrs = useAttrs()
+    const inputId = computed(() => (attrs.id as string) || /* ... random id ... */)
 
-export default meta
+    export interface NuiInputProps {
+        // ... props
+    }
+    const props = withDefaults(defineProps<NuiInputProps>(), {
+        // ... default values
+    })
 
-type Story = StoryObj<typeof meta>
-
-export const Default: Story = {
-    args: {
-        label: 'Button',
-    },
-    render: (args) => ({
-        components: { NuiButton },
-        setup() {
-            return { args }
-        },
-        template: '<NuiButton v-bind="args" />',
-    }),
-}
+    const wrapperClasses = computed(() => [
+        'nui-input-wrapper',
+        // ... dynamic classes
+    ])
+</script>
 ```

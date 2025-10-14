@@ -78,10 +78,7 @@
 
             /* Shadow */
             &.nui-chip--shadow {
-                @apply shadow-(--nui-chip-shadow);
-                &.nui-chip--variant-text {
-                    @apply shadow-none text-shadow-(--nui-chip-text-shadow);
-                }
+                @apply shadow-lg;
             }
 
             /* Clickable */

@@ -236,9 +236,11 @@
 
             /* Shadow */
             &.nui-button--shadow {
-                @apply shadow-(--nui-button-shadow);
+                @apply shadow-lg;
+
                 &.nui-button--variant-text {
-                    @apply shadow-none text-shadow-(--nui-button-text-shadow);
+                    @apply shadow-none;
+                    text-shadow: 0 1px 3px rgb(0 0 0 / 0.1), 0 1px 2px rgb(0 0 0 / 0.2);
                 }
             }
 
