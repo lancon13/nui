@@ -11,6 +11,7 @@
         --nui-button-padding-rounded: var(--spacing-base);
         --nui-button-radius: var(--radius-element);                
         --nui-button-shadow: var(--drop-shadow-md);
+        --nui-button-text-shadow: var(--text-shadow-md);
         --nui-button-icon-only-size-small: calc(var(--nui-button-font-size-small) * 2);
         --nui-button-icon-only-size-medium: calc(var(--nui-button-font-size-medium) * 2);
         --nui-button-icon-only-size-large: calc(var(--nui-button-font-size-large) * 2);        
@@ -33,8 +34,8 @@
         --nui-tooltip-radius: var(--radius-element);
         --nui-tooltip-padding-x: var(--spacing-sm);
         --nui-tooltip-padding-y: var(--spacing-xs);
-        --nui-tooltip-background-color: var(--color-bg-invert);
-        --nui-tooltip-text-color: var(--color-text-invert);
+        --nui-tooltip-background-color: var(--color-fg);
+        --nui-tooltip-text-color: var(--color-bg);
         --nui-tooltip-font-size: var(--text-xs);
 
         /* NuiInput */
@@ -118,7 +119,18 @@
         --nui-toggle-thumb-translate-x-end-medium: var(--nui-toggle-track-height-medium);
         --nui-toggle-track-height-large: calc(var(--nui-toggle-thumb-size-large) + (var(--nui-toggle-thumb-translate-x-start) * 2));
         --nui-toggle-track-width-large: calc(var(--nui-toggle-track-height-large) * 2);
-        --nui-toggle-thumb-translate-x-end-large: var(--nui-toggle-track-height-large);  
+        --nui-toggle-thumb-translate-x-end-large: var(--nui-toggle-track-height-large);
+
+        /* NuiChip */
+        --nui-chip-font-size-small: var(--text-xs);
+        --nui-chip-font-size-medium: var(--text-sm);
+        --nui-chip-font-size-large: var(--text-base);
+        --nui-chip-padding-x: var(--spacing-xs);
+        --nui-chip-padding-y: var(--spacing-xxs);
+        --nui-chip-radius: var(--radius-element);
+        --nui-chip-border-size: var(--border-thin);
+        --nui-chip-shadow: var(--drop-shadow-md);
+        --nui-chip-text-shadow: var(--text-shadow-md);
     }
 
     /* Focus ring */

@@ -236,7 +236,10 @@
 
             /* Shadow */
             &.nui-button--shadow {
-                @apply drop-shadow-[var(--nui-button-shadow)];
+                @apply shadow-(--nui-button-shadow);
+                &.nui-button--variant-text {
+                    @apply shadow-none text-shadow-(--nui-button-text-shadow);
+                }
             }
 
             /* Disabled */

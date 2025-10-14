@@ -1,6 +1,7 @@
 export { default as NuiButton } from './NuiButton.vue'
 export { default as NuiCard } from './NuiCard.vue'
 export { default as NuiCheckbox } from './NuiCheckbox.vue'
+export { default as NuiChip } from './NuiChip.vue'
 export { default as NuiIcon } from './NuiIcon.vue'
 export { default as NuiInput } from './NuiInput.vue'
 export { default as NuiRadio } from './NuiRadio.vue'
