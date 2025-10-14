@@ -1,7 +1,7 @@
 <template>
     <teleport to="body">
         <div
-            class="nui-modal"
+            :class="compClasses"
             :style="compStyles"
         >
             <transition name="nui-modal-fade">
@@ -62,6 +62,11 @@
     const modalContentRef = ref<HTMLElement | null>(null)
     let trap: FocusTrap | null = null
 
+    const compClasses = computed(() => [
+        'nui-modal',
+        model.value ? 'nui-modal--status-show' : 'nui-modal--status-hide',
+    ])
+
     const compStyles = computed(() => ({
         zIndex: `calc(var(--nui-modal-z-index) + ${props.level})`,
     }))
@@ -72,7 +77,8 @@
         const target = e.target as HTMLElement
         if (target.clientWidth < e.clientX || target.clientHeight < e.clientY)
             return
-    
+        
+
         model.value = false
     }
 
@@ -136,7 +142,14 @@
             .nui-modal-content-wrapper {
                 @apply fixed inset-0
                     grid w-screen h-screen place-items-center outline-0
-                    overflow-auto p-[var(--nui-modal-content-padding)];
+                    p-[var(--nui-modal-content-padding)];
+            }
+
+            /* Status */
+            &.nui-modal--status-show {
+                .nui-modal-content-wrapper {
+                    @apply overflow-auto;
+                }
             }
 
             /* Overlay Fade Transition */
