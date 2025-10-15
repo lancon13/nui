@@ -9,12 +9,12 @@
         --nui-button-padding-x: var(--spacing-sm);
         --nui-button-padding-y: var(--spacing-xs);
         --nui-button-padding-rounded: var(--spacing-base);
-        --nui-button-radius: var(--radius-element);                
+        --nui-button-radius: var(--radius-element);
         --nui-button-shadow: var(--drop-shadow-md);
         --nui-button-text-shadow: var(--text-shadow-md);
         --nui-button-icon-only-size-small: calc(var(--nui-button-font-size-small) * 2);
         --nui-button-icon-only-size-medium: calc(var(--nui-button-font-size-medium) * 2);
-        --nui-button-icon-only-size-large: calc(var(--nui-button-font-size-large) * 2);        
+        --nui-button-icon-only-size-large: calc(var(--nui-button-font-size-large) * 2);
 
         /* NuiIcon */
         --nui-icon-size-small: var(--text-xs);
@@ -41,14 +41,14 @@
         /* NuiInput */
         --nui-input-radius: var(--radius-element);
         --nui-input-border-size: var(--border-thin);
-        --nui-input-border-color: var(--color-border);        
+        --nui-input-border-color: var(--color-border);
         --nui-input-background-color: var(--color-input);
         --nui-input-padding-x: var(--spacing-sm);
-        --nui-input-padding-y: var(--spacing-xs);        
+        --nui-input-padding-y: var(--spacing-xs);
         --nui-input-label-font-size: var(--text-sm);
         --nui-input-label-font-weight: var(--font-weight-semibold);
-        --nui-input-helper-font-size: var(--text-sm);        
-        --nui-input-helper-font-weight: var(--font-weight-normal);        
+        --nui-input-helper-font-size: var(--text-sm);
+        --nui-input-helper-font-weight: var(--font-weight-normal);
         --nui-input-size-small: var(--text-xs);
         --nui-input-size-medium: var(--text-base);
         --nui-input-size-large: var(--text-lg);
@@ -59,8 +59,8 @@
         --nui-checkbox-border-color: var(--color-border);
         --nui-checkbox-label-font-size: var(--text-sm);
         --nui-checkbox-label-font-weight: var(--font-weight-semibold);
-        --nui-checkbox-helper-font-size: var(--text-sm);        
-        --nui-checkbox-helper-font-weight: var(--font-weight-normal);        
+        --nui-checkbox-helper-font-size: var(--text-sm);
+        --nui-checkbox-helper-font-weight: var(--font-weight-normal);
         --nui-checkbox-description-font-size: var(--text-base);
         --nui-checkbox-description-font-weight: var(--font-weight-normal);
         --nui-checkbox-background-color: var(--color-input);
@@ -90,12 +90,10 @@
         --nui-radio-dot-size-medium: calc(var(--nui-radio-size-medium) / 2);
         --nui-radio-dot-size-large: calc(var(--nui-radio-size-large) / 2);
 
-
-
         /* NuiToggle */
         --nui-toggle-radius: var(--radius-full);
         --nui-toggle-border-size: var(--border-thin);
-        --nui-toggle-border-color: var(--color-border);        
+        --nui-toggle-border-color: var(--color-border);
         --nui-toggle-label-font-size: var(--text-sm);
         --nui-toggle-label-font-weight: var(--font-weight-semibold);
         --nui-toggle-helper-font-size: var(--text-sm);
@@ -106,18 +104,24 @@
         --nui-toggle-slot-font-size-small: var(--text-xs);
         --nui-toggle-slot-font-size-medium: var(--text-base);
         --nui-toggle-slot-font-size-large: var(--text-xl);
-        --nui-toggle-thumb-background-color: var(--color-input-highlight);  
+        --nui-toggle-thumb-background-color: var(--color-input-highlight);
         --nui-toggle-thumb-translate-x-start: calc(var(--spacing-xxs) * 0.75);
         --nui-toggle-thumb-size-small: var(--text-xs);
         --nui-toggle-thumb-size-medium: var(--text-base);
         --nui-toggle-thumb-size-large: var(--text-xl);
-        --nui-toggle-track-height-small: calc(var(--nui-toggle-thumb-size-small) + (var(--nui-toggle-thumb-translate-x-start) * 2));
+        --nui-toggle-track-height-small: calc(
+            var(--nui-toggle-thumb-size-small) + (var(--nui-toggle-thumb-translate-x-start) * 2)
+        );
         --nui-toggle-track-width-small: calc(var(--nui-toggle-track-height-small) * 2);
         --nui-toggle-thumb-translate-x-end-small: var(--nui-toggle-track-height-small);
-        --nui-toggle-track-height-medium: calc(var(--nui-toggle-thumb-size-medium) + (var(--nui-toggle-thumb-translate-x-start) * 2));
+        --nui-toggle-track-height-medium: calc(
+            var(--nui-toggle-thumb-size-medium) + (var(--nui-toggle-thumb-translate-x-start) * 2)
+        );
         --nui-toggle-track-width-medium: calc(var(--nui-toggle-track-height-medium) * 2);
         --nui-toggle-thumb-translate-x-end-medium: var(--nui-toggle-track-height-medium);
-        --nui-toggle-track-height-large: calc(var(--nui-toggle-thumb-size-large) + (var(--nui-toggle-thumb-translate-x-start) * 2));
+        --nui-toggle-track-height-large: calc(
+            var(--nui-toggle-thumb-size-large) + (var(--nui-toggle-thumb-translate-x-start) * 2)
+        );
         --nui-toggle-track-width-large: calc(var(--nui-toggle-track-height-large) * 2);
         --nui-toggle-thumb-translate-x-end-large: var(--nui-toggle-track-height-large);
 
@@ -135,10 +139,26 @@
         /* NuiModal */
         --nui-modal-z-index: 50;
         --nui-modal-content-padding: var(--spacing-md);
-        --nui-modal-overlay-background-color: oklch(from var(--color-fg) l c h / calc(alpha - 0.35));
-        
+        --nui-modal-overlay-background-color: oklch(
+            from var(--color-fg) l c h / calc(alpha - 0.35)
+        );
+
         /* NuiPopOver */
-        --nui-popover-z-index: 90
+        --nui-popover-z-index: 90;
+
+        /* NuiProgress */
+        --nui-progress-height-small: var(--spacing-xs);
+        --nui-progress-height-medium: var(--spacing-base);
+        --nui-progress-height-large: var(--spacing-md);
+        --nui-progress-height: var(--nui-progress-height-medium);
+        --nui-progress-radius: var(--radius-element);
+        --nui-progress-border-size: var(--border-thin);
+        --nui-progress-border-color: var(--color-border);
+        --nui-progress-background-color: var(--color-muted);
+        --nui-progress-content-font-size: var(--text-xs);
+        --nui-progress-content-font-weight: var(--font-weight-semibold);
+        --nui-progress-content-color: var(--color-input-highlight);
+        --nui-progress-content-blend-mode: revert;
     }
 
     /* Focus ring */

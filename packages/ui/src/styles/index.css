@@ -1,73 +1,69 @@
-@import "@mdi/font/css/materialdesignicons.css";
-
+@import '@mdi/font/css/materialdesignicons.css';
 
 @custom-variant dark (&:where(body.body--dark, body.body--dark *));
 @custom-variant light (&:where(body.body--light, body.body--light *));
 
 @layer base {
     @theme {
-
         --font-ratio: 1;
 
-        /* -- Primary Colors (Light) -- */        
-        --color-primary-50-light: oklch(0.875 0.050 250.44);
-        --color-primary-100-light: oklch(0.800 0.060 250.44);
+        /* -- Primary Colors (Light) -- */
+        --color-primary-50-light: oklch(0.875 0.05 250.44);
+        --color-primary-100-light: oklch(0.8 0.06 250.44);
         --color-primary-200-light: oklch(0.725 0.069 250.44);
-        --color-primary-300-light: oklch(0.650 0.079 250.44);
+        --color-primary-300-light: oklch(0.65 0.079 250.44);
         --color-primary-400-light: oklch(0.574 0.089 250.44);
         --color-primary-500-light: oklch(0.499 0.099 250.44);
         --color-primary-600-light: oklch(0.433 0.096 250.44);
         --color-primary-700-light: oklch(0.366 0.092 250.44);
-        --color-primary-800-light: oklch(0.300 0.089 250.44);
+        --color-primary-800-light: oklch(0.3 0.089 250.44);
         --color-primary-900-light: oklch(0.233 0.086 250.44);
         --color-primary-950-light: oklch(0.167 0.083 250.44);
 
-
         /* -- Neutral Colors (Light) -- */
-        --color-neutral-50-light: oklch(0.900 0.000 0.00);
-        --color-neutral-100-light: oklch(0.830 0.000 0.00);
-        --color-neutral-200-light: oklch(0.760 0.000 0.00);
-        --color-neutral-300-light: oklch(0.690 0.000 0.00);
-        --color-neutral-400-light: oklch(0.620 0.000 0.00);
-        --color-neutral-500-light: oklch(0.550 0.000 0.00);
-        --color-neutral-600-light: oklch(0.480 0.000 0.00);
-        --color-neutral-700-light: oklch(0.410 0.000 0.00);
-        --color-neutral-800-light: oklch(0.340 0.000 0.00);
-        --color-neutral-900-light: oklch(0.270 0.000 0.00);
-        --color-neutral-950-light: oklch(0.200 0.000 0.00);
+        --color-neutral-50-light: oklch(0.9 0 0);
+        --color-neutral-100-light: oklch(0.83 0 0);
+        --color-neutral-200-light: oklch(0.76 0 0);
+        --color-neutral-300-light: oklch(0.69 0 0);
+        --color-neutral-400-light: oklch(0.62 0 0);
+        --color-neutral-500-light: oklch(0.55 0 0);
+        --color-neutral-600-light: oklch(0.48 0 0);
+        --color-neutral-700-light: oklch(0.41 0 0);
+        --color-neutral-800-light: oklch(0.34 0 0);
+        --color-neutral-900-light: oklch(0.27 0 0);
+        --color-neutral-950-light: oklch(0.2 0 0);
 
         /* -- Primary Colors (Dark) -- */
-        --color-primary-50-dark: oklch(0.875 0.050 250.44);
-        --color-primary-100-dark: oklch(0.800 0.060 250.44);
+        --color-primary-50-dark: oklch(0.875 0.05 250.44);
+        --color-primary-100-dark: oklch(0.8 0.06 250.44);
         --color-primary-200-dark: oklch(0.725 0.069 250.44);
-        --color-primary-300-dark: oklch(0.650 0.079 250.44);
+        --color-primary-300-dark: oklch(0.65 0.079 250.44);
         --color-primary-400-dark: oklch(0.574 0.089 250.44);
         --color-primary-500-dark: oklch(0.499 0.099 250.44);
         --color-primary-600-dark: oklch(0.433 0.096 250.44);
         --color-primary-700-dark: oklch(0.366 0.092 250.44);
-        --color-primary-800-dark: oklch(0.300 0.089 250.44);
+        --color-primary-800-dark: oklch(0.3 0.089 250.44);
         --color-primary-900-dark: oklch(0.233 0.086 250.44);
         --color-primary-950-dark: oklch(0.167 0.083 250.44);
 
         /* -- Neutral Colors (Dark) -- */
-        --color-neutral-50-dark: oklch(0.900 0.000 0.00);
-        --color-neutral-100-dark: oklch(0.830 0.000 0.00);
-        --color-neutral-200-dark: oklch(0.760 0.000 0.00);
-        --color-neutral-300-dark: oklch(0.690 0.000 0.00);
-        --color-neutral-400-dark: oklch(0.620 0.000 0.00);
-        --color-neutral-500-dark: oklch(0.550 0.000 0.00);
-        --color-neutral-600-dark: oklch(0.480 0.000 0.00);
-        --color-neutral-700-dark: oklch(0.410 0.000 0.00);
-        --color-neutral-800-dark: oklch(0.340 0.000 0.00);
-        --color-neutral-900-dark: oklch(0.270 0.000 0.00);
-        --color-neutral-950-dark: oklch(0.200 0.000 0.00);
+        --color-neutral-50-dark: oklch(0.9 0 0);
+        --color-neutral-100-dark: oklch(0.83 0 0);
+        --color-neutral-200-dark: oklch(0.76 0 0);
+        --color-neutral-300-dark: oklch(0.69 0 0);
+        --color-neutral-400-dark: oklch(0.62 0 0);
+        --color-neutral-500-dark: oklch(0.55 0 0);
+        --color-neutral-600-dark: oklch(0.48 0 0);
+        --color-neutral-700-dark: oklch(0.41 0 0);
+        --color-neutral-800-dark: oklch(0.34 0 0);
+        --color-neutral-900-dark: oklch(0.27 0 0);
+        --color-neutral-950-dark: oklch(0.2 0 0);
 
         /* -- Semantic Colors -- */
         --color-success: #009d44;
         --color-error: #a6192e;
         --color-warning: #d58000;
         --color-info: #0057b8;
-
 
         /* -- Theme (Light) -- */
         --color-primary-light: var(--color-primary-500-light);
@@ -76,13 +72,14 @@
         --color-fg-light: var(--color-neutral-900-light);
         --color-text-light: var(--color-neutral-900-light);
         --color-text-invert-light: var(--color-neutral-100-light);
-        --color-text-subtle-light: oklch(from var(--color-neutral-800-light) l c h / calc(alpha - 0.5));
+        --color-text-subtle-light: oklch(
+            from var(--color-neutral-800-light) l c h / calc(alpha - 0.5)
+        );
         --color-border-light: var(--color-neutral-300-light);
         --color-surface-light: var(--color-neutral-50-light);
-        --color-layer-light: var(--color-neutral-100-light);
+        --color-muted-light: var(--color-neutral-200-light);
         --color-input-light: var(--color-neutral-50-light);
         --color-input-highlight-light: var(--color-white);
-
 
         /* -- Theme (Dark) -- */
         --color-primary-dark: var(--color-primary-400-dark);
@@ -91,13 +88,14 @@
         --color-fg-dark: var(--color-neutral-100-dark);
         --color-text-dark: var(--color-neutral-100-dark);
         --color-text-invert-dark: var(--color-neutral-900-light);
-        --color-text-subtle-dark: oklch(from var(--color-neutral-200-dark) l c h / calc(alpha - 0.5));
+        --color-text-subtle-dark: oklch(
+            from var(--color-neutral-200-dark) l c h / calc(alpha - 0.5)
+        );
         --color-border-dark: var(--color-neutral-600-dark);
         --color-surface-dark: var(--color-neutral-800-dark);
-        --color-layer-dark: var(--color-neutral-700-dark);
+        --color-muted-dark: var(--color-neutral-700-dark);
         --color-input-dark: var(--color-neutral-950-dark);
         --color-input-highlight-dark: var(--color-black);
-
 
         /* Spacing */
         --spacing-0: 0;
@@ -111,23 +109,24 @@
 
         /* Base */
         --spacing-base: var(--spacing-sm);
-        --border-base: calc(var(--text-base)/12);
-        
+        --border-base: calc(var(--text-base) / 12);
+
         /* Shadow */
         --shadow-inset: var(--inset-shadow-lg);
 
         /* Radius variants */
         --radius-element: var(--radius-sm);
-        --radius-container: var(--radius-lg);        
-        --radius-full: calc(infinity * 1px);       
+        --radius-container: var(--radius-lg);
+        --radius-full: calc(infinity * 1px);
 
         /* Border variants */
-        --border-thin: calc(var(--text-base)/12); 
-        --border-thick: calc(var(--text-base)/8); 
-        --border-focus: var(--border-base); 
+        --border-thin: calc(var(--text-base) / 12);
+        --border-thick: calc(var(--text-base) / 8);
+        --border-focus: var(--border-base);
     }
 
-    html, html.html--light {
+    html,
+    html.html--light {
         --color-primary: var(--color-primary-light);
         --color-neutral: var(--color-neutral-light);
 
@@ -162,13 +161,13 @@
         --color-text-subtle: var(--color-text-subtle-light);
         --color-border: var(--color-border-light);
         --color-surface: var(--color-surface-light);
-        --color-layer: var(--color-layer-light);
+        --color-muted: var(--color-muted-light);
         --color-input: var(--color-input-light);
         --color-input-highlight: var(--color-input-highlight-light);
 
         & body {
-            @apply bg-[var(--color-bg-light)] text-[var(--color-fg-light)] text-[length:calc(var(--text-base)*var(--font-ratio))];            
-        }        
+            @apply bg-[var(--color-bg-light)] text-[var(--color-fg-light)] text-[length:calc(var(--text-base)*var(--font-ratio))];
+        }
     }
     html.html--dark {
         --color-primary: var(--color-primary-dark);
@@ -207,13 +206,13 @@
         --color-text-subtle: var(--color-text-subtle-dark);
         --color-border: var(--color-border-dark);
         --color-surface: var(--color-surface-dark);
-        --color-layer: var(--color-layer-dark);
+        --color-muted: var(--color-muted-dark);
         --color-input: var(--color-input-dark);
         --color-input-highlight: var(--color-input-highlight-dark);
 
         & body {
             @apply bg-[var(--color-bg-dark)] text-[var(--color-fg-dark)] text-[length:calc(var(--text-base)*var(--font-ratio))];
-        } 
+        }
     }
 
     @theme {
@@ -251,9 +250,25 @@
         --color-text-subtle: var(--color-text-subtle);
         --color-border: var(--color-border);
         --color-surface: var(--color-surface);
-        --color-layer: var(--color-layer);
+        --color-muted: var(--color-muted);
         --color-input: var(--color-input);
         --color-input-highlight: var(--color-input-highlight);
     }
-    
+}
+
+@keyframes nui-progress-indeterminate {
+    from {
+        left: -50%;
+    }
+    to {
+        left: 100%;
+    }
+}
+@keyframes nui-progress-indeterminate-reversed {
+    from {
+        right: -50%;
+    }
+    to {
+        right: 100%;
+    }
 }

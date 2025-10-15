@@ -25,7 +25,7 @@ const meta = {
         label: { control: 'text' }
     },
     args: {
-        color: 'primary',
+        color: 'current',
         variant: 'solid',
         size: 'medium',
         pilled: false,
@@ -123,7 +123,7 @@ export const WithIcons: Story = {
             </NuiChip>
             <NuiChip v-bind="args" label="Removable">
                 <template #append>
-                    <a href="#" class="hover:opacity-50">
+                    <a href="#" class="hover:opacity-50 bg-bg rounded-full text-fg">
                         <NuiIcon name="close"></NuiIcon>
                         <NuiTooltip>Close Chip</NuiTooltip>
                     </a>

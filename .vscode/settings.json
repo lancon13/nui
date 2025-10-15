@@ -6,7 +6,9 @@
     "editor.insertSpaces": true,
     "editor.detectIndentation": false,
     "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.codeActionsOnSave": ["source.fixAll.eslint"],
+    "editor.codeActionsOnSave": [
+        "source.fixAll.eslint"
+    ],
     "explorer.fileNesting.enabled": true,
     "explorer.fileNesting.patterns": {
         "tsconfig.json": "tsconfig.*.json, env.d.ts",
@@ -22,14 +24,21 @@
             "changeProcessCWD": true
         }
     ],
-    "eslint.validate": ["javascript", "javascriptreact", "typescript", "vue"],
+    "eslint.validate": [
+        "javascript",
+        "javascriptreact",
+        "typescript",
+        "vue"
+    ],
     "typescript.tsdk": "node_modules/typescript/lib",
     "livePreview.portNumber": 8200,
     "files.associations": {
         "*.json": "jsonc",
         "*.css": "tailwindcss"
     },
-    "css.customData": [".vscode/tailwind.json"],
+    "css.customData": [
+        ".vscode/tailwind.json"
+    ],
     "[jsonc]": {
         "editor.codeActionsOnSave": {
             "source.organizeImports": "never",
@@ -94,6 +103,6 @@
         "whispli"
     ],
     "[tailwindcss]": {
-        "editor.defaultFormatter": "vscode.css-language-features"
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
     }
 }
