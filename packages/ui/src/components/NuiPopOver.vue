@@ -1,15 +1,10 @@
 <template>
     <div ref="placeholderRef" class="hidden" />
-    <div>{{ floatingStyles }}</div>
     <teleport to="body">
         <div
-            v-if="isMounted"
-            ref="floatingRef"
-            :class="[
-                'nui-popover-content',
-                `nui-popover--placement-${placementDirection}`,
-                { 'nui-popover--visible': isVisible }
-            ]"
+            v-if="model || isVisible"
+            ref="contentRef"
+            :class="contentClasses"
             :style="floatingStyles"
         >
             <slot />
@@ -18,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-    import { computed, onUnmounted, ref, watch, nextTick } from 'vue'
+    import { computed, onUnmounted, ref, watch } from 'vue'
     import { onClickOutside } from '@vueuse/core'
     import { autoUpdate, flip, offset, shift, useFloating, type Placement } from '@floating-ui/vue'
 
@@ -46,13 +41,11 @@
         shiftPadding: 8
     })
 
-    const isMounted = ref(false)
-    const isVisible = ref(false)
-
     const placeholderRef = ref<HTMLElement | null>(null)
     const positionTarget = ref<HTMLElement | null>(null)
     const clickTrigger = ref<HTMLElement | null>(null)
-    const floatingRef = ref<HTMLElement | null>(null)
+    const contentRef = ref<HTMLElement | null>(null)
+    const isVisible = ref<boolean>(false)
 
     const placement = computed<Placement>(() => {
         if (props.anchorPosition === 'center') return props.displayPosition
@@ -74,7 +67,7 @@
         y,
         strategy,
         placement: finalPlacement
-    } = useFloating(positionTarget, floatingRef, {
+    } = useFloating(positionTarget, contentRef, {
         placement,
         whileElementsMounted: autoUpdate,
         middleware
@@ -88,22 +81,25 @@
         left: x.value != null ? `${x.value}px` : '-9999px'
     }))
 
+    const contentClasses = computed(() => [
+        'nui-popover-content',
+        `nui-popover--placement-${placementDirection.value}`,
+        {
+            'nui-popover--active': model.value && isVisible.value
+        }
+    ])
+
     const onKeydown = (e: KeyboardEvent) => {
         if (e.key === 'Escape') model.value = false
     }
 
-    watch(model, async value => {
+    watch(model, value => {
         if (value) {
-            isMounted.value = true
             document.addEventListener('keydown', onKeydown)
-            await nextTick()
-            isVisible.value = true
+            setTimeout(() => (isVisible.value = true), 1)
         } else {
-            isVisible.value = false
             document.removeEventListener('keydown', onKeydown)
-            setTimeout(() => {
-                isMounted.value = false
-            }, 250) // NOTE: duration-250
+            setTimeout(() => (isVisible.value = false), 250)
         }
     })
 
@@ -146,7 +142,7 @@
     })
 
     onClickOutside(
-        floatingRef,
+        contentRef,
         () => {
             model.value = false
         },
@@ -161,48 +157,40 @@
 
     @layer components {
         .nui-popover-content {
-            @apply z-[var(--nui-popover-z-index)] opacity-0 duration-250 ease-in-out transition-opacity transition-transform;
-        }
+            @apply z-[var(--nui-popover-z-index)] duration-250 ease-in-out transition-[opacity,translate]
+                opacity-0;
 
-        /* Visible state */
-        .nui-popover-content.nui-popover--visible {
-            @apply opacity-100;
-        }
+            /* Visible */
+            &.nui-popover--active {
+                @apply opacity-100;
+                /* Top, Bottom */
+                &.nui-popover--placement-top,
+                &.nui-popover--placement-bottom {
+                    @apply translate-y-0;
+                }
+                /* Left, Right */
+                &.nui-popover--placement-left,
+                &.nui-popover--placement-right {
+                    @apply translate-x-0;
+                }
+            }
 
-        /* Top */
-        .nui-popover-content.nui-popover--placement-top {
-            @apply translate-y-2;
-        }
-
-        .nui-popover-content.nui-popover--placement-top.nui-popover--visible {
-            @apply translate-y-0;
-        }
-
-        /* Bottom */
-        .nui-popover-content.nui-popover--placement-bottom {
-            @apply -translate-y-2;
-        }
-
-        .nui-popover-content.nui-popover--placement-bottom.nui-popover--visible {
-            @apply translate-y-0;
-        }
-
-        /* Left */
-        .nui-popover-content.nui-popover--placement-left {
-            @apply translate-x-2;
-        }
-
-        .nui-popover-content.nui-popover--placement-left.nui-popover--visible {
-            @apply translate-x-0;
-        }
-
-        /* Right */
-        .nui-popover-content.nui-popover--placement-right {
-            @apply -translate-x-2;
-        }
-
-        .nui-popover-content.nui-popover--placement-right.nui-popover--visible {
-            @apply translate-x-0;
+            /* Top */
+            &.nui-popover--placement-top {
+                @apply translate-y-2;
+            }
+            /* Bottom */
+            &.nui-popover--placement-bottom {
+                @apply -translate-y-2;
+            }
+            /* Left */
+            &.nui-popover--placement-left {
+                @apply translate-x-2;
+            }
+            /* Right */
+            &.nui-popover--placement-right {
+                @apply -translate-x-2;
+            }
         }
     }
 </style>

@@ -228,14 +228,14 @@
     @layer components {
         .nui-tooltip {
             @apply absolute z-10
-      bg-[var(--nui-tooltip-background-color)] text-[var(--nui-tooltip-text-color)]
-      rounded-[var(--nui-tooltip-radius)]
-      text-[length:var(--nui-tooltip-font-size)] leading-base
-      px-[var(--nui-tooltip-padding-x)] py-[var(--nui-tooltip-padding-y)]
-      font-normal
-      whitespace-nowrap
-      opacity-0
-      transition duration-200 ease-in-out;
+                bg-[var(--nui-tooltip-background-color)] text-[var(--nui-tooltip-text-color)]
+                rounded-[var(--nui-tooltip-radius)]
+                text-[length:var(--nui-tooltip-font-size)] leading-base
+                px-[var(--nui-tooltip-padding-x)] py-[var(--nui-tooltip-padding-y)]
+                font-normal
+                whitespace-nowrap
+                opacity-0
+                transition duration-200 ease-in-out;
 
             /* Visible */
             &.nui-tooltip--visible {
