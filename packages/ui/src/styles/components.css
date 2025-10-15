@@ -154,7 +154,7 @@
         --nui-progress-radius: var(--radius-element);
         --nui-progress-border-size: var(--border-thin);
         --nui-progress-border-color: var(--color-border);
-        --nui-progress-background-color: var(--color-muted);
+        --nui-progress-background-color: var(--color-text-subtle);
         --nui-progress-content-font-size: var(--text-xs);
         --nui-progress-content-font-weight: var(--font-weight-semibold);
         --nui-progress-content-color: var(--color-input-highlight);

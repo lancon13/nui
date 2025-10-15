@@ -258,7 +258,7 @@
 
 @keyframes nui-progress-indeterminate {
     from {
-        left: -50%;
+        left: -100%;
     }
     to {
         left: 100%;
@@ -266,9 +266,17 @@
 }
 @keyframes nui-progress-indeterminate-reversed {
     from {
-        right: -50%;
+        right: -100%;
     }
     to {
         right: 100%;
+    }
+}
+@keyframes nui-progress-stripes {
+    from {
+        background-position: 1rem 0;
+    }
+    to {
+        background-position: 0 0;
     }
 }

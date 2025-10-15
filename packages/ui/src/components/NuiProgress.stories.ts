@@ -21,6 +21,7 @@ const meta = {
         pilled: { control: 'boolean' },
         size: { control: 'select', options: sizes },
         bordered: { control: 'boolean' },
+        striped: { control: 'boolean' },
     },
     args: {
         value: 0.5,
@@ -31,6 +32,7 @@ const meta = {
         pilled: false,
         size: 'medium',
         bordered: false,
+        striped: false,
     }
 } satisfies Meta<typeof NuiProgress>
 
@@ -131,6 +133,52 @@ export const Colors: Story = {
 export const Indeterminate: Story = {
     args: {
         indeterminate: true,
+    },
+    render: args => ({
+        components: { NuiProgress },
+        setup() {
+            return { args, colors }
+        },
+        template: `
+        <div class="flex flex-col gap-sm w-64">
+            <NuiProgress
+                v-for="color in colors"
+                :key="color"
+                v-bind="args"
+                :color="color"
+            />
+        </div>
+        `
+    })
+}
+
+export const StripedIndeterminate: Story = {
+    args: {
+        indeterminate: true,
+        striped: true,
+    },
+    render: args => ({
+        components: { NuiProgress },
+        setup() {
+            return { args, colors }
+        },
+        template: `
+        <div class="flex flex-col gap-sm w-64">
+            <NuiProgress
+                v-for="color in colors"
+                :key="color"
+                v-bind="args"
+                :color="color"
+            />
+        </div>
+        `
+    })
+}
+
+export const StripedDeterminate: Story = {
+    args: {
+        value: 0.75,
+        striped: true,
     },
     render: args => ({
         components: { NuiProgress },

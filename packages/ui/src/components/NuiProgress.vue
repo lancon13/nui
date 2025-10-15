@@ -29,6 +29,7 @@
         pilled?: boolean
         size?: NuiProgressSize
         bordered?: boolean
+        striped?: boolean
     }
 
     const props = withDefaults(defineProps<NuiProgressProps>(), {
@@ -39,9 +40,9 @@
         reversed: false,
         pilled: false,
         size: 'medium',
-        bordered: false
+        bordered: false,
+        striped: false
     })
-
     const isIndeterminate = computed(() => props.indeterminate || props.value === undefined)
 
     const compClasses = computed(() => [
@@ -52,10 +53,10 @@
             'nui-progress--indeterminate': isIndeterminate.value,
             'nui-progress--reversed': props.reversed,
             'nui-progress--pilled': props.pilled,
-            'nui-progress--bordered': props.bordered
+            'nui-progress--bordered': props.bordered,
+            'nui-progress--striped': props.striped
         }
     ])
-
     const progressPercentage = computed(() => {
         if (isIndeterminate.value) {
             return undefined
@@ -87,7 +88,6 @@
     @layer components {
         .nui-progress {
             @apply relative w-full overflow-hidden
-            h-[var(--nui-progress-height)]
             bg-[var(--nui-progress-background-color)]
             rounded-[var(--nui-progress-radius)];
 
@@ -96,13 +96,13 @@
             }
 
             &.nui-progress--size-small {
-                --nui-progress-height: var(--nui-progress-height-small);
+                @apply h-[var(--spacing-xs)];
             }
             &.nui-progress--size-medium {
-                --nui-progress-height: var(--nui-progress-height-medium);
+                @apply h-[var(--spacing-base)];
             }
             &.nui-progress--size-large {
-                --nui-progress-height: var(--nui-progress-height-large);
+                @apply h-[var(--spacing-md)];
             }
 
             &.nui-progress--pilled {
@@ -110,7 +110,7 @@
             }
 
             .nui-progress-bar {
-                @apply absolute top-0 left-0 h-full transition-all duration-200 ease-out;
+                @apply absolute top-0 left-0 h-full transition-all duration-200 ease-out bg-size-[1rem_1rem];
             }
 
             &.nui-progress--reversed .nui-progress-bar {
@@ -125,37 +125,50 @@
                 [mix-blend-mode:var(--nui-progress-content-blend-mode)];
             }
 
+            /* Striped */
+
+            &.nui-progress--striped .nui-progress-bar {
+                @apply bg-[linear-gradient(45deg,hsl(0_0%_100%/0.15)_25%,transparent_25%,transparent_50%,hsl(0_0%_100%/0.15)_50%,hsl(0_0%_100%/0.15)_75%,transparent_75%,transparent)];
+                @apply [animation:nui-progress-stripes_1s_linear_infinite];
+            }
+
             /* Colors */
+
             &.nui-progress--color-primary {
                 @apply border-primary;
                 .nui-progress-bar {
                     @apply bg-primary;
                 }
             }
+
             &.nui-progress--color-success {
                 @apply border-success;
                 .nui-progress-bar {
                     @apply bg-success;
                 }
             }
+
             &.nui-progress--color-error {
                 @apply border-error;
                 .nui-progress-bar {
                     @apply bg-error;
                 }
             }
+
             &.nui-progress--color-warning {
                 @apply border-warning;
                 .nui-progress-bar {
                     @apply bg-warning;
                 }
             }
+
             &.nui-progress--color-info {
                 @apply border-info;
                 .nui-progress-bar {
                     @apply bg-info;
                 }
             }
+
             &.nui-progress--color-current {
                 @apply border-[var(--nui-progress-border-color)];
                 .nui-progress-bar {
@@ -165,8 +178,9 @@
 
             /* Indeterminate */
             &.nui-progress--indeterminate .nui-progress-bar {
-                @apply w-1/2 [animation:nui-progress-indeterminate_1.5s_ease-in-out_infinite];
+                @apply w-3/4 [animation:nui-progress-indeterminate_1.5s_ease-in-out_infinite];
             }
+
             &.nui-progress--indeterminate.nui-progress--reversed .nui-progress-bar {
                 @apply [animation-name:nui-progress-indeterminate-reversed];
             }
