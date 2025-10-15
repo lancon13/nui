@@ -136,6 +136,18 @@
         --nui-chip-shadow: var(--drop-shadow-md);
         --nui-chip-text-shadow: var(--text-shadow-md);
 
+        /* NuiAvatar */
+        --nui-avatar-radius: var(--radius-full);
+        --nui-avatar-radius-squared: var(--radius-element);
+        --nui-avatar-border-size: var(--border-base);
+        --nui-avatar-size-small: var(--spacing-xs);
+        --nui-avatar-size-medium: var(--spacing-sm);
+        --nui-avatar-size-large: var(--spacing-md);
+        --nui-avatar-font-size-small: var(--text-xs);
+        --nui-avatar-font-size-medium: var(--text-base);
+        --nui-avatar-font-size-large: var(--text-xl);
+        --nui-avatar-font-weight: var(--font-weight-semibold);
+
         /* NuiModal */
         --nui-modal-z-index: 50;
         --nui-modal-content-padding: var(--spacing-md);

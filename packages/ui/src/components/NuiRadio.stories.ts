@@ -30,7 +30,7 @@ const meta = {
         value: { control: 'text' }
     },
     args: {
-        color: 'primary',
+        color: 'current',
         size: 'medium',
         disabled: false,
         label: 'Radio',
