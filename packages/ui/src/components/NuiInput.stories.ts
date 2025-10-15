@@ -11,18 +11,18 @@ const meta = {
     title: 'UI/NuiInput',
     component: NuiInput,
     parameters: {
-        layout: 'centered',
+        layout: 'centered'
     },
     tags: ['autodocs'],
     argTypes: {
         // Props
         color: {
             control: 'select',
-            options: colors,
+            options: colors
         },
         size: {
             control: 'select',
-            options: sizes,
+            options: sizes
         },
         disabled: { control: 'boolean' },
         label: { control: 'text' },
@@ -43,8 +43,8 @@ const meta = {
         helperText: 'This is a helper text.',
         loading: false,
         pilled: false,
-        modelValue: '',
-    },
+        modelValue: ''
+    }
 } satisfies Meta<typeof NuiInput>
 
 export default meta
@@ -52,48 +52,48 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
-    render: (args) => ({
+    render: args => ({
         components: { NuiInput },
         setup() {
             const model = ref(args.modelValue || 'Default value')
             return { args, model }
         },
-        template: '<NuiInput v-bind="args" v-model="model" class="w-64" />',
-    }),
+        template: '<NuiInput v-bind="args" v-model="model" class="w-64" />'
+    })
 }
 
 export const Disabled: Story = {
     args: {
         disabled: true,
-        modelValue: 'Disabled value',
+        modelValue: 'Disabled value'
     },
-    render: (args) => ({
+    render: args => ({
         components: { NuiInput },
         setup() {
             const model = ref(args.modelValue)
             return { args, model }
         },
-        template: '<NuiInput v-bind="args" v-model="model" class="w-64" />',
-    }),
+        template: '<NuiInput v-bind="args" v-model="model" class="w-64" />'
+    })
 }
 
 export const Loading: Story = {
     args: {
         loading: true,
-        modelValue: 'Loading value',
+        modelValue: 'Loading value'
     },
-    render: (args) => ({
+    render: args => ({
         components: { NuiInput },
         setup() {
             const model = ref(args.modelValue)
             return { args, model }
         },
-        template: '<NuiInput v-bind="args" v-model="model" class="w-64" />',
-    }),
+        template: '<NuiInput v-bind="args" v-model="model" class="w-64" />'
+    })
 }
 
 export const Colors: Story = {
-    render: (args) => ({
+    render: args => ({
         components: { NuiInput },
         setup() {
             return { args, colors }
@@ -102,12 +102,12 @@ export const Colors: Story = {
             <div class="grid grid-cols-2 gap-md">
                 <NuiInput v-for="color in colors" :key="color" v-bind="args" :color="color" :label="color" :model-value="color" class="w-64" />
             </div>
-        `,
-    }),
+        `
+    })
 }
 
 export const Sizes: Story = {
-    render: (args) => ({
+    render: args => ({
         components: { NuiInput },
         setup() {
             return { args, sizes }
@@ -116,12 +116,12 @@ export const Sizes: Story = {
             <div class="flex flex-col gap-md items-start">
                 <NuiInput v-for="size in sizes" :key="size" v-bind="args" :size="size" :label="size" :model-value="size" class="w-64" />
             </div>
-        `,
-    }),
+        `
+    })
 }
 
 export const Shapes: Story = {
-    render: (args) => ({
+    render: args => ({
         components: { NuiInput },
         setup() {
             return { args }
@@ -131,12 +131,12 @@ export const Shapes: Story = {
                 <NuiInput v-bind="args" label="Default" class="w-64" />
                 <NuiInput v-bind="args" pilled label="Pilled" class="w-64" />
             </div>
-        `,
-    }),
+        `
+    })
 }
 
 export const WithSlots: Story = {
-    render: (args) => ({
+    render: args => ({
         components: { NuiInput, NuiIcon, NuiButton },
         setup() {
             const model1 = ref('prepend icon')
@@ -165,12 +165,12 @@ export const WithSlots: Story = {
                 </template>
             </NuiInput>
         </div>
-    `,
-    }),
+    `
+    })
 }
 
 export const WithBeforeAfter: Story = {
-    render: (args) => ({
+    render: args => ({
         components: { NuiInput, NuiIcon, NuiButton },
         setup() {
             const model1 = ref('before slot')
@@ -205,6 +205,6 @@ export const WithBeforeAfter: Story = {
                 </template>
             </NuiInput>
         </div>
-    `,
-    }),
+    `
+    })
 }

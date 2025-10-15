@@ -7,7 +7,7 @@ const meta: Meta<typeof NuiCard> = {
     title: 'UI/NuiCard',
     component: NuiCard,
     parameters: {
-        layout: 'centered',
+        layout: 'centered'
     },
     tags: ['autodocs'],
     argTypes: {
@@ -16,14 +16,14 @@ const meta: Meta<typeof NuiCard> = {
         clickable: { control: 'boolean' },
         tag: { control: 'text' },
         href: { control: 'text' },
-        target: { control: 'text' },
+        target: { control: 'text' }
     },
     args: {
         shadow: true,
         bordered: false,
         clickable: false,
-        tag: 'div',
-    },
+        tag: 'div'
+    }
 }
 
 export default meta
@@ -31,7 +31,7 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
-    render: (args) => ({
+    render: args => ({
         components: { NuiCard },
         setup() {
             return { args }
@@ -40,12 +40,12 @@ export const Default: Story = {
         <NuiCard v-bind="args">
             This is the default content of the card.
         </NuiCard>
-    `,
-    }),
+    `
+    })
 }
 
 export const WithHeaderAndFooter: Story = {
-    render: (args) => ({
+    render: args => ({
         components: { NuiCard },
         setup() {
             return { args }
@@ -60,27 +60,27 @@ export const WithHeaderAndFooter: Story = {
                 <p class="text-sm text-gray-500">Card Footer</p>
             </template>
         </NuiCard>
-    `,
-    }),
+    `
+    })
 }
 
 export const NoShadow: Story = {
     ...WithHeaderAndFooter,
     args: {
-        shadow: false,
-    },
+        shadow: false
+    }
 }
 
 export const Bordered: Story = {
     ...WithHeaderAndFooter,
     args: {
         bordered: true,
-        shadow: false,
-    },
+        shadow: false
+    }
 }
 
 export const Dialog: Story = {
-    render: (args) => ({
+    render: args => ({
         components: { NuiCard, NuiButton, NuiIcon },
         setup() {
             return { args }
@@ -107,12 +107,12 @@ export const Dialog: Story = {
                 <NuiButton variant="solid">Confirm</NuiButton>
             </template>
         </NuiCard>
-    `,
-    }),
+    `
+    })
 }
 
 export const WithMedia: Story = {
-    render: (args) => ({
+    render: args => ({
         components: { NuiCard },
         setup() {
             return { args }
@@ -125,8 +125,8 @@ export const WithMedia: Story = {
             <h3 class="font-bold">Card Title</h3>
             <p class="text-sm">This is the card's main content.</p>
         </NuiCard>
-    `,
-    }),
+    `
+    })
 }
 
 export const ClickableLink: Story = {
@@ -136,9 +136,9 @@ export const ClickableLink: Story = {
         clickable: true,
         tag: 'a',
         href: '#',
-        target: '_blank',
+        target: '_blank'
     },
-    render: (args) => ({
+    render: args => ({
         components: { NuiCard },
         setup() {
             return { args }
@@ -148,6 +148,6 @@ export const ClickableLink: Story = {
             <h3 class="font-bold">Clickable Card</h3>
             <p class="text-sm">This card is a link and has hover/focus effects.</p>
         </NuiCard>
-    `,
-    }),
+    `
+    })
 }

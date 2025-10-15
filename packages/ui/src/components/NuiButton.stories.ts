@@ -11,26 +11,26 @@ const meta = {
     title: 'UI/NuiButton',
     component: NuiButton,
     parameters: {
-        layout: 'centered',
+        layout: 'centered'
     },
     tags: ['autodocs'],
     argTypes: {
         // Props
         type: {
             control: 'select',
-            options: ['button', 'submit', 'reset'],
+            options: ['button', 'submit', 'reset']
         },
         color: {
             control: 'select',
-            options: colors,
+            options: colors
         },
         variant: {
             control: 'select',
-            options: variants,
+            options: variants
         },
         size: {
             control: 'select',
-            options: sizes,
+            options: sizes
         },
         disabled: { control: 'boolean' },
         label: { control: 'text' },
@@ -47,10 +47,10 @@ const meta = {
         href: { control: 'text' },
         target: {
             control: 'select',
-            options: ['_self', '_blank', '_parent', '_top'],
+            options: ['_self', '_blank', '_parent', '_top']
         },
         toggle: { control: 'boolean' },
-        shadow: { control: 'boolean' },
+        shadow: { control: 'boolean' }
         // Events
         // onClick: { action: 'clicked' },
     },
@@ -71,9 +71,9 @@ const meta = {
         href: undefined,
         target: undefined,
         toggle: false,
-        shadow: false,
+        shadow: false
         // onClick: fn(),
-    },
+    }
 } satisfies Meta<typeof NuiButton>
 
 export default meta
@@ -82,19 +82,19 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
     args: {
-        label: 'Button',
+        label: 'Button'
     },
-    render: (args) => ({
+    render: args => ({
         components: { NuiButton },
         setup() {
             return { args }
         },
-        template: '<NuiButton v-bind="args" />',
-    }),
+        template: '<NuiButton v-bind="args" />'
+    })
 }
 
 export const Variants: Story = {
-    render: (args) => ({
+    render: args => ({
         components: { NuiButton },
         setup() {
             return { args, colors, variants }
@@ -110,12 +110,12 @@ export const Variants: Story = {
                     :label="color.charAt(0).toUpperCase() + color.slice(1)"
                 />
             </template>
-        </div>`,
-    }),
+        </div>`
+    })
 }
 
 export const Sizes: Story = {
-    render: (args) => ({
+    render: args => ({
         components: { NuiButton },
         setup() {
             return { args, colors, sizes }
@@ -132,16 +132,16 @@ export const Sizes: Story = {
                         />
                     </div>
                 </template>
-            </div>`,
-    }),
+            </div>`
+    })
 }
 
 export const Icons: Story = {
     args: {
         prependIcon: 'account',
-        appendIcon: 'arrow-right',
+        appendIcon: 'arrow-right'
     },
-    render: (args) => ({
+    render: args => ({
         components: { NuiButton },
         setup() {
             return { args, sizes, variants }
@@ -156,15 +156,15 @@ export const Icons: Story = {
                     :size="size"
                 />                
             </template>
-        </div>`,
-    }),
+        </div>`
+    })
 }
 
 export const IconOnly: Story = {
     args: {
         label: ''
     },
-    render: (args) => ({
+    render: args => ({
         components: { NuiButton },
         setup() {
             return { args, sizes, variants }
@@ -190,15 +190,15 @@ export const IconOnly: Story = {
                         />
                     </div>
                 </template>                
-            </div>`,
-    }),
+            </div>`
+    })
 }
 
 export const Loading: Story = {
     args: {
-        loading: true,
+        loading: true
     },
-    render: (args) => ({
+    render: args => ({
         components: { NuiButton },
         setup() {
             return { variants, args }
@@ -211,15 +211,15 @@ export const Loading: Story = {
                     color="primary"
                     :variant="variant"                    
                 />     
-            </div>`,
-    }),
+            </div>`
+    })
 }
 
 export const Disabled: Story = {
     args: {
-        disabled: true,
+        disabled: true
     },
-    render: (args) => ({
+    render: args => ({
         components: { NuiButton },
         setup() {
             return { variants, args }
@@ -233,18 +233,16 @@ export const Disabled: Story = {
                     color="primary"                    
                     :variant="variant"                    
                 />                
-            </div>`,
-    }),
+            </div>`
+    })
 }
-
-
 
 export const Pilled: Story = {
     args: {
-        pilled: true,
+        pilled: true
     },
 
-    render: (args) => ({
+    render: args => ({
         components: { NuiButton },
         setup() {
             return { args, colors, variants }
@@ -262,36 +260,31 @@ export const Pilled: Story = {
                     :label="color.charAt(0).toUpperCase() + color.slice(1)"
                 />
             </template>
-        </div>`,
-
-    }),
-
+        </div>`
+    })
 }
-
-
 
 export const AsLink: Story = {
     args: {
         label: 'I am a link',
         tag: 'a',
         href: 'https://www.google.com',
-        target: '_blank',
+        target: '_blank'
     },
-    render: (args) => ({
+    render: args => ({
         components: { NuiButton },
         setup() {
             return { args }
         },
-        template: '<NuiButton v-bind="args" />',
-    }),
-
+        template: '<NuiButton v-bind="args" />'
+    })
 }
 
 export const CurrentColor: Story = {
     args: {
-        color: 'current',
+        color: 'current'
     },
-    render: (args) => ({
+    render: args => ({
         components: { NuiButton },
         setup() {
             return { args }
@@ -305,31 +298,31 @@ export const CurrentColor: Story = {
                     <NuiButton v-bind="args" variant="text" label="Text" />
                 </div>
             </div>
-        `,
-    }),
+        `
+    })
 }
 
 export const Toggle: Story = {
     args: {
         toggle: true,
-        label: 'Toggle Me',
+        label: 'Toggle Me'
     },
-    render: (args) => ({
+    render: args => ({
         components: { NuiButton },
         setup() {
             const toggled = ref(true)
             return { args, toggled }
         },
-        template: '<NuiButton v-bind="args" v-model="toggled" />',
-    }),
+        template: '<NuiButton v-bind="args" v-model="toggled" />'
+    })
 }
 
 export const ToggleOff: Story = {
     args: {
         toggle: true,
-        modelValue: false,
+        modelValue: false
     },
-    render: (args) => ({
+    render: args => ({
         components: { NuiButton },
         setup() {
             return { args, colors, sizes }
@@ -345,15 +338,15 @@ export const ToggleOff: Story = {
                     :label="color"
                 />
             </template>
-        </div>`,
-    }),
+        </div>`
+    })
 }
 
 export const Shadow: Story = {
     args: {
-        shadow: true,
+        shadow: true
     },
-    render: (args) => ({
+    render: args => ({
         components: { NuiButton },
         setup() {
             return { args, colors, sizes }
@@ -369,16 +362,16 @@ export const Shadow: Story = {
                     :label="color"
                 />
             </template>
-        </div>`,
-    }),
+        </div>`
+    })
 }
 
 export const TextShadow: Story = {
     args: {
         shadow: true,
-        variant: 'text',
+        variant: 'text'
     },
-    render: (args) => ({
+    render: args => ({
         components: { NuiButton },
         setup() {
             return { args, colors, sizes }
@@ -394,6 +387,6 @@ export const TextShadow: Story = {
                     :label="color"
                 />
             </template>
-        </div>`,
-    }),
+        </div>`
+    })
 }

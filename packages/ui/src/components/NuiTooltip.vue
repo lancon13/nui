@@ -1,5 +1,5 @@
 <template>
-    <div ref="placeholderRef" style="display: none" />
+    <div ref="placeholderRef" class="hidden" />
     <teleport to="body">
         <div
             ref="tooltipRef"
@@ -9,7 +9,8 @@
             @mouseenter="cancelHide"
             @mouseleave="startHide"
             @focusin="handleFocusIn"
-            @focusout="handleFocusOut($event)" >
+            @focusout="handleFocusOut($event)"
+        >
             <slot>
                 <div v-if="html" v-html="html" />
                 <div v-else>{{ text }}</div>
@@ -19,14 +20,7 @@
 </template>
 
 <script lang="ts" setup>
-    import {
-        computed,
-        ref,
-        watch,
-        onMounted,
-        onUnmounted,
-        nextTick,
-    } from 'vue'
+    import { computed, ref, watch, onMounted, onUnmounted, nextTick } from 'vue'
 
     export interface NuiTooltipProps {
         text?: string
@@ -53,7 +47,7 @@
         triggerParent: null,
         attachParent: null,
         offset: () => [0, 0],
-        size: 'medium',
+        size: 'medium'
     })
 
     const emit = defineEmits(['update:modelValue'])
@@ -104,8 +98,7 @@
 
     const handleFocusOut = (event: FocusEvent) => {
         const relatedTarget = event.relatedTarget as HTMLElement | null
-        if (!tooltipRef.value?.contains(relatedTarget))
-            startHide()
+        if (!tooltipRef.value?.contains(relatedTarget)) startHide()
     }
 
     const attachEvents = (element: HTMLElement) => {
@@ -182,17 +175,16 @@
 
     watch(
         () => props.modelValue,
-        (value) => {
+        value => {
             if (value !== null) isVisible.value = value
-        },
+        }
     )
 
-    watch(isVisible, (value) => {
+    watch(isVisible, value => {
         if (value)
             nextTick(() => {
                 updatePosition()
             })
-  
     })
 
     const compClasses = computed(() => [
@@ -200,20 +192,19 @@
         `nui-tooltip--position-${props.position}`,
         `nui-tooltip--size-${props.size}`,
         {
-            'nui-tooltip--visible': isVisible.value,
-        },
+            'nui-tooltip--visible': isVisible.value
+        }
     ])
 
     const compStyles = computed(() => {
         const [offsetX, offsetY] = props.offset
-        const formatOffset = (val: string | number) =>
-            typeof val === 'number' ? `${val}px` : val
+        const formatOffset = (val: string | number) => (typeof val === 'number' ? `${val}px` : val)
 
         return {
-            'top': `${tooltipTop.value}px`,
-            'left': `${tooltipLeft.value}px`,
+            top: `${tooltipTop.value}px`,
+            left: `${tooltipLeft.value}px`,
             '--tw-translate-x-offset': formatOffset(offsetX),
-            '--tw-translate-y-offset': formatOffset(offsetY),
+            '--tw-translate-y-offset': formatOffset(offsetY)
         }
     })
 
@@ -230,13 +221,13 @@
 </script>
 
 <style lang="css">
-@import 'tailwindcss';
-@import '../styles/index.css';
-@import '../styles/components.css';
+    @import 'tailwindcss';
+    @import '../styles/index.css';
+    @import '../styles/components.css';
 
-@layer components {
-  .nui-tooltip {
-    @apply absolute z-10
+    @layer components {
+        .nui-tooltip {
+            @apply absolute z-10
       bg-[var(--nui-tooltip-background-color)] text-[var(--nui-tooltip-text-color)]
       rounded-[var(--nui-tooltip-radius)]
       text-[length:var(--nui-tooltip-font-size)] leading-base
@@ -246,46 +237,46 @@
       opacity-0
       transition duration-200 ease-in-out;
 
-    /* Visible */
-    &.nui-tooltip--visible {
-      @apply opacity-100;
+            /* Visible */
+            &.nui-tooltip--visible {
+                @apply opacity-100;
+            }
+
+            /* Top */
+            &.nui-tooltip--position-top {
+                @apply translate-x-[calc(-50%+var(--tw-translate-x-offset,0px))] translate-y-[calc(var(--tw-translate-y-offset,0px)+10px)];
+
+                &.nui-tooltip--visible {
+                    @apply translate-x-[calc(-50%+var(--tw-translate-x-offset,0px))] translate-y-[var(--tw-translate-y-offset,0px)];
+                }
+            }
+
+            /* Bottom */
+            &.nui-tooltip--position-bottom {
+                @apply translate-x-[calc(-50%+var(--tw-translate-x-offset,0px))] translate-y-[calc(var(--tw-translate-y-offset,0px)-10px)];
+
+                &.nui-tooltip--visible {
+                    @apply translate-x-[calc(-50%+var(--tw-translate-x-offset,0px))] translate-y-[var(--tw-translate-y-offset,0px)];
+                }
+            }
+
+            /* Left */
+            &.nui-tooltip--position-left {
+                @apply translate-x-[calc(var(--tw-translate-x-offset,0px)+10px)] translate-y-[calc(-50%+var(--tw-translate-y-offset,0px))];
+
+                &.nui-tooltip--visible {
+                    @apply translate-x-[var(--tw-translate-x-offset,0px)] translate-y-[calc(-50%+var(--tw-translate-y-offset,0px))];
+                }
+            }
+
+            /* Right */
+            &.nui-tooltip--position-right {
+                @apply translate-x-[calc(var(--tw-translate-x-offset,0px)-10px)] translate-y-[calc(-50%+var(--tw-translate-y-offset,0px))];
+
+                &.nui-tooltip--visible {
+                    @apply translate-x-[var(--tw-translate-x-offset,0px)] translate-y-[calc(-50%+var(--tw-translate-y-offset,0px))];
+                }
+            }
+        }
     }
-
-    /* Top */
-    &.nui-tooltip--position-top {
-      @apply translate-x-[calc(-50%+var(--tw-translate-x-offset,0px))] translate-y-[calc(var(--tw-translate-y-offset,0px)+10px)];
-
-      &.nui-tooltip--visible {
-        @apply translate-x-[calc(-50%+var(--tw-translate-x-offset,0px))] translate-y-[var(--tw-translate-y-offset,0px)];
-      }
-    }
-
-    /* Bottom */
-    &.nui-tooltip--position-bottom {
-      @apply translate-x-[calc(-50%+var(--tw-translate-x-offset,0px))] translate-y-[calc(var(--tw-translate-y-offset,0px)-10px)];
-
-      &.nui-tooltip--visible {
-        @apply translate-x-[calc(-50%+var(--tw-translate-x-offset,0px))] translate-y-[var(--tw-translate-y-offset,0px)];
-      }
-    }
-
-    /* Left */
-    &.nui-tooltip--position-left {
-      @apply translate-x-[calc(var(--tw-translate-x-offset,0px)+10px)] translate-y-[calc(-50%+var(--tw-translate-y-offset,0px))];
-
-      &.nui-tooltip--visible {
-        @apply translate-x-[var(--tw-translate-x-offset,0px)] translate-y-[calc(-50%+var(--tw-translate-y-offset,0px))];
-      }
-    }
-
-    /* Right */
-    &.nui-tooltip--position-right {
-      @apply translate-x-[calc(var(--tw-translate-x-offset,0px)-10px)] translate-y-[calc(-50%+var(--tw-translate-y-offset,0px))];
-
-      &.nui-tooltip--visible {
-        @apply translate-x-[var(--tw-translate-x-offset,0px)] translate-y-[calc(-50%+var(--tw-translate-y-offset,0px))];
-      }
-    }
-  }
-}
 </style>

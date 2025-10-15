@@ -5,10 +5,8 @@
     "editor.tabSize": 4,
     "editor.insertSpaces": true,
     "editor.detectIndentation": false,
-    "editor.defaultFormatter": "dbaeumer.vscode-eslint",
-    "editor.codeActionsOnSave": [
-        "source.fixAll.eslint"
-    ],
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.codeActionsOnSave": ["source.fixAll.eslint"],
     "explorer.fileNesting.enabled": true,
     "explorer.fileNesting.patterns": {
         "tsconfig.json": "tsconfig.*.json, env.d.ts",
@@ -17,28 +15,21 @@
     },
     "eslint.useFlatConfig": true,
     "eslint.debug": false,
-    "eslint.format.enable": true,
+    "eslint.format.enable": false,
     "eslint.workingDirectories": [
         {
             "directory": "./",
             "changeProcessCWD": true
         }
     ],
-    "eslint.validate": [
-        "javascript",
-        "javascriptreact",
-        "typescript",
-        "vue"
-    ],
+    "eslint.validate": ["javascript", "javascriptreact", "typescript", "vue"],
     "typescript.tsdk": "node_modules/typescript/lib",
     "livePreview.portNumber": 8200,
     "files.associations": {
         "*.json": "jsonc",
         "*.css": "tailwindcss"
     },
-    "css.customData": [
-        ".vscode/tailwind.json"
-    ],
+    "css.customData": [".vscode/tailwind.json"],
     "[jsonc]": {
         "editor.codeActionsOnSave": {
             "source.organizeImports": "never",
@@ -64,7 +55,7 @@
             "source.fixAll.eslint": "never",
             "source.fixAll.ts": "never"
         },
-        "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
     "[typescript]": {
         "editor.codeActionsOnSave": {
@@ -73,7 +64,7 @@
             "source.fixAll.eslint": "never",
             "source.fixAll.ts": "never"
         },
-        "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
     "[vue]": {
         "editor.codeActionsOnSave": {
@@ -82,7 +73,7 @@
             "source.fixAll.eslint": "never",
             "source.fixAll.ts": "never"
         },
-        "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
     "[html]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"

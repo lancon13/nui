@@ -10,7 +10,7 @@ const meta = {
     title: 'UI/NuiModal',
     component: NuiModal,
     parameters: {
-        layout: 'fullscreen',
+        layout: 'fullscreen'
     },
     tags: ['autodocs'],
     argTypes: {
@@ -20,7 +20,7 @@ const meta = {
         noClickHide: { control: 'boolean' },
         noHide: { control: 'boolean' },
         level: { control: 'number' },
-        noOverlay: { control: 'boolean' },
+        noOverlay: { control: 'boolean' }
     },
     args: {
         modelValue: false,
@@ -29,8 +29,8 @@ const meta = {
         noClickHide: false,
         noHide: false,
         level: 0,
-        noOverlay: false,
-    },
+        noOverlay: false
+    }
 } satisfies Meta<typeof NuiModal>
 
 export default meta
@@ -38,7 +38,7 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
-    render: (args) => ({
+    render: args => ({
         components: { NuiModal, NuiCard, NuiButton },
         setup() {
             const show = ref(false)
@@ -59,12 +59,12 @@ export const Default: Story = {
                     </NuiCard>
                 </NuiModal>
             </div>
-        `,
-    }),
+        `
+    })
 }
 
 export const ProgrammaticControl: Story = {
-    render: (args) => ({
+    render: args => ({
         components: { NuiModal, NuiCard, NuiButton },
         setup() {
             const modalRef = ref<any>(null)
@@ -86,7 +86,15 @@ export const ProgrammaticControl: Story = {
                 console.log('hide event fired!')
             }
 
-            return { args, modalRef, lastEvent, showModal, hideModal, onShow, onHide }
+            return {
+                args,
+                modalRef,
+                lastEvent,
+                showModal,
+                hideModal,
+                onShow,
+                onHide
+            }
         },
         template: `
             <div class="h-screen w-full p-lg">
@@ -113,23 +121,22 @@ export const ProgrammaticControl: Story = {
                     </NuiCard>
                 </NuiModal>
             </div>
-        `,
+        `
     }),
     parameters: {
         docs: {
             description: {
-                story:
-                    'This story demonstrates how to control the modal programmatically. Use the buttons to call the `show()` and `hide()` methods exposed by the component. The component also emits `show` and `hide` events, which are logged below.',
-            },
-        },
-    },
+                story: 'This story demonstrates how to control the modal programmatically. Use the buttons to call the `show()` and `hide()` methods exposed by the component. The component also emits `show` and `hide` events, which are logged below.'
+            }
+        }
+    }
 }
 
 export const NoOverlay: Story = {
     args: {
-        noOverlay: true,
+        noOverlay: true
     },
-    render: (args) => ({
+    render: args => ({
         components: { NuiModal, NuiCard, NuiButton },
         setup() {
             const show = ref(false)
@@ -153,22 +160,22 @@ export const NoOverlay: Story = {
                     </NuiModal>
                 </div>
             </div>
-        `,
+        `
     }),
     parameters: {
         docs: {
             description: {
-                story: 'This story demonstrates the `noOverlay` prop. When set to `true`, the modal appears without the dark background overlay, allowing content behind it to be visible.',
-            },
-        },
-    },
+                story: 'This story demonstrates the `noOverlay` prop. When set to `true`, the modal appears without the dark background overlay, allowing content behind it to be visible.'
+            }
+        }
+    }
 }
 
 export const NoHide: Story = {
     args: {
-        noHide: true,
+        noHide: true
     },
-    render: (args) => ({
+    render: args => ({
         components: { NuiModal, NuiCard, NuiButton },
         setup() {
             const show = ref(false)
@@ -189,15 +196,15 @@ export const NoHide: Story = {
                     </NuiCard>
                 </NuiModal>
             </div>
-        `,
-    }),
+        `
+    })
 }
 
 export const NoClickHide: Story = {
     args: {
-        noClickHide: true,
+        noClickHide: true
     },
-    render: (args) => ({
+    render: args => ({
         components: { NuiModal, NuiCard, NuiButton },
         setup() {
             const show = ref(false)
@@ -218,15 +225,15 @@ export const NoClickHide: Story = {
                     </NuiCard>
                 </NuiModal>
             </div>
-        `,
-    }),
+        `
+    })
 }
 
 export const NoEscHide: Story = {
     args: {
-        noEscHide: true,
+        noEscHide: true
     },
-    render: (args) => ({
+    render: args => ({
         components: { NuiModal, NuiCard, NuiButton },
         setup() {
             const show = ref(false)
@@ -247,15 +254,15 @@ export const NoEscHide: Story = {
                     </NuiCard>
                 </NuiModal>
             </div>
-        `,
-    }),
+        `
+    })
 }
 
 export const NoAutoFocus: Story = {
     args: {
-        autoFocus: false,
+        autoFocus: false
     },
-    render: (args) => ({
+    render: args => ({
         components: { NuiModal, NuiCard, NuiButton },
         setup() {
             const show = ref(false)
@@ -276,12 +283,12 @@ export const NoAutoFocus: Story = {
                     </NuiCard>
                 </NuiModal>
             </div>
-        `,
-    }),
+        `
+    })
 }
 
 export const AutoFocusAndFocusTrap: Story = {
-    render: (args) => ({
+    render: args => ({
         components: { NuiModal, NuiCard, NuiButton, NuiInput },
         setup() {
             const show = ref(false)
@@ -314,19 +321,19 @@ export const AutoFocusAndFocusTrap: Story = {
                     </NuiCard>
                 </NuiModal>
             </div>
-        `,
+        `
     }),
     parameters: {
         docs: {
             description: {
-                story: 'This story demonstrates the `autoFocus` and focus-trapping behavior. \n\n1.  **Initial Focus**: When you open the modal, focus is automatically moved to the first focusable element inside it (the "First Name" input). \n2.  **Focus Trapping**: Once the modal is open, pressing the `Tab` key will cycle through the focusable elements *only within the modal*. You cannot focus on the elements behind the overlay. \n3.  **Return Focus**: When you close the modal (using the "Close" button, `Escape` key, or by clicking the overlay), focus is automatically returned to the element that opened it (the "Open Modal" button). \n\nTry disabling the `autoFocus` control to see the difference.',
-            },
-        },
-    },
+                story: 'This story demonstrates the `autoFocus` and focus-trapping behavior. \n\n1.  **Initial Focus**: When you open the modal, focus is automatically moved to the first focusable element inside it (the "First Name" input). \n2.  **Focus Trapping**: Once the modal is open, pressing the `Tab` key will cycle through the focusable elements *only within the modal*. You cannot focus on the elements behind the overlay. \n3.  **Return Focus**: When you close the modal (using the "Close" button, `Escape` key, or by clicking the overlay), focus is automatically returned to the element that opened it (the "Open Modal" button). \n\nTry disabling the `autoFocus` control to see the difference.'
+            }
+        }
+    }
 }
 
 export const MultipleModals: Story = {
-    render: (args) => ({
+    render: args => ({
         components: { NuiModal, NuiCard, NuiButton },
         setup() {
             const showModal1 = ref(false)
@@ -360,12 +367,12 @@ export const MultipleModals: Story = {
                     </NuiCard>
                 </NuiModal>
             </div>
-        `,
-    }),
+        `
+    })
 }
 
 export const NestedModalsWithLevel: Story = {
-    render: (args) => ({
+    render: args => ({
         components: { NuiModal, NuiCard, NuiButton },
         setup() {
             const showModal1 = ref(false)
@@ -399,20 +406,19 @@ export const NestedModalsWithLevel: Story = {
                     </NuiCard>
                 </NuiModal>
             </div>
-        `,
+        `
     }),
     parameters: {
         docs: {
             description: {
-                story:
-                    'This story demonstrates how the `level` prop can be used to stack modals correctly. The nested modal has `level={1}` which gives it a higher `z-index` than the base modal at `level={0}`. Without the `level` prop, the stacking order would depend on the DOM order, which can be unreliable.',
-            },
-        },
-    },
+                story: 'This story demonstrates how the `level` prop can be used to stack modals correctly. The nested modal has `level={1}` which gives it a higher `z-index` than the base modal at `level={0}`. Without the `level` prop, the stacking order would depend on the DOM order, which can be unreliable.'
+            }
+        }
+    }
 }
 
 export const IncorrectlyStackedModals: Story = {
-    render: (args) => ({
+    render: args => ({
         components: { NuiModal, NuiCard, NuiButton },
         setup() {
             const showModal1 = ref(false)
@@ -446,13 +452,13 @@ export const IncorrectlyStackedModals: Story = {
                     </NuiCard>
                 </NuiModal>
             </div>
-        `,
+        `
     }),
     parameters: {
         docs: {
             description: {
-                story: 'This story demonstrates what happens when modals are stacked incorrectly using the `level` prop. The second modal is given a lower `level` than the first, causing it to appear behind.',
-            },
-        },
-    },
+                story: 'This story demonstrates what happens when modals are stacked incorrectly using the `level` prop. The second modal is given a lower `level` than the first, causing it to appear behind.'
+            }
+        }
+    }
 }

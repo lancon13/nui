@@ -9,7 +9,7 @@ const meta = {
     title: 'UI/NuiTooltip',
     component: NuiTooltip,
     parameters: {
-        layout: 'centered',
+        layout: 'centered'
     },
     tags: ['autodocs'],
     argTypes: {
@@ -17,7 +17,7 @@ const meta = {
         html: { control: 'text' },
         position: {
             control: 'select',
-            options: positions,
+            options: positions
         },
         modelValue: { control: 'boolean' },
         showDelay: { control: 'number' },
@@ -26,15 +26,15 @@ const meta = {
         offset: { control: 'object' },
         size: {
             control: 'select',
-            options: ['small', 'medium', 'large'],
+            options: ['small', 'medium', 'large']
         },
         triggerParent: { control: false }, // Not controllable via storybook UI
-        attachParent: { control: false }, // Not controllable via storybook UI
+        attachParent: { control: false } // Not controllable via storybook UI
     },
     args: {
         text: 'This is a tooltip',
-        position: 'bottom',
-    },
+        position: 'bottom'
+    }
 } satisfies Meta<typeof NuiTooltip>
 
 export default meta
@@ -42,7 +42,7 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
-    render: (args) => ({
+    render: args => ({
         components: { NuiTooltip, NuiButton },
         setup() {
             return { args }
@@ -52,8 +52,8 @@ export const Default: Story = {
                 <div>Tooltip</div>
                 <NuiTooltip v-bind="args" />
             </NuiButton>
-        `,
-    }),
+        `
+    })
 }
 
 export const Positions: Story = {
@@ -68,12 +68,12 @@ export const Positions: Story = {
                 <NuiTooltip :position="pos" text="Tooltip text" />
             </NuiButton>
         </div>
-    `,
-    }),
+    `
+    })
 }
 
 export const Controlled: Story = {
-    render: (args) => ({
+    render: args => ({
         components: { NuiTooltip, NuiButton },
         setup() {
             const show = ref(false)
@@ -87,16 +87,16 @@ export const Controlled: Story = {
                 <NuiTooltip v-bind="args" v-model="show" />
             </div>
         </div>
-    `,
-    }),
+    `
+    })
 }
 
 export const CustomOffset: Story = {
     args: {
         offset: [20, 20],
-        text: 'Offset [20, 20]',
+        text: 'Offset [20, 20]'
     },
-    render: (args) => ({
+    render: args => ({
         components: { NuiTooltip, NuiButton },
         setup() {
             return { args }
@@ -104,15 +104,13 @@ export const CustomOffset: Story = {
         template: `
             <NuiButton label="Hover me">
                 <NuiTooltip v-bind="args" />
-            </NuiButton>`,
-    }),
+            </NuiButton>`
+    })
 }
 
 export const RichContent: Story = {
-    args: {
-        
-    },
-    render: (args) => ({
+    args: {},
+    render: args => ({
         components: { NuiTooltip, NuiButton },
         setup() {
             return { args }
@@ -127,12 +125,12 @@ export const RichContent: Story = {
                 </div>
             </NuiTooltip>
         </div>
-    `,
-    }),
+    `
+    })
 }
 
 export const ExplicitParent: Story = {
-    render: (args) => ({
+    render: args => ({
         components: { NuiTooltip, NuiButton },
         setup() {
             return { args }
@@ -146,12 +144,12 @@ export const ExplicitParent: Story = {
                 <NuiTooltip v-bind="args" triggerParent="#my-trigger-button" text="I am attached to the button" />
             </div>
         </div>
-    `,
-    }),
+    `
+    })
 }
 
 export const SeparateTriggerAndAttach: Story = {
-    render: (args) => ({
+    render: args => ({
         components: { NuiTooltip, NuiButton },
         setup() {
             return { args }
@@ -169,17 +167,17 @@ export const SeparateTriggerAndAttach: Story = {
                     <NuiTooltip v-bind="args" triggerParent="#my-trigger-button-2" attachParent="#my-attach-point" text="Triggered by button, attached to blue box" />
                 </div>
             </div>
-    `,
-    }),
+    `
+    })
 }
 
 export const Delays: Story = {
     args: {
         showDelay: 500,
         hideDelay: 500,
-        text: 'This tooltip has a 500ms show and hide delay.',
+        text: 'This tooltip has a 500ms show and hide delay.'
     },
-    render: (args) => ({
+    render: args => ({
         components: { NuiTooltip, NuiButton },
         setup() {
             return { args }
@@ -187,16 +185,16 @@ export const Delays: Story = {
         template: `
             <NuiButton label="Hover me">
                 <NuiTooltip v-bind="args" />
-            </NuiButton>`,
-    }),
+            </NuiButton>`
+    })
 }
 
 export const Persistent: Story = {
     args: {
         persistent: true,
-        text: 'I will stay visible as long as you hover the target!',
+        text: 'I will stay visible as long as you hover the target!'
     },
-    render: (args) => ({
+    render: args => ({
         components: { NuiTooltip, NuiButton },
         setup() {
             return { args }
@@ -204,15 +202,15 @@ export const Persistent: Story = {
         template: `
             <NuiButton label="Hover me">
                 <NuiTooltip v-bind="args" />
-            </NuiButton>`,
-    }),
+            </NuiButton>`
+    })
 }
 
 export const Focusable: Story = {
     args: {
-        hideDelay: 200,
+        hideDelay: 200
     },
-    render: (args) => ({
+    render: args => ({
         components: { NuiTooltip, NuiButton },
         setup() {
             return { args }
@@ -235,12 +233,12 @@ export const Focusable: Story = {
                 </NuiTooltip>
             </NuiButton>
         </div>
-    `,
-    }),
+    `
+    })
 }
 
 export const ExposedMethods: Story = {
-    render: (args) => ({
+    render: args => ({
         components: { NuiTooltip, NuiButton },
         setup() {
             const tooltipRef = ref<InstanceType<typeof NuiTooltip> | null>(null)
@@ -260,6 +258,6 @@ export const ExposedMethods: Story = {
             <NuiButton label="Call show()" @click="showTooltip" />
             <NuiButton label="Call hide()" @click="hideTooltip" />
         </div>
-    `,
-    }),
+    `
+    })
 }

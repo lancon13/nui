@@ -21,8 +21,7 @@
         "dist/"
     ],
     "scripts": {
-        "lint": "eslint -c ./eslint.config.js \"./src*/**/*.{ts,js,cjs,mjs,vue}\"",
-        "format": "prettier --write \"**/*.{js,ts,vue,scss,html,md,json}\" --ignore-path .gitignore",
+        "lint": "eslint -c ../../eslint.config.mjs \"src/**/*.{ts,js,cjs,mjs,vue}\"",
         "test": "echo \"No test specified\" && exit 0",
         "build": "pnpm icons:prepare && vue-tsc -p tsconfig.build.json --declaration --emitDeclarationOnly && mv dist/index.d.ts dist/wds-ui.d.ts && vite build",
         "icons:prepare": "tsx scripts/prepare-icons.ts",

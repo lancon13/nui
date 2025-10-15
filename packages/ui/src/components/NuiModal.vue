@@ -1,14 +1,8 @@
 <template>
     <teleport to="body">
-        <div
-            :class="compClasses"
-            :style="compStyles"
-        >
+        <div :class="compClasses" :style="compStyles">
             <transition name="nui-modal-fade">
-                <div
-                    v-if="model && !props.noOverlay"
-                    class="nui-modal-overlay"
-                />
+                <div v-if="model && !props.noOverlay" class="nui-modal-overlay" />
             </transition>
             <transition name="nui-modal-content-scale">
                 <div
@@ -17,12 +11,7 @@
                     tabindex="-1"
                     @mousedown="handleOverlayClick($event)"
                 >
-                    <div
-                        ref="modalContentRef"
-                        role="dialog"
-                        aria-modal="true"
-                        @mousedown.stop
-                    >
+                    <div ref="modalContentRef" role="dialog" aria-modal="true" @mousedown.stop>
                         <slot />
                     </div>
                 </div>
@@ -40,13 +29,13 @@
     const emit = defineEmits(['show', 'hide'])
 
     export interface NuiModalProps {
-        modelValue?: boolean;
-        autoFocus?: boolean;
-        noEscHide?: boolean;
-        noClickHide?: boolean;
-        noHide?: boolean;
-        noOverlay?: boolean;
-        level?: number;
+        modelValue?: boolean
+        autoFocus?: boolean
+        noEscHide?: boolean
+        noClickHide?: boolean
+        noHide?: boolean
+        noOverlay?: boolean
+        level?: number
     }
 
     const props = withDefaults(defineProps<NuiModalProps>(), {
@@ -56,7 +45,7 @@
         noClickHide: false,
         noHide: false,
         noOverlay: false,
-        level: 0,
+        level: 0
     })
 
     const modalContentRef = ref<HTMLElement | null>(null)
@@ -64,20 +53,18 @@
 
     const compClasses = computed(() => [
         'nui-modal',
-        model.value ? 'nui-modal--status-show' : 'nui-modal--status-hide',
+        model.value ? 'nui-modal--status-show' : 'nui-modal--status-hide'
     ])
 
     const compStyles = computed(() => ({
-        zIndex: `calc(var(--nui-modal-z-index) + ${props.level})`,
+        zIndex: `calc(var(--nui-modal-z-index) + ${props.level})`
     }))
 
     const handleOverlayClick = (e: MouseEvent) => {
         if (props.noOverlay || props.noHide || props.noClickHide) return
 
         const target = e.target as HTMLElement
-        if (target.clientWidth < e.clientX || target.clientHeight < e.clientY)
-            return
-        
+        if (target.clientWidth < e.clientX || target.clientHeight < e.clientY) return
 
         model.value = false
     }
@@ -93,7 +80,7 @@
                         allowOutsideClick: false, // Allow clicks to pass through to our handler
                         onDeactivate: () => {
                             model.value = false
-                        },
+                        }
                     })
                     trap.activate()
                 }
@@ -104,9 +91,7 @@
             trap?.deactivate()
             trap = null
             document.body.style.overflow = ''
-            if (oldValue)
-                emit('hide')
-            
+            if (oldValue) emit('hide')
         }
     })
 
@@ -123,14 +108,14 @@
 
     defineExpose({
         show,
-        hide,
+        hide
     })
 </script>
 
 <style lang="css">
-    @import "tailwindcss";
-    @import "../styles/index.css";
-    @import "../styles/components.css";
+    @import 'tailwindcss';
+    @import '../styles/index.css';
+    @import '../styles/components.css';
 
     @layer components {
         .nui-modal {

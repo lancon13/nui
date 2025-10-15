@@ -45,21 +45,11 @@
     const model = defineModel<boolean | null>()
     const attrs = useAttrs()
     const inputId = computed(
-        () =>
-            (attrs.id as string) ||
-            `nui-toggle-${Math.random()
-                .toString(36)
-                .slice(2)}`,
+        () => (attrs.id as string) || `nui-toggle-${Math.random().toString(36).slice(2)}`
     )
 
     export type NuiToggleSize = 'small' | 'medium' | 'large'
-    export type NuiToggleColor =
-        | 'primary'
-        | 'success'
-        | 'error'
-        | 'warning'
-        | 'info'
-        | 'current'
+    export type NuiToggleColor = 'primary' | 'success' | 'error' | 'warning' | 'info' | 'current'
     export interface NuiToggleProps {
         modelValue?: boolean | null
         label?: string
@@ -79,7 +69,7 @@
         disabled: false,
         color: 'current',
         size: 'medium',
-        helperText: undefined,
+        helperText: undefined
     })
 
     const wrapperClasses = computed(() => [
@@ -87,8 +77,8 @@
         `nui-toggle-wrapper--size-${props.size}`,
         `nui-toggle-wrapper--color-${props.color}`,
         {
-            'nui-toggle-wrapper--disabled': props.disabled,
-        },
+            'nui-toggle-wrapper--disabled': props.disabled
+        }
     ])
 </script>
 
@@ -137,8 +127,12 @@
             .nui-toggle-content-off {
                 @apply absolute top-0 flex items-center h-full z-0;
             }
-            .nui-toggle-content-on { @apply left-0 px-xxs text-bg; }
-            .nui-toggle-content-off { @apply right-0 px-xxs; }
+            .nui-toggle-content-on {
+                @apply left-0 px-xxs text-bg;
+            }
+            .nui-toggle-content-off {
+                @apply right-0 px-xxs;
+            }
 
             /* Movable thumb */
             .nui-toggle-thumb {
@@ -211,48 +205,100 @@
             .nui-toggle-label,
             .nui-toggle-description,
             .nui-toggle-helper {
-                .nui-toggle-wrapper--color-primary & { @apply text-primary; }
-                .nui-toggle-wrapper--color-success & { @apply text-success; }
-                .nui-toggle-wrapper--color-error & { @apply text-error; }
-                .nui-toggle-wrapper--color-warning & { @apply text-warning; }
-                .nui-toggle-wrapper--color-info & { @apply text-info; }
+                .nui-toggle-wrapper--color-primary & {
+                    @apply text-primary;
+                }
+                .nui-toggle-wrapper--color-success & {
+                    @apply text-success;
+                }
+                .nui-toggle-wrapper--color-error & {
+                    @apply text-error;
+                }
+                .nui-toggle-wrapper--color-warning & {
+                    @apply text-warning;
+                }
+                .nui-toggle-wrapper--color-info & {
+                    @apply text-info;
+                }
             }
 
             /* Thumb icon color */
             .nui-toggle-thumb {
-                .nui-toggle-wrapper--color-primary & { @apply text-primary; }
-                .nui-toggle-wrapper--color-success & { @apply text-success; }
-                .nui-toggle-wrapper--color-error & { @apply text-error; }
-                .nui-toggle-wrapper--color-warning & { @apply text-warning; }
-                .nui-toggle-wrapper--color-info & { @apply text-info; }
+                .nui-toggle-wrapper--color-primary & {
+                    @apply text-primary;
+                }
+                .nui-toggle-wrapper--color-success & {
+                    @apply text-success;
+                }
+                .nui-toggle-wrapper--color-error & {
+                    @apply text-error;
+                }
+                .nui-toggle-wrapper--color-warning & {
+                    @apply text-warning;
+                }
+                .nui-toggle-wrapper--color-info & {
+                    @apply text-info;
+                }
             }
 
             /* Track colors (unchecked) */
             .nui-toggle-input ~ .nui-toggle-display {
-                .nui-toggle-wrapper--color-primary & { @apply bg-primary/20 border-primary; }
-                .nui-toggle-wrapper--color-success & { @apply bg-success/20 border-success; }
-                .nui-toggle-wrapper--color-error & { @apply bg-error/20 border-error; }
-                .nui-toggle-wrapper--color-warning & { @apply bg-warning/20 border-warning; }
-                .nui-toggle-wrapper--color-info & { @apply bg-info/20 border-info; }
+                .nui-toggle-wrapper--color-primary & {
+                    @apply bg-primary/20 border-primary;
+                }
+                .nui-toggle-wrapper--color-success & {
+                    @apply bg-success/20 border-success;
+                }
+                .nui-toggle-wrapper--color-error & {
+                    @apply bg-error/20 border-error;
+                }
+                .nui-toggle-wrapper--color-warning & {
+                    @apply bg-warning/20 border-warning;
+                }
+                .nui-toggle-wrapper--color-info & {
+                    @apply bg-info/20 border-info;
+                }
             }
 
             /* Track colors (checked) */
             .nui-toggle-input:checked ~ .nui-toggle-display {
-                .nui-toggle-wrapper--color-primary & { @apply bg-primary border-primary; }
-                .nui-toggle-wrapper--color-success & { @apply bg-success border-success; }
-                .nui-toggle-wrapper--color-error & { @apply bg-error border-error; }
-                .nui-toggle-wrapper--color-warning & { @apply bg-warning border-warning; }
-                .nui-toggle-wrapper--color-info & { @apply bg-info border-info; }
-                .nui-toggle-wrapper--color-current & { @apply bg-text; }
+                .nui-toggle-wrapper--color-primary & {
+                    @apply bg-primary border-primary;
+                }
+                .nui-toggle-wrapper--color-success & {
+                    @apply bg-success border-success;
+                }
+                .nui-toggle-wrapper--color-error & {
+                    @apply bg-error border-error;
+                }
+                .nui-toggle-wrapper--color-warning & {
+                    @apply bg-warning border-warning;
+                }
+                .nui-toggle-wrapper--color-info & {
+                    @apply bg-info border-info;
+                }
+                .nui-toggle-wrapper--color-current & {
+                    @apply bg-text;
+                }
             }
 
             /* Focus ring colors */
             .nui-toggle-host:has(.nui-toggle-input:focus) .nui-toggle-display {
-                .nui-toggle-wrapper--color-primary & { @apply ring-primary/50; }
-                .nui-toggle-wrapper--color-success & { @apply ring-success/50; }
-                .nui-toggle-wrapper--color-error & { @apply ring-error/50; }
-                .nui-toggle-wrapper--color-warning & { @apply ring-warning/50; }
-                .nui-toggle-wrapper--color-info & { @apply ring-info/50; }
+                .nui-toggle-wrapper--color-primary & {
+                    @apply ring-primary/50;
+                }
+                .nui-toggle-wrapper--color-success & {
+                    @apply ring-success/50;
+                }
+                .nui-toggle-wrapper--color-error & {
+                    @apply ring-error/50;
+                }
+                .nui-toggle-wrapper--color-warning & {
+                    @apply ring-warning/50;
+                }
+                .nui-toggle-wrapper--color-info & {
+                    @apply ring-info/50;
+                }
             }
         }
     }

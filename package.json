@@ -9,7 +9,8 @@
         "clean": "pnpm -r clean && rm -rf node_modules",
         "changeset": "changeset",
         "version-packages": "changeset version",
-        "ui:storybook": "pnpm run --filter @nui/ui storybook"
+        "ui:storybook": "pnpm run --filter @nui/ui storybook",
+        "format": "prettier --write \"**/*.{js,ts,mts,mjs,vue,scss,html,md,json}\" --ignore-path .gitignore"
     },
     "dependencies": {
         "@changesets/cli": "^2.29.4",

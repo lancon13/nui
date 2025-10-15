@@ -5,18 +5,18 @@
 <script setup lang="ts">
     import { computed } from 'vue'
 
-    export type NuiIconSize = 'small' | 'medium' | 'large';
-    export type NuiIconColor = 'primary' | 'success' | 'error' | 'warning' | 'info' | 'current';
+    export type NuiIconSize = 'small' | 'medium' | 'large'
+    export type NuiIconColor = 'primary' | 'success' | 'error' | 'warning' | 'info' | 'current'
 
     export interface NuiIconProps {
-        name: string;
-        size?: NuiIconSize | string;
-        color?: NuiIconColor;
+        name: string
+        size?: NuiIconSize | string
+        color?: NuiIconColor
     }
 
     const props = withDefaults(defineProps<NuiIconProps>(), {
         size: undefined,
-        color: 'current',
+        color: 'current'
     })
 
     const iconClasses = computed(() => {
@@ -24,9 +24,8 @@
         const parts = name.split('-')
 
         // Assume short prefixes (e.g., 'fs', 'mdi', 'fa') for icon sets
-        if (parts.length > 1 && parts[0] === 'mdi' )
-            return ['mdi', name]
-        
+        if (parts.length > 1 && parts[0] === 'mdi') return ['mdi', name]
+
         // Default to MDI for names without a recognizable prefix
         return ['mdi', `mdi-${name}`]
     })
@@ -35,24 +34,25 @@
         'nui-icon',
         ...iconClasses.value,
         {
-            [`nui-icon--size-${props.size}`]: props.size && ['small', 'medium', 'large'].includes(props.size as string),
-            [`nui-icon--color-${props.color}`]: props.color && props.color !== 'current',
-        },
+            [`nui-icon--size-${props.size}`]:
+                props.size && ['small', 'medium', 'large'].includes(props.size as string),
+            [`nui-icon--color-${props.color}`]: props.color && props.color !== 'current'
+        }
     ])
 
     const compStyles = computed(() => {
         const styles: Record<string, string> = {}
         if (props.size && !['small', 'medium', 'large'].includes(props.size as string))
             styles['font-size'] = props.size
-        
+
         return styles
     })
 </script>
 
 <style lang="css">
-    @import "tailwindcss";
-    @import "../styles/index.css";
-    @import "../styles/components.css";
+    @import 'tailwindcss';
+    @import '../styles/index.css';
+    @import '../styles/components.css';
 
     @layer components {
         .nui-icon {
@@ -60,24 +60,24 @@
 
             /* Colors */
             &.nui-icon--color-primary {
-                @apply text-primary
+                @apply text-primary;
             }
             &.nui-icon--color-success {
-                @apply text-success
+                @apply text-success;
             }
             &.nui-icon--color-error {
-                @apply text-error
+                @apply text-error;
             }
             &.nui-icon--color-warning {
-                @apply text-warning
+                @apply text-warning;
             }
             &.nui-icon--color-info {
-                @apply text-info
+                @apply text-info;
             }
             &.nui-icon--color-current {
-                @apply text-current
+                @apply text-current;
             }
-            
+
             /* Sizes */
             &.nui-icon--size-small {
                 @apply text-[length:var(--nui-icon-size-small)] leading-[var(--nui-icon-size-small)];
@@ -88,8 +88,6 @@
             &.nui-icon--size-large {
                 @apply text-[length:var(--nui-icon-size-large)] leading-[var(--nui-icon-size-large)];
             }
-
-            
         }
     }
 </style>

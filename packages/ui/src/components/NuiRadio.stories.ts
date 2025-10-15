@@ -9,25 +9,25 @@ const meta = {
     title: 'UI/NuiRadio',
     component: NuiRadio,
     parameters: {
-        layout: 'centered',
+        layout: 'centered'
     },
     tags: ['autodocs'],
     argTypes: {
         // Props
         color: {
             control: 'select',
-            options: colors,
+            options: colors
         },
         size: {
             control: 'select',
-            options: sizes,
+            options: sizes
         },
         disabled: { control: 'boolean' },
         label: { control: 'text' },
         description: { control: 'text' },
         helperText: { control: 'text' },
         name: { control: 'text' },
-        value: { control: 'text' },
+        value: { control: 'text' }
     },
     args: {
         color: 'primary',
@@ -37,8 +37,8 @@ const meta = {
         description: 'Radio description',
         helperText: 'Radio helper text',
         name: 'nui-radio',
-        value: 'radio',
-    },
+        value: 'radio'
+    }
 } satisfies Meta<typeof NuiRadio>
 
 export default meta
@@ -46,7 +46,7 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
-    render: (args) => ({
+    render: args => ({
         components: { NuiRadio },
         setup() {
             const value = ref('one')
@@ -58,12 +58,12 @@ export const Default: Story = {
                 <NuiRadio v-bind="args" v-model="value" name="radio-def" value="two" label="Option two" />
                 <NuiRadio v-bind="args" v-model="value" name="radio-def" value="three" label="Option three" />
             </div>
-        `,
-    }),
+        `
+    })
 }
 
 export const Colors: Story = {
-    render: (args) => ({
+    render: args => ({
         components: { NuiRadio },
         setup() {
             const value = ref('primary')
@@ -75,12 +75,12 @@ export const Colors: Story = {
                     <NuiRadio v-bind="args" v-model="value" name="radio-colors" :value="color" :label="color" :color="color" />
                 </template>
             </div>
-        `,
-    }),
+        `
+    })
 }
 
 export const Sizes: Story = {
-    render: (args) => ({
+    render: args => ({
         components: { NuiRadio },
         setup() {
             const value = ref('medium')
@@ -92,15 +92,15 @@ export const Sizes: Story = {
                     <NuiRadio v-bind="args" v-model="value" name="radio-sizes" :value="size" :label="size" :size="size" />
                 </template>
             </div>
-        `,
-    }),
+        `
+    })
 }
 
 export const Disabled: Story = {
     args: {
-        disabled: true,
+        disabled: true
     },
-    render: (args) => ({
+    render: args => ({
         components: { NuiRadio },
         setup() {
             const value = ref('one')
@@ -111,6 +111,6 @@ export const Disabled: Story = {
                 <NuiRadio v-bind="args" v-model="value" name="radio-dis" value="one" label="Option one (selected)" />
                 <NuiRadio v-bind="args" v-model="value" name="radio-dis" value="two" label="Option two" />
             </div>
-        `,
-    }),
+        `
+    })
 }

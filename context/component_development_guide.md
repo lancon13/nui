@@ -22,22 +22,24 @@ Follow the pattern established by existing components like `NuiButton.vue` and `
 Always export reusable `type` aliases for props that have a fixed set of options. This promotes consistency and reusability across the design system.
 
 **Good Example:**
+
 ```typescript
 // In NuiButton.vue
-export type NuiButtonVariant = 'solid' | 'outlined' | 'flat' | 'text';
+export type NuiButtonVariant = 'solid' | 'outlined' | 'flat' | 'text'
 
 export interface NuiButtonProps {
-  variant?: NuiButtonVariant;
-  // ...
+    variant?: NuiButtonVariant
+    // ...
 }
 ```
 
 **Bad Example:**
+
 ```typescript
 // Avoid defining types inline where they cannot be reused.
 export interface NuiButtonProps {
-  variant?: 'solid' | 'outlined' | 'flat' | 'text'; // Not reusable
-  // ...
+    variant?: 'solid' | 'outlined' | 'flat' | 'text' // Not reusable
+    // ...
 }
 ```
 
@@ -46,12 +48,14 @@ export interface NuiButtonProps {
 For components that require two-way data binding (like form inputs or toggleable components), use the `defineModel<Type>()` macro for a clean and standard implementation.
 
 **Good Example:**
+
 ```typescript
 // In a component like NuiCheckbox.vue
 const model = defineModel<boolean>()
 ```
 
 **Bad Example:**
+
 ```typescript
 // Avoid manually implementing v-model unless necessary.
 const props = defineProps<{ modelValue: boolean }>()
@@ -63,66 +67,70 @@ const emit = defineEmits(['update:modelValue'])
 Use a `computed` property (typically named `compClasses`) to build the class array. This keeps the `<template>` clean and centralizes the component's styling logic.
 
 **Good Example:**
+
 ```typescript
 const compClasses = computed(() => [
     'nui-button',
     `nui-button--variant-${props.variant}`,
     {
         'nui-button--loading': props.loading,
-        'nui-button--disabled': props.disabled,
-    },
+        'nui-button--disabled': props.disabled
+    }
 ])
 ```
 
 **Bad Example:**
+
 ```html
 <!-- Avoid complex conditional logic directly in the :class binding -->
 <button
-  :class="[
+    :class="[
     'nui-button',
     `nui-button--variant-${variant}`,
     loading ? 'nui-button--loading' : '',
     disabled ? 'nui-button--disabled' : '',
   ]"
 >
-  ...
+    ...
 </button>
 ```
 
 ### Template (`<template>`)
 
-*   The root element should be a native HTML element or another Vue component. A common pattern is to use `<component :is="props.tag">` to allow for tag polymorphism, where `tag` is a prop that defaults to a standard HTML element (e.g., 'div', 'button').
-*   Use the `compClasses` and `compStyles` computed properties on the root element: `:class="compClasses"` and `:style="compStyles"`.
-*   Make liberal use of `<slot>`s to allow for content projection. Common slot names include `default`, `prepend`, and `append`.
+- The root element should be a native HTML element or another Vue component. A common pattern is to use `<component :is="props.tag">` to allow for tag polymorphism, where `tag` is a prop that defaults to a standard HTML element (e.g., 'div', 'button').
+- Use the `compClasses` and `compStyles` computed properties on the root element: `:class="compClasses"` and `:style="compStyles"`.
+- Make liberal use of `<slot>`s to allow for content projection. Common slot names include `default`, `prepend`, and `append`.
 
 ### Style (`<style lang="css">`)
 
-*   **Imports:** Start your style block by importing the necessary stylesheets:
+- **Imports:** Start your style block by importing the necessary stylesheets:
     ```css
-    @import "tailwindcss";
-    @import "../styles/index.css";
-    @import "../styles/components.css";
+    @import 'tailwindcss';
+    @import '../styles/index.css';
+    @import '../styles/components.css';
     ```
-*   **Scoping & Layers:**
-    *   Do NOT use the `scoped` attribute.
-    *   All styles must be within the `@layer components { ... }` block.
+- **Scoping & Layers:**
+    - Do NOT use the `scoped` attribute.
+    - All styles must be within the `@layer components { ... }` block.
 
 #### CSS Variables & `@apply`
 
 Always prefer using CSS variables from the theme over arbitrary or "magic" numbers. This ensures that components adhere to the design system's tokens.
 
 **Good Example:**
+
 ```css
 .nui-button {
-  @apply px-[var(--nui-button-padding-x)] rounded-[var(--nui-button-radius)];
+    @apply px-[var(--nui-button-padding-x)] rounded-[var(--nui-button-radius)];
 }
 ```
 
 **Bad Example:**
+
 ```css
 .nui-button {
-  /* Avoid arbitrary values that are not part of the theme */
-  @apply px-[11px] rounded-[7px];
+    /* Avoid arbitrary values that are not part of the theme */
+    @apply px-[11px] rounded-[7px];
 }
 ```
 
@@ -131,9 +139,12 @@ Always prefer using CSS variables from the theme over arbitrary or "magic" numbe
 Use a nested BEM-like CSS structure for component modifiers and elements. This improves readability and prevents style conflicts.
 
 **Good Example:**
+
 ```css
 .nui-button {
-    @apply inline-flex; // Base styles
+    @apply inline-flex;
+
+    // Base styles
 
     /* Modifier for variant */
     &.nui-button--variant-solid {
@@ -148,6 +159,7 @@ Use a nested BEM-like CSS structure for component modifiers and elements. This i
 ```
 
 **Bad Example:**
+
 ```css
 /* Avoid overly specific or non-reusable selectors */
 div > .nui-button.primary {
@@ -162,21 +174,21 @@ div > .nui-button.primary {
 
 ## 3. Storybook Integration (`NuiInput.stories.ts`)
 
-*   **Meta Configuration:**
-    *   Import `Meta` and `StoryObj` from `@storybook/vue3-vite`.
-    *   Import the component: `import NuiInput from './NuiInput.vue'`.
-    *   Define the `meta` object, specifying `title` (e.g., `'UI/NuiInput'`), `component`, `parameters: { layout: 'centered' }`, and `tags: ['autodocs']`.
-*   **Controls (`argTypes`):**
-    *   Define `argTypes` for all props to make them configurable in the Storybook UI. Use `control: 'select'` for props with a fixed set of options.
-*   **Stories:**
-    *   Define a `type Story = StoryObj<typeof meta>`.
-    *   Export a `Default` story.
-    *   Create separate, named exports for each major variant, size, and state of the component (e.g., `export const Outlined: Story = { ... }`, `export const Disabled: Story = { ... }`).
-    *   Use the `render` function for complex stories that need to show multiple component instances at once. When displaying multiple components, use a `grid` layout (e.g., `<div class="grid grid-cols-4 gap-sm">...</div>`) to ensure proper alignment and spacing.
+- **Meta Configuration:**
+    - Import `Meta` and `StoryObj` from `@storybook/vue3-vite`.
+    - Import the component: `import NuiInput from './NuiInput.vue'`.
+    - Define the `meta` object, specifying `title` (e.g., `'UI/NuiInput'`), `component`, `parameters: { layout: 'centered' }`, and `tags: ['autodocs']`.
+- **Controls (`argTypes`):**
+    - Define `argTypes` for all props to make them configurable in the Storybook UI. Use `control: 'select'` for props with a fixed set of options.
+- **Stories:**
+    - Define a `type Story = StoryObj<typeof meta>`.
+    - Export a `Default` story.
+    - Create separate, named exports for each major variant, size, and state of the component (e.g., `export const Outlined: Story = { ... }`, `export const Disabled: Story = { ... }`).
+    - Use the `render` function for complex stories that need to show multiple component instances at once. When displaying multiple components, use a `grid` layout (e.g., `<div class="grid grid-cols-4 gap-sm">...</div>`) to ensure proper alignment and spacing.
 
 ## 4. Exporting the Component
 
-*   Open `packages/ui/src/components/index.ts`.
-*   Add a new line to export your component, keeping the list alphabetized: `export { default as NuiInput } from './NuiInput.vue'`.
+- Open `packages/ui/src/components/index.ts`.
+- Add a new line to export your component, keeping the list alphabetized: `export { default as NuiInput } from './NuiInput.vue'`.
 
 By following these steps, the new component will integrate seamlessly into the existing design system architecture and tooling.

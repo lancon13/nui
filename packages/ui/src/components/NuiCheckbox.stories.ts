@@ -9,36 +9,36 @@ const meta: Meta<typeof NuiCheckbox> = {
     title: 'UI/NuiCheckbox',
     component: NuiCheckbox,
     parameters: {
-        layout: 'centered',
+        layout: 'centered'
     },
     tags: ['autodocs'],
     argTypes: {
         modelValue: {
-            control: 'boolean',
+            control: 'boolean'
         },
         label: {
-            control: 'text',
+            control: 'text'
         },
         description: {
-            control: 'text',
+            control: 'text'
         },
         disabled: {
-            control: 'boolean',
+            control: 'boolean'
         },
         indeterminate: {
-            control: 'boolean',
+            control: 'boolean'
         },
         color: {
             control: 'select',
-            options: colors,
+            options: colors
         },
         size: {
             control: 'select',
-            options: sizes,
+            options: sizes
         },
         helperText: {
-            control: 'text',
-        },
+            control: 'text'
+        }
     },
     args: {
         modelValue: false,
@@ -47,8 +47,8 @@ const meta: Meta<typeof NuiCheckbox> = {
         disabled: false,
         color: 'current',
         size: 'medium',
-        helperText: undefined,
-    },
+        helperText: undefined
+    }
 }
 
 export default meta
@@ -56,7 +56,7 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
     args: {
-        label: 'Default Checkbox',
+        label: 'Default Checkbox'
     },
     render: args => ({
         components: { NuiCheckbox },
@@ -64,14 +64,14 @@ export const Default: Story = {
             const model = ref(false)
             return { args, model }
         },
-        template: '<NuiCheckbox v-bind="args" v-model="model" />',
-    }),
+        template: '<NuiCheckbox v-bind="args" v-model="model" />'
+    })
 }
 
 export const Checked: Story = {
     args: {
         label: 'Checked Checkbox',
-        modelValue: true,
+        modelValue: true
     },
     render: args => ({
         components: { NuiCheckbox },
@@ -79,36 +79,36 @@ export const Checked: Story = {
             const model = ref(args.modelValue)
             return { args, model }
         },
-        template: '<NuiCheckbox v-bind="args" v-model="model" />',
-    }),
+        template: '<NuiCheckbox v-bind="args" v-model="model" />'
+    })
 }
 
 export const Disabled: Story = {
     args: {
         label: 'Disabled Checkbox',
         description: 'I am disabled.',
-        disabled: true,
-    },
+        disabled: true
+    }
 }
 
 export const Indeterminate: Story = {
     args: {
         label: 'Indeterminate Checkbox',
-        indeterminate: true,
-    },
+        indeterminate: true
+    }
 }
 
 export const WithDescription: Story = {
     args: {
         label: 'Accept terms',
-        description: 'You must accept the terms and conditions to proceed.',
-    },
+        description: 'You must accept the terms and conditions to proceed.'
+    }
 }
 
 export const WithSlot: Story = {
     args: {
         label: undefined, // Label (Description) is provided via slot
-        description: ' ', // This is required to make the slot render
+        description: ' ' // This is required to make the slot render
     },
     render: args => ({
         components: { NuiCheckbox },
@@ -116,8 +116,9 @@ export const WithSlot: Story = {
             const model = ref(false)
             return { args, model }
         },
-        template: '<NuiCheckbox v-bind="args" v-model="model">Custom <strong>Description</strong> with <em>HTML</em></NuiCheckbox>',
-    }),
+        template:
+            '<NuiCheckbox v-bind="args" v-model="model">Custom <strong>Description</strong> with <em>HTML</em></NuiCheckbox>'
+    })
 }
 
 export const Group: Story = {
@@ -136,15 +137,15 @@ export const Group: Story = {
                 </div>    
             </div>    
             
-        `,
-    }),
+        `
+    })
 }
 
 export const HelperText: Story = {
     args: {
         label: 'Checkbox with helper text',
-        helperText: 'This is some helpful text for the checkbox.',
-    },
+        helperText: 'This is some helpful text for the checkbox.'
+    }
 }
 
 export const Colors: Story = {
@@ -165,8 +166,8 @@ export const Colors: Story = {
                     :helper-text="color.charAt(0).toUpperCase() + color.slice(1) + ' helper text'"
                 />
             </div>
-        `,
-    }),
+        `
+    })
 }
 
 export const Sizes: Story = {
@@ -186,6 +187,6 @@ export const Sizes: Story = {
                     :size="size"
                 />
             </div>
-        `,
-    }),
+        `
+    })
 }

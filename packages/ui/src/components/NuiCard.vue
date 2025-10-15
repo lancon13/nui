@@ -11,22 +11,21 @@
     >
         <slot name="content">
             <slot name="media" />
-        
+
             <header v-if="$slots.header" class="nui-card--header">
-                <slot name="header"/>
+                <slot name="header" />
             </header>
             <main class="nui-card--content">
-                <slot/>
+                <slot />
             </main>
             <footer v-if="$slots.footer" class="nui-card--footer">
-                <slot name="footer"/>
+                <slot name="footer" />
             </footer>
         </slot>
     </component>
 </template>
 
 <script setup lang="ts">
-    
     import { computed } from 'vue'
 
     export interface NuiCardProps {
@@ -43,7 +42,7 @@
         shadow: true,
         bordered: false,
         clickable: false,
-        tag: 'div',
+        tag: 'div'
     })
 
     const emits = defineEmits<{
@@ -52,21 +51,21 @@
         // eslint-disable-next-line no-unused-vars
         (event: 'focus'): void
         // eslint-disable-next-line no-unused-vars
-        (event:'blur'): void
+        (event: 'blur'): void
     }>()
 
     const compClasses = computed(() => [
         'nui-card',
         { 'nui-card--shadow': props.shadow },
         { 'nui-card--bordered': props.bordered },
-        { 'nui-card--clickable': props.clickable },
+        { 'nui-card--clickable': props.clickable }
     ])
 </script>
 
 <style lang="css">
-    @import "tailwindcss";
-    @import "../styles/index.css";
-    @import "../styles/components.css";
+    @import 'tailwindcss';
+    @import '../styles/index.css';
+    @import '../styles/components.css';
 
     @layer components {
         .nui-card {

@@ -12,7 +12,7 @@ const meta = {
     title: 'UI/NuiChip',
     component: NuiChip,
     parameters: {
-        layout: 'centered',
+        layout: 'centered'
     },
     tags: ['autodocs'],
     argTypes: {
@@ -22,7 +22,7 @@ const meta = {
         pilled: { control: 'boolean' },
         shadow: { control: 'boolean' },
         clickable: { control: 'boolean' },
-        label: { control: 'text' },
+        label: { control: 'text' }
     },
     args: {
         color: 'primary',
@@ -31,8 +31,8 @@ const meta = {
         pilled: false,
         shadow: false,
         clickable: false,
-        label: 'Chip',
-    },
+        label: 'Chip'
+    }
 } satisfies Meta<typeof NuiChip>
 
 export default meta
@@ -42,7 +42,7 @@ type Story = StoryObj<typeof meta>
 export const Default: Story = {}
 
 export const Variants: Story = {
-    render: (args) => ({
+    render: args => ({
         components: { NuiChip },
         setup() {
             return { args, colors, variants }
@@ -58,12 +58,12 @@ export const Variants: Story = {
                     :label="variant"
                 />
             </template>
-        </div>`,
-    }),
+        </div>`
+    })
 }
 
 export const Sizes: Story = {
-    render: (args) => ({
+    render: args => ({
         components: { NuiChip },
         setup() {
             return { args, sizes }
@@ -76,15 +76,15 @@ export const Sizes: Story = {
                 :size="size"
                 :label="size"
             />
-        </div>`,
-    }),
+        </div>`
+    })
 }
 
 export const Pilled: Story = {
     args: {
-        pilled: true,
+        pilled: true
     },
-    render: (args) => ({
+    render: args => ({
         components: { NuiChip },
         setup() {
             return { args, sizes }
@@ -97,19 +97,19 @@ export const Pilled: Story = {
                 :size="size"
                 :label="size"
             />
-        </div>`,
-    }),
+        </div>`
+    })
 }
 
 export const Clickable: Story = {
     args: {
         clickable: true,
-        label: 'Clickable Chip',
-    },
+        label: 'Clickable Chip'
+    }
 }
 
 export const WithIcons: Story = {
-    render: (args) => ({
+    render: args => ({
         components: { NuiChip, NuiIcon, NuiButton, NuiTooltip },
         setup() {
             return { args }
@@ -135,15 +135,15 @@ export const WithIcons: Story = {
                 </template>
                 With Icon
             </NuiChip>
-        </div>`,
-    }),
+        </div>`
+    })
 }
 
 export const Shadow: Story = {
     args: {
-        shadow: true,
+        shadow: true
     },
-    render: (args) => ({
+    render: args => ({
         components: { NuiChip },
         setup() {
             return { args, variants, sizes }
@@ -160,6 +160,6 @@ export const Shadow: Story = {
                     />
                 </div>
             </template>
-        </div>`,
-    }),
+        </div>`
+    })
 }

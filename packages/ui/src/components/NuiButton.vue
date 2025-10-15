@@ -12,29 +12,43 @@
     >
         <template v-if="props.loading">
             <slot name="loading">
-                <nui-icon v-if="props.loadingIcon"
-                          :name="props.loadingIcon"
-                          :size="props.size"
-                          class="nui-button-loading-icon animate-spin" />
-                <span v-if="props.loadingLabel" class="nui-button-loading-label">{{ props.loadingLabel }}</span>
+                <nui-icon
+                    v-if="props.loadingIcon"
+                    :name="props.loadingIcon"
+                    :size="props.size"
+                    class="nui-button-loading-icon animate-spin"
+                />
+                <span v-if="props.loadingLabel" class="nui-button-loading-label">{{
+                    props.loadingLabel
+                }}</span>
                 <slot name="default" />
             </slot>
         </template>
-        
+
         <template v-else>
             <slot v-if="$slots['prepend'] || props.prependIcon" name="prepend">
-                <nui-icon :name="props.prependIcon as string" :size="props.size" class="nui-button--prepend-icon" />
+                <nui-icon
+                    :name="props.prependIcon as string"
+                    :size="props.size"
+                    class="nui-button--prepend-icon"
+                />
             </slot>
-            
-            <nui-icon v-if="props.icon"
-                      :name="props.icon"
-                      :size="props.size"
-                      class="nui-button-icon" />
+
+            <nui-icon
+                v-if="props.icon"
+                :name="props.icon"
+                :size="props.size"
+                class="nui-button-icon"
+            />
             {{ props.label }}
             <slot name="default" />
-            
+
             <slot v-if="$slots['append'] || props.appendIcon" name="append">
-                <nui-icon :name="props.appendIcon as string" :size="props.size" class="nui-button--append-icon" />
+                <nui-icon
+                    :name="props.appendIcon as string"
+                    :size="props.size"
+                    class="nui-button--append-icon"
+                />
             </slot>
         </template>
     </component>
@@ -46,32 +60,32 @@
 
     const model = defineModel<boolean>()
 
-    export type NuiButtonSize = 'small' | 'medium' | 'large';
-    export type NuiButtonColor = 'primary' | 'success' | 'error' | 'warning' | 'info' | 'current';
-    export type NuiButtonVariant = 'solid' | 'outlined' | 'flat' | 'text';
+    export type NuiButtonSize = 'small' | 'medium' | 'large'
+    export type NuiButtonColor = 'primary' | 'success' | 'error' | 'warning' | 'info' | 'current'
+    export type NuiButtonVariant = 'solid' | 'outlined' | 'flat' | 'text'
 
     export interface NuiButtonProps {
-        modelValue?: boolean;
-        toggle?: boolean;
-        type?: 'button' | 'submit' | 'reset';
-        variant?: NuiButtonVariant;
-        color?: NuiButtonColor;
-        size?: NuiButtonSize | string;
-        disabled?: boolean;
-        label?: string;
-        tag?: string;
-        prependIcon?: string;
-        appendIcon?: string;
-        icon?: string;
-        loading?: boolean;
-        loadingLabel?: string;
-        loadingIcon?: string;
-        rounded?: boolean;
-        pilled?: boolean;
-        to?: string | object;
-        href?: string;
-        target?: string;
-        shadow?: boolean;
+        modelValue?: boolean
+        toggle?: boolean
+        type?: 'button' | 'submit' | 'reset'
+        variant?: NuiButtonVariant
+        color?: NuiButtonColor
+        size?: NuiButtonSize | string
+        disabled?: boolean
+        label?: string
+        tag?: string
+        prependIcon?: string
+        appendIcon?: string
+        icon?: string
+        loading?: boolean
+        loadingLabel?: string
+        loadingIcon?: string
+        rounded?: boolean
+        pilled?: boolean
+        to?: string | object
+        href?: string
+        target?: string
+        shadow?: boolean
     }
 
     const props = withDefaults(defineProps<NuiButtonProps>(), {
@@ -95,20 +109,16 @@
         to: undefined,
         href: undefined,
         target: undefined,
-        shadow: false,
+        shadow: false
     })
 
     const emit = defineEmits(['click'])
 
-    const isOn = computed(() => props.toggle ? (model.value ?? true) : false)
+    const isOn = computed(() => (props.toggle ? (model.value ?? true) : false))
 
     const handleClick = (e: MouseEvent) => {
         emit('click', e)
-        if (props.toggle)
-            if (!props.disabled && !props.loading)
-                model.value = !isOn.value
-            
-        
+        if (props.toggle) if (!props.disabled && !props.loading) model.value = !isOn.value
     }
 
     const isIconOnly = computed(() => props.icon && !props.label)
@@ -117,8 +127,13 @@
         'nui-button',
         `nui-button--variant-${props.variant}`,
         {
-            [`nui-button--size-${props.size}`]: props.size && ['small', 'medium', 'large'].includes(props.size as string),
-            [`nui-button--color-${props.color}`]: props.color && ['primary', 'success', 'error', 'warning', 'info', 'current'].includes(props.color as string),
+            [`nui-button--size-${props.size}`]:
+                props.size && ['small', 'medium', 'large'].includes(props.size as string),
+            [`nui-button--color-${props.color}`]:
+                props.color &&
+                ['primary', 'success', 'error', 'warning', 'info', 'current'].includes(
+                    props.color as string
+                ),
             'nui-button--icon-only': isIconOnly.value,
             'nui-button--rounded': props.rounded,
             'nui-button--pilled': props.pilled,
@@ -127,8 +142,8 @@
             'nui-button--shadow': props.shadow,
             'nui-button-toggle': props.toggle,
             'nui-button-toggle--is-on': props.toggle && isOn.value,
-            'nui-button-toggle--is-off': props.toggle && !isOn.value,
-        },
+            'nui-button-toggle--is-off': props.toggle && !isOn.value
+        }
     ])
 
     const compStyles = computed(() => {
@@ -138,13 +153,12 @@
 
         return styles
     })
-
 </script>
 
 <style lang="css">
-    @import "tailwindcss";
-    @import "../styles/index.css";
-    @import "../styles/components.css";
+    @import 'tailwindcss';
+    @import '../styles/index.css';
+    @import '../styles/components.css';
 
     @layer components {
         .nui-button {
@@ -165,7 +179,7 @@
                     @apply rounded-full size-[var(--nui-button-icon-only-size-small)];
                 }
             }
-             &.nui-button--size-medium {
+            &.nui-button--size-medium {
                 @apply text-[length:var(--nui-button-font-size-medium)] leading-[var(--nui-button-font-size-medium)];
                 &.nui-button--rounded {
                     @apply rounded-full size-[var(--nui-button-icon-only-size-medium)];
@@ -183,55 +197,113 @@
                 @apply rounded-s-full rounded-e-full;
             }
 
-             /* Rounded (Circle) */
+            /* Rounded (Circle) */
             &.nui-button--rounded {
                 @apply rounded-full p-[var(--nui-button-padding-rounded)];
             }
 
             /* Colors */
-            &.nui-button--color-primary { @apply focus:ring-primary/50; }
-            &.nui-button--color-success { @apply focus:ring-success/50; }
-            &.nui-button--color-error { @apply focus:ring-error/50; }
-            &.nui-button--color-warning { @apply focus:ring-warning/50; }
-            &.nui-button--color-info { @apply focus:ring-info/50; }
+            &.nui-button--color-primary {
+                @apply focus:ring-primary/50;
+            }
+            &.nui-button--color-success {
+                @apply focus:ring-success/50;
+            }
+            &.nui-button--color-error {
+                @apply focus:ring-error/50;
+            }
+            &.nui-button--color-warning {
+                @apply focus:ring-warning/50;
+            }
+            &.nui-button--color-info {
+                @apply focus:ring-info/50;
+            }
 
             /* Variants */
             &.nui-button--variant-solid {
                 @apply border-transparent;
-                &.nui-button--color-primary { @apply bg-primary text-input-highlight; }
-                &.nui-button--color-success { @apply bg-success text-input-highlight; }
-                &.nui-button--color-error { @apply bg-error text-input-highlight; }
-                &.nui-button--color-warning { @apply  bg-warning text-input-highlight; }
-                &.nui-button--color-info { @apply  bg-info text-input-highlight; }
-                &.nui-button--color-current { @apply bg-fg text-input-highlight; }
+                &.nui-button--color-primary {
+                    @apply bg-primary text-input-highlight;
+                }
+                &.nui-button--color-success {
+                    @apply bg-success text-input-highlight;
+                }
+                &.nui-button--color-error {
+                    @apply bg-error text-input-highlight;
+                }
+                &.nui-button--color-warning {
+                    @apply bg-warning text-input-highlight;
+                }
+                &.nui-button--color-info {
+                    @apply bg-info text-input-highlight;
+                }
+                &.nui-button--color-current {
+                    @apply bg-fg text-input-highlight;
+                }
             }
             &.nui-button--variant-outlined {
                 @apply bg-transparent;
-                &.nui-button--color-primary { @apply border-primary text-primary hover:bg-primary/15; }
-                &.nui-button--color-success { @apply border-success text-success hover:bg-success/15; }
-                &.nui-button--color-error { @apply border-error text-error hover:bg-error/15; }
-                &.nui-button--color-warning { @apply border-warning text-warning hover:bg-warning/15; }
-                &.nui-button--color-info { @apply border-info text-info hover:bg-info/15; }
-                &.nui-button--color-current { @apply border-current text-current hover:bg-current/15; }
+                &.nui-button--color-primary {
+                    @apply border-primary text-primary hover:bg-primary/15;
+                }
+                &.nui-button--color-success {
+                    @apply border-success text-success hover:bg-success/15;
+                }
+                &.nui-button--color-error {
+                    @apply border-error text-error hover:bg-error/15;
+                }
+                &.nui-button--color-warning {
+                    @apply border-warning text-warning hover:bg-warning/15;
+                }
+                &.nui-button--color-info {
+                    @apply border-info text-info hover:bg-info/15;
+                }
+                &.nui-button--color-current {
+                    @apply border-current text-current hover:bg-current/15;
+                }
             }
             &.nui-button--variant-flat {
                 @apply border-transparent;
-                &.nui-button--color-primary { @apply text-primary bg-primary/20; }
-                &.nui-button--color-success { @apply text-success bg-success/20; }
-                &.nui-button--color-error { @apply text-error bg-error/20;  }
-                &.nui-button--color-warning { @apply text-warning bg-warning/20; }
-                &.nui-button--color-info { @apply text-info bg-info/20; }
-                &.nui-button--color-current { @apply text-current bg-current/20; }
+                &.nui-button--color-primary {
+                    @apply text-primary bg-primary/20;
+                }
+                &.nui-button--color-success {
+                    @apply text-success bg-success/20;
+                }
+                &.nui-button--color-error {
+                    @apply text-error bg-error/20;
+                }
+                &.nui-button--color-warning {
+                    @apply text-warning bg-warning/20;
+                }
+                &.nui-button--color-info {
+                    @apply text-info bg-info/20;
+                }
+                &.nui-button--color-current {
+                    @apply text-current bg-current/20;
+                }
             }
 
             &.nui-button--variant-text {
                 @apply border-transparent bg-transparent;
-                &.nui-button--color-primary { @apply text-primary hover:bg-primary/15; }
-                &.nui-button--color-success { @apply text-success hover:bg-success/15; }
-                &.nui-button--color-error { @apply text-error hover:bg-error/15; }
-                &.nui-button--color-warning { @apply text-warning hover:bg-warning/15; }
-                &.nui-button--color-info { @apply text-info hover:bg-info/15; }
-                &.nui-button--color-current { @apply text-current hover:bg-current/15; }
+                &.nui-button--color-primary {
+                    @apply text-primary hover:bg-primary/15;
+                }
+                &.nui-button--color-success {
+                    @apply text-success hover:bg-success/15;
+                }
+                &.nui-button--color-error {
+                    @apply text-error hover:bg-error/15;
+                }
+                &.nui-button--color-warning {
+                    @apply text-warning hover:bg-warning/15;
+                }
+                &.nui-button--color-info {
+                    @apply text-info hover:bg-info/15;
+                }
+                &.nui-button--color-current {
+                    @apply text-current hover:bg-current/15;
+                }
             }
 
             /* Shadow */
@@ -240,7 +312,9 @@
 
                 &.nui-button--variant-text {
                     @apply shadow-none;
-                    text-shadow: 0 1px 3px rgb(0 0 0 / 0.1), 0 1px 2px rgb(0 0 0 / 0.2);
+                    text-shadow:
+                        0 1px 3px rgb(0 0 0 / 0.1),
+                        0 1px 2px rgb(0 0 0 / 0.2);
                 }
             }
 

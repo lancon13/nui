@@ -10,33 +10,33 @@ const meta: Meta<typeof NuiToggle> = {
     title: 'UI/NuiToggle',
     component: NuiToggle,
     parameters: {
-        layout: 'centered',
+        layout: 'centered'
     },
     tags: ['autodocs'],
     argTypes: {
         modelValue: {
-            control: 'boolean',
+            control: 'boolean'
         },
         label: {
-            control: 'text',
+            control: 'text'
         },
         description: {
-            control: 'text',
+            control: 'text'
         },
         disabled: {
-            control: 'boolean',
+            control: 'boolean'
         },
         color: {
             control: 'select',
-            options: colors,
+            options: colors
         },
         size: {
             control: 'select',
-            options: sizes,
+            options: sizes
         },
         helperText: {
-            control: 'text',
-        },
+            control: 'text'
+        }
     },
     args: {
         modelValue: false,
@@ -45,8 +45,8 @@ const meta: Meta<typeof NuiToggle> = {
         disabled: false,
         color: 'current',
         size: 'medium',
-        helperText: undefined,
-    },
+        helperText: undefined
+    }
 }
 
 export default meta
@@ -54,7 +54,7 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
     args: {
-        label: 'Default Toggle',
+        label: 'Default Toggle'
     },
     render: args => ({
         components: { NuiToggle },
@@ -62,14 +62,14 @@ export const Default: Story = {
             const model = ref(false)
             return { args, model }
         },
-        template: '<NuiToggle v-bind="args" v-model="model" />',
-    }),
+        template: '<NuiToggle v-bind="args" v-model="model" />'
+    })
 }
 
 export const Checked: Story = {
     args: {
         label: 'Checked Toggle',
-        modelValue: true,
+        modelValue: true
     },
     render: args => ({
         components: { NuiToggle },
@@ -77,28 +77,28 @@ export const Checked: Story = {
             const model = ref(args.modelValue)
             return { args, model }
         },
-        template: '<NuiToggle v-bind="args" v-model="model" />',
-    }),
+        template: '<NuiToggle v-bind="args" v-model="model" />'
+    })
 }
 
 export const Disabled: Story = {
     args: {
         label: 'Disabled Toggle',
-        disabled: true,
-    },
+        disabled: true
+    }
 }
 
 export const WithDescription: Story = {
     args: {
         label: 'Accept terms',
-        description: 'You must accept the terms and conditions to proceed.',
-    },
+        description: 'You must accept the terms and conditions to proceed.'
+    }
 }
 
 export const WithSlot: Story = {
     args: {
         label: undefined, // Label (Description) is provided via slot
-        description: ' ', // This is required to make the slot render
+        description: ' ' // This is required to make the slot render
     },
     render: args => ({
         components: { NuiToggle },
@@ -106,8 +106,9 @@ export const WithSlot: Story = {
             const model = ref(false)
             return { args, model }
         },
-        template: '<NuiToggle v-bind="args" v-model="model">Custom <strong>Description</strong> with <em>HTML</em></NuiToggle>',
-    }),
+        template:
+            '<NuiToggle v-bind="args" v-model="model">Custom <strong>Description</strong> with <em>HTML</em></NuiToggle>'
+    })
 }
 
 export const Group: Story = {
@@ -125,15 +126,15 @@ export const Group: Story = {
                     <NuiToggle v-for="setting in settings" :key="setting" v-model="selected" :value="setting" :label="setting" />
                 </div>
             </div>
-        `,
-    }),
+        `
+    })
 }
 
 export const HelperText: Story = {
     args: {
         label: 'Toggle with helper text',
-        helperText: 'This is some helpful text for the toggle.',
-    },
+        helperText: 'This is some helpful text for the toggle.'
+    }
 }
 
 export const Colors: Story = {
@@ -154,8 +155,8 @@ export const Colors: Story = {
                     :helper-text="color.charAt(0).toUpperCase() + color.slice(1) + ' helper text'"
                 />
             </div>
-        `,
-    }),
+        `
+    })
 }
 
 export const Sizes: Story = {
@@ -175,8 +176,8 @@ export const Sizes: Story = {
                     :size="size"
                 />
             </div>
-        `,
-    }),
+        `
+    })
 }
 
 export const WithIcons: Story = {
@@ -184,9 +185,9 @@ export const WithIcons: Story = {
         label: 'Theme',
         description: 'Switch between light and dark mode',
         size: 'large',
-        color: 'primary',
+        color: 'primary'
     },
-    render: (args) => ({
+    render: args => ({
         components: { NuiToggle, NuiIcon },
         setup() {
             const model = ref(false)
@@ -203,8 +204,8 @@ export const WithIcons: Story = {
                     <NuiIcon name="weather-sunny" class="text-primary" />
                 </template>
             </NuiToggle>
-        `,
-    }),
+        `
+    })
 }
 
 export const WithThumbIcon: Story = {
@@ -212,9 +213,9 @@ export const WithThumbIcon: Story = {
         label: 'Icon in thumb',
         description: 'Show an icon inside the thumb',
         size: 'large',
-        color: 'primary',
+        color: 'primary'
     },
-    render: (args) => ({
+    render: args => ({
         components: { NuiToggle, NuiIcon },
         setup() {
             const model = ref(false)
@@ -226,8 +227,8 @@ export const WithThumbIcon: Story = {
                     <NuiIcon name="power" />
                 </template>
             </NuiToggle>
-        `,
-    }),
+        `
+    })
 }
 
 export const WithIconsSizes: Story = {
@@ -237,7 +238,7 @@ export const WithIconsSizes: Story = {
             const models = ref({
                 small: false,
                 medium: true,
-                large: false,
+                large: false
             })
             return { sizes, models }
         },
@@ -255,6 +256,6 @@ export const WithIconsSizes: Story = {
                     </NuiToggle>
                 </div>
             </div>
-        `,
-    }),
+        `
+    })
 }

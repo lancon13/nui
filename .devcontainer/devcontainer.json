@@ -12,9 +12,7 @@
         "PNPM_HOME": "/pnpm",
         "PATH": "${containerEnv:PNPM_HOME}:${containerEnv:PATH}"
     },
-    "mounts": [
-        "source=${localEnv:HOME}/.ssh,target=/root/.ssh,type=bind,consistency=cached"
-    ],
+    "mounts": ["source=${localEnv:HOME}/.ssh,target=/root/.ssh,type=bind,consistency=cached"],
     "customizations": {
         "vscode": {
             "extensions": [

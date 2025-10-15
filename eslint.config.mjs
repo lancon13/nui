@@ -1,5 +1,5 @@
 // For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
-import storybook from "eslint-plugin-storybook";
+// import storybook from "eslint-plugin-storybook";
 
 import js from '@eslint/js'
 import globals from 'globals'
@@ -7,7 +7,7 @@ import tseslint from 'typescript-eslint'
 import pluginVue from 'eslint-plugin-vue'
 import json from '@eslint/json'
 import css from '@eslint/css'
-// import eslintConfigPrettier from '@vue/eslint-config-prettier'
+import eslintConfigPrettier from '@vue/eslint-config-prettier'
 import { defineConfig } from 'eslint/config'
 
 export default defineConfig([
@@ -27,8 +27,6 @@ export default defineConfig([
             '**/*.sql'
         ]
     },
-
-    // eslintConfigPrettier,
 
     {
         files: ['**/*.{js,mjs,cjs,ts,vue}'],
@@ -70,60 +68,12 @@ export default defineConfig([
         rules: {
             // Add non-stylistic JS rules or overrides here if needed
             // e.g., 'no-unused-vars': 'warn',
-            'brace-style': [
-                'error',
-                '1tbs',
-                {
-                    allowSingleLine: false
-                }
-            ],
-            'indent': [
-                'error',
-                4,
-                {
-                    SwitchCase: 1,
-                    flatTernaryExpressions: true
-                }
-            ],
-            'curly': ['error', 'multi', 'consistent'],
-            'linebreak-style': ['error', 'unix'],
-            'multiline-ternary': ['error', 'always-multiline'],
-            'newline-per-chained-call': [
-                'error',
-                {
-                    ignoreChainWithDepth: 1
-                }
-            ],
-            'no-irregular-whitespace': [
-                'error',
-                {
-                    skipComments: true
-                }
-            ],
-            'no-trailing-spaces': [
-                'error',
-                {
-                    skipBlankLines: true,
-                    ignoreComments: true
-                }
-            ],
             'no-unused-vars': 'warn',
-            'object-curly-spacing': ['error', 'always'],
             'prefer-promise-reject-errors': 'off',
             'prefer-arrow-callback': [
                 'error',
                 { allowNamedFunctions: true, allowUnboundThis: false }
-            ],
-            'quote-props': ['error', 'consistent-as-needed'],
-            'quotes': ['warn', 'single'],
-            'semi': [
-                'error',
-                'never',
-                {
-                    beforeStatementContinuationChars: 'any'
-                }
-            ],
-            'max-len': 'off'
+            ]
         }
     },
 
@@ -160,38 +110,6 @@ export default defineConfig([
                 }
             ],
             'vue/custom-event-name-casing': ['error', 'kebab-case'],
-            'vue/html-closing-bracket-newline': [
-                0,
-                {
-                    multiline: 'never',
-                    singleline: 'never'
-                }
-            ],
-            'vue/html-indent': [
-                'error',
-                4,
-                {
-                    baseIndent: 1
-                }
-            ],
-            'vue/html-self-closing': [
-                'error',
-                {
-                    html: {
-                        component: 'always',
-                        normal: 'always',
-                        void: 'any'
-                    },
-                    math: 'always',
-                    svg: 'always'
-                }
-            ],
-            'vue/max-attributes-per-line': [
-                'error',
-                {
-                    singleline: 3
-                }
-            ],
             'vue/no-reserved-keys': 0,
             'vue/no-unused-components': 'warn',
             'vue/order-in-components': [
@@ -232,16 +150,6 @@ export default defineConfig([
                 }
             ],
             'vue/prop-name-casing': ['error', 'camelCase'],
-            'vue/script-indent': [
-                'error',
-                4,
-                {
-                    baseIndent: 1,
-                    switchCase: 1
-                }
-            ],
-            'vue/no-multi-spaces': ['error'],
-            'vue/singleline-html-element-content-newline': [0],
             'vue/v-slot-style': [
                 'error',
                 {
@@ -251,8 +159,9 @@ export default defineConfig([
                 }
             ],
             'vue/v-on-event-hyphenation': ['error', 'always'],
-            'indent': 'off',
+            indent: 'off',
             '@typescript-eslint/indent': 'off'
         }
-    }
+    },
+    eslintConfigPrettier
 ])

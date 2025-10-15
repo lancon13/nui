@@ -5,37 +5,31 @@ const meta = {
     title: 'UI/NuiIcon',
     component: NuiIcon,
     parameters: {
-        layout: 'centered',
+        layout: 'centered'
     },
     tags: ['autodocs'],
     argTypes: {
         name: {
             control: 'select',
-            options: [
-                'account',
-                'home',
-                'cog',
-                'check',
-                'close',
-            ],
-            description: 'The name of the icon to display.',
+            options: ['account', 'home', 'cog', 'check', 'close'],
+            description: 'The name of the icon to display.'
         },
         size: {
             control: 'select',
             options: ['', 'small', 'medium', 'large', '32px', '48px'],
-            description: 'The size of the icon.',
+            description: 'The size of the icon.'
         },
         color: {
             control: 'select',
             options: ['current', 'primary', 'success', 'error', 'warning'],
-            description: 'The color of the icon.',
-        },
+            description: 'The color of the icon.'
+        }
     },
     args: {
         name: 'account',
         size: 'medium',
-        color: 'current',
-    },
+        color: 'current'
+    }
 } satisfies Meta<typeof NuiIcon>
 
 export default meta
@@ -44,12 +38,12 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
     args: {
-        name: 'account',
-    },
+        name: 'account'
+    }
 }
 
 export const IconSet: Story = {
-    render: (args) => ({
+    render: args => ({
         components: { NuiIcon },
         setup() {
             const icons = meta.argTypes.name.options
@@ -62,8 +56,8 @@ export const IconSet: Story = {
                     <span class="text-xs mt-4">{{ icon }}</span>
                 </div>
             </div>            
-        `,
-    }),
+        `
+    })
 }
 
 export const Sizes: Story = {
@@ -101,8 +95,8 @@ export const Sizes: Story = {
                     <span class="text-xs mt-4">48px</span>
                 </div>
             </div>
-        `,
-    }),
+        `
+    })
 }
 
 export const Colors: Story = {
@@ -116,8 +110,8 @@ export const Colors: Story = {
             <div class="grid grid-cols-6 gap-sm items-center">
                 <NuiIcon v-for="color in colors" :key="color" name="account" size="large" :color="color" />
             </div>
-        `,
-    }),
+        `
+    })
 }
 
 export const CurrentColor: Story = {
@@ -127,6 +121,6 @@ export const CurrentColor: Story = {
             <div class="text-primary-500">
                 <NuiIcon name="account" color="current" />
             </div>
-        `,
-    }),
+        `
+    })
 }

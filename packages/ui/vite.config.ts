@@ -28,27 +28,26 @@ export default defineConfig({
             // ADD the formats you want to build
             formats: ['es', 'umd'],
             // FIX the file naming to match your package.json
-            fileName: (format) => {
+            fileName: format => {
                 if (format === 'es') return 'wds-ui.js'
                 if (format === 'umd') return 'wds-ui.umd.cjs'
                 return `wds-ui.${format}.js`
-            },
+            }
         },
         rollupOptions: {
             // This is correct! Ensures you don't bundle Vue into your library.
             external: ['vue'],
             output: {
                 globals: {
-                    vue: 'Vue',
+                    vue: 'Vue'
                 },
                 // This is correct! Puts all CSS into one file.
-                assetFileNames: (assetInfo) => {
-                    if (assetInfo.name && assetInfo.name.endsWith('.css'))
-                        return 'components.css'
+                assetFileNames: assetInfo => {
+                    if (assetInfo.name && assetInfo.name.endsWith('.css')) return 'components.css'
 
                     return assetInfo.name || '[name].[ext]'
-                },
-            },
-        },
-    },
+                }
+            }
+        }
+    }
 })

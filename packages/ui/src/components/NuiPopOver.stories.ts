@@ -8,33 +8,33 @@ const meta = {
     title: 'UI/NuiPopOver',
     component: NuiPopOver,
     parameters: {
-        layout: 'centered',
+        layout: 'centered'
     },
     tags: ['autodocs'],
     argTypes: {
         displayPosition: {
             control: 'select',
-            options: ['top', 'bottom', 'left', 'right'],
+            options: ['top', 'bottom', 'left', 'right']
         },
         anchorPosition: {
             control: 'select',
-            options: ['start', 'center', 'end'],
+            options: ['start', 'center', 'end']
         },
         offset: {
-            control: 'object',
+            control: 'object'
         },
         autoReposition: {
-            control: 'boolean',
+            control: 'boolean'
         },
         attachParent: {
-            control: 'text',
+            control: 'text'
         },
         triggerParent: {
-            control: 'text',
+            control: 'text'
         },
         shiftPadding: {
-            control: 'number',
-        },
+            control: 'number'
+        }
     },
     args: {
         displayPosition: 'bottom',
@@ -43,15 +43,15 @@ const meta = {
         autoReposition: true,
         attachParent: null,
         triggerParent: null,
-        shiftPadding: 8,
-    },
+        shiftPadding: 8
+    }
 } satisfies Meta<typeof NuiPopOver>
 
 export default meta
 type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
-    render: (args) => ({
+    render: args => ({
         components: { NuiPopOver, NuiButton, NuiCard },
         setup() {
             const show = ref(false)
@@ -71,15 +71,15 @@ export const Default: Story = {
                     </NuiCard>
                 </NuiPopOver>
             </NuiButton>
-        `,
-    }),
+        `
+    })
 }
 
 export const Offset: Story = {
     args: {
-        offset: [20, 20],
+        offset: [20, 20]
     },
-    render: (args) => ({
+    render: args => ({
         components: { NuiPopOver, NuiButton, NuiCard },
         setup() {
             const show = ref(false)
@@ -93,7 +93,7 @@ export const Offset: Story = {
                     </NuiCard>
                 </NuiPopOver>
             </NuiButton>
-        `,
+        `
     }),
     parameters: {
         docs: {
@@ -105,22 +105,32 @@ export const Offset: Story = {
 }
 
 export const Positions: Story = {
-    render: (args) => ({
+    render: args => ({
         components: { NuiPopOver, NuiButton, NuiCard },
         setup() {
             const positions = [
-                'top-start', 'top-center', 'top-end',
-                'bottom-start', 'bottom-center', 'bottom-end',
-                'left-start', 'left-center', 'left-end',
-                'right-start', 'right-center', 'right-end',
+                'top-start',
+                'top-center',
+                'top-end',
+                'bottom-start',
+                'bottom-center',
+                'bottom-end',
+                'left-start',
+                'left-center',
+                'left-end',
+                'right-start',
+                'right-center',
+                'right-end'
             ]
 
-            const popovers = ref(positions.map(p => ({
-                id: p,
-                show: false,
-                display: p.split('-')[0],
-                anchor: p.split('-')[1],
-            })))
+            const popovers = ref(
+                positions.map(p => ({
+                    id: p,
+                    show: false,
+                    display: p.split('-')[0],
+                    anchor: p.split('-')[1]
+                }))
+            )
 
             return { args, popovers }
         },
@@ -140,7 +150,7 @@ export const Positions: Story = {
                     </NuiButton>
                 </div>
             </div>
-        `,
+        `
     }),
     parameters: {
         docs: {
@@ -152,7 +162,7 @@ export const Positions: Story = {
 }
 
 export const AutoReposition: Story = {
-    render: (args) => ({
+    render: args => ({
         components: { NuiPopOver, NuiButton, NuiCard },
         setup() {
             const showFlip = ref(false)
@@ -184,7 +194,7 @@ export const AutoReposition: Story = {
                     </div>
                 </div>
             </div>
-        `,
+        `
     }),
     parameters: {
         layout: 'fullscreen',
@@ -198,9 +208,9 @@ export const AutoReposition: Story = {
 
 export const AttachParent: Story = {
     args: {
-        attachParent: '#attach-button',
+        attachParent: '#attach-button'
     },
-    render: (args) => ({
+    render: args => ({
         components: { NuiPopOver, NuiButton, NuiCard },
         setup() {
             const show = ref(false)
@@ -219,7 +229,7 @@ export const AttachParent: Story = {
                     </NuiPopOver>
                 </div>
             </div>
-        `,
+        `
     }),
     parameters: {
         docs: {
@@ -233,9 +243,9 @@ export const AttachParent: Story = {
 export const TriggerParent: Story = {
     args: {
         attachParent: '#position-anchor',
-        triggerParent: '#click-trigger',
+        triggerParent: '#click-trigger'
     },
-    render: (args) => ({
+    render: args => ({
         components: { NuiPopOver, NuiButton, NuiCard },
         setup() {
             const show = ref(false)
@@ -257,7 +267,7 @@ export const TriggerParent: Story = {
                     </NuiPopOver>
                 </div>
             </div>
-        `,
+        `
     }),
     parameters: {
         docs: {
