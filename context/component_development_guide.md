@@ -127,15 +127,28 @@ const compClasses = computed(() => [
 
 ### Style (`<style lang="css">`)
 
-- **Imports:** Start your style block by importing the necessary stylesheets:
-    ```css
-    @import 'tailwindcss';
-    @import '../styles/index.css';
-    @import '../styles/components.css';
-    ```
+- **Imports & Referencing:**
+    - The actual CSS for the library is imported only once in `packages/ui/src/styles/main.css`.
+    - To provide build-time context for the Tailwind compiler to resolve `@apply` directives with both default and custom-defined utilities (like `text-primary`), you **must** add `@reference` directives for Tailwind and your project's style files at the top of each component's `<style>` block. This does not duplicate the styles in the final output.
+
 - **Scoping & Layers:**
     - Do NOT use the `scoped` attribute.
-    - All styles must be within the `@layer components { ... }` block.
+    - All component-specific styles must be placed within the `@layer components { ... }` block.
+
+    **Good Example:**
+    ```css
+    <style lang="css">
+        @reference 'tailwindcss';
+        @reference '../styles/index.css';
+        @reference '../styles/components.css';
+
+        @layer components {
+            .nui-button {
+                @apply inline-flex text-primary;
+            }
+        }
+    </style>
+    ```
 
 #### CSS Variables & `@apply`
 

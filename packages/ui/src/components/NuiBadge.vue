@@ -41,9 +41,9 @@
 </script>
 
 <style lang="css">
-    @import 'tailwindcss';
-    @import '../styles/index.css';
-    @import '../styles/components.css';
+    @reference 'tailwindcss';
+    @reference '../styles/index.css';
+    @reference '../styles/components.css';
 
     @layer components {
         .nui-badge {

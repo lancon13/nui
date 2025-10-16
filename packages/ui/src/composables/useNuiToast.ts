@@ -61,7 +61,7 @@ const add = (options: NuiToastObjOptions) => {
 
     const toast: NuiToastObj = {
         id,
-        duration: 3000,
+        duration: 30000,
         position: 'top',
         direction: 'right',
         ...options,
