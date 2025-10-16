@@ -50,6 +50,16 @@
                     "url": "https://tailwindcss.com/docs/functions-and-directives#variants"
                 }
             ]
+        },
+        {
+            "name": "@reference",
+            "description": "@reference directive is used to import a CSS file for reference without actually including its styles directly in the output. This is particularly useful when you need to access variables or other definitions from a stylesheet, like breakpoints for @screen directives, but don't want to embed the entire content of that stylesheet.",
+            "references": [
+                {
+                    "name": "Tailwind Documentation",
+                    "url": "https://tailwindcss.com/docs/functions-and-directives#reference"
+                }
+            ]
         }
     ]
 }

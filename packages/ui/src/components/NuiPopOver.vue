@@ -157,7 +157,8 @@
 
     @layer components {
         .nui-popover-content {
-            @apply z-[var(--nui-popover-z-index)] duration-250 ease-in-out transition-[opacity,translate]
+            @apply z-[var(--nui-popover-z-index)] 
+                duration-250 ease-in-out transition-[opacity,translate]
                 opacity-0;
 
             /* Visible */

@@ -2,10 +2,11 @@
     <div ref="placeholderRef" class="hidden" />
     <teleport to="body">
         <div
-            ref="tooltipRef"
+            v-if="model || isVisible"
+            ref="contentRef"
             role="tooltip"
             :class="compClasses"
-            :style="compStyles"
+            :style="floatingStyles"
             @mouseenter="cancelHide"
             @mouseleave="startHide"
             @focusin="handleFocusIn"
@@ -20,71 +21,100 @@
 </template>
 
 <script lang="ts" setup>
-    import { computed, ref, watch, onMounted, onUnmounted, nextTick } from 'vue'
+    import { autoUpdate, flip, offset, shift, useFloating, type Placement } from '@floating-ui/vue'
+    import { computed, onUnmounted, ref, watch } from 'vue'
+
+    export type NuiTooltipDisplayPosition = 'top' | 'bottom' | 'left' | 'right'
 
     export interface NuiTooltipProps {
         text?: string
         html?: string
-        position?: 'top' | 'bottom' | 'left' | 'right'
-        modelValue?: boolean | null
+        displayPosition?: NuiTooltipDisplayPosition
+        autoReposition?: boolean
+        shiftPadding?: number
         showDelay?: number
         hideDelay?: number
         persistent?: boolean
         triggerParent?: HTMLElement | string | null
         attachParent?: HTMLElement | string | null
-        offset?: [string | number, string | number]
+        offset?: [number, number]
         size?: 'small' | 'medium' | 'large'
     }
 
     const props = withDefaults(defineProps<NuiTooltipProps>(), {
         text: '',
         html: '',
-        position: 'bottom',
-        modelValue: null,
+        displayPosition: 'bottom',
+        autoReposition: true,
+        shiftPadding: 8,
         showDelay: 0,
         hideDelay: 125,
         persistent: false,
         triggerParent: null,
         attachParent: null,
-        offset: () => [0, 0],
+        offset: () => [0, 8],
         size: 'medium'
     })
 
-    const emit = defineEmits(['update:modelValue'])
-
-    const tooltipRef = ref<HTMLElement>()
-    const placeholderRef = ref<HTMLElement>()
+    const model = defineModel<boolean>({ default: false })
     const isVisible = ref(false)
-    const tooltipTop = ref(0)
-    const tooltipLeft = ref(0)
+
+    const placeholderRef = ref<HTMLElement | null>(null)
+    const contentRef = ref<HTMLElement | null>(null)
+    const positionTarget = ref<HTMLElement | null>(null)
+    const hoverTrigger = ref<HTMLElement | null>(null)
+
     let showTimeoutId: number | undefined
     let hideTimeoutId: number | undefined
 
-    let triggerEl: HTMLElement | null = null
-    let attachEl: HTMLElement | null = null
+    const placement = computed<Placement>(() => props.displayPosition)
+
+    const middleware = computed(() => {
+        const [cross, main] = props.offset
+        const list = [offset({ crossAxis: cross, mainAxis: main })]
+        if (props.autoReposition) {
+            list.push(flip())
+            list.push(shift({ padding: props.shiftPadding }))
+        }
+        return list
+    })
+
+    const {
+        x,
+        y,
+        strategy,
+        placement: finalPlacement
+    } = useFloating(positionTarget, contentRef, {
+        placement,
+        whileElementsMounted: autoUpdate,
+        middleware
+    })
+
+    const placementDirection = computed(() => finalPlacement.value.split('-')[0])
+
+    const floatingStyles = computed(() => ({
+        position: strategy.value,
+        top: y.value != null ? `${y.value}px` : '',
+        left: x.value != null ? `${x.value}px` : ''
+    }))
 
     const startShow = () => {
-        if (props.modelValue !== null) return
-
         if (hideTimeoutId) clearTimeout(hideTimeoutId)
         if (showTimeoutId) clearTimeout(showTimeoutId)
 
         showTimeoutId = window.setTimeout(() => {
-            isVisible.value = true
-            emit('update:modelValue', true)
+            model.value = true
         }, props.showDelay)
     }
 
     const startHide = () => {
-        if (props.modelValue !== null) return
         if (props.persistent) return
 
         if (showTimeoutId) clearTimeout(showTimeoutId)
         if (hideTimeoutId) clearTimeout(hideTimeoutId)
 
         hideTimeoutId = window.setTimeout(() => {
-            isVisible.value = false
-            emit('update:modelValue', false)
+            model.value = false
         }, props.hideDelay)
     }
 
@@ -98,7 +128,7 @@
 
     const handleFocusOut = (event: FocusEvent) => {
         const relatedTarget = event.relatedTarget as HTMLElement | null
-        if (!tooltipRef.value?.contains(relatedTarget)) startHide()
+        if (!contentRef.value?.contains(relatedTarget)) startHide()
     }
 
     const attachEvents = (element: HTMLElement) => {
@@ -115,107 +145,65 @@
         element.removeEventListener('blur', startHide)
     }
 
-    const updatePosition = () => {
-        if (!attachEl || !tooltipRef.value) return
+    const setup = () => {
+        if (hoverTrigger.value) detachEvents(hoverTrigger.value)
 
-        const attachRect = attachEl.getBoundingClientRect()
-        const tooltipEl = tooltipRef.value
-        const margin = 4 // From tailwind 'xs'
-
-        const { position } = props
-
-        let top = 0
-        let left = 0
-
-        if (position === 'top') {
-            top = attachRect.top + window.scrollY - tooltipEl.offsetHeight - margin
-            left = attachRect.left + window.scrollX + attachRect.width / 2
-        } else if (position === 'bottom') {
-            top = attachRect.bottom + window.scrollY + margin
-            left = attachRect.left + window.scrollX + attachRect.width / 2
-        } else if (position === 'left') {
-            top = attachRect.top + window.scrollY + attachRect.height / 2
-            left = attachRect.left + window.scrollX - tooltipEl.offsetWidth - margin
-        } else if (position === 'right') {
-            top = attachRect.top + window.scrollY + attachRect.height / 2
-            left = attachRect.right + window.scrollX + margin
+        let posTarget: HTMLElement | null = null
+        if (props.attachParent) {
+            posTarget =
+                typeof props.attachParent === 'string'
+                    ? document.querySelector(props.attachParent)
+                    : props.attachParent
+        } else if (placeholderRef.value) {
+            posTarget = placeholderRef.value.parentElement
         }
+        positionTarget.value = posTarget
 
-        tooltipTop.value = top
-        tooltipLeft.value = left
+        let trig: HTMLElement | null = null
+        if (props.triggerParent) {
+            trig =
+                typeof props.triggerParent === 'string'
+                    ? document.querySelector(props.triggerParent)
+                    : props.triggerParent
+        } else if (placeholderRef.value) {
+            trig = placeholderRef.value.parentElement
+        }
+        hoverTrigger.value = trig
+
+        if (hoverTrigger.value) attachEvents(hoverTrigger.value)
     }
 
-    onMounted(() => {
-        // Determine trigger element
-        if (props.triggerParent)
-            if (typeof props.triggerParent === 'string')
-                triggerEl = document.querySelector(props.triggerParent)
-            else triggerEl = props.triggerParent
-        else triggerEl = placeholderRef.value?.parentElement || null
-
-        // Determine attach element
-        if (props.attachParent)
-            if (typeof props.attachParent === 'string')
-                attachEl = document.querySelector(props.attachParent)
-            else attachEl = props.attachParent
-        else attachEl = placeholderRef.value?.parentElement || null
-
-        if (triggerEl) attachEvents(triggerEl)
-
-        window.addEventListener('resize', updatePosition)
-        window.addEventListener('scroll', updatePosition, true)
+    watch(() => [props.attachParent, props.triggerParent, placeholderRef.value], setup, {
+        flush: 'post'
     })
 
     onUnmounted(() => {
-        if (triggerEl) detachEvents(triggerEl)
-
-        window.removeEventListener('resize', updatePosition)
-        window.removeEventListener('scroll', updatePosition, true)
+        if (hoverTrigger.value) detachEvents(hoverTrigger.value)
     })
 
-    watch(
-        () => props.modelValue,
-        value => {
-            if (value !== null) isVisible.value = value
+    watch(model, value => {
+        if (value) {
+            setTimeout(() => (isVisible.value = true), 1)
+        } else {
+            setTimeout(() => (isVisible.value = false), 250)
         }
-    )
-
-    watch(isVisible, value => {
-        if (value)
-            nextTick(() => {
-                updatePosition()
-            })
     })
 
     const compClasses = computed(() => [
         'nui-tooltip',
-        `nui-tooltip--position-${props.position}`,
+        `nui-tooltip--placement-${placementDirection.value}`,
         `nui-tooltip--size-${props.size}`,
         {
-            'nui-tooltip--visible': isVisible.value
+            'nui-tooltip--visible': model.value && isVisible.value
         }
     ])
 
-    const compStyles = computed(() => {
-        const [offsetX, offsetY] = props.offset
-        const formatOffset = (val: string | number) => (typeof val === 'number' ? `${val}px` : val)
-
-        return {
-            top: `${tooltipTop.value}px`,
-            left: `${tooltipLeft.value}px`,
-            '--tw-translate-x-offset': formatOffset(offsetX),
-            '--tw-translate-y-offset': formatOffset(offsetY)
-        }
-    })
-
     const show = () => {
-        isVisible.value = true
-        emit('update:modelValue', true)
+        model.value = true
     }
 
     const hide = () => {
-        isVisible.value = false
-        emit('update:modelValue', false)
+        model.value = false
     }
     defineExpose({ show, hide })
 </script>
@@ -235,47 +223,33 @@
                 font-normal
                 whitespace-nowrap
                 opacity-0
-                transition duration-200 ease-in-out;
+                transition-[opacity,translate] duration-250 ease-in-out;
 
-            /* Visible */
             &.nui-tooltip--visible {
                 @apply opacity-100;
-            }
-
-            /* Top */
-            &.nui-tooltip--position-top {
-                @apply translate-x-[calc(-50%+var(--tw-translate-x-offset,0px))] translate-y-[calc(var(--tw-translate-y-offset,0px)+10px)];
-
-                &.nui-tooltip--visible {
-                    @apply translate-x-[calc(-50%+var(--tw-translate-x-offset,0px))] translate-y-[var(--tw-translate-y-offset,0px)];
+                /* Top, Bottom */
+                &.nui-tooltip--placement-top,
+                &.nui-tooltip--placement-bottom {
+                    @apply translate-y-0;
+                }
+                /* Left, Right */
+                &.nui-tooltip--placement-left,
+                &.nui-tooltip--placement-right {
+                    @apply translate-x-0;
                 }
             }
 
-            /* Bottom */
-            &.nui-tooltip--position-bottom {
-                @apply translate-x-[calc(-50%+var(--tw-translate-x-offset,0px))] translate-y-[calc(var(--tw-translate-y-offset,0px)-10px)];
-
-                &.nui-tooltip--visible {
-                    @apply translate-x-[calc(-50%+var(--tw-translate-x-offset,0px))] translate-y-[var(--tw-translate-y-offset,0px)];
-                }
+            &.nui-tooltip--placement-top {
+                @apply translate-y-2;
             }
-
-            /* Left */
-            &.nui-tooltip--position-left {
-                @apply translate-x-[calc(var(--tw-translate-x-offset,0px)+10px)] translate-y-[calc(-50%+var(--tw-translate-y-offset,0px))];
-
-                &.nui-tooltip--visible {
-                    @apply translate-x-[var(--tw-translate-x-offset,0px)] translate-y-[calc(-50%+var(--tw-translate-y-offset,0px))];
-                }
+            &.nui-tooltip--placement-bottom {
+                @apply -translate-y-2;
             }
-
-            /* Right */
-            &.nui-tooltip--position-right {
-                @apply translate-x-[calc(var(--tw-translate-x-offset,0px)-10px)] translate-y-[calc(-50%+var(--tw-translate-y-offset,0px))];
-
-                &.nui-tooltip--visible {
-                    @apply translate-x-[var(--tw-translate-x-offset,0px)] translate-y-[calc(-50%+var(--tw-translate-y-offset,0px))];
-                }
+            &.nui-tooltip--placement-left {
+                @apply translate-x-2;
+            }
+            &.nui-tooltip--placement-right {
+                @apply -translate-x-2;
             }
         }
     }

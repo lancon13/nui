@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import NuiTooltip from './NuiTooltip.vue'
 import NuiButton from './NuiButton.vue'
 
-const positions = ['top', 'bottom', 'left', 'right']
+const displayPositions = ['top', 'bottom', 'left', 'right']
 
 const meta = {
     title: 'UI/NuiTooltip',
@@ -15,10 +15,12 @@ const meta = {
     argTypes: {
         text: { control: 'text' },
         html: { control: 'text' },
-        position: {
+        displayPosition: {
             control: 'select',
-            options: positions
+            options: displayPositions
         },
+        autoReposition: { control: 'boolean' },
+        shiftPadding: { control: 'number' },
         modelValue: { control: 'boolean' },
         showDelay: { control: 'number' },
         hideDelay: { control: 'number' },
@@ -28,12 +30,19 @@ const meta = {
             control: 'select',
             options: ['small', 'medium', 'large']
         },
-        triggerParent: { control: false }, // Not controllable via storybook UI
-        attachParent: { control: false } // Not controllable via storybook UI
+        triggerParent: { control: false },
+        attachParent: { control: false }
     },
     args: {
         text: 'This is a tooltip',
-        position: 'bottom'
+        displayPosition: 'bottom',
+        autoReposition: true,
+        shiftPadding: 8,
+        offset: [0, 8],
+        showDelay: 0,
+        hideDelay: 125,
+        persistent: false,
+        size: 'medium'
     }
 } satisfies Meta<typeof NuiTooltip>
 
@@ -57,19 +66,28 @@ export const Default: Story = {
 }
 
 export const Positions: Story = {
-    render: () => ({
+    render: args => ({
         components: { NuiTooltip, NuiButton },
         setup() {
-            return { positions }
+            return { args, displayPositions }
         },
         template: `
-        <div class="grid grid-cols-4 gap-sm">
-            <NuiButton v-for="pos in positions" :key="pos" :label="'Hover for ' + pos">
-                <NuiTooltip :position="pos" text="Tooltip text" />
-            </NuiButton>
-        </div>
-    `
-    })
+            <div class="grid grid-cols-4 gap-sm p-lg">
+                <div v-for="pos in displayPositions" :key="pos" class="flex justify-center">
+                    <NuiButton :label="pos" class="w-24">
+                        <NuiTooltip
+                            v-bind="args"
+                            :text="pos"
+                            :display-position="pos"
+                        />
+                    </NuiButton>
+                </div>
+            </div>
+        `
+    }),
+    args: {
+        text: ''
+    }
 }
 
 export const Controlled: Story = {
@@ -117,7 +135,7 @@ export const RichContent: Story = {
         },
         template: `
         <div>
-            <NuiButton label="Hover for rich content">
+            <NuiButton label="Hover for rich content" />
             <NuiTooltip v-bind="args">
                 <div class="p-2">
                 <h3 class="text-lg font-bold text-bg">Hello World</h3>
