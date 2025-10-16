@@ -1,3 +1,27 @@
+# Instructions for AI / LLM
+
+Before creating a new component, it is crucial to understand the existing project context and conventions.
+
+1.  **Review Project Context:**
+    - Read the files in the `./context` directory, including `project_context.md` and this `component_development_guide.md`.
+
+2.  **Analyze Existing Components:**
+    - List the files in `packages/ui/src/components` to see what components already exist.
+    - Read the source code of a few existing components (e.g., `NuiButton.vue`, `NuiInput.vue`) to understand the coding patterns, prop definitions, and overall structure.
+
+3.  **Understand Styling and CSS Variables:**
+    - Before writing any CSS, read `packages/ui/src/styles/index.css` and `packages/ui/src/styles/components.css` to learn the available CSS variables (theme tokens).
+    - All styles must use these CSS variables with Tailwind CSS's `@apply` directive to ensure consistency with the design system.
+
+4.  **Follow the Development Guide:**
+    - Adhere strictly to the guidelines in this document for file structure, component implementation, styling, and Storybook integration.
+
+5.  **Create Comprehensive Stories:**
+    - For every new component, create a corresponding `.stories.ts` file.
+    - Write multiple stories to demonstrate all features, variants, and states of the component.
+
+---
+
 # Nui Design System: Component Development Guide
 
 This guide provides instructions for creating new primitive UI components for the `@nui/ui` package, ensuring consistency with the existing codebase.

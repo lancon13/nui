@@ -30,6 +30,16 @@
         --nui-card-border-size: var(--border-thin);
         --nui-card-border-color: var(--color-border);
 
+        /* NuiList */
+        --nui-list-background-color: var(--color-surface);
+        --nui-list-radius: var(--radius-container);
+        --nui-list-shadow: var(--drop-shadow-md);
+        --nui-list-border-size: var(--border-thin);
+        --nui-list-border-color: var(--color-border);
+        --nui-list-item-padding-x: var(--spacing-sm);
+        --nui-list-item-padding-y: var(--spacing-xs);
+        --nui-list-virtual-scroll-max-height: calc(var(--spacing-md) * 10);
+
         /* NuiTooltip */
         --nui-tooltip-radius: var(--radius-element);
         --nui-tooltip-padding-x: var(--spacing-sm);
