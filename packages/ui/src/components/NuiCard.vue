@@ -77,7 +77,7 @@
             }
 
             &.nui-card--bordered {
-                @apply border-solid border-[length:var(--nui-card-border-width)] border-[var(--nui-card-border-color)];
+                @apply border-solid border-[length:var(--nui-card-border-size)] border-[var(--nui-card-border-color)];
             }
 
             &.nui-card--clickable {

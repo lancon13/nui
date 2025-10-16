@@ -181,6 +181,26 @@
         --nui-progress-content-font-weight: var(--font-weight-semibold);
         --nui-progress-content-color: var(--color-input-highlight);
         --nui-progress-content-blend-mode: revert;
+
+        /* NuiToast */
+        --nui-toast-z-index: 9999;
+        --nui-toast-group-padding: var(--spacing-sm);
+        --nui-toast-spacing: var(--spacing-sm);
+        --nui-toast-max-width: calc(var(--spacing-md), 10);
+
+        /* NuiBadge */
+        --nui-badge-background-color: var(--color-surface);
+        --nui-badge-text-color: var(--color-text);
+        --nui-badge-border-size: var(--border-thin);
+        --nui-badge-radius: var(--radius-element);
+        --nui-badge-font-size: var(--text-xs);
+        --nui-badge-font-weight: var(--font-weight-semibold);
+        --nui-badge-padding-x: var(--spacing-xs);
+        --nui-badge-padding-y: var(--spacing-xxs);
+        --nui-badge-size: 1.25rem;
+        --nui-badge-dot-size: 0.5rem;
+        --nui-badge-translate-x: 50%;
+        --nui-badge-translate-y: -50%;
     }
 
     /* Focus ring */

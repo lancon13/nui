@@ -162,7 +162,7 @@
 
     @layer components {
         .nui-button {
-            @apply relative box-border inline-flex items-center justify-center shrink truncate
+            @apply relative box-border inline-flex items-center justify-center shrink gap-sm
                 text-center no-underline whitespace-nowrap
                 px-[var(--nui-button-padding-x)] py-[var(--nui-button-padding-y)]
                 rounded-[var(--nui-button-radius)]
@@ -311,10 +311,7 @@
                 @apply shadow-lg;
 
                 &.nui-button--variant-text {
-                    @apply shadow-none;
-                    text-shadow:
-                        0 1px 3px rgb(0 0 0 / 0.1),
-                        0 1px 2px rgb(0 0 0 / 0.2);
+                    @apply shadow-none text-shadow-[var(--nui-button-text-shadow)];
                 }
             }
 
@@ -325,10 +322,6 @@
 
             /* Icons */
             .nui-icon {
-                @apply mr-[var(--spacing-xs)];
-                &:last-of-type {
-                    @apply mr-0 ml-[var(--spacing-xs)];
-                }
                 &.nui-icon--size-small {
                     @apply text-[length:var(--nui-button-font-size-small)] leading-[var(--nui-button-font-size-small)];
                 }

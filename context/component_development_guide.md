@@ -199,7 +199,7 @@ div > .nui-button.primary {
 ## 3. Storybook Integration (`NuiInput.stories.ts`)
 
 - **Meta Configuration:**
-    - Import `Meta` and `StoryObj` from `@storybook/vue3-vite`.
+    - Import `Meta` and `StoryObj` from `@storybook/vue3-vite`. **Note: This project uses Vite, so it is crucial to import from `@storybook/vue3-vite` and not `@storybook/vue3`**.
     - Import the component: `import NuiInput from './NuiInput.vue'`.
     - Define the `meta` object, specifying `title` (e.g., `'UI/NuiInput'`), `component`, `parameters: { layout: 'centered' }`, and `tags: ['autodocs']`.
 - **Controls (`argTypes`):**
