@@ -30,10 +30,9 @@ const meta = {
             control: 'select',
             options: ['small', 'medium', 'large']
         },
-        triggerParent: { control: false },
-        attachParent: { control: false },
-        noHover: { control: 'boolean' },
-        noFocus: { control: 'boolean' }
+        hoverTriggerParent: { control: false },
+        focusTriggerParent: { control: false },
+        attachParent: { control: false }
     },
     args: {
         text: 'This is a tooltip',
@@ -44,9 +43,7 @@ const meta = {
         showDelay: 0,
         hideDelay: 125,
         persistent: false,
-        size: 'medium',
-        noHover: false,
-        noFocus: false
+        size: 'medium'
     }
 } satisfies Meta<typeof NuiTooltip>
 
@@ -69,27 +66,8 @@ export const Default: Story = {
     })
 }
 
-export const DefaultTriggers: Story = {
-    render: args => ({
-        components: { NuiTooltip, NuiButton },
-        setup() {
-            return { args }
-        },
-        template: `
-            <NuiButton>
-                <div>Hover or Focus me</div>
-                <NuiTooltip v-bind="args" />
-            </NuiButton>
-        `
-    }),
-    args: {
-        text: 'This tooltip shows on hover or focus.',
-        noHover: false,
-        noFocus: false
-    }
-}
-
-export const NoHoverNoFocus: Story = {
+export const TriggerControl: Story = {
+    name: 'Trigger Control',
     render: args => ({
         components: { NuiTooltip, NuiButton },
         setup() {
@@ -97,26 +75,27 @@ export const NoHoverNoFocus: Story = {
         },
         template: `
             <div class="flex flex-col gap-y-8">
-                <NuiButton label="Hover/Focus enabled (default)">
-                    <NuiTooltip v-bind="args" text="I show on hover/focus" :no-hover="false" :no-focus="false" />
+                <NuiButton>
+                    <div>Hover/Focus enabled (default)</div>
+                    <NuiTooltip v-bind="args" text="I show on hover/focus" />
                 </NuiButton>
-                <NuiButton label="Hover disabled, Focus enabled">
-                    <NuiTooltip v-bind="args" text="I show on focus, not hover" :no-hover="true" :no-focus="false" />
+                <NuiButton>
+                    <div>Hover disabled, Focus enabled</div>
+                    <NuiTooltip v-bind="args" text="I show on focus, not hover" :hoverTriggerParent="null" />
                 </NuiButton>
-                <NuiButton label="Hover enabled, Focus disabled">
-                    <NuiTooltip v-bind="args" text="I show on hover, not focus" :no-hover="false" :no-focus="true" />
+                <NuiButton>
+                    <div>Hover enabled, Focus disabled</div>
+                    <NuiTooltip v-bind="args" text="I show on hover, not focus" :focusTriggerParent="null" />
                 </NuiButton>
-                <NuiButton label="Hover/Focus disabled">
-                    <NuiTooltip v-bind="args" text="I do NOT show on hover/focus" :no-hover="true" :no-focus="true" />
+                <NuiButton>
+                    <div>Hover/Focus disabled</div>
+                    <NuiTooltip v-bind="args" text="I do NOT show on hover/focus" :hoverTriggerParent="null" :focusTriggerParent="null" />
                 </NuiButton>
             </div>
         `
     }),
     args: {
-        // These args will be overridden by the template
-        text: '',
-        noHover: false,
-        noFocus: false
+        text: ''
     }
 }
 
@@ -161,35 +140,16 @@ export const Controlled: Story = {
             </div>
         </div>
     `
-    })
-}
-
-export const ControlledTriggers: Story = {
-    render: args => ({
-        components: { NuiTooltip, NuiButton },
-        setup() {
-            const show = ref(false)
-            return { args, show }
-        },
-        template: `
-            <div class="flex flex-col gap-sm">
-                <NuiButton label="Toggle Tooltip" @click="show = !show" />
-                <div class="p-sm mt-md border border-dashed border-primary relative text-center">
-                    Attach Point
-                    <NuiTooltip v-bind="args" v-model="show" />
-                </div>
-            </div>
-        `
     }),
     args: {
-        text: 'This tooltip is controlled by the button.',
-        noHover: true,
-        noFocus: true,
-        persistent: false
+        text: 'This tooltip is controlled by v-model.',
+        hoverTriggerParent: null,
+        focusTriggerParent: null
     }
 }
 
 export const CustomOffset: Story = {
+    name: 'Custom Offset',
     args: {
         offset: [20, 20],
         text: 'Offset [20, 20]'
@@ -207,6 +167,7 @@ export const CustomOffset: Story = {
 }
 
 export const RichContent: Story = {
+    name: 'Rich Content',
     args: {},
     render: args => ({
         components: { NuiTooltip, NuiButton },
@@ -228,7 +189,8 @@ export const RichContent: Story = {
     })
 }
 
-export const ExplicitParent: Story = {
+export const ExplicitTrigger: Story = {
+    name: 'Explicit Trigger',
     render: args => ({
         components: { NuiTooltip, NuiButton },
         setup() {
@@ -240,7 +202,35 @@ export const ExplicitParent: Story = {
 
             <div class="p-sm mt-md border border-dashed border-error-200 bg-error-50">
                 The tooltip component is here, but it points to the button above.
-                <NuiTooltip v-bind="args" triggerParent="#my-trigger-button" text="I am attached to the button" />
+                <NuiTooltip v-bind="args" :hoverTriggerParent="'#my-trigger-button'" :focusTriggerParent="'#my-trigger-button'" text="I am attached to the button" />
+            </div>
+        </div>
+    `
+    })
+}
+
+export const SeparateTriggers: Story = {
+    name: 'Separate Triggers',
+    render: args => ({
+        components: { NuiTooltip, NuiButton },
+        setup() {
+            return { args }
+        },
+        template: `
+        <div class="text-center">
+            <div class="flex gap-x-4">
+                <NuiButton label="Hover Trigger" id="my-hover-trigger" />
+                <NuiButton label="Focus Trigger" id="my-focus-trigger" />
+            </div>
+
+            <div class="p-sm mt-md border border-dashed border-error-200 bg-error-50">
+                The tooltip component is here.
+                <NuiTooltip
+                    v-bind="args"
+                    text="Hover one button, focus the other"
+                    :hoverTriggerParent="'#my-hover-trigger'"
+                    :focusTriggerParent="'#my-focus-trigger'"
+                />
             </div>
         </div>
     `
@@ -248,6 +238,7 @@ export const ExplicitParent: Story = {
 }
 
 export const SeparateTriggerAndAttach: Story = {
+    name: 'Separate Trigger & Attach',
     render: args => ({
         components: { NuiTooltip, NuiButton },
         setup() {
@@ -263,7 +254,7 @@ export const SeparateTriggerAndAttach: Story = {
 
                 <div class="p-sm mt-md border border-dashed border-error-200 bg-error-50">
                     The tooltip component is here, but it is triggered by the button and attached to the blue box.
-                    <NuiTooltip v-bind="args" triggerParent="#my-trigger-button-2" attachParent="#my-attach-point" text="Triggered by button, attached to blue box" />
+                    <NuiTooltip v-bind="args" :hoverTriggerParent="'#my-trigger-button-2'" :focusTriggerParent="'#my-trigger-button-2'" attachParent="#my-attach-point" text="Triggered by button, attached to blue box" />
                 </div>
             </div>
     `
@@ -337,6 +328,7 @@ export const Focusable: Story = {
 }
 
 export const ExposedMethods: Story = {
+    name: 'Exposed Methods',
     render: args => ({
         components: { NuiTooltip, NuiButton },
         setup() {

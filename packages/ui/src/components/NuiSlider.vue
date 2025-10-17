@@ -1,55 +1,17 @@
 <template>
-    <div :class="wrapperClasses">
+    <div
+        ref="wrapperRef"
+        :class="wrapperClasses"
+        @mouseenter="handleSliderMouseEnter"
+        @mouseout="handlerSliderMouseOut"
+    >
         <label v-if="props.label" :for="inputId" class="nui-slider-label">{{ props.label }}</label>
         <label
-            ref="sliderElement"
+            ref="sliderRef"
             :for="inputId"
             class="nui-slider-host"
-            @mousedown="handleSliderClick"
+            @mousedown.stop="handleSliderMouseDown"
         >
-            <template v-if="isRange && Array.isArray(model)">
-                <input
-                    :id="inputId + '-min'"
-                    type="range"
-                    class="nui-slider-input"
-                    :min="props.min"
-                    :max="model[1]"
-                    :step="props.step"
-                    :value="model[0]"
-                    aria-label="Minimum value"
-                    @input="model = [Number(($event.target as HTMLInputElement).value), model[1]]"
-                    @focus="activeThumb = 'min'"
-                    @blur="activeThumb = null"
-                />
-                <input
-                    :id="inputId + '-max'"
-                    type="range"
-                    class="nui-slider-input"
-                    :min="model[0]"
-                    :max="props.max"
-                    :step="props.step"
-                    :value="model[1]"
-                    aria-label="Maximum value"
-                    @input="model = [model[0], Number(($event.target as HTMLInputElement).value)]"
-                    @focus="activeThumb = 'max'"
-                    @blur="activeThumb = null"
-                />
-            </template>
-            <template v-else>
-                <input
-                    :id="inputId"
-                    type="range"
-                    class="nui-slider-input"
-                    :min="props.min"
-                    :max="props.max"
-                    :step="props.step"
-                    :value="model as number"
-                    aria-label="Value"
-                    @input="model = Number(($event.target as HTMLInputElement).value)"
-                    @focus="activeThumb = 'min'"
-                    @blur="activeThumb = null"
-                />
-            </template>
             <div class="nui-slider-track">
                 <div v-if="props.markers" class="nui-slider-markers">
                     <span
@@ -59,15 +21,52 @@
                         :style="{ left: `${marker}%` }"
                     ></span>
                 </div>
+                <!-- Selection -->
                 <div class="nui-slider-selection" :style="selectionStyle"></div>
-                <div
+                <!-- Min Thumb -->
+                <label
                     ref="thumbMinRef"
+                    :for="inputId + (isRange ? '-min' : '')"
                     class="nui-slider-thumb"
-                    :class="{ 'nui-slider-thumb--focused': activeThumb === 'min' }"
                     :style="{ left: `${thumbMinPosition}%` }"
                     @mousedown.stop="handleThumbMouseDown('min')"
                 >
-                    <nui-tooltip v-if="props.tooltipVisibility !== false" v-bind="mergedTooltipPropsMin">
+                    <input
+                        v-if="isRange && Array.isArray(model)"
+                        :id="inputId + '-min'"
+                        ref="inputRangeMinRef"
+                        type="range"
+                        class="nui-slider-input"
+                        :min="props.min"
+                        :max="model[1]"
+                        :step="props.step"
+                        :value="model[0]"
+                        aria-label="Minimum value"
+                        @input="
+                            model = [Number(($event.target as HTMLInputElement).value), model[1]]
+                        "
+                        @focus="() => (isThumbFocusing = true)"
+                        @blur="() => (isThumbFocusing = false)"
+                    />
+                    <input
+                        v-else
+                        :id="inputId"
+                        ref="inputRangeRef"
+                        type="range"
+                        class="nui-slider-input"
+                        :min="props.min"
+                        :max="props.max"
+                        :step="props.step"
+                        :value="model as number"
+                        aria-label="Value"
+                        @input="model = Number(($event.target as HTMLInputElement).value)"
+                        @focus="() => (isThumbFocusing = true)"
+                        @blur="() => (isThumbFocusing = false)"
+                    />
+                    <nui-tooltip
+                        v-if="props.tooltipVisibility !== false"
+                        v-bind="mergedTooltipPropsMin"
+                    >
                         <slot
                             v-if="$slots['tooltip-content']"
                             name="tooltip-content"
@@ -75,17 +74,37 @@
                             thumb="min"
                         />
                     </nui-tooltip>
-                </div>
+                </label>
                 <!-- Max Thumb -->
-                <div
+                <label
                     v-if="isRange"
                     ref="thumbMaxRef"
+                    :for="inputId + '-max'"
                     class="nui-slider-thumb"
-                    :class="{ 'nui-slider-thumb--focused': activeThumb === 'max' }"
                     :style="{ left: `${thumbMaxPosition}%` }"
                     @mousedown.stop="handleThumbMouseDown('max')"
                 >
-                    <nui-tooltip v-if="props.tooltipVisibility !== false" v-bind="mergedTooltipPropsMax">
+                    <input
+                        v-if="isRange && Array.isArray(model)"
+                        :id="inputId + '-max'"
+                        ref="inputRangeMaxRef"
+                        type="range"
+                        class="nui-slider-input"
+                        :min="model[0]"
+                        :max="props.max"
+                        :step="props.step"
+                        :value="model[1]"
+                        aria-label="Maximum value"
+                        @input="
+                            model = [model[0], Number(($event.target as HTMLInputElement).value)]
+                        "
+                        @focus="() => (isThumbFocusing = true)"
+                        @blur="() => (isThumbFocusing = false)"
+                    />
+                    <nui-tooltip
+                        v-if="props.tooltipVisibility !== false"
+                        v-bind="mergedTooltipPropsMax"
+                    >
                         <slot
                             v-if="$slots['tooltip-content']"
                             name="tooltip-content"
@@ -93,7 +112,7 @@
                             thumb="max"
                         />
                     </nui-tooltip>
-                </div>
+                </label>
             </div>
         </label>
         <span v-if="props.helperText" class="nui-slider-helper">{{ props.helperText }}</span>
@@ -152,12 +171,18 @@
     )
 
     const isRange = computed(() => Array.isArray(model.value))
+    const isTooltipVisible = computed(() => isWrapperHovering.value || isThumbFocusing.value)
 
-    const sliderElement = ref<HTMLElement | null>(null)
+    const inputRangeRef = ref<HTMLElement | null>(null)
+    const inputRangeMinRef = ref<HTMLElement | null>(null)
+    const inputRangeMaxRef = ref<HTMLElement | null>(null)
+    const wrapperRef = ref<HTMLElement | null>(null)
+    const sliderRef = ref<HTMLElement | null>(null)
     const thumbMinRef = ref<HTMLElement | null>(null)
     const thumbMaxRef = ref<HTMLElement | null>(null)
-    const slidingThumb = ref<'min' | 'max' | null>(null)
-    const activeThumb = ref<'min' | 'max' | null>(null)
+    const isWrapperHovering = ref(false)
+    const isThumbDragging = ref(false)
+    const isThumbFocusing = ref(false)
 
     const valueToPercentage = (val: number) => {
         const range = props.max - props.min
@@ -171,40 +196,36 @@
     const minVal = computed(() =>
         isRange.value ? (model.value as number[])[0] : (model.value as number)
     )
-
     const maxVal = computed(() =>
         isRange.value && Array.isArray(model.value) ? model.value[1] : 0
     )
 
-    const mergedTooltipPropsMin = computed<NuiTooltipProps>(() => {
-        return {
-            text: `${minVal.value}`,
-            displayPosition: 'top',
-            noHover: props.tooltipVisibility === false,
-            noFocus: props.tooltipVisibility === false,
-            persistent: props.tooltipVisibility === true,
-            modelValue: activeThumb.value === 'min' || props.tooltipVisibility === true,
-            ...props.tooltipProps
-        }
-    })
+    const mergedTooltipPropsMin = computed<NuiTooltipProps>(() => ({
+        text: `${minVal.value}`,
+        displayPosition: 'top',
+        hoverTriggerParent: null,
+        focusTriggerParent: null,
+        modelValue:
+            props.tooltipVisibility === true ||
+            (props.tooltipVisibility !== false && isTooltipVisible.value),
+        ...props.tooltipProps
+    }))
 
-    const mergedTooltipPropsMax = computed<NuiTooltipProps>(() => {
-        return {
-            text: `${maxVal.value}`,
-            displayPosition: 'top',
-            noHover: props.tooltipVisibility === false,
-            noFocus: props.tooltipVisibility === false,
-            persistent: props.tooltipVisibility === true,
-            modelValue: activeThumb.value === 'max' || props.tooltipVisibility === true,
-            ...props.tooltipProps
-        }
-    })
+    const mergedTooltipPropsMax = computed<NuiTooltipProps>(() => ({
+        text: `${maxVal.value}`,
+        displayPosition: 'top',
+        hoverTriggerParent: null,
+        focusTriggerParent: null,
+        modelValue:
+            props.tooltipVisibility === true ||
+            (props.tooltipVisibility !== false && isTooltipVisible.value),
+        ...props.tooltipProps
+    }))
 
     const thumbMinPosition = computed(() => {
         const val = isRange.value ? (model.value as number[])[0] : (model.value as number)
         return valueToPercentage(val)
     })
-
     const thumbMaxPosition = computed(() => {
         if (!isRange.value || !Array.isArray(model.value)) return 0
         return valueToPercentage(model.value[1])
@@ -238,9 +259,9 @@
     })
 
     const updateValueFromPosition = (x: number, thumb: 'min' | 'max' | 'auto' = 'auto') => {
-        if (!sliderElement.value || props.disabled) return
+        if (!sliderRef.value || props.disabled) return model.value
 
-        const { left, width } = sliderElement.value.getBoundingClientRect()
+        const { left, width } = sliderRef.value.getBoundingClientRect()
         const percentage = Math.max(0, Math.min(1, (x - left) / width))
         const range = props.max - props.min
         let newValue = props.min + percentage * range
@@ -260,36 +281,83 @@
             }
 
             if (thumbToMove === 'min') {
-                model.value = [Math.min(newValue, model.value[1]), model.value[1]]
+                // If min thumb is dragged past max thumb, push max thumb
+                if (newValue > model.value[1]) {
+                    return [newValue, newValue]
+                }
+                return [newValue, model.value[1]]
             } else {
                 // 'max'
-                model.value = [model.value[0], Math.max(newValue, model.value[0])]
+                // If max thumb is dragged past min thumb, push min thumb
+                if (newValue < model.value[0]) {
+                    return [newValue, newValue]
+                }
+                return [model.value[0], newValue]
             }
         } else {
-            model.value = newValue
+            return newValue
         }
     }
 
-    const handleSliderClick = (event: MouseEvent) => {
-        updateValueFromPosition(event.clientX, 'auto')
+    const handleSliderMouseEnter = () => {
+        isWrapperHovering.value = true
     }
-
-    const handleThumbMouseDown = (thumb: 'min' | 'max') => {
+    const handlerSliderMouseOut = (event: MouseEvent) => {
+        const relatedTarget = event.relatedTarget as HTMLElement | null
+        if (!wrapperRef.value?.contains(relatedTarget)) {
+            isWrapperHovering.value = false
+        }
+    }
+    const handleSliderMouseDown = (event: MouseEvent) => {
         if (props.disabled) return
-        slidingThumb.value = thumb
 
-        const onMouseMove = (event: MouseEvent) => {
-            updateValueFromPosition(event.clientX, thumb)
+        // For range sliders, determine which thumb is closer to the click point
+        // and lock it for the duration of the drag.
+        let thumbToMove: 'min' | 'max' | 'auto' = 'auto'
+        if (isRange.value && Array.isArray(model.value)) {
+            const { left, width } = sliderRef.value!.getBoundingClientRect()
+            const percentage = Math.max(0, Math.min(1, (event.clientX - left) / width))
+            const clickedValue = props.min + percentage * (props.max - props.min)
+
+            const distToMin = Math.abs(clickedValue - model.value[0])
+            const distToMax = Math.abs(clickedValue - model.value[1])
+            thumbToMove = distToMin <= distToMax ? 'min' : 'max'
+        }
+
+        model.value = updateValueFromPosition(event.clientX, thumbToMove)
+
+        const onMouseMove = (moveEvent: MouseEvent) => {
+            // For subsequent moves, continue moving the same thumb.
+            model.value = updateValueFromPosition(moveEvent.clientX, thumbToMove)
         }
 
         const onMouseUp = () => {
-            slidingThumb.value = null
+            isThumbDragging.value = false
             document.removeEventListener('mousemove', onMouseMove)
             document.removeEventListener('mouseup', onMouseUp)
         }
 
         document.addEventListener('mousemove', onMouseMove)
         document.addEventListener('mouseup', onMouseUp)
+        isThumbDragging.value = true
+    }
+
+    const handleThumbMouseDown = (thumb: 'min' | 'max') => {
+        if (props.disabled) return
+
+        const onMouseMove = (event: MouseEvent) => {
+            model.value = updateValueFromPosition(event.clientX, thumb)
+        }
+
+        const onMouseUp = () => {
+            document.removeEventListener('mousemove', onMouseMove)
+            document.removeEventListener('mouseup', onMouseUp)
+            isThumbDragging.value = false
+        }
+
+        document.addEventListener('mousemove', onMouseMove)
+        document.addEventListener('mouseup', onMouseUp)
+        isThumbDragging.value = true
     }
 
     const wrapperClasses = computed(() => [
@@ -299,7 +367,9 @@
         {
             'nui-slider-wrapper--disabled': props.disabled,
             'nui-slider-wrapper--thumb-shadow': props.thumbShadow,
-            'nui-slider-wrapper--track-shadow': props.trackShadow
+            'nui-slider-wrapper--track-shadow': props.trackShadow,
+            'nui-slider-wrapper--thumb-dragging': isThumbDragging.value,
+            'nui-slider-wrapper--tooltip-visible': isTooltipVisible.value
         }
     ])
 </script>
@@ -325,11 +395,7 @@
             }
 
             .nui-slider-input {
-                @apply sr-only;
-            }
-
-            .nui-slider-thumb.nui-slider-thumb--focused {
-                @apply ring-2 ring-offset-2 ring-offset-bg ring-fg/50;
+                @apply sr-only size-[var(--nui-slider-thumb-size)];
             }
 
             .nui-slider-track {
@@ -352,12 +418,13 @@
             .nui-slider-thumb {
                 @apply absolute top-1/2 -translate-y-1/2 -translate-x-1/2
                 size-[var(--nui-slider-thumb-size)] rounded-[var(--nui-slider-thumb-radius)]
-                bg-[var(--nui-slider-thumb-background-color)] shadow-[var(--nui-slider-thumb-shadow)]
-                transition-shadow z-10;
+                bg-[var(--nui-slider-thumb-background-color)]
+                z-10
+                transition-[left] duration-250 ease-in-out
+                cursor-pointer;
 
-                &:focus,
-                &:hover {
-                    @apply shadow-[var(--nui-slider-thumb-shadow-focus)];
+                &:focus-within {
+                    @apply ring-2 ring-offset-2 ring-offset-bg ring-current/50;
                 }
             }
 
@@ -370,15 +437,23 @@
 
             &.nui-slider-wrapper--track-shadow {
                 .nui-slider-track {
-                    @apply shadow-lg;
+                    @apply shadow-[var(--nui-slider-track-shadow-focus)];
                 }
             }
             &.nui-slider-wrapper--thumb-shadow {
                 .nui-slider-thumb {
-                    @apply shadow-lg;
+                    @apply shadow-[var(--nui-slider-thumb-shadow-focus)];
                 }
             }
 
+            &.nui-slider-wrapper--thumb-dragging {
+                .nui-slider-thumb {
+                    @apply ring-2 ring-offset-2 ring-offset-bg ring-current/50
+                    transition-none;
+                }
+            }
+
+            /* Sizes */
             &.nui-slider-wrapper--size-small {
                 --nui-slider-track-height: var(--nui-slider-size-small-track-height);
                 --nui-slider-thumb-size: var(--nui-slider-size-small-thumb-size);
@@ -392,10 +467,19 @@
                 --nui-slider-thumb-size: var(--nui-slider-size-large-thumb-size);
             }
 
+            /* Colors */
             &.nui-slider-wrapper--color-primary {
                 .nui-slider-selection,
                 .nui-slider-thumb {
                     @apply bg-primary;
+                }
+                .nui-slider-thumb:focus-within {
+                    @apply ring-primary/50;
+                }
+                &.nui-slider-wrapper--thumb-dragging {
+                    .nui-slider-thumb {
+                        @apply ring-primary/50;
+                    }
                 }
             }
             &.nui-slider-wrapper--color-success {
@@ -403,11 +487,27 @@
                 .nui-slider-thumb {
                     @apply bg-success;
                 }
+                .nui-slider-thumb:focus-within {
+                    @apply ring-success/50;
+                }
+                &.nui-slider-wrapper--thumb-dragging {
+                    .nui-slider-thumb {
+                        @apply ring-success/50;
+                    }
+                }
             }
             &.nui-slider-wrapper--color-error {
                 .nui-slider-selection,
                 .nui-slider-thumb {
                     @apply bg-error;
+                }
+                .nui-slider-thumb:focus-within {
+                    @apply ring-error/50;
+                }
+                &.nui-slider-wrapper--thumb-dragging {
+                    .nui-slider-thumb {
+                        @apply ring-error/50;
+                    }
                 }
             }
             &.nui-slider-wrapper--color-warning {
@@ -415,11 +515,27 @@
                 .nui-slider-thumb {
                     @apply bg-warning;
                 }
+                .nui-slider-thumb:focus-within {
+                    @apply ring-warning/50;
+                }
+                &.nui-slider-wrapper--thumb-dragging {
+                    .nui-slider-thumb {
+                        @apply ring-warning/50;
+                    }
+                }
             }
             &.nui-slider-wrapper--color-info {
                 .nui-slider-selection,
                 .nui-slider-thumb {
                     @apply bg-info;
+                }
+                .nui-slider-thumb:focus-within {
+                    @apply ring-info/50;
+                }
+                &.nui-slider-wrapper--thumb-dragging {
+                    .nui-slider-thumb {
+                        @apply ring-info/50;
+                    }
                 }
             }
             &.nui-slider-wrapper--color-current {
@@ -427,24 +543,6 @@
                 .nui-slider-thumb {
                     @apply bg-current;
                 }
-            }
-        }
-
-        .nui-slider-host:has(.nui-slider-input:focus) .nui-slider-thumb {
-            .nui-slider-wrapper--color-primary & {
-                @apply ring-primary/50;
-            }
-            .nui-slider-wrapper--color-success & {
-                @apply ring-success/50;
-            }
-            .nui-slider-wrapper--color-error & {
-                @apply ring-error/50;
-            }
-            .nui-slider-wrapper--color-warning & {
-                @apply ring-warning/50;
-            }
-            .nui-slider-wrapper--color-info & {
-                @apply ring-info/50;
             }
         }
     }

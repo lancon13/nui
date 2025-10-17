@@ -45,10 +45,9 @@ const meta = {
         markers: false,
         color: 'current',
         disabled: false,
-        thumbShadow: false,
+        thumbShadow: true,
         trackShadow: false,
-        alwaysTooltip: undefined,
-        noTooltip: false
+        tooltipVisibility: undefined
     }
 } satisfies Meta<typeof NuiSlider>
 
@@ -69,6 +68,7 @@ export const Default: Story = {
         template: `
             <div class="w-64">
                 <NuiSlider v-bind="args" v-model="model" />
+                <p class="mt-4 text-center">Value: {{ model }}</p>
             </div>
         `
     })
@@ -78,7 +78,7 @@ export const Range: Story = {
     args: {
         modelValue: [25, 75],
         label: 'Range Slider',
-        helperText: 'Select a range of values',
+        helperText: 'Select a range of values'
     },
     render: args => ({
         components: { NuiSlider },
@@ -90,22 +90,6 @@ export const Range: Story = {
             <div class="w-64">
                 <NuiSlider v-bind="args" v-model="model" />
                 <p class="mt-4 text-center">Value: [{{ model[0] }}, {{ model[1] }}]</p>
-            </div>
-        `
-    })
-}
-
-export const Interactive: Story = {
-    render: args => ({
-        components: { NuiSlider },
-        setup() {
-            const model = ref(args.modelValue)
-            return { args, model }
-        },
-        template: `
-            <div class="w-64">
-                <NuiSlider v-bind="args" v-model="model" />
-                <p class="mt-4 text-center">Value: {{ model }}</p>
             </div>
         `
     })
@@ -139,15 +123,13 @@ export const TooltipVisibility: Story = {
             const model1 = ref(25)
             const model2 = ref(50)
             const model3 = ref(75)
-            const model4 = ref(100)
-            return { args, model1, model2, model3, model4 }
+            return { args, model1, model2, model3 }
         },
         template: `
             <div class="w-64 flex flex-col gap-y-8">
                 <NuiSlider v-bind="args" label="Default Tooltip (hover/focus)" v-model="model1" />
                 <NuiSlider v-bind="args" label="Always Show Tooltip" :tooltip-visibility="true" v-model="model2" />
                 <NuiSlider v-bind="args" label="Always Hide Tooltip" :tooltip-visibility="false" v-model="model3" />
-                <NuiSlider v-bind="args" label="No Tooltip (prop)" :tooltip-visibility="false" v-model="model4" />
             </div>
         `
     })
