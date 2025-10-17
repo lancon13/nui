@@ -7,10 +7,10 @@
             role="tooltip"
             :class="compClasses"
             :style="floatingStyles"
-            @mouseenter="cancelHide"
-            @mouseleave="startHide"
-            @focusin="handleFocusIn"
-            @focusout="handleFocusOut($event)"
+            @mouseenter="handleTooltipHoverIn"
+            @mouseleave="handleTooltipHoverOut"
+            @focusin="handleTooltipFocusIn"
+            @focusout="handleTooltipFocusOut"
         >
             <slot>
                 <div v-if="html" v-html="html" />
@@ -62,6 +62,7 @@
 
     const model = defineModel<boolean>({ default: false })
     const isVisible = ref(false)
+    const isFocusing = ref(false)
 
     const placeholderRef = ref<HTMLElement | null>(null)
     const contentRef = ref<HTMLElement | null>(null)
@@ -126,31 +127,55 @@
         if (hideTimeoutId) clearTimeout(hideTimeoutId)
     }
 
-    const handleFocusIn = () => {
+    const handleTooltipHoverIn = () => {
         cancelHide()
     }
-
-    const handleFocusOut = (event: FocusEvent) => {
+    const handleTooltipHoverOut = () => {
+        if (!isFocusing.value) startHide()
+    }
+    const handleTooltipFocusIn = () => {
+        isFocusing.value = true
+        startShow()
+    }
+    const handleTooltipFocusOut = (event: FocusEvent) => {
         const relatedTarget = event.relatedTarget as HTMLElement | null
-        if (!contentRef.value?.contains(relatedTarget)) startHide()
+        if (!contentRef.value?.contains(relatedTarget)) {
+            isFocusing.value = false
+            startHide()
+        }
+    }
+
+    const handleParentFocusIn = function () {
+        isFocusing.value = true
+        startShow()
+    }
+    const handleParentFocusOut = function () {
+        isFocusing.value = false
+        startHide()
+    }
+    const handleParentHoverIn = function () {
+        if (!isFocusing.value) startShow()
+    }
+    const handleParentHoverOut = function () {
+        if (!isFocusing.value) startHide()
     }
 
     const attachEvents = (element: HTMLElement) => {
         if (!props.noHover) {
-            element.addEventListener('mouseenter', startShow)
-            element.addEventListener('mouseleave', startHide)
+            element.addEventListener('mouseenter', handleParentHoverIn)
+            element.addEventListener('mouseleave', handleParentHoverOut)
         }
         if (!props.noFocus) {
-            element.addEventListener('focus', startShow)
-            element.addEventListener('blur', startHide)
+            element.addEventListener('focus', handleParentFocusIn)
+            element.addEventListener('blur', handleParentFocusOut)
         }
     }
 
     const detachEvents = (element: HTMLElement) => {
-        element.removeEventListener('mouseenter', startShow)
-        element.removeEventListener('mouseleave', startHide)
-        element.removeEventListener('focus', startShow)
-        element.removeEventListener('blur', startHide)
+        element.removeEventListener('mouseenter', handleParentHoverIn)
+        element.removeEventListener('mouseleave', handleParentHoverOut)
+        element.removeEventListener('focus', handleParentFocusIn)
+        element.removeEventListener('blur', handleParentFocusOut)
     }
 
     const setup = () => {

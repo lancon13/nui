@@ -85,7 +85,7 @@ export const DefaultTriggers: Story = {
     args: {
         text: 'This tooltip shows on hover or focus.',
         noHover: false,
-        noFocus: false,
+        noFocus: false
     }
 }
 
@@ -116,7 +116,7 @@ export const NoHoverNoFocus: Story = {
         // These args will be overridden by the template
         text: '',
         noHover: false,
-        noFocus: false,
+        noFocus: false
     }
 }
 
@@ -185,7 +185,7 @@ export const ControlledTriggers: Story = {
         text: 'This tooltip is controlled by the button.',
         noHover: true,
         noFocus: true,
-        persistent: false,
+        persistent: false
     }
 }
 
@@ -215,13 +215,14 @@ export const RichContent: Story = {
         },
         template: `
         <div>
-            <NuiButton label="Hover for rich content" />
-            <NuiTooltip v-bind="args">
-                <div class="p-2">
-                <h3 class="text-lg font-bold text-bg">Hello World</h3>
-                <p class="text-bg/80">This is some rich content.</p>
-                </div>
-            </NuiTooltip>
+            <NuiButton label="Hover for rich content" >
+                <NuiTooltip v-bind="args">
+                    <div class="p-2">
+                    <h3 class="text-lg font-bold text-bg">Hello World</h3>
+                    <p class="text-bg/80">This is some rich content.</p>
+                    </div>
+                </NuiTooltip>
+            </NuiButton>
         </div>
     `
     })
