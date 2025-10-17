@@ -16,7 +16,7 @@
                 </div>
                 <input
                     :id="inputId"
-                    v-model="model"
+                    :value="model"
                     :name="props.name"
                     :type="props.type"
                     :placeholder="props.placeholder"

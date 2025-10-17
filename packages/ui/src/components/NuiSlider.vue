@@ -6,22 +6,50 @@
             :for="inputId"
             class="nui-slider-host"
             @mousedown="handleSliderClick"
-            @mouseenter="handleHostEnter"
-            @mouseleave="handleHostLeave"
         >
-            <input
-                :id="inputId"
-                type="range"
-                :min="props.min"
-                :max="props.max"
-                :step="props.step"
-                :value="model"
-                class="nui-slider-input"
-                v-bind="$attrs"
-                @input="model = Number(($event.target as HTMLInputElement).value)"
-                @focus="handleFocus"
-                @blur="handleBlur"
-            />
+            <template v-if="isRange && Array.isArray(model)">
+                <input
+                    :id="inputId + '-min'"
+                    type="range"
+                    class="nui-slider-input"
+                    :min="props.min"
+                    :max="model[1]"
+                    :step="props.step"
+                    :value="model[0]"
+                    aria-label="Minimum value"
+                    @input="model = [Number(($event.target as HTMLInputElement).value), model[1]]"
+                    @focus="activeThumb = 'min'"
+                    @blur="activeThumb = null"
+                />
+                <input
+                    :id="inputId + '-max'"
+                    type="range"
+                    class="nui-slider-input"
+                    :min="model[0]"
+                    :max="props.max"
+                    :step="props.step"
+                    :value="model[1]"
+                    aria-label="Maximum value"
+                    @input="model = [model[0], Number(($event.target as HTMLInputElement).value)]"
+                    @focus="activeThumb = 'max'"
+                    @blur="activeThumb = null"
+                />
+            </template>
+            <template v-else>
+                <input
+                    :id="inputId"
+                    type="range"
+                    class="nui-slider-input"
+                    :min="props.min"
+                    :max="props.max"
+                    :step="props.step"
+                    :value="model as number"
+                    aria-label="Value"
+                    @input="model = Number(($event.target as HTMLInputElement).value)"
+                    @focus="activeThumb = 'min'"
+                    @blur="activeThumb = null"
+                />
+            </template>
             <div class="nui-slider-track">
                 <div v-if="props.markers" class="nui-slider-markers">
                     <span
@@ -31,22 +59,38 @@
                         :style="{ left: `${marker}%` }"
                     ></span>
                 </div>
-                <div class="nui-slider-selection" :style="{ width: `${selectionWidth}%` }"></div>
+                <div class="nui-slider-selection" :style="selectionStyle"></div>
                 <div
-                    ref="thumbElement"
+                    ref="thumbMinRef"
                     class="nui-slider-thumb"
-                    :style="{ left: `${selectionWidth}%` }"
-                    @mousedown.stop="handleThumbMouseDown"
+                    :class="{ 'nui-slider-thumb--focused': activeThumb === 'min' }"
+                    :style="{ left: `${thumbMinPosition}%` }"
+                    @mousedown.stop="handleThumbMouseDown('min')"
                 >
-                    <nui-tooltip
-                        v-if="!props.noTooltip"
-                        v-model="showTooltip"
-                        v-bind="mergedTooltipProps"
-                    >
+                    <nui-tooltip v-if="props.tooltipVisibility !== false" v-bind="mergedTooltipPropsMin">
                         <slot
                             v-if="$slots['tooltip-content']"
                             name="tooltip-content"
-                            :value="model"
+                            :value="minVal"
+                            thumb="min"
+                        />
+                    </nui-tooltip>
+                </div>
+                <!-- Max Thumb -->
+                <div
+                    v-if="isRange"
+                    ref="thumbMaxRef"
+                    class="nui-slider-thumb"
+                    :class="{ 'nui-slider-thumb--focused': activeThumb === 'max' }"
+                    :style="{ left: `${thumbMaxPosition}%` }"
+                    @mousedown.stop="handleThumbMouseDown('max')"
+                >
+                    <nui-tooltip v-if="props.tooltipVisibility !== false" v-bind="mergedTooltipPropsMax">
+                        <slot
+                            v-if="$slots['tooltip-content']"
+                            name="tooltip-content"
+                            :value="maxVal"
+                            thumb="max"
                         />
                     </nui-tooltip>
                 </div>
@@ -57,7 +101,7 @@
 </template>
 
 <script setup lang="ts">
-    import { computed, ref, useAttrs, watch } from 'vue'
+    import { computed, ref, useAttrs } from 'vue'
     import NuiTooltip, { type NuiTooltipProps } from './NuiTooltip.vue'
 
     defineOptions({
@@ -68,7 +112,7 @@
     export type NuiSliderSize = 'small' | 'medium' | 'large'
 
     export interface NuiSliderProps {
-        modelValue?: number
+        modelValue?: number | number[]
         min?: number
         max?: number
         step?: number
@@ -80,8 +124,7 @@
         markers?: boolean
         thumbShadow?: boolean
         trackShadow?: boolean
-        persistTooltip?: boolean
-        noTooltip?: boolean
+        tooltipVisibility?: boolean
         tooltipProps?: NuiTooltipProps
     }
 
@@ -98,54 +141,86 @@
         markers: false,
         thumbShadow: true,
         trackShadow: false,
-        persistTooltip: false,
-        noTooltip: false,
+        tooltipVisibility: undefined,
         tooltipProps: undefined
     })
 
-    const model = defineModel<number>()
+    const model = defineModel<number | number[]>()
     const attrs = useAttrs()
     const inputId = computed(
         () => (attrs.id as string) || `nui-slider-${Math.random().toString(36).slice(2)}`
     )
 
+    const isRange = computed(() => Array.isArray(model.value))
+
     const sliderElement = ref<HTMLElement | null>(null)
-    const thumbElement = ref<HTMLElement | null>(null)
-    const isSliding = ref(false)
-    const showTooltip = ref(false)
-    const isFocused = ref(false)
-    const isHovered = ref(false)
+    const thumbMinRef = ref<HTMLElement | null>(null)
+    const thumbMaxRef = ref<HTMLElement | null>(null)
+    const slidingThumb = ref<'min' | 'max' | null>(null)
+    const activeThumb = ref<'min' | 'max' | null>(null)
 
-    watch(
-        [isFocused, isHovered, isSliding, () => props.persistTooltip],
-        ([focus, hover, sliding, persist]) => {
-            if (persist) {
-                showTooltip.value = true
-                return
-            }
+    const valueToPercentage = (val: number) => {
+        const range = props.max - props.min
+        if (range === 0) {
+            return 0
+        }
+        const clampedVal = Math.max(props.min, Math.min(val, props.max))
+        return ((clampedVal - props.min) / range) * 100
+    }
 
-            if (focus || hover || sliding) {
-                showTooltip.value = true
-            } else {
-                showTooltip.value = false
-            }
-        },
-        { immediate: true }
+    const minVal = computed(() =>
+        isRange.value ? (model.value as number[])[0] : (model.value as number)
     )
 
-    const mergedTooltipProps = computed<NuiTooltipProps>(() => {
+    const maxVal = computed(() =>
+        isRange.value && Array.isArray(model.value) ? model.value[1] : 0
+    )
+
+    const mergedTooltipPropsMin = computed<NuiTooltipProps>(() => {
         return {
-            text: `${model.value}`,
+            text: `${minVal.value}`,
             displayPosition: 'top',
-            persistent: props.persistTooltip,
+            noHover: props.tooltipVisibility === false,
+            noFocus: props.tooltipVisibility === false,
+            persistent: props.tooltipVisibility === true,
+            modelValue: activeThumb.value === 'min' || props.tooltipVisibility === true,
             ...props.tooltipProps
         }
     })
 
-    const selectionWidth = computed(() => {
-        const range = props.max - props.min
-        if (range === 0) return 0
-        return (((model.value ?? props.min) - props.min) / range) * 100
+    const mergedTooltipPropsMax = computed<NuiTooltipProps>(() => {
+        return {
+            text: `${maxVal.value}`,
+            displayPosition: 'top',
+            noHover: props.tooltipVisibility === false,
+            noFocus: props.tooltipVisibility === false,
+            persistent: props.tooltipVisibility === true,
+            modelValue: activeThumb.value === 'max' || props.tooltipVisibility === true,
+            ...props.tooltipProps
+        }
+    })
+
+    const thumbMinPosition = computed(() => {
+        const val = isRange.value ? (model.value as number[])[0] : (model.value as number)
+        return valueToPercentage(val)
+    })
+
+    const thumbMaxPosition = computed(() => {
+        if (!isRange.value || !Array.isArray(model.value)) return 0
+        return valueToPercentage(model.value[1])
+    })
+
+    const selectionStyle = computed(() => {
+        if (isRange.value && Array.isArray(model.value)) {
+            return {
+                left: `${thumbMinPosition.value}%`,
+                width: `${thumbMaxPosition.value - thumbMinPosition.value}%`
+            }
+        }
+        return {
+            left: '0%',
+            width: `${thumbMinPosition.value}%`
+        }
     })
 
     const markers = computed(() => {
@@ -162,7 +237,7 @@
         return markerPositions
     })
 
-    const updateValueFromPosition = (x: number) => {
+    const updateValueFromPosition = (x: number, thumb: 'min' | 'max' | 'auto' = 'auto') => {
         if (!sliderElement.value || props.disabled) return
 
         const { left, width } = sliderElement.value.getBoundingClientRect()
@@ -174,42 +249,47 @@
             newValue = Math.round(newValue / props.step) * props.step
         }
 
-        model.value = Math.max(props.min, Math.min(props.max, newValue))
+        newValue = Math.max(props.min, Math.min(props.max, newValue))
+
+        if (isRange.value && Array.isArray(model.value)) {
+            let thumbToMove = thumb
+            if (thumbToMove === 'auto') {
+                const distToMin = Math.abs(newValue - model.value[0])
+                const distToMax = Math.abs(newValue - model.value[1])
+                thumbToMove = distToMin <= distToMax ? 'min' : 'max'
+            }
+
+            if (thumbToMove === 'min') {
+                model.value = [Math.min(newValue, model.value[1]), model.value[1]]
+            } else {
+                // 'max'
+                model.value = [model.value[0], Math.max(newValue, model.value[0])]
+            }
+        } else {
+            model.value = newValue
+        }
     }
 
     const handleSliderClick = (event: MouseEvent) => {
-        updateValueFromPosition(event.clientX)
+        updateValueFromPosition(event.clientX, 'auto')
     }
 
-    const handleThumbMouseDown = () => {
+    const handleThumbMouseDown = (thumb: 'min' | 'max') => {
         if (props.disabled) return
-        isSliding.value = true
+        slidingThumb.value = thumb
 
         const onMouseMove = (event: MouseEvent) => {
-            updateValueFromPosition(event.clientX)
+            updateValueFromPosition(event.clientX, thumb)
         }
 
         const onMouseUp = () => {
-            isSliding.value = false
+            slidingThumb.value = null
             document.removeEventListener('mousemove', onMouseMove)
             document.removeEventListener('mouseup', onMouseUp)
         }
 
         document.addEventListener('mousemove', onMouseMove)
         document.addEventListener('mouseup', onMouseUp)
-    }
-
-    const handleHostEnter = () => {
-        isHovered.value = true
-    }
-    const handleHostLeave = () => {
-        isHovered.value = false
-    }
-    const handleFocus = () => {
-        isFocused.value = true
-    }
-    const handleBlur = () => {
-        isFocused.value = false
     }
 
     const wrapperClasses = computed(() => [
@@ -248,7 +328,7 @@
                 @apply sr-only;
             }
 
-            .nui-slider-host:has(.nui-slider-input:focus) .nui-slider-thumb {
+            .nui-slider-thumb.nui-slider-thumb--focused {
                 @apply ring-2 ring-offset-2 ring-offset-bg ring-fg/50;
             }
 

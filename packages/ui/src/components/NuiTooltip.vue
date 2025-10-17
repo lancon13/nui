@@ -39,6 +39,8 @@
         attachParent?: HTMLElement | string | null
         offset?: [number, number]
         size?: 'small' | 'medium' | 'large'
+        noHover?: boolean
+        noFocus?: boolean
     }
 
     const props = withDefaults(defineProps<NuiTooltipProps>(), {
@@ -53,7 +55,9 @@
         triggerParent: null,
         attachParent: null,
         offset: () => [0, 8],
-        size: 'medium'
+        size: 'medium',
+        noHover: false,
+        noFocus: false
     })
 
     const model = defineModel<boolean>({ default: false })
@@ -62,7 +66,7 @@
     const placeholderRef = ref<HTMLElement | null>(null)
     const contentRef = ref<HTMLElement | null>(null)
     const positionTarget = ref<HTMLElement | null>(null)
-    const hoverTrigger = ref<HTMLElement | null>(null)
+    const triggerTarget = ref<HTMLElement | null>(null)
 
     let showTimeoutId: number | undefined
     let hideTimeoutId: number | undefined
@@ -132,10 +136,14 @@
     }
 
     const attachEvents = (element: HTMLElement) => {
-        element.addEventListener('mouseenter', startShow)
-        element.addEventListener('mouseleave', startHide)
-        element.addEventListener('focus', startShow)
-        element.addEventListener('blur', startHide)
+        if (!props.noHover) {
+            element.addEventListener('mouseenter', startShow)
+            element.addEventListener('mouseleave', startHide)
+        }
+        if (!props.noFocus) {
+            element.addEventListener('focus', startShow)
+            element.addEventListener('blur', startHide)
+        }
     }
 
     const detachEvents = (element: HTMLElement) => {
@@ -146,7 +154,7 @@
     }
 
     const setup = () => {
-        if (hoverTrigger.value) detachEvents(hoverTrigger.value)
+        if (triggerTarget.value) detachEvents(triggerTarget.value)
 
         let posTarget: HTMLElement | null = null
         if (props.attachParent) {
@@ -168,17 +176,27 @@
         } else if (placeholderRef.value) {
             trig = placeholderRef.value.parentElement
         }
-        hoverTrigger.value = trig
+        triggerTarget.value = trig
 
-        if (hoverTrigger.value) attachEvents(hoverTrigger.value)
+        if (triggerTarget.value) attachEvents(triggerTarget.value)
     }
 
-    watch(() => [props.attachParent, props.triggerParent, placeholderRef.value], setup, {
-        flush: 'post'
-    })
+    watch(
+        () => [
+            props.attachParent,
+            props.triggerParent,
+            placeholderRef.value,
+            props.noHover,
+            props.noFocus
+        ],
+        setup,
+        {
+            flush: 'post'
+        }
+    )
 
     onUnmounted(() => {
-        if (hoverTrigger.value) detachEvents(hoverTrigger.value)
+        if (triggerTarget.value) detachEvents(triggerTarget.value)
     })
 
     watch(
