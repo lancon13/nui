@@ -16,7 +16,6 @@ const meta = {
         step: { control: 'number' },
         label: { control: 'text' },
         helperText: { control: 'text' },
-        tooltip: { control: 'boolean' },
         markers: { control: 'boolean' },
         color: {
             control: 'select',
@@ -27,6 +26,11 @@ const meta = {
             options: ['small', 'medium', 'large']
         },
         disabled: { control: 'boolean' },
+        thumbShadow: { control: 'boolean' },
+        trackShadow: { control: 'boolean' },
+        persistTooltip: { control: 'boolean' },
+        noTooltip: { control: 'boolean' },
+        tooltipProps: { control: 'object' }
     },
     args: {
         modelValue: 50,
@@ -35,10 +39,13 @@ const meta = {
         step: 1,
         label: 'Slider Label',
         helperText: 'Move the slider to select a value',
-        tooltip: true,
         markers: false,
-        color: 'primary',
+        color: 'current',
         disabled: false,
+        thumbShadow: false,
+        trackShadow: false,
+        persistTooltip: false,
+        noTooltip: false
     }
 } satisfies Meta<typeof NuiSlider>
 
@@ -47,7 +54,25 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
-    render: (args) => ({
+    args: {
+        modelValue: 50
+    },
+    render: args => ({
+        components: { NuiSlider },
+        setup() {
+            const model = ref(args.modelValue)
+            return { args, model }
+        },
+        template: `
+            <div class="w-64">
+                <NuiSlider v-bind="args" v-model="model" />
+            </div>
+        `
+    })
+}
+
+export const Interactive: Story = {
+    render: args => ({
         components: { NuiSlider },
         setup() {
             const model = ref(args.modelValue)
@@ -58,39 +83,56 @@ export const Default: Story = {
                 <NuiSlider v-bind="args" v-model="model" />
                 <p class="mt-4 text-center">Value: {{ model }}</p>
             </div>
-        `,
-    }),
+        `
+    })
 }
 
-export const Tooltip: Story = {
-    render: (args) => ({
+export const CustomTooltip: Story = {
+    render: args => ({
         components: { NuiSlider },
         setup() {
-            const model1 = ref(25)
-            const model2 = ref(75)
-            return { args, model1, model2 }
+            const model = ref(75)
+            return { args, model }
         },
         template: `
-            <div class="w-64 flex flex-col gap-y-8">
-                <NuiSlider v-bind="args" label="Default Tooltip" v-model="model1" />
-                <NuiSlider v-bind="args" label="Custom Tooltip" v-model="model2">
-                    <template #tooltip="{ value }">
+            <div class="w-64">
+                <NuiSlider v-bind="args" v-model="model">
+                    <template #tooltip-content="{ value }">
                         <div class="text-primary bg-white/80 p-2 rounded-lg shadow-lg">
-                            Value: {{ value }}
-                        </div>
+                                Value: {{ value }}
+                            </div>
                     </template>
                 </NuiSlider>
             </div>
-        `,
-    }),
+        `
+    })
+}
+
+export const TooltipVisibility: Story = {
+    render: args => ({
+        components: { NuiSlider },
+        setup() {
+            const model1 = ref(25)
+            const model2 = ref(50)
+            const model3 = ref(75)
+            return { args, model1, model2, model3 }
+        },
+        template: `
+            <div class="w-64 flex flex-col gap-y-8">
+                <NuiSlider v-bind="args" label="Auto Tooltip (default)" v-model="model1" />
+                <NuiSlider v-bind="args" label="Persistent Tooltip" :persist-tooltip="true" v-model="model2" />
+                <NuiSlider v-bind="args" label="No Tooltip" :no-tooltip="true" v-model="model3" />
+            </div>
+        `
+    })
 }
 
 export const Markers: Story = {
     args: {
         markers: true,
-        step: 10,
+        step: 10
     },
-    render: (args) => ({
+    render: args => ({
         components: { NuiSlider },
         setup() {
             const model = ref(args.modelValue)
@@ -101,12 +143,12 @@ export const Markers: Story = {
                 <NuiSlider v-bind="args" v-model="model" />
                 <p class="mt-4 text-center">Value: {{ model }}</p>
             </div>
-        `,
-    }),
+        `
+    })
 }
 
 export const Colors: Story = {
-    render: (args) => ({
+    render: args => ({
         components: { NuiSlider },
         setup() {
             const colors = meta.argTypes.color.options
@@ -123,19 +165,19 @@ export const Colors: Story = {
                     :model-value="75"
                 />
             </div>
-        `,
+        `
     }),
     args: {
-        label: '',
+        label: ''
     }
 }
 
 export const Disabled: Story = {
     args: {
         disabled: true,
-        modelValue: 25,
+        modelValue: 25
     },
-    render: (args) => ({
+    render: args => ({
         components: { NuiSlider },
         setup() {
             const model = ref(args.modelValue)
@@ -146,12 +188,12 @@ export const Disabled: Story = {
                 <NuiSlider v-bind="args" v-model="model" />
                 <p class="mt-4 text-center">Value: {{ model }}</p>
             </div>
-        `,
-    }),
+        `
+    })
 }
 
 export const MinMaxStep: Story = {
-    render: (args) => ({
+    render: args => ({
         components: { NuiSlider },
         setup() {
             const model1 = ref(4)
@@ -165,15 +207,15 @@ export const MinMaxStep: Story = {
                 <NuiSlider v-bind="args" label="Min: -10, Max: 10, Step: 1" :min="-10" :max="10" :step="1" v-model="model2" />
                 <NuiSlider v-bind="args" label="Min: 0, Max: 1, Step: 0.1" :min="0" :max="1" :step="0.1" v-model="model3" />
             </div>
-        `,
+        `
     }),
     args: {
-        helperText: '',
+        helperText: ''
     }
 }
 
 export const Sizes: Story = {
-    render: (args) => ({
+    render: args => ({
         components: { NuiSlider },
         setup() {
             const sizes = meta.argTypes.size.options
@@ -189,9 +231,51 @@ export const Sizes: Story = {
                     :label="size"
                 />
             </div>
-        `,
+        `
     }),
     args: {
-        modelValue: 75,
+        modelValue: 75
     }
+}
+
+export const Shadows: Story = {
+    render: args => ({
+        components: { NuiSlider },
+        setup() {
+            const model1 = ref(75)
+            const model2 = ref(75)
+            const model3 = ref(75)
+            return { args, model1, model2, model3 }
+        },
+        template: `
+            <div class="w-64 flex flex-col gap-y-8">
+                <NuiSlider v-bind="args" label="Track Shadow" :track-shadow="true" :thumb-shadow="false" v-model="model1" />
+                <NuiSlider v-bind="args" label="Thumb Shadow" :track-shadow="false" :thumb-shadow="true" v-model="model2" />
+            </div>`
+    }),
+    args: {
+        helperText: ''
+    }
+}
+
+export const CustomTooltipProps: Story = {
+    args: {
+        persistTooltip: true,
+        tooltipProps: {
+            displayPosition: 'right',
+            size: 'large'
+        }
+    },
+    render: args => ({
+        components: { NuiSlider },
+        setup() {
+            const model = ref(50)
+            return { args, model }
+        },
+        template: `
+            <div class="w-64">
+                <NuiSlider v-bind="args" v-model="model" />
+            </div>
+        `
+    })
 }

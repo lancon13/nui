@@ -181,13 +181,17 @@
         if (hoverTrigger.value) detachEvents(hoverTrigger.value)
     })
 
-    watch(model, value => {
-        if (value) {
-            setTimeout(() => (isVisible.value = true), 1)
-        } else {
-            setTimeout(() => (isVisible.value = false), 250)
-        }
-    })
+    watch(
+        model,
+        value => {
+            if (value) {
+                setTimeout(() => (isVisible.value = true), 1)
+            } else {
+                setTimeout(() => (isVisible.value = false), 250)
+            }
+        },
+        { immediate: true }
+    )
 
     const compClasses = computed(() => [
         'nui-tooltip',

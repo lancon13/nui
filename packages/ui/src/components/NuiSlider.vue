@@ -2,8 +2,8 @@
     <div :class="wrapperClasses">
         <label v-if="props.label" :for="inputId" class="nui-slider-label">{{ props.label }}</label>
         <label
-            :for="inputId"
             ref="sliderElement"
+            :for="inputId"
             class="nui-slider-host"
             @mousedown="handleSliderClick"
             @mouseenter="handleHostEnter"
@@ -19,6 +19,8 @@
                 class="nui-slider-input"
                 v-bind="$attrs"
                 @input="model = Number(($event.target as HTMLInputElement).value)"
+                @focus="handleFocus"
+                @blur="handleBlur"
             />
             <div class="nui-slider-track">
                 <div v-if="props.markers" class="nui-slider-markers">
@@ -36,14 +38,17 @@
                     :style="{ left: `${selectionWidth}%` }"
                     @mousedown.stop="handleThumbMouseDown"
                 >
-                    <NuiTooltip
-                        v-if="props.tooltip"
+                    <nui-tooltip
+                        v-if="!props.noTooltip"
                         v-model="showTooltip"
-                        :text="`${model}`"
-                        display-position="top"
+                        v-bind="mergedTooltipProps"
                     >
-                        <slot name="tooltip" :value="model"></slot>
-                    </NuiTooltip>
+                        <slot
+                            v-if="$slots['tooltip-content']"
+                            name="tooltip-content"
+                            :value="model"
+                        />
+                    </nui-tooltip>
                 </div>
             </div>
         </label>
@@ -52,8 +57,8 @@
 </template>
 
 <script setup lang="ts">
-    import { computed, ref, useAttrs } from 'vue'
-    import NuiTooltip from './NuiTooltip.vue'
+    import { computed, ref, useAttrs, watch } from 'vue'
+    import NuiTooltip, { type NuiTooltipProps } from './NuiTooltip.vue'
 
     defineOptions({
         inheritAttrs: false
@@ -72,8 +77,12 @@
         color?: NuiSliderColor
         size?: NuiSliderSize
         disabled?: boolean
-        tooltip?: boolean
         markers?: boolean
+        thumbShadow?: boolean
+        trackShadow?: boolean
+        persistTooltip?: boolean
+        noTooltip?: boolean
+        tooltipProps?: NuiTooltipProps
     }
 
     const props = withDefaults(defineProps<NuiSliderProps>(), {
@@ -83,11 +92,15 @@
         step: 1,
         label: undefined,
         helperText: undefined,
-        color: 'primary',
+        color: 'current',
         size: 'medium',
         disabled: false,
-        tooltip: true,
-        markers: false
+        markers: false,
+        thumbShadow: true,
+        trackShadow: false,
+        persistTooltip: false,
+        noTooltip: false,
+        tooltipProps: undefined
     })
 
     const model = defineModel<number>()
@@ -100,6 +113,34 @@
     const thumbElement = ref<HTMLElement | null>(null)
     const isSliding = ref(false)
     const showTooltip = ref(false)
+    const isFocused = ref(false)
+    const isHovered = ref(false)
+
+    watch(
+        [isFocused, isHovered, isSliding, () => props.persistTooltip],
+        ([focus, hover, sliding, persist]) => {
+            if (persist) {
+                showTooltip.value = true
+                return
+            }
+
+            if (focus || hover || sliding) {
+                showTooltip.value = true
+            } else {
+                showTooltip.value = false
+            }
+        },
+        { immediate: true }
+    )
+
+    const mergedTooltipProps = computed<NuiTooltipProps>(() => {
+        return {
+            text: `${model.value}`,
+            displayPosition: 'top',
+            persistent: props.persistTooltip,
+            ...props.tooltipProps
+        }
+    })
 
     const selectionWidth = computed(() => {
         const range = props.max - props.min
@@ -159,12 +200,16 @@
     }
 
     const handleHostEnter = () => {
-        showTooltip.value = true
+        isHovered.value = true
     }
     const handleHostLeave = () => {
-        if (!isSliding.value) {
-            showTooltip.value = false
-        }
+        isHovered.value = false
+    }
+    const handleFocus = () => {
+        isFocused.value = true
+    }
+    const handleBlur = () => {
+        isFocused.value = false
     }
 
     const wrapperClasses = computed(() => [
@@ -172,7 +217,9 @@
         `nui-slider-wrapper--color-${props.color}`,
         `nui-slider-wrapper--size-${props.size}`,
         {
-            'nui-slider-wrapper--disabled': props.disabled
+            'nui-slider-wrapper--disabled': props.disabled,
+            'nui-slider-wrapper--thumb-shadow': props.thumbShadow,
+            'nui-slider-wrapper--track-shadow': props.trackShadow
         }
     ])
 </script>
@@ -238,6 +285,17 @@
                 @apply opacity-50 cursor-not-allowed;
                 .nui-slider-host {
                     @apply cursor-not-allowed;
+                }
+            }
+
+            &.nui-slider-wrapper--track-shadow {
+                .nui-slider-track {
+                    @apply shadow-lg;
+                }
+            }
+            &.nui-slider-wrapper--thumb-shadow {
+                .nui-slider-thumb {
+                    @apply shadow-lg;
                 }
             }
 

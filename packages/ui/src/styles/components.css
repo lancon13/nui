@@ -214,12 +214,11 @@
         --nui-slider-thumb-shadow-focus: var(--drop-shadow-md);
 
         --nui-slider-size-small-track-height: calc(var(--spacing-xs) * 0.75);
-        --nui-slider-size-small-thumb-size: calc(var(--spacing-md) * 0.75);
+        --nui-slider-size-small-thumb-size: calc(var(--spacing-sm) * 0.75);
         --nui-slider-size-medium-track-height: var(--spacing-xs);
-        --nui-slider-size-medium-thumb-size: var(--spacing-md);
+        --nui-slider-size-medium-thumb-size: var(--spacing-sm);
         --nui-slider-size-large-track-height: calc(var(--spacing-xs) * 1.25);
-        --nui-slider-size-large-thumb-size: calc(var(--spacing-md) * 1.25);
-
+        --nui-slider-size-large-thumb-size: calc(var(--spacing-sm) * 1.25);
         --nui-slider-marker-size: calc(var(--spacing-xs) * 0.75);
         --nui-slider-marker-background-color: var(--color-border);
     }
