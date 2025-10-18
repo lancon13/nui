@@ -1,111 +1,109 @@
-import { reactive, readonly, computed, markRaw } from 'vue'
+import { createGlobalState } from '@vueuse/core'
+import { reactive, computed, markRaw } from 'vue'
 import type { Component } from 'vue'
 
-export type NuiToastPosition = 'top' | 'center' | 'bottom'
-export type NuiToastDirection = 'left' | 'center' | 'right'
+export type ToastPosition = 'top' | 'center' | 'bottom'
+export type ToastDirection = 'left' | 'center' | 'right'
 
-export type NuiToastObj = {
-    id: number
-    content: Component
-    duration?: number
-    position?: NuiToastPosition
-    direction?: NuiToastDirection
+export interface Toast {
+    id: string
+    content: string | Component
+    position: ToastPosition
+    direction: ToastDirection
+    timeout: number
     close: () => void
 }
 
-export type NuiToastObjOptions = Omit<NuiToastObj, 'id' | 'close'>
+export interface ToastOptions {
+    content: string | Component
+    position?: ToastPosition
+    direction?: ToastDirection
+    timeout?: number
+}
 
-const state = reactive<{
-    toasts: NuiToastObj[]
-}>({ toasts: [] })
-let toastCount = 0
+export const useNuiToast = createGlobalState(() => {
+    const toasts = reactive<Toast[]>([])
 
-// --- Timer Logic ---
-const timers = new Map<number, ReturnType<typeof createTimer>>()
+    const locations = computed(() => {
+        return ['top', 'center', 'bottom']
+            .map(p => ['left', 'center', 'right'].map(d => `${p}-${d}`))
+            .flat()
+            .filter(v => v !== 'center-center')
+    })
 
-function createTimer(callback: () => void, delay: number) {
-    let timerId: number
+    const toastsByLocations = computed(() => {
+        return locations.value.reduce(
+            (obj, pos) => {
+                obj[pos] = toasts.filter(toast => `${toast.position}-${toast.direction}` === pos)
+                return obj
+            },
+            {} as Record<string, Toast[]>
+        )
+    })
 
-    const pause = () => {
-        window.clearTimeout(timerId)
-    }
+    const timers = new Map<string, number>()
 
-    const resume = () => {
-        window.clearTimeout(timerId)
-        timerId = window.setTimeout(callback, delay)
-    }
-
-    const clear = () => {
-        window.clearTimeout(timerId)
-    }
-
-    resume()
-
-    return { pause, resume, clear }
-} // --- End Timer Logic ---
-
-const remove = (id: number) => {
-    const index = state.toasts.findIndex(t => t.id === id)
-    if (index > -1) {
-        state.toasts.splice(index, 1)
+    const remove = (id: string) => {
+        const index = toasts.findIndex(t => t.id === id)
+        if (index > -1) {
+            toasts.splice(index, 1)
+        }
         if (timers.has(id)) {
-            timers.get(id)?.clear()
+            clearTimeout(timers.get(id))
             timers.delete(id)
         }
     }
-}
 
-const add = (options: NuiToastObjOptions) => {
-    const id = toastCount++
-    const close = () => remove(id)
+    const add = (options: ToastOptions) => {
+        const id = `toast-${Date.now()}-${Math.random()}`
+        const close = () => remove(id)
 
-    const toast: NuiToastObj = {
-        id,
-        duration: 30000,
-        position: 'top',
-        direction: 'right',
-        ...options,
-        content: markRaw(options.content),
-        close
-    }
-
-    state.toasts.unshift(toast)
-
-    if (toast.duration && toast.duration > 0) {
-        timers.set(
+        const toast: Toast = {
             id,
-            createTimer(() => remove(id), toast.duration)
-        )
-    }
-}
-
-const toastsByPosition = computed(() => {
-    const groups: Record<string, NuiToastObj[]> = {}
-    for (const toast of state.toasts) {
-        const key = `${toast.position || 'top'}-${toast.direction || 'right'}`
-        if (!groups[key]) {
-            groups[key] = []
+            content:
+                typeof options.content === 'object'
+                    ? markRaw(options.content as Component)
+                    : options.content,
+            position: options.position || 'bottom',
+            direction: options.direction || 'right',
+            timeout: options.timeout || 5000,
+            close
         }
-        groups[key].push(toast)
+
+        toasts.push(toast)
+
+        if (toast.timeout > 0) {
+            const timer = window.setTimeout(() => {
+                remove(id)
+            }, toast.timeout)
+            timers.set(id, timer)
+        }
     }
-    return groups
-})
 
-const pause = (id: number) => {
-    timers.get(id)?.pause()
-}
+    const pause = (id: string) => {
+        if (timers.has(id)) {
+            clearTimeout(timers.get(id))
+        }
+    }
 
-const resume = (id: number) => {
-    timers.get(id)?.resume()
-}
+    const resume = (id: string) => {
+        const toast = toasts.find(t => t.id === id)
+        if (toast && toast.timeout > 0) {
+            const timer = window.setTimeout(() => {
+                remove(id)
+            }, toast.timeout)
+            // Restart timer, does not account for remaining time.
+            timers.set(id, timer)
+        }
+    }
 
-export function useNuiToast() {
     return {
-        toasts: readonly(state.toasts),
-        toastsByPosition,
+        toasts,
+        locations,
+        toastsByLocations,
         add,
         remove,
         pause,
         resume
     }
-}
+})

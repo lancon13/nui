@@ -186,7 +186,9 @@
         --nui-toast-z-index: 9999;
         --nui-toast-group-padding: var(--spacing-sm);
         --nui-toast-spacing: var(--spacing-sm);
-        --nui-toast-max-width: calc(var(--spacing-md), 10);
+        --nui-toast-max-width: calc(var(--spacing-sm) * 15);
+        --nui-toast-translate-x-amount: var(--spacing-lg);
+        --nui-toast-translate-y-amount: var(--spacing-lg);
 
         /* NuiBadge */
         --nui-badge-background-color: var(--color-surface);
@@ -206,13 +208,12 @@
         --nui-slider-track-height: var(--spacing-xs);
         --nui-slider-track-radius: var(--radius-full);
         --nui-slider-track-background-color: var(--color-text-subtle);
+        --nui-slider-track-shadow: var(--drop-shadow-md);
         --nui-slider-selection-background-color: var(--color-primary);
         --nui-slider-thumb-size: var(--spacing-sm);
         --nui-slider-thumb-radius: var(--radius-full);
         --nui-slider-thumb-background-color: var(--color-primary);
-        --nui-slider-thumb-shadow: var(--drop-shadow-sm);
-        --nui-slider-thumb-shadow-focus: var(--drop-shadow-md);
-
+        --nui-slider-thumb-shadow: var(--drop-shadow-md);
         --nui-slider-size-small-track-height: calc(var(--spacing-xs) * 0.75);
         --nui-slider-size-small-thumb-size: calc(var(--spacing-sm) * 0.75);
         --nui-slider-size-medium-track-height: var(--spacing-xs);

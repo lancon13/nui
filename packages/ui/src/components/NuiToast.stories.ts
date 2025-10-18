@@ -104,7 +104,7 @@ export const Positions: Story = {
         <NuiButton @click="showToast('top', 'center')">Top Center</NuiButton>
         <NuiButton @click="showToast('top', 'right')">Top Right</NuiButton>
         <NuiButton @click="showToast('center', 'left')">Center Left</NuiButton>
-        <NuiButton @click="showToast('center', 'center')">Center Center</NuiButton>
+        <div></div>
         <NuiButton @click="showToast('center', 'right')">Center Right</NuiButton>
         <NuiButton @click="showToast('bottom', 'left')">Bottom Left</NuiButton>
         <NuiButton @click="showToast('bottom', 'center')">Bottom Center</NuiButton>
@@ -157,95 +157,5 @@ export const Stacking: Story = {
         <NuiButton @click="showToast()">Add Toast</NuiButton>
       </div>
     `
-    })
-}
-
-export const ConditionalStacking: Story = {
-    render: args => ({
-        components: { NuiToast, NuiButton, NuiCard },
-        setup() {
-            const { add } = useNuiToast()
-            let uniqueCount = 0
-
-            const groupedContentA = {
-                name: 'GroupedToastA',
-                props: ['close'],
-                components: { NuiCard, NuiButton },
-                template: `
-                  <NuiCard shadow>
-                    <span>This is a grouped toast (Group A).</span>
-                    <template #footer>
-                      <div class="flex justify-end">
-                        <NuiButton variant="text" @click="close">Close</NuiButton>
-                      </div>
-                    </template>
-                  </NuiCard>
-                `
-            }
-
-            const groupedContentB = {
-                name: 'GroupedToastB',
-                props: ['close'],
-                components: { NuiCard, NuiButton },
-                template: `
-                  <NuiCard shadow>
-                    <span>This is another grouped toast (Group B).</span>
-                    <template #footer>
-                      <div class="flex justify-end">
-                        <NuiButton variant="text" @click="close">Close</NuiButton>
-                      </div>
-                    </template>
-                  </NuiCard>
-                `
-            }
-
-            const showUniqueToast = () => {
-                uniqueCount++
-                add({
-                    position: 'bottom',
-                    direction: 'right',
-                    content: {
-                        props: ['close'],
-                        components: { NuiCard, NuiButton },
-                        template: `
-                          <NuiCard shadow>
-                            <span>This is a unique toast (${uniqueCount}).</span>
-                            <template #footer>
-                              <div class="flex justify-end">
-                                <NuiButton variant="text" @click="close">Close</NuiButton>
-                              </div>
-                            </template>
-                          </NuiCard>
-                        `
-                    }
-                })
-            }
-
-            const showGroupedToastA = () => {
-                add({
-                    position: 'bottom',
-                    direction: 'right',
-                    content: groupedContentA
-                })
-            }
-
-            const showGroupedToastB = () => {
-                add({
-                    position: 'bottom',
-                    direction: 'right',
-                    content: groupedContentB
-                })
-            }
-
-            return { args, showUniqueToast, showGroupedToastA, showGroupedToastB }
-        },
-        template: `
-          <NuiToast v-bind="args" />
-          <div class="p-lg flex flex-wrap gap-sm">
-            <NuiButton @click="showUniqueToast()">Add Unique Toast</NuiButton>
-            <NuiButton @click="showGroupedToastA()">Add Grouped Toast 'A'</NuiButton>
-            <NuiButton @click="showGroupedToastB()">Add Grouped Toast 'B'</NuiButton>
-          </div>
-        `
     })
 }
