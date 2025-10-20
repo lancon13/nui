@@ -15,7 +15,20 @@
                     @focusin="pause(toast.id)"
                     @focusout="resume(toast.id)"
                 >
-                    <component :is="toast.content" :close="toast.close" />
+                    <div class="relative">
+                        <component :is="toast.content" />
+                        <nui-badge
+                            v-if="toast.count > 1"
+                            :key="toast.count"
+                            v-bind="{
+                                ...badgePosition(toast.badgePosition),
+                                ...toast.badgeProps
+                            }"
+                            class="absolute nui-badge-shake"
+                        >
+                            {{ toast.count }}
+                        </nui-badge>
+                    </div>
                 </div>
             </transition-group>
         </div>
@@ -24,6 +37,7 @@
 
 <script setup lang="ts">
     import { useNuiToast } from '../composables/useNuiToast'
+    import NuiBadge from './NuiBadge.vue'
 
     const { toastsByLocations, pause, resume } = useNuiToast()
 
@@ -34,6 +48,16 @@
             `nui-toast-group--position-${position}`,
             `nui-toast-group--direction-${direction}`
         ]
+    }
+
+    const badgePosition = (
+        position: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' = 'top-right'
+    ) => {
+        const [y, x] = position.split('-')
+        return {
+            position: y as 'top' | 'center' | 'bottom',
+            direction: x as 'left' | 'right'
+        }
     }
 </script>
 

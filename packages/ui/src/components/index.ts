@@ -1,5 +1,6 @@
 export { default as NuiAvatar } from './NuiAvatar.vue'
 export { default as NuiBadge } from './NuiBadge.vue'
+export { default as NuiBanner } from './NuiBanner.vue'
 export { default as NuiButton } from './NuiButton.vue'
 export { default as NuiCard } from './NuiCard.vue'
 export { default as NuiCheckbox } from './NuiCheckbox.vue'

@@ -21,7 +21,7 @@ const meta = {
         pilled: { control: 'boolean' },
         size: { control: 'select', options: sizes },
         bordered: { control: 'boolean' },
-        striped: { control: 'boolean' },
+        striped: { control: 'boolean' }
     },
     args: {
         value: 0.5,
@@ -32,7 +32,7 @@ const meta = {
         pilled: false,
         size: 'medium',
         bordered: false,
-        striped: false,
+        striped: false
     }
 } satisfies Meta<typeof NuiProgress>
 
@@ -52,7 +52,7 @@ export const Default: Story = {
 
 export const Bordered: Story = {
     args: {
-        bordered: true,
+        bordered: true
     },
     render: args => ({
         components: { NuiProgress },
@@ -75,7 +75,7 @@ export const Bordered: Story = {
 export const Pilled: Story = {
     args: {
         pilled: true,
-        value: 0.75,
+        value: 0.75
     },
     render: args => ({
         components: { NuiProgress },
@@ -132,7 +132,7 @@ export const Colors: Story = {
 
 export const Indeterminate: Story = {
     args: {
-        indeterminate: true,
+        indeterminate: true
     },
     render: args => ({
         components: { NuiProgress },
@@ -155,7 +155,7 @@ export const Indeterminate: Story = {
 export const StripedIndeterminate: Story = {
     args: {
         indeterminate: true,
-        striped: true,
+        striped: true
     },
     render: args => ({
         components: { NuiProgress },
@@ -178,7 +178,7 @@ export const StripedIndeterminate: Story = {
 export const StripedDeterminate: Story = {
     args: {
         value: 0.75,
-        striped: true,
+        striped: true
     },
     render: args => ({
         components: { NuiProgress },
@@ -200,7 +200,7 @@ export const StripedDeterminate: Story = {
 
 export const Reversed: Story = {
     args: {
-        reversed: true,
+        reversed: true
     },
     render: args => ({
         components: { NuiProgress },

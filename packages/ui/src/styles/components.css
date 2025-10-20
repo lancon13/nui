@@ -222,6 +222,11 @@
         --nui-slider-size-large-thumb-size: calc(var(--spacing-sm) * 1.25);
         --nui-slider-marker-size: calc(var(--spacing-xs) * 0.75);
         --nui-slider-marker-background-color: var(--color-border);
+
+        /* NuiBanner */
+        --nui-banner-radius: var(--radius-element);
+        --nui-banner-padding: var(--spacing-sm);
+        --nui-button-shadow: var(--drop-shadow-md);
     }
 
     /* Focus ring */

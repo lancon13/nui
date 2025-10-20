@@ -10,7 +10,7 @@
                 <slot name="before" />
             </div>
 
-            <div :class="outerClasses" ref="selectInputRef">
+            <div ref="selectInputRef" :class="outerClasses">
                 <div v-if="$slots.prepend" class="nui-select-prepend">
                     <slot name="prepend" />
                 </div>
@@ -39,7 +39,7 @@
                 <slot name="after" />
             </div>
 
-            <NuiPopOver
+            <nui-pop-over
                 v-model="showPopover"
                 :attach-parent="selectInputRef"
                 display-position="bottom"
@@ -48,7 +48,7 @@
                 :auto-reposition="true"
             >
                 <slot name="dropdown-content" />
-            </NuiPopOver>
+            </nui-pop-over>
         </div>
         <slot v-if="props.helperText || $slots['helper']" name="helper">
             <p class="nui-select-helper">
