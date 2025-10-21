@@ -1,13 +1,13 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite'
 import { computed, ref } from 'vue'
-import NuiProgress from './NuiProgress.vue'
+import NuiLinearProgress from './NuiLinearProgress.vue'
 
 const colors = ['primary', 'success', 'error', 'warning', 'info', 'current']
 const sizes = ['small', 'medium', 'large']
 
 const meta = {
-    title: 'UI/NuiProgress',
-    component: NuiProgress,
+    title: 'UI/NuiLinearProgress',
+    component: NuiLinearProgress,
     parameters: {
         layout: 'centered'
     },
@@ -34,7 +34,7 @@ const meta = {
         bordered: false,
         striped: false
     }
-} satisfies Meta<typeof NuiProgress>
+} satisfies Meta<typeof NuiLinearProgress>
 
 export default meta
 
@@ -42,11 +42,11 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
     render: args => ({
-        components: { NuiProgress },
+        components: { NuiLinearProgress },
         setup() {
             return { args }
         },
-        template: '<NuiProgress v-bind="args" class="w-64" />'
+        template: '<NuiLinearProgress v-bind="args" class="w-64" />'
     })
 }
 
@@ -55,13 +55,13 @@ export const Bordered: Story = {
         bordered: true
     },
     render: args => ({
-        components: { NuiProgress },
+        components: { NuiLinearProgress },
         setup() {
             return { args, colors }
         },
         template: `
         <div class="flex flex-col gap-sm w-64">
-            <NuiProgress
+            <NuiLinearProgress
                 v-for="color in colors"
                 :key="color"
                 v-bind="args"
@@ -78,14 +78,14 @@ export const Pilled: Story = {
         value: 0.75
     },
     render: args => ({
-        components: { NuiProgress },
+        components: { NuiLinearProgress },
         setup() {
             return { args }
         },
         template: `
         <div class="flex flex-col gap-sm w-64">
-            <NuiProgress v-bind="args" />
-            <NuiProgress v-bind="args" :pilled="false" />
+            <NuiLinearProgress v-bind="args" />
+            <NuiLinearProgress v-bind="args" :pilled="false" />
         </div>
         `
     })
@@ -93,13 +93,13 @@ export const Pilled: Story = {
 
 export const Sizes: Story = {
     render: args => ({
-        components: { NuiProgress },
+        components: { NuiLinearProgress },
         setup() {
             return { args, sizes }
         },
         template: `
         <div class="flex flex-col items-center gap-sm w-64">
-            <NuiProgress
+            <NuiLinearProgress
                 v-for="size in sizes"
                 :key="size"
                 v-bind="args"
@@ -113,13 +113,13 @@ export const Sizes: Story = {
 
 export const Colors: Story = {
     render: args => ({
-        components: { NuiProgress },
+        components: { NuiLinearProgress },
         setup() {
             return { args, colors }
         },
         template: `
         <div class="flex flex-col gap-sm w-64">
-            <NuiProgress
+            <NuiLinearProgress
                 v-for="color in colors"
                 :key="color"
                 v-bind="args"
@@ -135,13 +135,13 @@ export const Indeterminate: Story = {
         indeterminate: true
     },
     render: args => ({
-        components: { NuiProgress },
+        components: { NuiLinearProgress },
         setup() {
             return { args, colors }
         },
         template: `
         <div class="flex flex-col gap-sm w-64">
-            <NuiProgress
+            <NuiLinearProgress
                 v-for="color in colors"
                 :key="color"
                 v-bind="args"
@@ -158,13 +158,13 @@ export const StripedIndeterminate: Story = {
         striped: true
     },
     render: args => ({
-        components: { NuiProgress },
+        components: { NuiLinearProgress },
         setup() {
             return { args, colors }
         },
         template: `
         <div class="flex flex-col gap-sm w-64">
-            <NuiProgress
+            <NuiLinearProgress
                 v-for="color in colors"
                 :key="color"
                 v-bind="args"
@@ -181,13 +181,13 @@ export const StripedDeterminate: Story = {
         striped: true
     },
     render: args => ({
-        components: { NuiProgress },
+        components: { NuiLinearProgress },
         setup() {
             return { args, colors }
         },
         template: `
         <div class="flex flex-col gap-sm w-64">
-            <NuiProgress
+            <NuiLinearProgress
                 v-for="color in colors"
                 :key="color"
                 v-bind="args"
@@ -203,13 +203,13 @@ export const Reversed: Story = {
         reversed: true
     },
     render: args => ({
-        components: { NuiProgress },
+        components: { NuiLinearProgress },
         setup() {
             return { args, colors }
         },
         template: `
         <div class="flex flex-col gap-sm w-64">
-            <NuiProgress
+            <NuiLinearProgress
                 v-for="color in colors"
                 :key="color"
                 v-bind="args"
@@ -222,7 +222,7 @@ export const Reversed: Story = {
 
 export const WithContent: Story = {
     render: args => ({
-        components: { NuiProgress },
+        components: { NuiLinearProgress },
         setup() {
             const value = ref(args.value)
             const percentage = computed(() => {
@@ -235,10 +235,26 @@ export const WithContent: Story = {
         },
         template: `
         <div class="flex flex-col gap-sm w-64">
-            <NuiProgress v-bind="args" :value="value">
+            <NuiLinearProgress v-bind="args" :value="value">
                 {{ percentage }}%
-            </NuiProgress>
+            </NuiLinearProgress>
             <input type="range" v-model.number="value" :min="args.range[0]" :max="args.range[1]" step="0.01" class="w-full" />
+        </div>
+        `
+    })
+}
+
+export const ArbitrarySizes: Story = {
+    render: args => ({
+        components: { NuiLinearProgress },
+        setup() {
+            return { args }
+        },
+        template: `
+        <div class="flex flex-col items-center gap-sm w-64">
+            <NuiLinearProgress v-bind="args" size="2rem" class="w-full" />
+            <NuiLinearProgress v-bind="args" size="3rem" class="w-full" />
+            <NuiLinearProgress v-bind="args" size="4rem" class="w-full" />
         </div>
         `
     })

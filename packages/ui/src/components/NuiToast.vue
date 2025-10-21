@@ -10,6 +10,7 @@
                     v-for="toast in toasts"
                     :key="toast.id"
                     class="nui-toast"
+                    :role="getRole(toast.props?.color as string)"
                     @mouseenter="pause(toast.id)"
                     @mouseleave="resume(toast.id)"
                     @focusin="pause(toast.id)"
@@ -57,6 +58,13 @@
     import NuiBadge from './NuiBadge.vue'
 
     const { toastsByLocations, pause, resume } = useNuiToast()
+
+    const getRole = (color?: string) => {
+        if (color === 'error' || color === 'warning') {
+            return 'alert'
+        }
+        return 'status'
+    }
 
     const groupClasses = (location: string) => {
         const [position, direction] = location.split('-')

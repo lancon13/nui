@@ -168,19 +168,25 @@
         /* NuiPopOver */
         --nui-popover-z-index: 90;
 
-        /* NuiProgress */
-        --nui-progress-height-small: var(--spacing-xs);
-        --nui-progress-height-medium: var(--spacing-base);
-        --nui-progress-height-large: var(--spacing-md);
-        --nui-progress-height: var(--nui-progress-height-medium);
-        --nui-progress-radius: var(--radius-element);
-        --nui-progress-border-size: var(--border-thin);
-        --nui-progress-border-color: var(--color-border);
-        --nui-progress-background-color: var(--color-text-subtle);
-        --nui-progress-content-font-size: var(--text-xs);
-        --nui-progress-content-font-weight: var(--font-weight-semibold);
-        --nui-progress-content-color: var(--color-input-highlight);
-        --nui-progress-content-blend-mode: revert;
+        /* NuiLinearProgress */
+        --nui-linear-progress-height-small: var(--spacing-xs);
+        --nui-linear-progress-height-medium: var(--spacing-base);
+        --nui-linear-progress-height-large: var(--spacing-md);
+        --nui-linear-progress-height: var(--nui-linear-progress-height-medium);
+        --nui-linear-progress-radius: var(--radius-element);
+        --nui-linear-progress-border-size: var(--border-thin);
+        --nui-linear-progress-border-color: var(--color-border);
+        --nui-linear-progress-background-color: var(--color-text-subtle);
+        --nui-linear-progress-content-font-size: var(--text-xs);
+        --nui-linear-progress-content-font-weight: var(--font-weight-semibold);
+        --nui-linear-progress-content-color: var(--color-input-highlight);
+        --nui-linear-progress-content-blend-mode: revert;
+
+        /* NuiCircularProgress */
+        --nui-circular-progress-track-color: var(--color-text-subtle);
+        --nui-circular-progress-size-small: calc(var(--spacing-xs) * 5);
+        --nui-circular-progress-size-medium: calc(var(--spacing-sm) * 5);
+        --nui-circular-progress-size-large: calc(var(--spacing-md) * 5);
 
         /* NuiToast */
         --nui-toast-z-index: 9999;
@@ -236,7 +242,7 @@
     }
 
     /* Transition animations */
-    @keyframes nui-progress-indeterminate {
+    @keyframes nui-linear-progress-indeterminate {
         from {
             left: -100%;
         }
@@ -244,7 +250,7 @@
             left: 100%;
         }
     }
-    @keyframes nui-progress-indeterminate-reversed {
+    @keyframes nui-linear-progress-indeterminate-reversed {
         from {
             right: -100%;
         }
@@ -252,7 +258,7 @@
             right: 100%;
         }
     }
-    @keyframes nui-progress-stripes {
+    @keyframes nui-linear-progress-stripes {
         from {
             background-position: 1rem 0;
         }
