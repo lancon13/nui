@@ -25,7 +25,7 @@ const meta = {
         shadow: {
             control: { type: 'boolean' }
         },
-                noRounded: { control: { type: 'boolean' } }
+        noRounded: { control: { type: 'boolean' } }
     }
 } satisfies Meta<typeof NuiBanner>
 
@@ -234,7 +234,7 @@ export const NoRounded: Story = {
     args: {
         default: 'This is a no-rounded banner.',
         noRounded: true,
-        color: 'primary',
+        color: 'primary'
     },
     render: args => ({
         components: { NuiBanner },

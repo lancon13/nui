@@ -285,7 +285,7 @@ export const Pilled: Story = {
 export const NoRounded: Story = {
     args: {
         noRounded: true,
-        color: 'primary',
+        color: 'primary'
     },
     render: args => ({
         components: { NuiButton },
@@ -302,8 +302,8 @@ export const NoRounded: Story = {
           :label="variant.charAt(0).toUpperCase() + variant.slice(1)"
         />
       </div>
-    `,
-    }),
+    `
+    })
 }
 
 export const AsLink: Story = {

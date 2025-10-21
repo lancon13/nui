@@ -38,7 +38,7 @@
         actions?: NuiButtonProps[]
         inline?: boolean
         shadow?: boolean
-    noRounded?: boolean
+        noRounded?: boolean
     }
 
     const props = withDefaults(defineProps<NuiBannerProps>(), {
@@ -47,14 +47,13 @@
         actions: undefined,
         inline: true,
         shadow: false,
-    noRounded: false
+        noRounded: false
     })
 
     const compClasses = computed(() => [
         'nui-banner',
         `nui-banner--color-${props.color}`,
-        { 'nui-banner--shadow': props.shadow,
-      'nui-banner--no-rounded': props.noRounded }
+        { 'nui-banner--shadow': props.shadow, 'nui-banner--no-rounded': props.noRounded }
     ])
 </script>
 
@@ -67,9 +66,9 @@
         .nui-banner {
             @apply rounded-[var(--nui-banner-radius)] p-[var(--nui-banner-padding)];
 
-        &.nui-banner--no-rounded {
-            @apply rounded-none;
-        }
+            &.nui-banner--no-rounded {
+                @apply rounded-none;
+            }
 
             .nui-banner-content {
                 @apply flex items-center justify-between gap-sm;

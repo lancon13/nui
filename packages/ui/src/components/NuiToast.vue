@@ -15,20 +15,37 @@
                     @focusin="pause(toast.id)"
                     @focusout="resume(toast.id)"
                 >
-                    <div class="relative">
-                        <component :is="toast.content" />
-                        <nui-badge
-                            v-if="toast.count > 1"
-                            :key="toast.count"
-                            v-bind="{
-                                ...badgePosition(toast.badgePosition),
-                                ...toast.badgeProps
-                            }"
-                            class="absolute nui-badge-shake"
+                    <component :is="toast.content" :close="toast.close" v-bind="toast.props" />
+                    <slot
+                        v-if="toast.timeout > 0 && !toast.noProgress"
+                        name="progress"
+                        :toast="toast"
+                    >
+                        <div
+                            class="nui-toast-progress-track"
+                            :class="[
+                                `nui-toast-progress-track--location-${toast.progressLocation}`
+                            ]"
                         >
-                            {{ toast.count }}
-                        </nui-badge>
-                    </div>
+                            <div
+                                class="nui-toast-progress-bar"
+                                :style="{
+                                    width: `${100 - toast.progress}%`
+                                }"
+                            />
+                        </div>
+                    </slot>
+                    <nui-badge
+                        v-if="toast.count > 1"
+                        :key="toast.count"
+                        v-bind="{
+                            ...badgePosition(toast.badgePosition),
+                            ...toast.badgeProps
+                        }"
+                        class="absolute nui-badge-shake"
+                    >
+                        {{ toast.count }}
+                    </nui-badge>
                 </div>
             </transition-group>
         </div>
@@ -73,7 +90,7 @@
                 z-[var(--nui-toast-z-index)];
 
             .nui-toast {
-                @apply max-w-[var(--nui-toast-max-width)];
+                @apply relative max-w-[var(--nui-toast-max-width)];
             }
 
             .nui-toast-transition-enter-active,
@@ -125,6 +142,22 @@
                     .nui-toast-transition-leave-to {
                         @apply translate-x-full;
                     }
+                }
+            }
+
+            .nui-toast-progress-track {
+                @apply absolute left-0 w-full h-[var(--nui-toast-progress-size)];
+
+                &.nui-toast-progress-track--location-top {
+                    @apply top-0;
+                }
+
+                &.nui-toast-progress-track--location-bottom {
+                    @apply bottom-0;
+                }
+
+                .nui-toast-progress-bar {
+                    @apply h-full bg-input-highlight/50;
                 }
             }
         }
