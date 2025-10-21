@@ -58,15 +58,12 @@
     import { computed } from 'vue'
     import NuiIcon from './NuiIcon.vue'
 
-    const model = defineModel<boolean>()
-
     export type NuiButtonSize = 'small' | 'medium' | 'large'
     export type NuiButtonColor = 'primary' | 'success' | 'error' | 'warning' | 'info' | 'current'
     export type NuiButtonVariant = 'solid' | 'outlined' | 'flat' | 'text'
 
     export interface NuiButtonProps {
-        modelValue?: boolean
-        toggle?: boolean
+        toggled?: boolean
         type?: 'button' | 'submit' | 'reset'
         variant?: NuiButtonVariant
         color?: NuiButtonColor
@@ -86,11 +83,10 @@
         href?: string
         target?: string
         shadow?: boolean
+        noRounded?: boolean
     }
 
     const props = withDefaults(defineProps<NuiButtonProps>(), {
-        modelValue: undefined,
-        toggle: false,
         type: 'button',
         variant: 'solid',
         color: 'current',
@@ -109,16 +105,14 @@
         to: undefined,
         href: undefined,
         target: undefined,
-        shadow: false
+        shadow: false,
+        noRounded: false
     })
 
     const emit = defineEmits(['click'])
 
-    const isOn = computed(() => (props.toggle ? (model.value ?? true) : false))
-
     const handleClick = (e: MouseEvent) => {
         emit('click', e)
-        if (props.toggle) if (!props.disabled && !props.loading) model.value = !isOn.value
     }
 
     const isIconOnly = computed(() => props.icon && !props.label)
@@ -140,9 +134,8 @@
             'nui-button--loading': props.loading,
             'nui-button--disabled': props.disabled,
             'nui-button--shadow': props.shadow,
-            'nui-button-toggle': props.toggle,
-            'nui-button-toggle--is-on': props.toggle && isOn.value,
-            'nui-button-toggle--is-off': props.toggle && !isOn.value
+            'nui-button--toggled': props.toggled,
+            'nui-button--no-rounded': props.noRounded
         }
     ])
 
@@ -154,7 +147,6 @@
         return styles
     })
 </script>
-
 <style lang="css">
     @reference 'tailwindcss';
     @reference '../styles/index.css';
@@ -200,6 +192,11 @@
             /* Rounded (Circle) */
             &.nui-button--rounded {
                 @apply rounded-full p-[var(--nui-button-padding-rounded)];
+            }
+
+            /* NoRounded */
+            &.nui-button--no-rounded {
+                @apply rounded-none;
             }
 
             /* Colors */
@@ -338,18 +335,28 @@
                 }
             }
 
-            /* Toggle styles */
-            &.nui-button-toggle {
-                &.nui-button-toggle--is-off {
-                    @apply inset-shadow-black/25 inset-shadow-[0_0.125rem_0.125rem_0]
-                        pt-[calc(var(--nui-button-padding-y)*1.125)]
-                        pb-[calc(var(--nui-button-padding-y)*0.875)]
-                        brightness-80 contrast-80;
-                }
-                &.nui-button-toggle--is-on {
-                    @apply inset-shadow-none
-                        py-[var(--nui-button-padding-y)]
-                        brightness-100 contrast-100;
+            /* Toggled styles */
+            &.nui-button--toggled {
+                &.nui-button--variant-solid,
+                &.nui-button--variant-outlined,
+                &.nui-button--variant-flat,
+                &.nui-button--variant-text {
+                    @apply hover:opacity-50;
+                    &.nui-button--color-primary {
+                        @apply text-primary bg-input-highlight;
+                    }
+                    &.nui-button--color-success {
+                        @apply text-success bg-input-highlight;
+                    }
+                    &.nui-button--color-error {
+                        @apply text-error bg-input-highlight;
+                    }
+                    &.nui-button--color-warning {
+                        @apply text-warning bg-input-highlight;
+                    }
+                    &.nui-button--color-info {
+                        @apply text-info bg-input-highlight;
+                    }
                 }
             }
         }

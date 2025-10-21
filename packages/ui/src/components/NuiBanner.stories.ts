@@ -24,7 +24,8 @@ const meta = {
         },
         shadow: {
             control: { type: 'boolean' }
-        }
+        },
+                noRounded: { control: { type: 'boolean' } }
     }
 } satisfies Meta<typeof NuiBanner>
 
@@ -215,6 +216,25 @@ export const Shadow: Story = {
     args: {
         default: 'This is a banner with a shadow.',
         shadow: true
+    },
+    render: args => ({
+        components: { NuiBanner },
+        setup() {
+            return { args }
+        },
+        template: `
+      <NuiBanner v-bind="args">
+        {{ args.default }}
+      </NuiBanner>
+    `
+    })
+}
+
+export const NoRounded: Story = {
+    args: {
+        default: 'This is a no-rounded banner.',
+        noRounded: true,
+        color: 'primary',
     },
     render: args => ({
         components: { NuiBanner },

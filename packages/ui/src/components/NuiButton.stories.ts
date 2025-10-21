@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite'
-import { ref } from 'vue'
+import { reactive } from 'vue'
 // import { fn } from '@storybook/test'
 import NuiButton from './NuiButton.vue'
 
@@ -49,8 +49,9 @@ const meta = {
             control: 'select',
             options: ['_self', '_blank', '_parent', '_top']
         },
-        toggle: { control: 'boolean' },
-        shadow: { control: 'boolean' }
+        toggled: { control: 'boolean' },
+        shadow: { control: 'boolean' },
+        noRounded: { control: 'boolean' }
         // Events
         // onClick: { action: 'clicked' },
     },
@@ -70,7 +71,6 @@ const meta = {
         to: undefined,
         href: undefined,
         target: undefined,
-        toggle: false,
         shadow: false
         // onClick: fn(),
     }
@@ -97,20 +97,41 @@ export const Variants: Story = {
     render: args => ({
         components: { NuiButton },
         setup() {
-            return { args, colors, variants }
+            return { args, variants }
         },
         template: `
-        <div class="grid grid-cols-6 gap-sm place-content-center">
-            <template v-for="variant in variants" :key="variant">
-                <NuiButton
-                    v-for="color in colors" :key="color" 
-                    v-bind="args"
-                    :variant="variant"
-                    :color="color"
-                    :label="color.charAt(0).toUpperCase() + color.slice(1)"
-                />
-            </template>
-        </div>`
+      <div class="flex flex-wrap items-end gap-sm">
+        <NuiButton
+          v-for="variant in variants"
+          :key="variant"
+          v-bind="args"
+          color="primary"
+          :variant="variant"
+          :label="variant.charAt(0).toUpperCase() + variant.slice(1)"
+        />
+      </div>
+    `
+    })
+}
+
+export const Colors: Story = {
+    render: args => ({
+        components: { NuiButton },
+        setup() {
+            return { args, colors }
+        },
+        template: `
+      <div class="flex flex-wrap items-end gap-sm">
+        <NuiButton
+          v-for="color in colors"
+          :key="color"
+          v-bind="args"
+          variant="solid"
+          :color="color"
+          :label="color.charAt(0).toUpperCase() + color.slice(1)"
+        />
+      </div>
+    `
     })
 }
 
@@ -239,29 +260,50 @@ export const Disabled: Story = {
 
 export const Pilled: Story = {
     args: {
-        pilled: true
+        pilled: true,
+        color: 'primary'
     },
-
     render: args => ({
         components: { NuiButton },
         setup() {
-            return { args, colors, variants }
+            return { args, variants }
         },
-
         template: `
-        <div class="grid grid-cols-6 gap-sm">
-            <template v-for="variant in variants" :key="variant">
-                <NuiButton
-                    v-for="color in colors"
-                    v-bind="args"
-                    :key="color"
-                    :variant="variant"
-                    :color="color"
-                    :label="color.charAt(0).toUpperCase() + color.slice(1)"
-                />
-            </template>
-        </div>`
+      <div class="flex flex-wrap items-end gap-sm">
+        <NuiButton
+          v-for="variant in variants"
+          :key="variant"
+          v-bind="args"
+          :variant="variant"
+          :label="variant.charAt(0).toUpperCase() + variant.slice(1)"
+        />
+      </div>
+    `
     })
+}
+
+export const NoRounded: Story = {
+    args: {
+        noRounded: true,
+        color: 'primary',
+    },
+    render: args => ({
+        components: { NuiButton },
+        setup() {
+            return { args, variants }
+        },
+        template: `
+      <div class="flex flex-wrap items-end gap-sm">
+        <NuiButton
+          v-for="variant in variants"
+          :key="variant"
+          v-bind="args"
+          :variant="variant"
+          :label="variant.charAt(0).toUpperCase() + variant.slice(1)"
+        />
+      </div>
+    `,
+    }),
 }
 
 export const AsLink: Story = {
@@ -304,41 +346,92 @@ export const CurrentColor: Story = {
 
 export const Toggle: Story = {
     args: {
-        toggle: true,
-        label: 'Toggle Me'
+        color: 'primary'
     },
     render: args => ({
         components: { NuiButton },
         setup() {
-            const toggled = ref(true)
-            return { args, toggled }
-        },
-        template: '<NuiButton v-bind="args" v-model="toggled" />'
-    })
-}
+            const sizes = ['small', 'medium', 'large']
+            const variants = ['solid', 'outlined', 'flat', 'text']
+            const states = reactive({
+                small: {
+                    solid: { normal: false, pilled: false, rounded: false, icon: false },
+                    outlined: { normal: false, pilled: false, rounded: false, icon: false },
+                    flat: { normal: false, pilled: false, rounded: false, icon: false },
+                    text: { normal: false, pilled: false, rounded: false, icon: false }
+                },
+                medium: {
+                    solid: { normal: false, pilled: false, rounded: false, icon: false },
+                    outlined: { normal: false, pilled: false, rounded: false, icon: false },
+                    flat: { normal: false, pilled: false, rounded: false, icon: false },
+                    text: { normal: false, pilled: false, rounded: false, icon: false }
+                },
+                large: {
+                    solid: { normal: false, pilled: false, rounded: false, icon: false },
+                    outlined: { normal: false, pilled: false, rounded: false, icon: false },
+                    flat: { normal: false, pilled: false, rounded: false, icon: false },
+                    text: { normal: false, pilled: false, rounded: false, icon: false }
+                }
+            })
 
-export const ToggleOff: Story = {
-    args: {
-        toggle: true,
-        modelValue: false
-    },
-    render: args => ({
-        components: { NuiButton },
-        setup() {
-            return { args, colors, sizes }
+            return { args, sizes, variants, states }
         },
         template: `
-        <div class="grid grid-cols-6 gap-sm place-content-center">
-            <template v-for="size in sizes" :key="size">
-                <NuiButton
-                    v-for="color in colors" :key="color" 
-                    v-bind="args"
-                    :size="size"
-                    :color="color"
-                    :label="color"
-                />
-            </template>
-        </div>`
+            <div class="space-y-xl">
+                <div v-for="size in sizes" :key="size">
+                    <h2 class="font-sans font-bold text-lg capitalize mb-md border-b-2 border-muted-200 dark:border-muted-800 pb-sm">
+                        Size: {{ size }}
+                    </h2>
+                    <div class="space-y-lg">
+                        <div
+                            v-for="variant in variants"
+                            :key="variant"
+                            class="flex items-center gap-x-sm"
+                        >
+                            <h3 class="font-sans font-bold capitalize w-20 shrink-0">
+                                {{ variant }}
+                            </h3>
+                            <NuiButton
+                                v-bind="args"
+                                :toggled="states[size][variant].normal"                                
+                                :size="size"
+                                :variant="variant"
+                                label="Normal"
+                                @click="() => states[size][variant].normal = !states[size][variant].normal"
+                            />
+                            <NuiButton                                
+                                v-bind="args"
+                                :toggled="states[size][variant].pilled"
+                                :size="size"
+                                :variant="variant"
+                                label="Pilled"
+                                pilled
+                                @click="() => states[size][variant].pilled = !states[size][variant].pilled"
+                            />
+                            <NuiButton                                
+                                v-bind="args"
+                                :toggled="states[size][variant].rounded"
+                                :size="size"
+                                :variant="variant"
+                                label=""
+                                icon="account"
+                                rounded
+                                @click="() => states[size][variant].rounded = !states[size][variant].rounded"
+                            />
+                            <NuiButton
+                                v-bind="args"
+                                :toggled="states[size][variant].icon"
+                                :size="size"
+                                :variant="variant"
+                                icon="heart"
+                                label=""
+                                @click="() => states[size][variant].icon = !states[size][variant].icon"
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `
     })
 }
 

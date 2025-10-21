@@ -1,6 +1,7 @@
 <template>
     <div :class="compClasses">
         <div class="nui-banner-content" :class="{ 'nui-banner-content--block': !props.inline }">
+            <slot name="before" />
             <div class="nui-banner-main">
                 <slot name="icon">
                     <nui-icon v-if="props.icon" :name="props.icon" />
@@ -18,6 +19,7 @@
                     />
                 </div>
             </slot>
+            <slot name="after" />
         </div>
     </div>
 </template>
@@ -36,6 +38,7 @@
         actions?: NuiButtonProps[]
         inline?: boolean
         shadow?: boolean
+    noRounded?: boolean
     }
 
     const props = withDefaults(defineProps<NuiBannerProps>(), {
@@ -43,13 +46,15 @@
         icon: undefined,
         actions: undefined,
         inline: true,
-        shadow: false
+        shadow: false,
+    noRounded: false
     })
 
     const compClasses = computed(() => [
         'nui-banner',
         `nui-banner--color-${props.color}`,
-        { 'nui-banner--shadow': props.shadow }
+        { 'nui-banner--shadow': props.shadow,
+      'nui-banner--no-rounded': props.noRounded }
     ])
 </script>
 
@@ -61,6 +66,10 @@
     @layer components {
         .nui-banner {
             @apply rounded-[var(--nui-banner-radius)] p-[var(--nui-banner-padding)];
+
+        &.nui-banner--no-rounded {
+            @apply rounded-none;
+        }
 
             .nui-banner-content {
                 @apply flex items-center justify-between gap-sm;
