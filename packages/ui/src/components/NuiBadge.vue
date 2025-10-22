@@ -53,6 +53,10 @@
                 min-h-[var(--nui-badge-size)] min-w-[var(--nui-badge-size)]
                 px-[var(--nui-badge-padding-x)] py-[var(--nui-badge-padding-y)];
 
+            &.nui-badge-shake {
+                @apply [animation:nui-badge-shake_0.82s_cubic-bezier(0.36,0.07,0.19,0.97)_both];
+            }
+
             &.nui-badge--variant-solid {
                 &.nui-badge--color-primary {
                     @apply bg-primary text-input-highlight;

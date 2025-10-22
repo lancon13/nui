@@ -1,7 +1,7 @@
 <template>
     <nui-pop-over class="nui-menu" :offset="[0, 0]">
         <slot>
-            <recursive-menu :items="items" :ancestors="[]" :parent-list-item-ref="null" />
+            <recursive-menu :items="props.items" :ancestors="[]" :parent-list-item-ref="null" />
         </slot>
     </nui-pop-over>
 </template>
@@ -9,9 +9,8 @@
 <script setup lang="ts">
     import { provide, ref, Ref } from 'vue'
     import NuiPopOver from './NuiPopOver.vue'
-    import RecursiveMenu from './RecursiveMenu.vue' // Import _RecursiveMenu
+    import RecursiveMenu from './RecursiveMenu.vue'
 
-    // Define NuiMenuItem interface (needs to be shared)
     export interface NuiMenuItem {
         label: string
         value: string
@@ -45,7 +44,7 @@
     const handleSubmenuMouseOut = (item: NuiMenuItem) => {
         submenuTimeouts.value[item.value] = window.setTimeout(() => {
             openSubmenus.value[item.value] = false
-        }, 200)
+        }, 750)
     }
 
     // Define the API interface for provide/inject

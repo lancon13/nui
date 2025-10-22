@@ -1,7 +1,11 @@
 <template>
     <div ref="containerRef" :class="compClasses">
-        <ul ref="measurementItemRef" class="nui-list-items nui-list-items--dummy">
-            <nui-list-item v-if="props.virtual && props.items.length > 0">
+        <ul
+            v-if="props.virtual && props.items.length > 0"
+            ref="measurementItemRef"
+            class="nui-list-items nui-list-items--dummy"
+        >
+            <nui-list-item>
                 <slot name="item" :item="props.items[0]" :index="0">
                     {{ props.items[0] }}
                 </slot>
@@ -15,23 +19,25 @@
             class="nui-list-virtual-scrollable-container"
         >
             <ul class="nui-list-items" v-bind="wrapperProps">
-                <nui-list-item v-for="{ data, index } in list" :key="index">
-                    <slot name="item" :item="data" :index="index">
-                        {{ data }}
-                    </slot>
-                </nui-list-item>
+                <slot>
+                    <nui-list-item v-for="{ data, index } in list" :key="index">
+                        <slot name="item" :item="data" :index="index">
+                            {{ data }}
+                        </slot>
+                    </nui-list-item>
+                </slot>
             </ul>
         </div>
 
-        <slot v-else>
-            <ul class="nui-list-items">
+        <ul v-else class="nui-list-items">
+            <slot>
                 <nui-list-item v-for="(item, index) in items" :key="index">
                     <slot name="item" :item="item" :index="index">
                         {{ item }}
                     </slot>
                 </nui-list-item>
-            </ul>
-        </slot>
+            </slot>
+        </ul>
 
         <slot name="after" />
     </div>
