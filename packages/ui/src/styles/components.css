@@ -234,6 +234,11 @@
         --nui-banner-radius: var(--radius-element);
         --nui-banner-padding: var(--spacing-sm);
         --nui-button-shadow: var(--drop-shadow-md);
+
+        /* NuiMenu */
+        --nui-menu-list-padding-y: var(--spacing-sm);
+        --nui-menu-item-icon-size: var(--text-base);
+        --nui-menu-item-icon-margin-x: var(--spacing-xs);
     }
 
     /* Focus ring */

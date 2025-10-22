@@ -1,11 +1,12 @@
 <template>
     <div ref="placeholderRef" class="hidden" />
-    <teleport to="body">
+    <teleport :to="teleportTarget">
         <div
             v-if="model || isVisible"
             ref="contentRef"
             :class="contentClasses"
             :style="floatingStyles"
+            v-bind="attrs"
         >
             <slot />
         </div>
@@ -13,9 +14,12 @@
 </template>
 
 <script setup lang="ts">
-    import { computed, onUnmounted, ref, watch } from 'vue'
+    import { computed, onUnmounted, ref, watch, useAttrs } from 'vue'
     import { onClickOutside } from '@vueuse/core'
     import { autoUpdate, flip, offset, shift, useFloating, type Placement } from '@floating-ui/vue'
+
+    defineOptions({ inheritAttrs: false })
+    const attrs = useAttrs()
 
     const model = defineModel<boolean>()
 
@@ -23,6 +27,7 @@
     export type NuiPopOverAnchorPosition = 'start' | 'center' | 'end'
 
     export interface NuiPopOverProps {
+        nested?: boolean
         displayPosition?: NuiPopOverDisplayPosition
         anchorPosition?: NuiPopOverAnchorPosition
         autoReposition?: boolean
@@ -32,13 +37,14 @@
         shiftPadding?: number
     }
     const props = withDefaults(defineProps<NuiPopOverProps>(), {
+        nested: false,
         displayPosition: 'bottom',
         anchorPosition: 'start',
         autoReposition: true,
         attachParent: null,
         triggerParent: null,
-        offset: () => [0, 8],
-        shiftPadding: 8
+        offset: () => [0, 0],
+        shiftPadding: 0
     })
 
     const placeholderRef = ref<HTMLElement | null>(null)
@@ -46,6 +52,15 @@
     const clickTrigger = ref<HTMLElement | null>(null)
     const contentRef = ref<HTMLElement | null>(null)
     const isVisible = ref<boolean>(false)
+
+    const teleportTarget = computed(() => {
+        if (props.nested) {
+            const triggerEl =
+                positionTarget.value || clickTrigger.value || placeholderRef.value?.parentElement
+            return triggerEl?.parentElement || 'body'
+        }
+        return 'body'
+    })
 
     const placement = computed<Placement>(() => {
         if (props.anchorPosition === 'center') return props.displayPosition
@@ -131,8 +146,6 @@
         clickTrigger.value?.addEventListener('click', toggle)
     }
 
-    // This single watcher handles initial setup and prop changes.
-    // It runs after the DOM has been patched, ensuring elements are available.
     watch(() => [props.attachParent, props.triggerParent, placeholderRef.value], setup, {
         flush: 'post'
     })

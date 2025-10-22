@@ -34,6 +34,9 @@ const meta = {
         },
         shiftPadding: {
             control: 'number'
+        },
+        nested: {
+            control: 'boolean'
         }
     },
     args: {
@@ -43,12 +46,45 @@ const meta = {
         autoReposition: true,
         attachParent: null,
         triggerParent: null,
-        shiftPadding: 8
+        shiftPadding: 8,
+        nested: false
     }
 } satisfies Meta<typeof NuiPopOver>
 
 export default meta
 type Story = StoryObj<typeof meta>
+
+const NestedPopover = {
+    name: 'NestedPopover',
+    components: { NuiPopOver, NuiButton, NuiCard },
+    props: ['level', 'maxLevel'],
+    setup(props) {
+        const show = ref(false)
+        const currentLevel = props.level || 1
+        const isLastLevel = currentLevel === props.maxLevel
+        const displayPosition = currentLevel % 2 === 0 ? 'left' : 'right' // Alternate position
+        return { show, currentLevel, isLastLevel, displayPosition }
+    },
+    template: `
+    <NuiButton :class="{'mt-sm': currentLevel > 1}">
+      Level {{ currentLevel }} Trigger
+      <NuiPopOver v-model="show" :display-position="displayPosition" :offset="[0, 8]" nested>
+        <NuiCard :class="{'bg-primary-alt': currentLevel % 2 === 0, 'bg-secondary-alt': currentLevel % 2 !== 0}">
+          <template #header>
+            <h3 class="font-bold">Level {{ currentLevel }} Popover</h3>
+          </template>
+          <p>This is level {{ currentLevel }} content.</p>
+          <template v-if="!isLastLevel">
+            <NestedPopover :level="currentLevel + 1" :max-level="maxLevel" />
+          </template>
+          <template #footer>
+            <NuiButton :label="'Close Level ' + currentLevel" size="small" @click="show = false" />
+          </template>
+        </NuiCard>
+      </NuiPopOver>
+    </NuiButton>
+  `
+}
 
 export const Default: Story = {
     render: args => ({
@@ -73,6 +109,47 @@ export const Default: Story = {
             </NuiButton>
         `
     })
+}
+
+export const Nested: Story = {
+    render: () => ({
+        components: { NuiPopOver, NuiButton, NuiCard, NestedPopover },
+        setup() {
+            const showParent = ref(false)
+            const maxLevel = ref(3) // Default to 3 levels
+            return { showParent, maxLevel }
+        },
+        template: `
+      <div class="flex flex-col gap-md">
+        <div class="flex items-center gap-sm">
+          <label>Max Nesting Level:</label>
+          <input type="number" v-model.number="maxLevel" min="1" max="5" class="border p-xs rounded" />
+        </div>
+        <NuiButton>
+          Root Trigger
+          <NuiPopOver v-model="showParent" :offset="[0, 8]">
+            <NuiCard class="w-72">
+              <template #header>
+                <h3 class="font-bold">Root Popover</h3>
+              </template>
+              <p>This is the root popover. Adjust max nesting level below.</p>
+              <NestedPopover :level="1" :max-level="maxLevel" />
+              <template #footer>
+                  <NuiButton label="Close Root" size="small" @click="showParent = false" />
+              </template>
+            </NuiCard>
+          </NuiPopOver>
+        </NuiButton>
+      </div>
+    `
+    }),
+    parameters: {
+        docs: {
+            description: {
+                story: 'This story demonstrates multi-level nested popovers. Adjust the "Max Nesting Level" to see 1 to 5 levels deep. Clicking inside any child popover will not close its parent popovers.'
+            }
+        }
+    }
 }
 
 export const Offset: Story = {

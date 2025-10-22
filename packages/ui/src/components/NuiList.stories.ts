@@ -112,3 +112,85 @@ export const Slots: Story = {
         bordered: true
     }
 }
+
+export const HoverableItems: Story = {
+    render: args => ({
+        components: { NuiList, NuiListItem },
+        setup() {
+            return { args }
+        },
+        template: `
+      <NuiList v-bind="args">
+        <NuiListItem hoverable>Hoverable Item 1</NuiListItem>
+        <NuiListItem hoverable>Hoverable Item 2</NuiListItem>
+        <NuiListItem hoverable>Hoverable Item 3</NuiListItem>
+      </NuiList>
+    `
+    }),
+    args: {
+        bordered: true
+    }
+}
+
+export const FocusableItems: Story = {
+    render: args => ({
+        components: { NuiList, NuiListItem },
+        setup() {
+            return { args }
+        },
+        template: `
+      <NuiList v-bind="args">
+        <NuiListItem focusable>Focusable Item 1 (try tabbing)</NuiListItem>
+        <NuiListItem focusable>Focusable Item 2 (try tabbing)</NuiListItem>
+        <NuiListItem focusable>Focusable Item 3 (try tabbing)</NuiListItem>
+      </NuiList>
+    `
+    }),
+    args: {
+        bordered: true
+    }
+}
+
+export const ClickableItems: Story = {
+    render: args => ({
+        components: { NuiList, NuiListItem },
+        setup() {
+            const handleClick = (item: string) => {
+                console.log(`${item} clicked`)
+            }
+            return { args, handleClick }
+        },
+        template: `
+      <NuiList v-bind="args">
+        <NuiListItem clickable @click="handleClick('Item 1')">Clickable Item 1</NuiListItem>
+        <NuiListItem clickable @click="handleClick('Item 2')">Clickable Item 2</NuiListItem>
+        <NuiListItem clickable @click="handleClick('Item 3')">Clickable Item 3</NuiListItem>
+      </NuiList>
+    `
+    }),
+    args: {
+        bordered: true
+    }
+}
+
+export const InteractiveItems: Story = {
+    render: args => ({
+        components: { NuiList, NuiListItem },
+        setup() {
+            const handleClick = (item: string) => {
+                console.log(`${item} clicked`)
+            }
+            return { args, handleClick }
+        },
+        template: `
+      <NuiList v-bind="args">
+        <NuiListItem hoverable focusable clickable @click="handleClick('Item 1')">Interactive Item 1</NuiListItem>
+        <NuiListItem hoverable focusable clickable @click="handleClick('Item 2')">Interactive Item 2</NuiListItem>
+        <NuiListItem hoverable focusable clickable @click="handleClick('Item 3')">Interactive Item 3</NuiListItem>
+      </NuiList>
+    `
+    }),
+    args: {
+        bordered: true
+    }
+}
