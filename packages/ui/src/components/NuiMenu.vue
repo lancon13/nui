@@ -15,15 +15,9 @@
 </template>
 
 <script setup lang="ts">
-    import { provide, ref, Ref, onMounted, onBeforeUnmount } from 'vue'
+    import { provide, ref, Ref, toRef } from 'vue'
     import NuiPopOver from './NuiPopOver.vue'
     import RecursiveMenu from './RecursiveMenu.vue'
-
-    interface NuiPopOverRef {
-        show: () => void
-        hide: () => void
-        placeholderRef: HTMLElement | null
-    }
 
     export interface NuiMenuItem {
         label: string
@@ -88,39 +82,9 @@
         handleSubmenuMouseOut
     })
 
-    // Handle automatic hover for nested menus
-    let hoverTimeout: number | undefined
-    const menuElement = ref<NuiPopOverRef | null>(null)
-
-    onMounted(() => {
-        if (props.nested && menuElement.value && menuElement.value.placeholderRef) {
-            const parentElement = menuElement.value.placeholderRef.parentElement
-            if (parentElement) {
-                const handleMouseOver = () => {
-                    clearTimeout(hoverTimeout)
-                    if (menuElement.value) {
-                        menuElement.value.show()
-                    }
-                }
-                const handleMouseOut = () => {
-                    hoverTimeout = window.setTimeout(() => {
-                        if (menuElement.value) {
-                            menuElement.value.hide()
-                        }
-                    }, 750)
-                }
-
-                parentElement.addEventListener('mouseover', handleMouseOver)
-                parentElement.addEventListener('mouseout', handleMouseOut)
-
-                onBeforeUnmount(() => {
-                    parentElement.removeEventListener('mouseover', handleMouseOver)
-                    parentElement.removeEventListener('mouseout', handleMouseOut)
-                    clearTimeout(hoverTimeout)
-                })
-            }
-        }
-    })
+    const menuElement = ref<InstanceType<typeof NuiPopOver> | null>(null)
+    import { useMenuHover } from '../composables/useMenuHover'
+    useMenuHover(menuElement, toRef(props, 'nested'))
 </script>
 
 <style lang="css">

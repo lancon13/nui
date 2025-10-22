@@ -73,34 +73,17 @@
 </template>
 
 <script setup lang="ts">
-    import {
-        ref,
-        onBeforeUpdate,
-        nextTick,
-        inject,
-        Ref,
-        PropType,
-        ComponentPublicInstance
-    } from 'vue'
-    import NuiPopOver from './NuiPopOver.vue'
+    import { inject, PropType, toRef, Ref, ComponentPublicInstance } from 'vue'
+    import { useMenuFocus } from '../composables/useMenuFocus'
+    import { useSubmenuHover } from '../composables/useSubmenuHover'
+    import type { NuiMenuItem } from './NuiMenu.vue'
+    import NuiIcon from './NuiIcon.vue'
     import NuiList from './NuiList.vue'
     import NuiListItem from './NuiListItem.vue'
-    import NuiIcon from './NuiIcon.vue'
-
-    // Define NuiMenuItem interface (needs to be imported or defined here)
-    export interface NuiMenuItem {
-        label: string
-        value: string
-        onClick?: (payload: MouseEvent) => void
-        onFocus?: (payload: FocusEvent) => void
-        onBlur?: (payload: FocusEvent) => void
-        onMouseOver?: (payload: MouseEvent) => void
-        onMouseOut?: (payload: MouseEvent) => void
-        children?: NuiMenuItem[]
-    }
+    import NuiPopOver from './NuiPopOver.vue'
 
     // Define the injected API interface
-    interface RecursiveMenuState {
+    export interface RecursiveMenuState {
         openSubmenus: Ref<Record<string, boolean>>
         submenuTimeouts: Ref<Record<string, number>>
         handleSubmenuMouseOver: (item: NuiMenuItem) => void
@@ -108,15 +91,13 @@
     }
 
     // Define the interface for the exposed methods of RecursiveMenu
-    interface RecursiveMenuInstance extends ComponentPublicInstance {
+    export interface RecursiveMenuInstance extends ComponentPublicInstance {
         focusFirstItem: () => void
         focusLastItem: () => void
     }
 
     // Inject the menu state and handlers
-    const { openSubmenus, handleSubmenuMouseOver, handleSubmenuMouseOut } = inject(
-        'menu-state'
-    ) as RecursiveMenuState
+    const { openSubmenus } = inject('menu-state') as RecursiveMenuState
 
     // Props for this component
     const props = defineProps({
@@ -134,113 +115,22 @@
         }
     })
 
-    const itemRefs = ref<InstanceType<typeof NuiListItem>[]>([]) // To hold refs to NuiListItem
-    const submenuRecursiveMenuRefs = ref<Record<string, RecursiveMenuInstance | null>>({})
+    const { itemRefs, submenuRecursiveMenuRefs, handleItemKeydown, focusFirstItem, focusLastItem } =
+        useMenuFocus(
+            toRef(props, 'items'),
+            toRef(props, 'ancestors'),
+            toRef(props, 'parentListItemRef')
+        )
 
-    // Ensure itemRefs is reset before each update
-    onBeforeUpdate(() => {
-        itemRefs.value = []
-    })
+    const {
+        handleListMouseover,
+        handleListMouseout,
+        handleSubmenuTriggerMouseover,
+        handleSubmenuTriggerMouseout,
+        handleSubmenuTriggerClick
+    } = useSubmenuHover(toRef(props, 'items'), toRef(props, 'ancestors'))
 
-    // Focus management methods
-    const focusFirstItem = () => {
-        if (itemRefs.value.length > 0) {
-            itemRefs.value[0].$el.focus()
-        }
-    }
-
-    const focusLastItem = () => {
-        if (itemRefs.value.length > 0) {
-            itemRefs.value[itemRefs.value.length - 1].$el.focus()
-        }
-    }
-
-    const focusNextItem = (currentIndex: number) => {
-        if (currentIndex < itemRefs.value.length - 1) {
-            itemRefs.value[currentIndex + 1].$el.focus()
-        } else {
-            focusFirstItem() // Loop around
-        }
-    }
-
-    const focusPreviousItem = (currentIndex: number) => {
-        if (currentIndex > 0) {
-            itemRefs.value[currentIndex - 1].$el.focus()
-        }
-    }
-
-    defineExpose({ focusFirstItem, focusLastItem }) // Expose methods for parent components
-
-    // Event handlers for NuiList
-    const handleListMouseover = () => {
-        props.ancestors.forEach(ancestor => {
-            handleSubmenuMouseOver(ancestor)
-        })
-    }
-
-    const handleListMouseout = () => {
-        if (props.ancestors.length > 0) {
-            const immediateParent = props.ancestors[props.ancestors.length - 1]
-            handleSubmenuMouseOut(immediateParent)
-        }
-    }
-
-    // Event handler for NuiListItem keydown
-    const handleItemKeydown = (e: KeyboardEvent, item: NuiMenuItem) => {
-        const focusedElement = document.activeElement
-        const currentItemIndex = itemRefs.value.findIndex(el => el.$el === focusedElement)
-
-        if (e.key === 'ArrowDown') {
-            e.preventDefault()
-            focusNextItem(currentItemIndex)
-        } else if (e.key === 'ArrowUp') {
-            e.preventDefault()
-            focusPreviousItem(currentItemIndex)
-        }
-        // Handle Space/ArrowRight/ArrowLeft on submenu triggers
-        else if (item.children?.length) {
-            // isSubmenuTrigger
-            if (e.key === ' ' || e.key === 'ArrowRight') {
-                e.preventDefault()
-                handleSubmenuMouseOver(item)
-                nextTick(() => {
-                    const submenuComponent = submenuRecursiveMenuRefs.value[item.value]
-                    if (submenuComponent && submenuComponent.focusFirstItem) {
-                        submenuComponent.focusFirstItem()
-                    }
-                })
-            } else if (e.key === 'ArrowLeft') {
-                e.preventDefault()
-                handleSubmenuMouseOut(item)
-                if (props.parentListItemRef) {
-                    props.parentListItemRef.$el.focus()
-                }
-            }
-        } else if (e.key === 'ArrowLeft') {
-            // For final items, ArrowLeft should close current submenu and focus parent
-            e.preventDefault()
-            if (props.ancestors.length > 0) {
-                const immediateParent = props.ancestors[props.ancestors.length - 1]
-                handleSubmenuMouseOut(immediateParent)
-                if (props.parentListItemRef) {
-                    props.parentListItemRef.$el.focus()
-                }
-            }
-        }
-    }
-
-    const handleSubmenuTriggerMouseover = (item: NuiMenuItem) => {
-        props.ancestors.forEach(ancestor => {
-            handleSubmenuMouseOver(ancestor)
-        })
-        handleSubmenuMouseOver(item)
-    }
-    const handleSubmenuTriggerMouseout = (item: NuiMenuItem) => {
-        handleSubmenuMouseOut(item)
-    }
-    const handleSubmenuTriggerClick = (e: MouseEvent) => {
-        e.stopImmediatePropagation()
-    }
+    defineExpose({ focusFirstItem, focusLastItem })
 </script>
 
 <style lang="css" scoped>
