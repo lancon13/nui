@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite'
 import NuiMenu, { type NuiMenuItem } from './NuiMenu.vue'
 import NuiButton from './NuiButton.vue'
+import NuiList from './NuiList.vue'
+import NuiListItem from './NuiListItem.vue'
 
 const meta = {
     title: 'UI/NuiMenu',
@@ -258,4 +260,31 @@ export const ClickToClose: Story = {
             }
         }
     }
+}
+
+export const NestedWithSlots: Story = {
+    render: () => ({
+        components: { NuiMenu, NuiButton, NuiList, NuiListItem },
+        template: `
+      <NuiButton>
+        Open Menu
+        <NuiMenu>
+          <NuiList>
+            <NuiListItem>Item 1</NuiListItem>
+            <NuiListItem>Item 2</NuiListItem>
+            <NuiListItem>
+              Submenu Trigger
+              <NuiMenu nested display-position="right" anchor-position="start">
+                <NuiList>
+                  <NuiListItem>Sub Item A</NuiListItem>
+                  <NuiListItem>Sub Item B</NuiListItem>
+                </NuiList>
+              </NuiMenu>
+            </NuiListItem>
+            <NuiListItem>Item 3</NuiListItem>
+          </NuiList>
+        </NuiMenu>
+      </NuiButton>
+    `
+    })
 }

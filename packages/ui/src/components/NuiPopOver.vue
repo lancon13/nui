@@ -82,11 +82,15 @@
         y,
         strategy,
         placement: finalPlacement
-    } = useFloating(positionTarget, contentRef, {
-        placement,
-        whileElementsMounted: autoUpdate,
-        middleware
-    })
+    } = useFloating(
+        computed(() => placeholderRef.value?.parentElement),
+        contentRef,
+        {
+            placement,
+            whileElementsMounted: autoUpdate,
+            middleware
+        }
+    )
 
     const placementDirection = computed(() => finalPlacement.value.split('-')[0])
 
@@ -161,6 +165,16 @@
         },
         { ignore: [clickTrigger, positionTarget] }
     )
+
+    const show = () => {
+        model.value = true
+    }
+
+    const hide = () => {
+        model.value = false
+    }
+
+    defineExpose({ show, hide, placeholderRef })
 </script>
 
 <style lang="css">

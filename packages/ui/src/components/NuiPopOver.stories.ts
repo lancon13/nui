@@ -354,3 +354,38 @@ export const TriggerParent: Story = {
         }
     }
 }
+
+export const ImperativeControl: Story = {
+    render: args => ({
+        components: { NuiPopOver, NuiButton, NuiCard },
+        setup() {
+            const popoverRef = ref<InstanceType<typeof NuiPopOver> | null>(null)
+            const showPopover = () => {
+                popoverRef.value?.show()
+            }
+            const hidePopover = () => {
+                popoverRef.value?.hide()
+            }
+            return { args, popoverRef, showPopover, hidePopover }
+        },
+        template: `
+            <div class="flex gap-md">
+                <NuiButton label="Show Popover" @click="showPopover" />
+                <NuiButton label="Hide Popover" @click="hidePopover" />
+
+                <NuiPopOver ref="popoverRef" v-bind="args">
+                    <NuiCard class="w-64">
+                        <p>This popover is controlled imperatively.</p>
+                    </NuiCard>
+                </NuiPopOver>
+            </div>
+        `
+    }),
+    parameters: {
+        docs: {
+            description: {
+                story: 'This story demonstrates how to imperatively control the popover\'s visibility using the `show()` and `hide()` methods exposed by the component.'
+            }
+        }
+    }
+}

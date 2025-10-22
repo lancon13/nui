@@ -1,5 +1,13 @@
 <template>
-    <nui-pop-over class="nui-menu" :offset="[0, 0]">
+    <nui-pop-over
+        ref="menuElement"
+        v-model="model"
+        class="nui-menu"
+        :offset="[0, 0]"
+        :nested="props.nested"
+        :display-position="props.displayPosition"
+        :anchor-position="props.anchorPosition"
+    >
         <slot>
             <recursive-menu :items="props.items" :ancestors="[]" :parent-list-item-ref="null" />
         </slot>
@@ -7,9 +15,15 @@
 </template>
 
 <script setup lang="ts">
-    import { provide, ref, Ref } from 'vue'
+    import { provide, ref, Ref, onMounted, onBeforeUnmount } from 'vue'
     import NuiPopOver from './NuiPopOver.vue'
     import RecursiveMenu from './RecursiveMenu.vue'
+
+    interface NuiPopOverRef {
+        show: () => void
+        hide: () => void
+        placeholderRef: HTMLElement | null
+    }
 
     export interface NuiMenuItem {
         label: string
@@ -22,12 +36,23 @@
         children?: NuiMenuItem[]
     }
 
+    export type NuiPopOverDisplayPosition = 'top' | 'bottom' | 'left' | 'right'
+    export type NuiPopOverAnchorPosition = 'start' | 'center' | 'end'
+
     export interface NuiMenuProps {
         items?: NuiMenuItem[]
+        nested?: boolean
+        displayPosition?: NuiPopOverDisplayPosition
+        anchorPosition?: NuiPopOverAnchorPosition
     }
 
+    const model = defineModel<boolean>()
+
     const props = withDefaults(defineProps<NuiMenuProps>(), {
-        items: () => []
+        items: () => [],
+        nested: false,
+        displayPosition: 'bottom',
+        anchorPosition: 'start'
     })
 
     // Define state and handlers
@@ -49,7 +74,6 @@
 
     // Define the API interface for provide/inject
     interface RecursiveMenuState {
-        // Renamed
         openSubmenus: Ref<Record<string, boolean>>
         submenuTimeouts: Ref<Record<string, number>>
         handleSubmenuMouseOver: (item: NuiMenuItem) => void
@@ -58,11 +82,44 @@
 
     // Provide them
     provide<RecursiveMenuState>('menu-state', {
-        // Renamed key
         openSubmenus,
         submenuTimeouts, // Restored
         handleSubmenuMouseOver,
         handleSubmenuMouseOut
+    })
+
+    // Handle automatic hover for nested menus
+    let hoverTimeout: number | undefined
+    const menuElement = ref<NuiPopOverRef | null>(null)
+
+    onMounted(() => {
+        if (props.nested && menuElement.value && menuElement.value.placeholderRef) {
+            const parentElement = menuElement.value.placeholderRef.parentElement
+            if (parentElement) {
+                const handleMouseOver = () => {
+                    clearTimeout(hoverTimeout)
+                    if (menuElement.value) {
+                        menuElement.value.show()
+                    }
+                }
+                const handleMouseOut = () => {
+                    hoverTimeout = window.setTimeout(() => {
+                        if (menuElement.value) {
+                            menuElement.value.hide()
+                        }
+                    }, 750)
+                }
+
+                parentElement.addEventListener('mouseover', handleMouseOver)
+                parentElement.addEventListener('mouseout', handleMouseOut)
+
+                onBeforeUnmount(() => {
+                    parentElement.removeEventListener('mouseover', handleMouseOver)
+                    parentElement.removeEventListener('mouseout', handleMouseOut)
+                    clearTimeout(hoverTimeout)
+                })
+            }
+        }
     })
 </script>
 

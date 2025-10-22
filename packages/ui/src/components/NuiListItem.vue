@@ -39,7 +39,7 @@
     @layer components {
         .nui-list-item {
             @apply flex items-center px-[var(--nui-list-item-padding-x)] py-[var(--nui-list-item-padding-y)] outline-none
-                transition-all duration-250 ease-in-out;
+                transition-all duration-250 ease-in-out relative;
 
             &.nui-list-item--hoverable {
                 &:hover {
