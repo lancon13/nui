@@ -226,10 +226,13 @@ export const WithContent: Story = {
         setup() {
             const value = ref(args.value)
             const percentage = computed(() => {
+                if (!args.range || !Array.isArray(args.range) || args.range.length !== 2) {
+                    return 0 // Or handle this error case appropriately
+                }
                 const [min, max] = args.range
                 const range = max - min
-                if (range === 0) return value.value >= max ? 100 : 0
-                return Math.round(((value.value - min) / range) * 100)
+                if (range === 0) return (value.value ?? 0) >= max ? 100 : 0
+                return Math.round((((value.value ?? 0) - min) / range) * 100)
             })
             return { args, value, percentage }
         },
@@ -238,7 +241,7 @@ export const WithContent: Story = {
             <NuiLinearProgress v-bind="args" :value="value">
                 {{ percentage }}%
             </NuiLinearProgress>
-            <input type="range" v-model.number="value" :min="args.range[0]" :max="args.range[1]" step="0.01" class="w-full" />
+            <input type="range" v-model.number="value" :min="args.range?.[0] ?? 0" :max="args.range?.[1] ?? 1" step="0.01" class="w-full" />
         </div>
         `
     })

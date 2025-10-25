@@ -135,7 +135,7 @@
                 }
 
                 .nui-input {
-                    @apply grow w-auto bg-transparent
+                    @apply grow w-fit bg-transparent
                        text-text
                        border-none ring-0 ring-offset-0 outline-none appearance-none;
                 }

@@ -58,7 +58,7 @@ export const Default: Story = {
             const model = ref(args.modelValue || 'Default value')
             return { args, model }
         },
-        template: '<NuiInput v-bind="args" v-model="model" class="w-64" />'
+        template: '<NuiInput v-bind="args" v-model="model" />'
     })
 }
 

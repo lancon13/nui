@@ -58,7 +58,7 @@ const NestedPopover = {
     name: 'NestedPopover',
     components: { NuiPopOver, NuiButton, NuiCard },
     props: ['level', 'maxLevel'],
-    setup(props) {
+    setup(props: { level?: number; maxLevel?: number }) {
         const show = ref(false)
         const currentLevel = props.level || 1
         const isLastLevel = currentLevel === props.maxLevel
@@ -384,7 +384,7 @@ export const ImperativeControl: Story = {
     parameters: {
         docs: {
             description: {
-                story: 'This story demonstrates how to imperatively control the popover\'s visibility using the `show()` and `hide()` methods exposed by the component.'
+                story: "This story demonstrates how to imperatively control the popover's visibility using the `show()` and `hide()` methods exposed by the component."
             }
         }
     }

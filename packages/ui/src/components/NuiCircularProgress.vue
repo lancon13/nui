@@ -78,7 +78,7 @@
     const svgSize = 100
     const radius = computed(() => svgSize / 3)
     const circumference = computed(() => 2 * Math.PI * radius.value)
-    const innerRadius = computed(() => radius.value - (props.thickness / 2)) // Calculate inner radius for fill circle
+    const innerRadius = computed(() => radius.value - props.thickness / 2) // Calculate inner radius for fill circle
 
     const progressPercentage = computed(() => {
         if (isIndeterminate.value) {

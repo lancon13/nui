@@ -1,7 +1,7 @@
 import { ref, onBeforeUpdate, nextTick, Ref, inject } from 'vue'
 import NuiListItem from '../components/NuiListItem.vue'
-import { NuiMenuItem } from '../types/NuiMenu'
-import { RecursiveMenuState, RecursiveMenuInstance } from '../types/NuiRecursiveMenu'
+import type { NuiMenuItem } from '../components/NuiMenu.vue'
+import { RecursiveMenuInstance, RecursiveMenuState } from '../components/RecursiveMenu.vue'
 
 export function useMenuFocus(
     items: Ref<NuiMenuItem[]>,

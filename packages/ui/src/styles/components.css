@@ -239,6 +239,22 @@
         --nui-menu-list-padding-y: var(--spacing-sm);
         --nui-menu-item-icon-size: var(--text-base);
         --nui-menu-item-icon-margin-x: var(--spacing-xs);
+
+        /* NuiSelect */
+        --nui-select-label-font-size: var(--nui-input-label-font-size);
+        --nui-select-label-font-weight: var(--nui-input-label-font-weight);
+        --nui-select-helper-font-size: var(--nui-input-helper-font-size);
+        --nui-select-helper-font-weight: var(--nui-input-helper-font-weight);
+        --nui-select-popover-background-color: var(--nui-list-background-color);
+        --nui-select-popover-border-size: var(--nui-list-border-size);
+        --nui-select-popover-border-color: var(--nui-list-border-color);
+        --nui-select-popover-radius: var(--nui-list-radius);
+        --nui-select-option-padding-x: var(--nui-list-item-padding-x);
+        --nui-select-option-padding-y: var(--nui-list-item-padding-y);
+        --nui-select-option-selected-background-color: oklch(
+            from var(--color-primary) l c h / 0.2
+        );
+        --nui-select-option-selected-text-color: var(--color-primary);
     }
 
     /* Focus ring */
