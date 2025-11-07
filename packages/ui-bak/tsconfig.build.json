@@ -1,0 +1,20 @@
+{
+    "include": ["src"],
+    "exclude": ["node_modules", "src/**/*.test.*", "src/**/*.spec.*"],
+    "compilerOptions": {
+        "target": "ESNext",
+        "module": "ESNext",
+        "strict": true,
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "jsx": "preserve",
+        "declaration": true,
+        "emitDeclarationOnly": true,
+        "outDir": "dist",
+        "skipLibCheck": true,
+        "moduleResolution": "bundler",
+        // This is the crucial fix:
+        // It prevents TypeScript from including any global libraries (like vitest/globals or chai).
+        "types": []
+    }
+}

@@ -4,11 +4,7 @@ import type { StorybookConfig } from '@storybook/vue3-vite'
 import { resolve } from 'path'
 
 const config: StorybookConfig = {
-    stories: [
-        '../src/stories/**/*.stories.@(js|jsx|mjs|ts|tsx)',
-        '../src/components/**/*.mdx',
-        '../src/components/**/*.stories.@(js|jsx|mjs|ts|tsx)'
-    ],
+    stories: ['../src/components/**/*.mdx', '../src/components/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
     addons: [
         '@chromatic-com/storybook',
         '@storybook/addon-docs',

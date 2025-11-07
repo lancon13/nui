@@ -1,0 +1,16 @@
+{
+    "extends": "../../tsconfig.base.json",
+    "compilerOptions": {
+        "paths": {
+            "@/*": ["./src/*"]
+        }
+    },
+    "include": [
+        "scripts/**/*.ts",
+        "src/**/*.ts",
+        "src/**/*.d.ts",
+        "src/**/*.tsx",
+        "src/**/*.vue",
+        "src/**/*.stories.ts"
+    ]
+}

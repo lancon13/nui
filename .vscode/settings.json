@@ -97,11 +97,13 @@
         "fantasticon",
         "hoverable",
         "Nunito",
+        "oklab",
+        "oklch",
+        "rgba",
         "scroller",
         "swipeable",
         "upserting",
-        "vueuse",
-        "whispli"
+        "vueuse"
     ],
     "[tailwindcss]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"

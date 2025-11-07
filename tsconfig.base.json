@@ -2,7 +2,9 @@
     "compilerOptions": {
         "baseUrl": ".",
         "paths": {
-            "@nui/ui/*": ["packages/ui/src/*"]
+            "@nui/ui/*": [
+                "packages/ui/src/*"
+            ]
         },
         // Other common compiler options
         "target": "ESNext",
@@ -10,5 +12,8 @@
         "moduleResolution": "node",
         "esModuleInterop": true,
         "strict": true
-    }
+    },
+    "exclude": [
+        "ui-bak/*"
+    ]
 }

@@ -24,7 +24,8 @@ export default defineConfig([
             '**/_generated/',
             '**/.pnpm-store/',
             '**/database.ts',
-            '**/*.sql'
+            '**/*.sql',
+            '**/ui-bak/'
         ]
     },
 

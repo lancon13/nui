@@ -1,0 +1,296 @@
+@custom-variant dark (&:where(body.body--dark, body.body--dark *));
+@custom-variant dark (&:where(body.body--light, body.body--light *));
+
+@layer base {
+    @theme {
+        --font-ratio: 1;
+
+        /* Primary */
+        --color-primary-light: oklch(0.65 0.079 250.44);
+        --color-primary-bright-light: color-mix(in oklab, var(--color-primary-light) 50%, white 50%);
+        --color-primary-dim-light: color-mix(in oklab, var(--color-primary-light) 50%, black 50%);
+
+        --color-primary-dark: oklch(0.65 0.079 250.44);
+        --color-primary-bright-dark: color-mix(in oklab, var(--color-primary-dark) 50%, white 50%);
+        --color-primary-dim-dark: color-mix(in oklab, var(--color-primary-dark) 50%, black 50%);
+
+        /* Neutral */
+        --color-neutral-light: oklch(0.69 0 0);
+        --color-neutral-bright-light: color-mix(in oklab, var(--color-neutral-light) 50%, white 50%);
+        --color-neutral-dim-light: color-mix(in oklab, var(--color-neutral-light) 50%, black 50%);
+
+        --color-neutral-dark: oklch(0.69 0 0);
+        --color-neutral-bright-dark: color-mix(in oklab, var(--color-neutral-dark) 50%, white 50%);
+        --color-neutral-dim-dark: color-mix(in oklab, var(--color-neutral-dark) 50%, black 50%);
+
+        /* -- Semantic Colors -- */
+        /* Success */
+        --color-success-light: #009d44;
+        --color-success-bright-light: color-mix(in oklab, var(--color-success-light) 50%, white 50%);
+        --color-success-dim-light: color-mix(in oklab, var(--color-success-light) 50%, black 50%);
+
+        --color-success-dark: #009d44;
+        --color-success-bright-dark: color-mix(in oklab, var(--color-success-dark) 50%, white 50%);
+        --color-success-dim-dark: color-mix(in oklab, var(--color-success-dark) 50%, black 50%);
+
+        /* Error */
+        --color-error-light: #a6192e;
+        --color-error-bright-light: color-mix(in oklab, var(--color-error-light) 50%, white 50%);
+        --color-error-dim-light: color-mix(in oklab, var(--color-error-light) 50%, black 50%);
+
+        --color-error-dark: #a6192e;
+        --color-error-bright-dark: color-mix(in oklab, var(--color-error-dark) 50%, white 50%);
+        --color-error-dim-dark: color-mix(in oklab, var(--color-error-dark) 50%, black 50%);
+
+        /* Warning */
+        --color-warning-light: #d58000;
+        --color-warning-bright-light: color-mix(in oklab, var(--color-warning-light) 50%, white 50%);
+        --color-warning-dim-light: color-mix(in oklab, var(--color-warning-light) 50%, black 50%);
+
+        --color-warning-dark: #d58000;
+        --color-warning-bright-dark: color-mix(in oklab, var(--color-warning-dark) 50%, white 50%);
+        --color-warning-dim-dark: color-mix(in oklab, var(--color-warning-dark) 50%, black 50%);
+
+        /* Info */
+        --color-info-light: #0057b8;
+        --color-info-bright-light: color-mix(in oklab, var(--color-info-light) 50%, white 50%);
+        --color-info-dim-light: color-mix(in oklab, var(--color-info-light) 50%, black 50%);
+
+        --color-info-dark: #0057b8;
+        --color-info-bright-dark: color-mix(in oklab, var(--color-info-dark) 50%, white 50%);
+        --color-info-dim-dark: color-mix(in oklab, var(--color-info-dark) 50%, black 50%);
+
+        /* Text, Background */
+        --color-text-light: oklch(0.27 0 0);
+        --color-text-subtle-light: color-mix(in oklab, var(--color-text-light) 50%, white 50%);
+        --color-fg-light: var(--color-text-light);
+        --color-background-light: oklch(0.83 0 0);
+        --color-background-subtle-light: color-mix(in oklab, var(--color-background-light) 50%, white 50%);
+        --color-bg-light: var(--color-background-light);
+
+        --color-text-invert-light: oklch(0.83 0 0);
+        --color-text-invert-subtle-light: color-mix(in oklab, var(--color-text--invert-light) 50%, white 50%);
+        --color-fg-invert-light: var(--color-text-invert-light);
+        --color-background-invert-light: oklch(0.27 0 0);
+        --color-background-invert-subtle-light: color-mix(
+            in oklab,
+            var(--color-background-invert-light) 50%,
+            white 50%
+        );
+        --color-bg-invert-light: var(--color-background-invert-light);
+
+        --color-surface-light: oklch(0.9 0 0);
+        --color-sub-surface-light: oklch(0.76 0 0);
+        --color-border-light: oklch(0.69 0 0);
+
+        --color-text-dark: oklch(0.83 0 0);
+        --color-text-subtle-dark: color-mix(in oklab, var(--color-text-dark) 50%, white 50%);
+        --color-fg-dark: var(--color-text-dark);
+        --color-background-dark: oklch(0.27 0 0);
+        --color-background-subtle-dark: color-mix(in oklab, var(--color-background-dark) 50%, white 50%);
+        --color-bg-dark: var(--color-background-dark);
+
+        --color-text-invert-dark: oklch(0.27 0 0);
+        --color-text-invert-subtle-dark: color-mix(in oklab, var(--color-text--invert-dark) 50%, white 50%);
+        --color-fg-invert-dark: var(--color-text-invert-dark);
+        --color-background-invert-dark: oklch(0.83 0 0);
+        --color-background-invert-subtle-dark: color-mix(in oklab, var(--color-background-invert-dark) 50%, white 50%);
+        --color-bg-invert-dark: var(--color-background-invert-dark);
+
+        --color-surface-dark: oklch(0.2 0 0);
+        --color-sub-surface-dark: oklch(0.34 0 0);
+        --color-border-dark: oklch(0.48 0 0);
+
+        /* Spacing */
+        --spacing-0: 0;
+        --spacing-xxs: 0.125rem;
+        --spacing-xs: 0.25rem;
+        --spacing-sm: 0.5rem;
+        --spacing-base: 1rem;
+        --spacing-md: 2rem;
+        --spacing-lg: 4rem;
+        --spacing-xl: 8rem;
+        --spacing-xxl: 16rem;
+
+        /* Radius */
+        --radius-square: 0;
+        --radius-element: var(--radius-base);
+        --radius-container: var(--radius-lg);
+        --radius-full: calc(infinity * 1px);
+
+        /* Shadow */
+        --shadow-outer: 0 0 var(--spacing-base) rgba(0 0 0 / 0.125);
+        --shadow-inner: inset 0 0 var(--spacing-base) rgba(0 0 0 / 0.125);
+    }
+
+    html.html--light {
+        --color-primary: var(--color-primary-light);
+        --color-primary-bright: var(--color-primary-bright-light);
+        --color-primary-dim: var(--color-primary-dim-light);
+
+        --color-neutral: var(--color-neutral-light);
+        --color-neutral-bright: var(--color-neutral-bright-light);
+        --color-neutral-dim: var(--color-neutral-dim-light);
+
+        --color-success: var(--color-success-light);
+        --color-success-bright: var(--color-success-bright-light);
+        --color-success-dim: var(--color-success-dim-light);
+
+        --color-error: var(--color-error-light);
+        --color-error-bright: var(--color-error-bright-light);
+        --color-error-dim: var(--color-error-dim-light);
+
+        --color-warning: var(--color-warning-light);
+        --color-warning-bright: var(--color-warning-bright-light);
+        --color-warning-dim: var(--color-warning-dim-light);
+
+        --color-info: var(--color-info-light);
+        --color-info-bright: var(--color-info-bright-light);
+        --color-info-dim: var(--color-info-dim-light);
+
+        --color-text: var(--color-text-light);
+        --color-text-subtle: var(--color-text-subtle-light);
+        --color-fg: var(--color-fg-light);
+        --color-background: var(--color-background-light);
+        --color-background-subtle: var(--color-background-subtle-light);
+        --color-bg: var(--color-bg-light);
+        --color-text-invert: var(--color-text-invert-light);
+        --color-text-invert-subtle: var(--color-text-invert-subtle-light);
+        --color-fg-invert: var(--color-fg-invert-light);
+        --color-background-invert: var(--color-background-invert-light);
+        --color-background-invert-subtle: var(--color-background-invert-subtle-light);
+        --color-bg-invert: var(--color-bg-invert-light);
+
+        --color-surface: var(--color-surface-light);
+        --color-sub-surface: var(--color-sub-surface-light);
+        --color-border: var(--color-border-light);
+
+        @apply bg-background text-text;
+    }
+
+    html.html--dark {
+        --color-primary: var(--color-primary-dark);
+        --color-primary-bright: var(--color-primary-bright-dark);
+        --color-primary-dim: var(--color-primary-dim-dark);
+
+        --color-neutral: var(--color-neutral-dark);
+        --color-neutral-bright: var(--color-neutral-bright-dark);
+        --color-neutral-dim: var(--color-neutral-dim-dark);
+
+        --color-success: var(--color-success-dark);
+        --color-success-bright: var(--color-success-bright-dark);
+        --color-success-dim: var(--color-success-dim-dark);
+
+        --color-error: var(--color-error-dark);
+        --color-error-bright: var(--color-error-bright-dark);
+        --color-error-dim: var(--color-error-dim-dark);
+
+        --color-warning: var(--color-warning-dark);
+        --color-warning-bright: var(--color-warning-bright-dark);
+        --color-warning-dim: var(--color-warning-dim-dark);
+
+        --color-info: var(--color-info-dark);
+        --color-info-bright: var(--color-info-bright-dark);
+        --color-info-dim: var(--color-info-dim-dark);
+
+        --color-text: var(--color-text-dark);
+        --color-text-subtle: var(--color-text-subtle-dark);
+        --color-fg: var(--color-fg-dark);
+        --color-background: var(--color-background-dark);
+        --color-background-subtle: var(--color-background-subtle-dark);
+        --color-bg: var(--color-bg-dark);
+        --color-text-invert: var(--color-text-invert-dark);
+        --color-text-invert-subtle: var(--color-text-invert-subtle-dark);
+        --color-fg-invert: var(--color-fg-invert-dark);
+        --color-background-invert: var(--color-background-invert-dark);
+        --color-background-invert-subtle: var(--color-background-invert-subtle-dark);
+        --color-bg-invert: var(--color-bg-invert-dark);
+
+        --color-surface: var(--color-surface-dark);
+        --color-sub-surface: var(--color-sub-surface-dark);
+        --color-border: var(--color-border-dark);
+
+        @apply bg-background text-text;
+    }
+
+    @theme {
+        --color-primary: var(--color-primary);
+        --color-primary-bright: var(--color-primary-bright);
+        --color-primary-dim: var(--color-primary-dim);
+
+        --color-neutral: var(--color-neutral);
+        --color-neutral-bright: var(--color-neutral-bright);
+        --color-neutral-dim: var(--color-neutral-dim);
+
+        --color-success: var(--color-success);
+        --color-success-bright: var(--color-success-bright);
+        --color-success-dim: var(--color-success-dim);
+
+        --color-error: var(--color-error);
+        --color-error-bright: var(--color-error-bright);
+        --color-error-dim: var(--color-error-dim);
+
+        --color-warning: var(--color-warning);
+        --color-warning-bright: var(--color-warning-bright);
+        --color-warning-dim: var(--color-warning-dim);
+
+        --color-info: var(--color-info);
+        --color-info-bright: var(--color-info-bright);
+        --color-info-dim: var(--color-info-dim);
+
+        --color-text: var(--color-text);
+        --color-text-subtle: var(--color-text-subtle);
+        --color-fg: var(--color-fg);
+        --color-background: var(--color-background);
+        --color-background-subtle: var(--color-background-subtle);
+        --color-bg: var(--color-bg);
+
+        --color-text-invert: var(--color-text-invert);
+        --color-text-invert-subtle: var(--color-text-invert-subtle);
+        --color-fg-invert: var(--color-fg-invert);
+        --color-background-invert: var(--color-background-invert);
+        --color-background-invert-subtle: var(--color-background-invert-subtle);
+        --color-bg-invert: var(--color-bg-invert);
+
+        --color-surface: var(--color-surface);
+        --color-sub-surface: var(--color-sub-surface);
+        --color-border: var(--color-border);
+    }
+
+    h1 {
+        @apply text-5xl;
+    }
+    h2 {
+        @apply text-3xl;
+    }
+    h3 {
+        @apply text-2xl;
+    }
+    h4 {
+        @apply text-xl;
+    }
+    h5 {
+        @apply text-lg;
+    }
+    h6 {
+        @apply text-base;
+    }
+    .title-text {
+        @apply text-5xl font-semibold;
+    }
+    .sub-title-text {
+        @apply text-xl font-semibold;
+    }
+    .label-text {
+        @apply font-semibold;
+    }
+    .body-text {
+        @apply text-base;
+    }
+    .caption-text {
+        @apply text-xs font-bold;
+    }
+}
+
+/* @utility {
+} */

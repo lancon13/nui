@@ -1,0 +1,82 @@
+{
+    "name": "@nui/ui-bak",
+    "version": "0.0.1",
+    "description": "NUI",
+    "productName": "NUI",
+    "author": "Gordon Cheng <lancon13@gmail.com>",
+    "type": "module",
+    "private": false,
+    "main": "./dist/nui-ui.umd.cjs",
+    "module": "./dist/nui-ui.js",
+    "types": "./dist/nui-ui.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/nui-ui.d.ts",
+            "import": "./dist/nui-ui.js",
+            "require": "./dist/nui-ui.umd.cjs"
+        }
+    },
+    "files": [
+        "src/",
+        "dist/"
+    ],
+    "scripts": {
+        "lint": "eslint -c ../../eslint.config.mjs \"src/**/*.{ts,js,cjs,mjs,vue}\"",
+        "test": "echo \"No test specified\" && exit 0",
+        "build": "pnpm icons:prepare && vue-tsc -p tsconfig.build.json --declaration --emitDeclarationOnly && mv dist/index.d.ts dist/wds-ui.d.ts && vite build",
+        "icons:prepare": "tsx scripts/prepare-icons.ts",
+        "storybook:dev": "storybook dev",
+        "storybook:build": "storybook build"
+    },
+    "dependencies": {
+        "@floating-ui/vue": "^1.1.9",
+        "@mdi/font": "^7.4.47",
+        "@tailwindcss/vite": "^4.1.13",
+        "@vueuse/components": "^13.5.0",
+        "@vueuse/core": "^13.5.0",
+        "@vueuse/integrations": "^13.9.0",
+        "@vueuse/router": "^13.5.0",
+        "async-validator": "^4.2.5",
+        "dayjs": "^1.11.13",
+        "es-toolkit": "^1.39.7",
+        "focus-trap": "^7",
+        "tailwindcss": "^4.1.13",
+        "vue": "^3.5.18",
+        "vue-forward-slots": "^5.0.4",
+        "vue-i18n": "^11.1.11",
+        "vue-router": "^4.5.1",
+        "zod": "^4.0.5"
+    },
+    "devDependencies": {
+        "@chromatic-com/storybook": "^4.1.1",
+        "@intlify/unplugin-vue-i18n": "^6.0.8",
+        "@storybook/addon-a11y": "^9.1.5",
+        "@storybook/addon-docs": "^9.1.5",
+        "@storybook/addon-themes": "^9.1.10",
+        "@storybook/addon-vitest": "^9.1.5",
+        "@storybook/vue3-vite": "^9.1.5",
+        "@types/node": "^24.1.0",
+        "@vitejs/plugin-vue": "^6.0.1",
+        "@vitest/browser": "^3.2.4",
+        "@vitest/coverage-v8": "^3.2.4",
+        "autoprefixer": "^10.4.2",
+        "fantasticon": "^3.0.0",
+        "globals": "^16.3.0",
+        "playwright": "^1.55.0",
+        "sass": "^1.93.0",
+        "storybook": "^9.1.5",
+        "tsx": "^4.20.5",
+        "typescript": "~5.8.3",
+        "vite": "^7.1.5",
+        "vite-plugin-checker": "^0.10.1",
+        "vite-plugin-static-copy": "^3.1.2",
+        "vite-svg-loader": "^5.1.0",
+        "vitest": "^3.2.4",
+        "vue-tsc": "^3.0.3"
+    },
+    "engines": {
+        "node": "^28 || ^26 || ^24 || ^22 || ^20 || ^18",
+        "npm": ">= 6.13.4",
+        "yarn": ">= 1.21.1"
+    }
+}
