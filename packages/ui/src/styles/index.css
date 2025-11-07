@@ -1,2 +1,6 @@
+@import '@mdi/font/css/materialdesignicons.css';
+
 @import 'tailwindcss';
 @import './palettes.css';
+@import './typos.css';
+@import './components.css';

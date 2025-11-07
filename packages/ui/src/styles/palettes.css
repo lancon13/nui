@@ -68,10 +68,10 @@
         --color-background-subtle-light: color-mix(in oklab, var(--color-background-light) 50%, white 50%);
         --color-bg-light: var(--color-background-light);
 
-        --color-text-invert-light: oklch(0.83 0 0);
+        --color-text-invert-light: oklch(0.92 0 0);
         --color-text-invert-subtle-light: color-mix(in oklab, var(--color-text--invert-light) 50%, white 50%);
         --color-fg-invert-light: var(--color-text-invert-light);
-        --color-background-invert-light: oklch(0.27 0 0);
+        --color-background-invert-light: oklch(0.08 0 0);
         --color-background-invert-subtle-light: color-mix(
             in oklab,
             var(--color-background-invert-light) 50%,
@@ -90,10 +90,10 @@
         --color-background-subtle-dark: color-mix(in oklab, var(--color-background-dark) 50%, white 50%);
         --color-bg-dark: var(--color-background-dark);
 
-        --color-text-invert-dark: oklch(0.27 0 0);
+        --color-text-invert-dark: oklch(0.08 0 0);
         --color-text-invert-subtle-dark: color-mix(in oklab, var(--color-text--invert-dark) 50%, white 50%);
         --color-fg-invert-dark: var(--color-text-invert-dark);
-        --color-background-invert-dark: oklch(0.83 0 0);
+        --color-background-invert-dark: oklch(0.92 0 0);
         --color-background-invert-subtle-dark: color-mix(in oklab, var(--color-background-invert-dark) 50%, white 50%);
         --color-bg-invert-dark: var(--color-background-invert-dark);
 
@@ -114,13 +114,14 @@
 
         /* Radius */
         --radius-square: 0;
-        --radius-element: var(--radius-base);
+        --radius-element: var(--radius-sm);
         --radius-container: var(--radius-lg);
         --radius-full: calc(infinity * 1px);
 
         /* Shadow */
         --shadow-outer: 0 0 var(--spacing-base) rgba(0 0 0 / 0.125);
         --shadow-inner: inset 0 0 var(--spacing-base) rgba(0 0 0 / 0.125);
+        --text-shadow-outer: 0 0 var(--spacing-base) rgba(0 0 0 / 0.125);
     }
 
     html.html--light {
@@ -255,40 +256,6 @@
         --color-surface: var(--color-surface);
         --color-sub-surface: var(--color-sub-surface);
         --color-border: var(--color-border);
-    }
-
-    h1 {
-        @apply text-5xl;
-    }
-    h2 {
-        @apply text-3xl;
-    }
-    h3 {
-        @apply text-2xl;
-    }
-    h4 {
-        @apply text-xl;
-    }
-    h5 {
-        @apply text-lg;
-    }
-    h6 {
-        @apply text-base;
-    }
-    .title-text {
-        @apply text-5xl font-semibold;
-    }
-    .sub-title-text {
-        @apply text-xl font-semibold;
-    }
-    .label-text {
-        @apply font-semibold;
-    }
-    .body-text {
-        @apply text-base;
-    }
-    .caption-text {
-        @apply text-xs font-bold;
     }
 }
 

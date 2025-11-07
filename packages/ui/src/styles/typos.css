@@ -1,0 +1,35 @@
+@layer base {
+    h1 {
+        @apply text-5xl;
+    }
+    h2 {
+        @apply text-3xl;
+    }
+    h3 {
+        @apply text-2xl;
+    }
+    h4 {
+        @apply text-xl;
+    }
+    h5 {
+        @apply text-lg;
+    }
+    h6 {
+        @apply text-base;
+    }
+    .title-text {
+        @apply text-5xl font-semibold;
+    }
+    .sub-title-text {
+        @apply text-xl font-semibold;
+    }
+    .label-text {
+        @apply font-semibold;
+    }
+    .body-text {
+        @apply text-base;
+    }
+    .caption-text {
+        @apply text-xs font-bold;
+    }
+}
