@@ -1,2 +1,13 @@
 @layer components {
+    [class*='n-'] {
+        .pilled {
+            @apply rounded-full;
+        }
+        .squared {
+            @apply rounded-none;
+        }
+        .shadowed {
+            @apply shadow-outer;
+        }
+    }
 }

@@ -35,7 +35,7 @@
 
     @layer components {
         .n-icon {
-            @apply leading-none;
+            @apply relative leading-none;
             &::before {
                 @apply !leading-0;
             }

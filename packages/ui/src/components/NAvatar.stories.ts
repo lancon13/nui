@@ -63,7 +63,7 @@ export const Pilled: Story = {
         },
         template: `
             <div class="flex flex-row items-center gap-4">
-                <div><NAvatar v-bind="args" icon="mdi-account" ></NAvatar></div>
+                <div><NAvatar v-bind="args" icon="mdi-account" class="pilled" ></NAvatar></div>
                 <div><NAvatar v-bind="args" icon="mdi-account" class="pilled primary"></NAvatar></div>
                 <div><NAvatar v-bind="args" icon="mdi-account" class="pilled success"></NAvatar></div>
                 <div><NAvatar v-bind="args" icon="mdi-account" class="pilled error"></NAvatar></div>

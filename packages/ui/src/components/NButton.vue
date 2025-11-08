@@ -47,7 +47,7 @@
         .n-button {
             @apply relative appearance-none
                 cursor-pointer
-                flex flex-row gap-2 items-center
+                inline-flex flex-row gap-2 items-center
                 bg-text text-text-invert
                 font-semibold leading-none
                 rounded-element
@@ -57,7 +57,7 @@
                 transition-all duration-200 ease-in-out;
             @apply hover:opacity-80;
             @apply focus:ring-2 focus:ring-offset-2 focus:ring-text/50;
-            @apply disabled:grayscale disabled:contrast-50 disabled:hover:opacity-100 disabled:cursor-not-allowed;
+            @apply disabled:grayscale disabled:contrast-50 disabled:opacity-50 disabled:hover:opacity-50 disabled:cursor-not-allowed;
 
             &.primary {
                 @apply bg-primary;
@@ -78,16 +78,6 @@
 
             &.icon {
                 @apply aspect-square p-2;
-            }
-
-            &.pilled {
-                @apply rounded-full;
-            }
-            &.squared {
-                @apply rounded-none;
-            }
-            &.shadowed {
-                @apply shadow-outer;
             }
 
             &.flat {
@@ -112,7 +102,7 @@
 
             &.outlined {
                 @apply bg-transparent border-2 border-current text-current
-                    hover:bg-current/10 hover:opacity-100;
+                    hover:bg-current/10 hover:opacity-50;
                 &.primary {
                     @apply border-primary text-primary 
                         hover:bg-current/10;
@@ -138,7 +128,7 @@
 
             &.texted {
                 @apply bg-transparent text-current
-                    hover:bg-current/10 hover:opacity-100;
+                    hover:bg-current/10 hover:opacity-50;
                 &.primary {
                     @apply text-primary
                         hover:bg-current/10;

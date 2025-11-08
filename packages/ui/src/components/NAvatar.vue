@@ -61,16 +61,6 @@
             &.info {
                 @apply bg-info;
             }
-
-            &.pilled {
-                @apply rounded-full;
-            }
-            &.squared {
-                @apply rounded-none;
-            }
-            &.shadowed {
-                @apply shadow-outer;
-            }
         }
     }
 </style>
