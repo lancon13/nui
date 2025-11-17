@@ -19,7 +19,18 @@
         <n-icon
             v-if="props.prependIcon || props.icon"
             :name="(props.prependIcon || props.icon) as string"
-            :class="[...(props.iconClass || []), ...(props.prependIconClass || [])]"
+            :class="[
+                ...(props.iconClass
+                    ? ['string', 'object'].includes(typeof props.iconClass)
+                        ? [props.iconClass]
+                        : props.iconClass
+                    : []),
+                ...(props.prependIconClass
+                    ? ['string', 'object'].includes(typeof props.prependIconClass)
+                        ? [props.prependIconClass]
+                        : props.prependIconClass
+                    : [])
+            ]"
         />
 
         <slot v-if="isDefaultSlotHasMultiple" name="default"></slot>

@@ -1,5 +1,7 @@
 <template>
-    <component :is="props.tag" :class="compClasses" v-bind="compBind" />
+    <component :is="props.tag" :class="compClasses" v-bind="compBind">
+        <slot name="default"></slot>
+    </component>
 </template>
 
 <script setup lang="ts">

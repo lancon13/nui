@@ -1,9 +1,9 @@
 <template>
     <div ref="placeholderRef" class="hidden" />
-    <teleport to="body">
+    <transition v-if="props.nested" name="n-tooltip">
         <component
             :is="props.tag"
-            v-if="isActive"
+            v-if="model"
             ref="contentRef"
             role="tooltip"
             :style="compStyles"
@@ -16,6 +16,25 @@
         >
             <slot name="default" v-html="props.content"></slot>
         </component>
+    </transition>
+    <teleport v-else to="body">
+        <transition name="n-tooltip">
+            <component
+                :is="props.tag"
+                v-if="model"
+                ref="contentRef"
+                role="tooltip"
+                :style="compStyles"
+                :class="compClasses"
+                v-bind="compBind"
+                @mouseenter="handleTooltipHoverFocusIn"
+                @mouseleave="handleTooltipHoverFocusOut"
+                @focusin="handleTooltipHoverFocusIn"
+                @focusout="handleTooltipHoverFocusOut"
+            >
+                <slot name="default" v-html="props.content"></slot>
+            </component>
+        </transition>
     </teleport>
 </template>
 
@@ -46,6 +65,7 @@
             margin?: number
             offset?: [number, number]
             autoReposition?: boolean
+            nested?: boolean
         }>(),
         {
             tag: 'span',
@@ -54,9 +74,10 @@
             hideDelay: 250,
             persistent: false,
             direction: 'bottom',
-            margin: 16,
+            margin: 8,
             offset: () => [0, 0],
-            autoReposition: true
+            autoReposition: true,
+            nested: false
         }
     )
 
@@ -114,15 +135,6 @@
         left: x.value != null ? `${x.value}px` : ''
     }))
 
-    const isActive = computed({
-        get() {
-            return true
-        },
-        set(value) {
-            console.log(value)
-        }
-    })
-
     // Lifecycle hooks
     watch(
         () => [props.attachParent, props.hoverTriggerAnchor, props.focusTriggerAnchor],
@@ -131,6 +143,8 @@
                 attachParentEl.value = props.attachParent
                     ? getElement(props.attachParent)
                     : placeholderRef.value?.parentElement || null
+
+                console.log(attachParentEl.value)
 
                 // Hover
                 if (hoverTriggerAnchorEl.value) {
@@ -199,39 +213,34 @@
 
     @layer components {
         .n-tooltip {
-            @apply absolute z-10
-                bg-text text-text-invert 
+            @apply z-10
+                bg-neutral text-text 
                 text-center
                 text-sm
                 px-2 py-1
                 rounded-element
-                opacity-0
-                transition-[opacity,translate] duration-200 ease-in-out;
+                shadow;
 
-            &.n-tooltip--visible {
-                @apply opacity-100;
-                /* Top, Bottom */
-                &.n-tooltip--direction-top,
+            &.n-tooltip-enter-active,
+            &.n-tooltip-leave-active {
+                @apply transition-[opacity,translate] duration-200 ease-in-out;
+                @apply translate-x-0 translate-y-0;
+            }
+            &.n-tooltip-enter-from,
+            &.n-tooltip-leave-to {
+                @apply opacity-0;
+                &.n-tooltip--direction-top {
+                    @apply translate-y-2;
+                }
                 &.n-tooltip--direction-bottom {
-                    @apply translate-y-0;
+                    @apply -translate-y-2;
                 }
-                /* Left, Right */
-                &.n-tooltip--direction-left,
+                &.n-tooltip--direction-left {
+                    @apply translate-x-2;
+                }
                 &.n-tooltip--direction-right {
-                    @apply translate-x-0;
+                    @apply -translate-x-2;
                 }
-            }
-            &.n-tooltip--direction-top {
-                @apply translate-y-2;
-            }
-            &.n-tooltip--direction-bottom {
-                @apply -translate-y-2;
-            }
-            &.n-tooltip--direction-left {
-                @apply translate-x-2;
-            }
-            &.n-tooltip--direction-right {
-                @apply -translate-x-2;
             }
         }
     }

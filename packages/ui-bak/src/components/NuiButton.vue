@@ -18,37 +18,22 @@
                     :size="props.size"
                     class="nui-button-loading-icon animate-spin"
                 />
-                <span v-if="props.loadingLabel" class="nui-button-loading-label">{{
-                    props.loadingLabel
-                }}</span>
+                <span v-if="props.loadingLabel" class="nui-button-loading-label">{{ props.loadingLabel }}</span>
                 <slot name="default" />
             </slot>
         </template>
 
         <template v-else>
             <slot v-if="$slots['prepend'] || props.prependIcon" name="prepend">
-                <nui-icon
-                    :name="props.prependIcon as string"
-                    :size="props.size"
-                    class="nui-button--prepend-icon"
-                />
+                <nui-icon :name="props.prependIcon as string" :size="props.size" class="nui-button--prepend-icon" />
             </slot>
 
-            <nui-icon
-                v-if="props.icon"
-                :name="props.icon"
-                :size="props.size"
-                class="nui-button-icon"
-            />
+            <nui-icon v-if="props.icon" :name="props.icon" :size="props.size" class="nui-button-icon" />
             {{ props.label }}
             <slot name="default" />
 
             <slot v-if="$slots['append'] || props.appendIcon" name="append">
-                <nui-icon
-                    :name="props.appendIcon as string"
-                    :size="props.size"
-                    class="nui-button--append-icon"
-                />
+                <nui-icon :name="props.appendIcon as string" :size="props.size" class="nui-button--append-icon" />
             </slot>
         </template>
     </component>
@@ -125,9 +110,7 @@
                 props.size && ['small', 'medium', 'large'].includes(props.size as string),
             [`nui-button--color-${props.color}`]:
                 props.color &&
-                ['primary', 'success', 'error', 'warning', 'info', 'current'].includes(
-                    props.color as string
-                ),
+                ['primary', 'success', 'error', 'warning', 'info', 'current'].includes(props.color as string),
             'nui-button--icon-only': isIconOnly.value,
             'nui-button--rounded': props.rounded,
             'nui-button--pilled': props.pilled,
@@ -141,8 +124,7 @@
 
     const compStyles = computed(() => {
         const styles: Record<string, string> = {}
-        if (props.size && !['small', 'medium', 'large'].includes(props.size as string))
-            styles['font-size'] = props.size
+        if (props.size && !['small', 'medium', 'large'].includes(props.size as string)) styles['font-size'] = props.size
 
         return styles
     })
@@ -161,7 +143,7 @@
                 border-[length:var(--nui-button-border-size)]
                 cursor-pointer
                 transition-all duration-250 ease-in-out
-                hover:opacity-70
+                hover:opacity-75
                 disabled:cursor-not-allowed;
 
             /* Sizes */
