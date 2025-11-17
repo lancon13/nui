@@ -399,3 +399,23 @@ export const IconOnly: Story = {
         `
     })
 }
+
+export const Loading: Story = {
+    args: {},
+    render: args => ({
+        components: { NButton },
+        setup() {
+            return { args }
+        },
+        template: `
+            <div class="flex flex-row items-center gap-4">
+                <NButton v-bind="args" prependIcon="arrow-left" loading>Prev</NButton>
+                <NButton v-bind="args" appendIcon="arrow-right" class="flat" loading>Next</NButton>                
+                <div></div>
+                <NButton v-bind="args" icon="send" class="primary" loading>Send</NButton>
+                <div></div>
+                <NButton v-bind="args" prependIcon="alert" appendIcon="alert" loading class="texted error">Delete</NButton>
+            </div>
+        `
+    })
+}

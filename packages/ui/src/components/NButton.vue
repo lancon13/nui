@@ -6,14 +6,25 @@
         :href="props.href"
         :target="props.target"
         :type="props.type"
+        :disabled="attrs.disabled || props.loading"
         v-bind="compBind"
     >
+        <span v-if="props.loading" class="loading-overlay">
+            <slot name="loading">
+                <n-icon :name="props.loadingIcon" :class="props.loadingIconClass" />
+            </slot>
+        </span>
+
         <slot name="prepend"></slot>
-        <n-icon v-if="props.prependIcon || props.icon" :name="(props.prependIcon || props.icon) as string" />
+        <n-icon
+            v-if="props.prependIcon || props.icon"
+            :name="(props.prependIcon || props.icon) as string"
+            :class="[...(props.iconClass || []), ...(props.prependIconClass || [])]"
+        />
         <span v-if="props.label || $slots['default']">
             <slot name="default"><{{ props.label }}</slot>
         </span>
-        <n-icon v-if="props.appendIcon" :name="props.appendIcon" />
+        <n-icon v-if="props.appendIcon" :name="props.appendIcon" :class="props.prependIconClass" />
         <slot name="append"></slot>
     </component>
 </template>
@@ -30,27 +41,30 @@
     const props = withDefaults(
         defineProps<{
             icon?: string
+            iconClass?: string | object | string[]
             prependIcon?: string
+            prependIconClass?: string | object | string[]
             appendIcon?: string
+            appendIconClass?: string | object | string[]
             label?: string
             tag?: string
             type?: string
-            // loading?: boolean
-            // prependIconClass?: string | object | string[]
-            // appendIconClass?: string | object | string[]
-            // iconClass?: string | object | string[]
+            loading?: boolean
+            loadingIcon?: string
+            loadingIconClass?: string | string[] | object
             to?: string | object
             href?: string
             target?: string
         }>(),
         {
             tag: 'button',
-            type: 'button'
+            type: 'button',
+            loadingIcon: 'loading'
         }
     )
 
     const compClasses = computed(() => {
-        return ['n-button']
+        return ['n-button', props.loading ? 'loading' : '']
     })
     const compBind = computed(() => {
         return {
@@ -76,7 +90,10 @@
                 px-4 py-2
                 transition-all duration-200 ease-in-out;
             @apply hover:opacity-80;
-            @apply disabled:grayscale disabled:contrast-50 disabled:opacity-50 disabled:hover:opacity-50 disabled:cursor-not-allowed;
+            @apply disabled:opacity-80 disabled:hover:opacity-80 disabled:cursor-not-allowed;
+            &:not(.loading) {
+                @apply disabled:grayscale disabled:contrast-50 disabled:opacity-50 disabled:hover:opacity-50;
+            }
 
             &.primary {
                 @apply bg-primary;
@@ -93,10 +110,25 @@
             &.info {
                 @apply bg-info;
             }
-            @apply disabled:bg-text disabled:text-text-invert;
+            &:not(.loading) {
+                @apply disabled:bg-text disabled:text-text-invert;
+            }
 
             &.icon {
                 @apply aspect-square p-2;
+            }
+
+            &.loading {
+                @apply disabled:grayscale-0 disabled:contrast-100;
+                .loading-overlay {
+                    @apply absolute top-0 left-0 w-full h-full flex items-center justify-center;
+                    .n-icon {
+                        @apply animate-spin;
+                    }
+                    & ~ * {
+                        @apply opacity-0;
+                    }
+                }
             }
 
             &.flat {
@@ -116,7 +148,9 @@
                 &.info {
                     @apply bg-info-bright text-info;
                 }
-                @apply disabled:bg-current/20 disabled:text-current;
+                &:not(.loading) {
+                    @apply disabled:bg-current/20 disabled:text-current;
+                }
             }
 
             &.outlined {
@@ -142,12 +176,14 @@
                     @apply border-info text-info
                         hover:bg-current/10;
                 }
-                @apply disabled:bg-transparent disabled:border-current disabled:text-current disabled:hover:bg-transparent;
+                &:not(.loading) {
+                    @apply disabled:bg-transparent disabled:border-current disabled:text-current disabled:hover:bg-transparent;
+                }
             }
 
             &.texted {
                 @apply bg-transparent text-current
-                    hover:bg-current/10 hover:opacity-50;
+                    hover:bg-current/10;
                 &.primary {
                     @apply text-primary
                         hover:bg-current/10;
@@ -173,7 +209,12 @@
                     @apply shadow-none text-shadow-outer;
                 }
 
-                @apply disabled:bg-transparent disabled:text-current disabled:hover:bg-transparent;
+                &.loading {
+                    @apply bg-current/10 hover:bg-current/10;
+                }
+                &:not(.loading) {
+                    @apply disabled:bg-transparent disabled:text-current disabled:hover:bg-transparent;
+                }
             }
 
             &:has(.n-avatar) {
