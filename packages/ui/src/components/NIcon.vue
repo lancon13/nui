@@ -37,7 +37,7 @@
     })
 
     const compClasses = computed(() => {
-        return ['n-icon', ...(props.clickable ? ['clickable'] : []), ...iconClasses.value]
+        return ['n-icon', ...(props.clickable ? ['n-icon--clickable'] : []), ...iconClasses.value]
     })
     const compBind = computed(() => {
         return {

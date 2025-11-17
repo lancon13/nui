@@ -1,2 +1,5 @@
 export { default as NIcon } from './NIcon.vue'
 export { default as NButton } from './NButton.vue'
+export { default as NAvatar } from './NAvatar.vue'
+export { default as NChip } from './NChip.vue'
+export { default as NTooltip } from './NTooltip.vue'

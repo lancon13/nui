@@ -9,7 +9,7 @@
         :disabled="attrs.disabled || props.loading"
         v-bind="compBind"
     >
-        <span v-if="props.loading" class="loading-overlay">
+        <span v-if="props.loading" class="n-button-loading-overlay">
             <slot name="loading">
                 <n-icon :name="props.loadingIcon" :class="props.loadingIconClass" />
             </slot>
@@ -21,22 +21,26 @@
             :name="(props.prependIcon || props.icon) as string"
             :class="[...(props.iconClass || []), ...(props.prependIconClass || [])]"
         />
-        <span v-if="props.label || $slots['default']">
+
+        <slot v-if="isDefaultSlotHasMultiple" name="default"></slot>
+        <span v-else-if="props.label || $slots['default']">
             <slot name="default"><{{ props.label }}</slot>
         </span>
+
         <n-icon v-if="props.appendIcon" :name="props.appendIcon" :class="props.prependIconClass" />
         <slot name="append"></slot>
     </component>
 </template>
 
 <script setup lang="ts">
-    import { computed, useAttrs } from 'vue'
+    import { computed, useAttrs, useSlots } from 'vue'
     import NIcon from './NIcon.vue'
 
     defineOptions({
         inheritAttrs: false
     })
 
+    const slots = useSlots()
     const attrs = useAttrs()
     const props = withDefaults(
         defineProps<{
@@ -64,12 +68,16 @@
     )
 
     const compClasses = computed(() => {
-        return ['n-button', props.loading ? 'loading' : '']
+        return ['n-button', props.loading ? 'n-button--loading' : '']
     })
     const compBind = computed(() => {
         return {
             ...attrs
         }
+    })
+
+    const isDefaultSlotHasMultiple = computed(() => {
+        return (slots['default']?.() ?? []).length > 1
     })
 </script>
 
@@ -91,7 +99,7 @@
                 transition-all duration-200 ease-in-out;
             @apply hover:opacity-80;
             @apply disabled:opacity-80 disabled:hover:opacity-80 disabled:cursor-not-allowed;
-            &:not(.loading) {
+            &:not(.n-button--loading) {
                 @apply disabled:grayscale disabled:contrast-50 disabled:opacity-50 disabled:hover:opacity-50;
             }
 
@@ -110,7 +118,7 @@
             &.info {
                 @apply bg-info;
             }
-            &:not(.loading) {
+            &:not(.n-button--loading) {
                 @apply disabled:bg-text disabled:text-text-invert;
             }
 
@@ -118,9 +126,9 @@
                 @apply aspect-square p-2;
             }
 
-            &.loading {
+            &.n-button--loading {
                 @apply disabled:grayscale-0 disabled:contrast-100;
-                .loading-overlay {
+                .n-button-loading-overlay {
                     @apply absolute top-0 left-0 w-full h-full flex items-center justify-center;
                     .n-icon {
                         @apply animate-spin;
@@ -148,7 +156,7 @@
                 &.info {
                     @apply bg-info-bright text-info;
                 }
-                &:not(.loading) {
+                &:not(.n-button--loading) {
                     @apply disabled:bg-current/20 disabled:text-current;
                 }
             }
@@ -176,7 +184,7 @@
                     @apply border-info text-info
                         hover:bg-current/10;
                 }
-                &:not(.loading) {
+                &:not(.n-button--loading) {
                     @apply disabled:bg-transparent disabled:border-current disabled:text-current disabled:hover:bg-transparent;
                 }
             }
@@ -209,10 +217,10 @@
                     @apply shadow-none text-shadow-outer;
                 }
 
-                &.loading {
+                &.n-button--loading {
                     @apply bg-current/10 hover:bg-current/10;
                 }
-                &:not(.loading) {
+                &:not(.n-button--loading) {
                     @apply disabled:bg-transparent disabled:text-current disabled:hover:bg-transparent;
                 }
             }

@@ -4,7 +4,7 @@
         @apply focus:outline-0 focus:ring-2 focus:ring-offset-2 focus:ring-offset-bg focus:ring-focus;
 
         a[href]&,
-        .clickable& {
+        [class$='--clickable']& {
             @apply cursor-pointer;
             @apply transition-opacity duration-200 ease-in-out;
             @apply transition-shadow duration-200 ease-in-out;

@@ -46,7 +46,7 @@
     }>()
 
     const compClasses = computed(() => {
-        return ['n-chip', ...(props.clickable ? ['clickable'] : [])]
+        return ['n-chip', ...(props.clickable ? ['n-chip--clickable'] : [])]
     })
     const compBind = computed(() => {
         return {

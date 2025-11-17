@@ -33,7 +33,7 @@
     )
 
     const compClasses = computed(() => {
-        return ['n-avatar', ...(props.clickable ? ['clickable'] : [])]
+        return ['n-avatar', ...(props.clickable ? ['n-avatar--clickable'] : [])]
     })
     const compBind = computed(() => {
         return {
