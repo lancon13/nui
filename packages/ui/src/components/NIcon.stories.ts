@@ -72,3 +72,14 @@ export const Colors: Story = {
         `
     })
 }
+
+export const Clickable: Story = {
+    args: {},
+    render: args => ({
+        components: { NIcon },
+        setup() {
+            return { args }
+        },
+        template: '<NIcon v-bind="args" tag="a" href="#" name="mdi-account" clickable class="text-[1.25rem]"></NIcon>'
+    })
+}

@@ -304,3 +304,40 @@ export const Icon: Story = {
         `
     })
 }
+
+export const Removable: Story = {
+    args: {},
+    render: args => ({
+        components: { NChip },
+        setup() {
+            function handleRemove() {
+                console.log('Remove')
+            }
+            return { args, handleRemove }
+        },
+        template: `
+            <div class="flex flex-row items-center gap-4">
+                <NChip v-bind="args" removable @remove="handleRemove">Test account</NChip>
+                <NChip v-bind="args" appendIcon="account" removable-class="pilled bg-bg text-fg" removable @remove="handleRemove">Test account</NChip>
+            </div>
+        `
+    })
+}
+
+export const Clickable: Story = {
+    args: {},
+    render: args => ({
+        components: { NChip },
+        setup() {
+            function handleClick() {
+                console.log('Click')
+            }
+            return { args, handleClick }
+        },
+        template: `
+            <div class="flex flex-row items-center gap-4">
+                <NChip v-bind="args" clickable @click="handleClick">Click me</NChip>
+            </div>
+        `
+    })
+}

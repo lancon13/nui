@@ -1,17 +1,29 @@
 <template>
-    <i :class="compClasses" v-bind="$attrs" />
+    <component :is="props.tag" :class="compClasses" v-bind="compBind" />
 </template>
 
 <script setup lang="ts">
-    import { computed } from 'vue'
+    import { computed, useAttrs } from 'vue'
 
     defineOptions({
         inheritAttrs: false
     })
 
-    const props = defineProps<{
-        name: string
-    }>()
+    const attrs = useAttrs()
+    const props = withDefaults(
+        defineProps<{
+            name: string
+            tag?: string
+            clickable?: boolean
+            to?: string | object
+            href?: string
+            target?: string
+        }>(),
+        {
+            tag: 'i',
+            href: '#'
+        }
+    )
 
     const iconClasses = computed(() => {
         const name = props.name || 'mdi-account'
@@ -25,7 +37,15 @@
     })
 
     const compClasses = computed(() => {
-        return ['n-icon', ...iconClasses.value]
+        return ['n-icon', ...(props.clickable ? ['clickable'] : []), ...iconClasses.value]
+    })
+    const compBind = computed(() => {
+        return {
+            ...(props.clickable
+                ? { tabindex: 0, role: 'button', to: props.to, href: props.href, target: props.target }
+                : {}),
+            ...attrs
+        }
     })
 </script>
 
@@ -35,10 +55,7 @@
 
     @layer components {
         .n-icon {
-            @apply relative leading-none;
-            &::before {
-                @apply !leading-0;
-            }
+            @apply inline-block leading-none size-[1em] rounded-element;
         }
     }
 </style>

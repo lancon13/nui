@@ -61,16 +61,16 @@ export const Default: Story = {
                     <div>This is a card</div>
                     <div class="text-text-subtle">This is a description</div>
                 </div>
-                <div class="bg-sub-surface border-border border-1 p-4 text-center rounded-container shadow-inner">
+                <div class="bg-sub-surface border-border border-1 p-4 text-center rounded-container shadow-outer">
                     <div>This is a sub-card</div>
                     <div class="text-text-subtle">This is a description</div>
                 </div>
 
-                <div class="bg-sub-surface border-border border-1 p-4 text-center rounded-full shadow-inner ">
+                <div class="bg-sub-surface border-border border-1 p-4 text-center rounded-full">
                     <div>Pilled</div>                    
                 </div>
 
-                <div class="bg-sub-surface border-border border-1 p-4 text-center rounded-square shadow-inner ">
+                <div class="bg-sub-surface border-border border-1 p-4 text-center rounded-square">
                     <div>Squared</div>                    
                 </div>
             </div>

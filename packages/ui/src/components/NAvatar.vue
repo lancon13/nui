@@ -1,30 +1,47 @@
 <template>
-    <div :class="compClasses" v-bind="$attrs">
+    <component :is="props.tag" :class="compClasses" v-bind="compBind">
         <n-icon v-if="props.icon" :name="props.icon" />
         <span v-else-if="props.label || $slots['default']">
             <slot name="default">{{ props.label }}</slot>
         </span>
-    </div>
+    </component>
 </template>
 
 <script setup lang="ts">
-    import { computed } from 'vue'
+    import { computed, useAttrs } from 'vue'
     import NIcon from './NIcon.vue'
 
     defineOptions({
         inheritAttrs: false
     })
 
-    const props = defineProps<{
-        icon?: string
-        label?: string
-        // tag?: string
-        // iconClass?: string | object | string[]
-        // labelClass?: string | object | string[]
-    }>()
+    const attrs = useAttrs()
+    const props = withDefaults(
+        defineProps<{
+            icon?: string
+            label?: string
+            tag?: string
+            clickable?: boolean
+            to?: string | object
+            href?: string
+            target?: string
+        }>(),
+        {
+            tag: 'span',
+            href: '#'
+        }
+    )
 
     const compClasses = computed(() => {
-        return ['n-avatar']
+        return ['n-avatar', ...(props.clickable ? ['clickable'] : [])]
+    })
+    const compBind = computed(() => {
+        return {
+            ...(props.clickable
+                ? { tabindex: 0, role: 'button', to: props.to, href: props.href, target: props.target }
+                : {}),
+            ...attrs
+        }
     })
 </script>
 

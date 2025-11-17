@@ -220,3 +220,21 @@ export const Buttons: Story = {
         `
     })
 }
+
+export const Clickable: Story = {
+    args: {},
+    render: args => ({
+        components: { NAvatar },
+        setup() {
+            function handleClick() {
+                console.log('Click')
+            }
+            return { args, handleClick }
+        },
+        template: `
+            <div class="flex flex-row items-center gap-4">
+                <NAvatar v-bind="args" icon="mdi-account" clickable></NAvatar>
+            </div>
+        `
+    })
+}

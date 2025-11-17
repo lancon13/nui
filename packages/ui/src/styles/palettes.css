@@ -60,6 +60,10 @@
         --color-info-bright-dark: color-mix(in oklab, var(--color-info-dark) 50%, white 50%);
         --color-info-dim-dark: color-mix(in oklab, var(--color-info-dark) 50%, black 50%);
 
+        /* Focus */
+        --color-focus-light: #0066ff;
+        --color-focus-dark: #0066ff;
+
         /* Text, Background */
         --color-text-light: oklch(0.27 0 0);
         --color-text-subtle-light: color-mix(in oklab, var(--color-text-light) 50%, white 50%);
@@ -149,6 +153,8 @@
         --color-info-bright: var(--color-info-bright-light);
         --color-info-dim: var(--color-info-dim-light);
 
+        --color-focus: var(--color-focus-light);
+
         --color-text: var(--color-text-light);
         --color-text-subtle: var(--color-text-subtle-light);
         --color-fg: var(--color-fg-light);
@@ -194,6 +200,8 @@
         --color-info-bright: var(--color-info-bright-dark);
         --color-info-dim: var(--color-info-dim-dark);
 
+        --color-focus: var(--color-focus-dark);
+
         --color-text: var(--color-text-dark);
         --color-text-subtle: var(--color-text-subtle-dark);
         --color-fg: var(--color-fg-dark);
@@ -238,6 +246,8 @@
         --color-info: var(--color-info);
         --color-info-bright: var(--color-info-bright);
         --color-info-dim: var(--color-info-dim);
+
+        --color-focus: var(--color-focus);
 
         --color-text: var(--color-text);
         --color-text-subtle: var(--color-text-subtle);

@@ -1,5 +1,13 @@
 <template>
-    <button :class="compClasses" v-bind="$attrs">
+    <component
+        :is="props.tag"
+        :class="compClasses"
+        :to="props.to"
+        :href="props.href"
+        :target="props.target"
+        :type="props.type"
+        v-bind="compBind"
+    >
         <slot name="prepend"></slot>
         <n-icon v-if="props.prependIcon || props.icon" :name="(props.prependIcon || props.icon) as string" />
         <span v-if="props.label || $slots['default']">
@@ -7,35 +15,47 @@
         </span>
         <n-icon v-if="props.appendIcon" :name="props.appendIcon" />
         <slot name="append"></slot>
-    </button>
+    </component>
 </template>
 
 <script setup lang="ts">
-    import { computed } from 'vue'
+    import { computed, useAttrs } from 'vue'
     import NIcon from './NIcon.vue'
 
     defineOptions({
         inheritAttrs: false
     })
 
-    const props = defineProps<{
-        icon?: string
-        prependIcon?: string
-        appendIcon?: string
-        label?: string
-        // tag?: string
-        // type?: string
-        // loading?: boolean
-        // to?: string | object
-        // href?: string
-        // target?: string
-        // prependIconClass?: string | object | string[]
-        // appendIconClass?: string | object | string[]
-        // iconClass?: string | object | string[]
-    }>()
+    const attrs = useAttrs()
+    const props = withDefaults(
+        defineProps<{
+            icon?: string
+            prependIcon?: string
+            appendIcon?: string
+            label?: string
+            tag?: string
+            type?: string
+            // loading?: boolean
+            // prependIconClass?: string | object | string[]
+            // appendIconClass?: string | object | string[]
+            // iconClass?: string | object | string[]
+            to?: string | object
+            href?: string
+            target?: string
+        }>(),
+        {
+            tag: 'button',
+            type: 'button'
+        }
+    )
 
     const compClasses = computed(() => {
         return ['n-button']
+    })
+    const compBind = computed(() => {
+        return {
+            ...attrs
+        }
     })
 </script>
 
@@ -56,7 +76,6 @@
                 px-4 py-2
                 transition-all duration-200 ease-in-out;
             @apply hover:opacity-80;
-            @apply focus:ring-2 focus:ring-offset-2 focus:ring-text/50;
             @apply disabled:grayscale disabled:contrast-50 disabled:opacity-50 disabled:hover:opacity-50 disabled:cursor-not-allowed;
 
             &.primary {

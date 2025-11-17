@@ -1,5 +1,5 @@
 <template>
-    <span :class="compClasses" v-bind="$attrs">
+    <component :is="props.tag" :class="compClasses" v-bind="compBind">
         <slot name="prepend"></slot>
         <n-icon v-if="props.prependIcon || props.icon" :name="(props.prependIcon || props.icon) as string" />
         <span v-if="props.label || $slots['default']">
@@ -7,27 +7,59 @@
         </span>
         <n-icon v-if="props.appendIcon" :name="props.appendIcon" />
         <slot name="append"></slot>
-    </span>
+        <slot v-if="props.removable" name="removable">
+            <n-icon name="close" :class="props.removableClass" clickable @click="handleRemovableClick" />
+        </slot>
+    </component>
 </template>
 
 <script setup lang="ts">
-    import { computed } from 'vue'
+    import { computed, useAttrs } from 'vue'
     import NIcon from './NIcon.vue'
 
     defineOptions({
         inheritAttrs: false
     })
 
-    const props = defineProps<{
-        icon?: string
-        prependIcon?: string
-        appendIcon?: string
-        label?: string
+    const attrs = useAttrs()
+    const props = withDefaults(
+        defineProps<{
+            icon?: string
+            prependIcon?: string
+            appendIcon?: string
+            tag?: string
+            label?: string
+            removable?: boolean
+            removableClass?: string | string[] | object
+            clickable?: boolean
+            to?: string | object
+            href?: string
+            target?: string
+        }>(),
+        {
+            tag: 'span',
+            href: '#'
+        }
+    )
+    const emits = defineEmits<{
+        remove: []
     }>()
 
     const compClasses = computed(() => {
-        return ['n-chip']
+        return ['n-chip', ...(props.clickable ? ['clickable'] : [])]
     })
+    const compBind = computed(() => {
+        return {
+            ...(props.clickable
+                ? { tabindex: 0, role: 'button', to: props.to, href: props.href, target: props.target }
+                : {}),
+            ...attrs
+        }
+    })
+
+    function handleRemovableClick() {
+        emits('remove')
+    }
 </script>
 
 <style lang="css">
