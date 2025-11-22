@@ -2,5 +2,5 @@
 
 @import 'tailwindcss';
 @import './palettes.css';
-@import './typos.css';
+@import './typography.css';
 @import './components.css';

@@ -93,3 +93,18 @@ export const Content: Story = {
         `
     })
 }
+
+export const IconButton: Story = {
+    args: {},
+    render: args => ({
+        components: { NTooltip, NButton },
+        setup() {
+            return { args }
+        },
+        template: `
+            <NButton icon="close" class="pilled icon text-xs">
+                <NTooltip v-bind="args" >This is a tooltip</NTooltip>
+            </NButton>
+        `
+    })
+}

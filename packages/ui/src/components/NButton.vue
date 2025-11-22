@@ -23,19 +23,20 @@
                 ...(props.iconClass
                     ? ['string', 'object'].includes(typeof props.iconClass)
                         ? [props.iconClass]
-                        : props.iconClass
+                        : (props.iconClass as string[])
                     : []),
                 ...(props.prependIconClass
                     ? ['string', 'object'].includes(typeof props.prependIconClass)
                         ? [props.prependIconClass]
-                        : props.prependIconClass
+                        : (props.prependIconClass as string[])
                     : [])
             ]"
         />
 
-        <slot v-if="isDefaultSlotHasMultiple" name="default"></slot>
-        <span v-else-if="props.label || $slots['default']">
-            <slot name="default"><{{ props.label }}</slot>
+        <span v-if="props.label">{{ props.label }}</span>
+        <slot v-if="shouldNotAddWrapper" name="default"></slot>
+        <span v-else-if="$slots['default']">
+            <slot name="default"></slot>
         </span>
 
         <n-icon v-if="props.appendIcon" :name="props.appendIcon" :class="props.prependIconClass" />
@@ -45,6 +46,7 @@
 
 <script setup lang="ts">
     import { computed, useAttrs, useSlots } from 'vue'
+    import { isVNodeNameContain } from '../helpers/dom'
     import NIcon from './NIcon.vue'
 
     defineOptions({
@@ -87,8 +89,11 @@
         }
     })
 
-    const isDefaultSlotHasMultiple = computed(() => {
-        return (slots['default']?.() ?? []).length > 1
+    const shouldNotAddWrapper = computed(() => {
+        const nodes = slots['default']?.() ?? []
+        if (nodes.length === 0) return false
+        if (nodes.length > 0 && isVNodeNameContain(nodes[0], ['NTooltip'])) return true
+        return nodes.length > 1
     })
 </script>
 
@@ -140,7 +145,7 @@
             &.n-button--loading {
                 @apply disabled:grayscale-0 disabled:contrast-100;
                 .n-button-loading-overlay {
-                    @apply absolute top-0 left-0 w-full h-full flex items-center justify-center;
+                    @apply absolute top-0 left-0 w-full h-full flex items-center justify-center z-10;
                     .n-icon {
                         @apply animate-spin;
                     }

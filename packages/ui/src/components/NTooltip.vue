@@ -144,8 +144,6 @@
                     ? getElement(props.attachParent)
                     : placeholderRef.value?.parentElement || null
 
-                console.log(attachParentEl.value)
-
                 // Hover
                 if (hoverTriggerAnchorEl.value) {
                     hoverTriggerAnchorEl.value.removeEventListener('mouseenter', handleTriggerAnchorHoverFocusIn)
@@ -214,12 +212,13 @@
     @layer components {
         .n-tooltip {
             @apply z-10
-                bg-neutral text-text 
+                bg-bg-invert text-text-invert 
                 text-center
-                text-sm
+                text-xs
                 px-2 py-1
                 rounded-element
-                shadow;
+                shadow
+                max-w-1/3;
 
             &.n-tooltip-enter-active,
             &.n-tooltip-leave-active {

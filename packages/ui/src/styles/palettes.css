@@ -3,8 +3,6 @@
 
 @layer base {
     @theme {
-        --font-ratio: 1;
-
         /* Primary */
         --color-primary-light: oklch(0.65 0.079 250.44);
         --color-primary-bright-light: color-mix(in oklab, var(--color-primary-light) 50%, white 50%);
@@ -81,11 +79,23 @@
             var(--color-background-invert-light) 50%,
             white 50%
         );
-        --color-bg-invert-light: var(--color-background-invert-light);
 
+        --color-bg-invert-light: var(--color-background-invert-light);
         --color-surface-light: oklch(0.9 0 0);
         --color-sub-surface-light: oklch(0.76 0 0);
         --color-border-light: oklch(0.69 0 0);
+        --color-surface-indent-light: color-mix(in oklab, var(--color-surface-light) 90%, black 10%);
+        --color-surface-indent-indent-light: color-mix(in oklab, var(--color-surface-indent-light) 90%, black 10%);
+        --color-surface-indent-indent-indent-light: color-mix(
+            in oklab,
+            var(--color-surface-indent-indent-light) 10%,
+            black 90%
+        );
+        --color-surface-indent-indent-indent-indent-light: color-mix(
+            in oklab,
+            var(--color-surface-indent-indent-indent-light) 10%,
+            black 90%
+        );
 
         --color-text-dark: oklch(0.83 0 0);
         --color-text-subtle-dark: color-mix(in oklab, var(--color-text-dark) 50%, white 50%);
@@ -104,28 +114,18 @@
         --color-surface-dark: oklch(0.2 0 0);
         --color-sub-surface-dark: oklch(0.34 0 0);
         --color-border-dark: oklch(0.48 0 0);
-
-        /* Spacing */
-        --spacing-0: 0;
-        --spacing-xxs: 0.125rem;
-        --spacing-xs: 0.25rem;
-        --spacing-sm: 0.5rem;
-        --spacing-base: 1rem;
-        --spacing-md: 2rem;
-        --spacing-lg: 4rem;
-        --spacing-xl: 8rem;
-        --spacing-xxl: 16rem;
-
-        /* Radius */
-        --radius-square: 0;
-        --radius-element: var(--radius-sm);
-        --radius-container: var(--radius-lg);
-        --radius-full: calc(infinity * 1px);
-
-        /* Shadow */
-        --shadow-outer: 0 0 var(--spacing-base) rgba(0 0 0 / 0.125);
-        --shadow-inner: inset 0 0 var(--spacing-base) rgba(0 0 0 / 0.125);
-        --text-shadow-outer: 0 0 var(--spacing-base) rgba(0 0 0 / 0.125);
+        --color-surface-indent-dark: color-mix(in oklab, var(--color-surface-dark) 90%, white 10%);
+        --color-surface-indent-indent-dark: color-mix(in oklab, var(--color-surface-indent-dark) 90%, white 10%);
+        --color-surface-indent-indent-indent-dark: color-mix(
+            in oklab,
+            var(--color-surface-indent-indent-dark) 10%,
+            white 90%
+        );
+        --color-surface-indent-indent-indent-indent-dark: color-mix(
+            in oklab,
+            var(--color-surface-indent-indent-indent-dark) 10%,
+            white 90%
+        );
     }
 
     html.html--light {
@@ -171,6 +171,10 @@
         --color-surface: var(--color-surface-light);
         --color-sub-surface: var(--color-sub-surface-light);
         --color-border: var(--color-border-light);
+        --color-surface-indent: var(--color-surface-indent-light);
+        --color-surface-indent-indent: var(--color-surface-indent-indent-light);
+        --color-surface-indent-indent-indent: var(--color-surface-indent-indent-indent-light);
+        --color-surface-indent-indent-indent-indent: var(--color-surface-indent-indent-indent-indent-light);
 
         @apply bg-background text-text;
     }
@@ -218,6 +222,10 @@
         --color-surface: var(--color-surface-dark);
         --color-sub-surface: var(--color-sub-surface-dark);
         --color-border: var(--color-border-dark);
+        --color-surface-indent: var(--color-surface-indent-dark);
+        --color-surface-indent-indent: var(--color-surface-indent-indent-dark);
+        --color-surface-indent-indent-indent: var(--color-surface-indent-indent-indent-dark);
+        --color-surface-indent-indent-indent-indent: var(--color-surface-indent-indent-indent-indent-dark);
 
         @apply bg-background text-text;
     }
@@ -266,6 +274,10 @@
         --color-surface: var(--color-surface);
         --color-sub-surface: var(--color-sub-surface);
         --color-border: var(--color-border);
+        --color-surface-indent: var(--color-surface-indent);
+        --color-surface-indent-indent: var(--color-surface-indent-indent);
+        --color-surface-indent-indent-indent: var(--color-surface-indent-indent-indent);
+        --color-surface-indent-indent-indent-indent: var(--color-surface-indent-indent-indent-indent);
     }
 }
 

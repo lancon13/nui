@@ -1,13 +1,42 @@
+@layer base {
+    @theme {
+        --font-ratio: 1;
+
+        /* Spacing */
+        --spacing-0: 0;
+        --spacing-xxs: 0.125rem;
+        --spacing-xs: 0.25rem;
+        --spacing-sm: 0.5rem;
+        --spacing-base: 1rem;
+        --spacing-md: 2rem;
+        --spacing-lg: 4rem;
+        --spacing-xl: 8rem;
+        --spacing-xxl: 16rem;
+
+        /* Radius */
+        --radius-square: 0;
+        --radius-element: var(--radius-sm);
+        --radius-container: var(--radius-sm);
+        --radius-full: calc(infinity * 1px);
+
+        /* Shadow */
+        --shadow-outer: 0 0 var(--spacing-base) rgba(0 0 0 / 0.125);
+        --shadow-inner: inset 0 0 var(--spacing-base) rgba(0 0 0 / 0.125);
+        --text-shadow-outer: 0 0 var(--spacing-base) rgba(0 0 0 / 0.125);
+    }
+}
+
 @layer components {
     [class*='n-'] {
         @apply transition-shadow duration-200 ease-in-out;
-        @apply focus:outline-0 focus:ring-2 focus:ring-offset-2 focus:ring-offset-bg focus:ring-focus;
+        @apply focus:outline-0 focus:ring-2 focus:ring-focus;
 
         a[href]&,
-        [class$='--clickable']& {
+        [class*='--clickable']& {
             @apply cursor-pointer;
             @apply transition-opacity duration-200 ease-in-out;
             @apply transition-shadow duration-200 ease-in-out;
+            @apply focus:outline-0 focus:ring-2 focus:ring-focus;
             @apply hover:opacity-75;
         }
 
@@ -20,5 +49,24 @@
         .shadowed {
             @apply shadow-outer;
         }
+    }
+
+    .n-space {
+        @apply grow;
+    }
+    .n-separator,
+    .n-divider {
+        @apply border-b border-border;
+
+        & + .n-vertical {
+            @apply border-l border-b-0;
+        }
+    }
+
+    .n-content-row {
+        @apply flex flex-row gap-4;
+    }
+    .n-content-col {
+        @apply flex flex-col gap-4;
     }
 }

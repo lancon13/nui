@@ -233,7 +233,7 @@ export const Clickable: Story = {
         },
         template: `
             <div class="flex flex-row items-center gap-4">
-                <NAvatar v-bind="args" icon="mdi-account" clickable></NAvatar>
+                <NAvatar v-bind="args" icon="mdi-account" clickable @click="handleClick"></NAvatar>
             </div>
         `
     })
