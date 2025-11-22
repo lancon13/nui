@@ -92,6 +92,9 @@
                         @apply bg-surface-indent-indent;
                         & > .n-card-body > .n-card {
                             @apply bg-surface-indent-indent-indent;
+                            & > .n-card-body > .n-card {
+                                @apply bg-surface-indent-indent-indent-indent;
+                            }
                         }
                     }
                 }

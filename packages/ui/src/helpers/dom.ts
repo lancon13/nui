@@ -1,4 +1,5 @@
-import { isVNode, VNode } from 'vue'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { h, isVNode, VNode } from 'vue'
 
 interface ComponentTypeWithName {
     name?: string
@@ -78,4 +79,39 @@ export const isVNodeClassContain = (node: VNode, className: string | string[]): 
 
     // 4. Check if ANY of the target classes exist on the node
     return classesToCheck.some(cls => nodeClasses.includes(cls))
+}
+
+/**
+ * Wraps any "meaningful" Text nodes in the provided list with a specific tag.
+ * Leaves other nodes (Elements, Components) untouched.
+ *
+ * @param nodes - A single VNode or an array of VNodes (usually from slots.default())
+ * @param tag - The HTML tag to wrap text with (e.g., 'span', 'div')
+ * @param props - Optional props to pass to the wrapper (e.g., class, style)
+ */
+export function wrapTextNode(
+    nodes: VNode | VNode[] | undefined,
+    tag: string = 'span',
+    props: Record<string, any> = {}
+): VNode[] {
+    if (!nodes) return []
+
+    // Normalize to array
+    const nodeList = Array.isArray(nodes) ? nodes : [nodes]
+
+    return nodeList.map(node => {
+        // 1. Check if it is a Text Node
+        if (node.type === Text) {
+            const content = node.children as string
+
+            // 2. Only wrap if it contains actual text (ignore purely whitespace/newlines)
+            //    If you want to wrap whitespace too, remove this if-check.
+            if (content && content.trim().length > 0) {
+                return h(tag, props, content)
+            }
+        }
+
+        // 3. Return non-text nodes (or whitespace text nodes) as-is
+        return node
+    })
 }

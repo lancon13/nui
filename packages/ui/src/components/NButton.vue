@@ -34,10 +34,9 @@
         />
 
         <span v-if="props.label">{{ props.label }}</span>
-        <slot v-if="shouldNotAddWrapper" name="default"></slot>
-        <span v-else-if="$slots['default']">
-            <slot name="default"></slot>
-        </span>
+        <template v-for="(node, index) in slotDefaultNodes" :key="index">
+            <component :is="node" />
+        </template>
 
         <n-icon v-if="props.appendIcon" :name="props.appendIcon" :class="props.prependIconClass" />
         <slot name="append"></slot>
@@ -46,7 +45,7 @@
 
 <script setup lang="ts">
     import { computed, useAttrs, useSlots } from 'vue'
-    import { isVNodeNameContain } from '../helpers/dom'
+    import { wrapTextNode } from '../helpers/dom'
     import NIcon from './NIcon.vue'
 
     defineOptions({
@@ -88,12 +87,8 @@
             ...attrs
         }
     })
-
-    const shouldNotAddWrapper = computed(() => {
-        const nodes = slots['default']?.() ?? []
-        if (nodes.length === 0) return false
-        if (nodes.length > 0 && isVNodeNameContain(nodes[0], ['NTooltip'])) return true
-        return nodes.length > 1
+    const slotDefaultNodes = computed(() => {
+        return wrapTextNode(slots.default?.() ?? [], 'span')
     })
 </script>
 

@@ -53,7 +53,7 @@ export const HeadBodyFoot: Story = {
     })
 }
 
-export const Complex: Story = {
+export const Complex1: Story = {
     args: {},
     render: args => ({
         components: { NCard, NButton, NIcon, NTooltip },
@@ -83,7 +83,7 @@ export const Complex: Story = {
     })
 }
 
-export const DataCard: Story = {
+export const Complex2: Story = {
     args: {},
     render: args => ({
         components: { NCard, NButton, NIcon, NTooltip },
@@ -167,5 +167,16 @@ export const Loading: Story = {
                 <div class="n-card-footer">Footer</div>
             </NCard>
         `
+    })
+}
+
+export const Bordered: Story = {
+    args: {},
+    render: args => ({
+        components: { NCard },
+        setup() {
+            return { args }
+        },
+        template: '<NCard v-bind="args" class="w-96 h-32 border border-border" >This is a card that has border</NCard>'
     })
 }
