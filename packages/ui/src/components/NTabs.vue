@@ -3,7 +3,15 @@
         <template v-for="(node, index) in slotDefaultNodes" :key="index">
             <component
                 :is="node"
-                :class="[node.props?.name === modelValueName ? 'n-tab--active' : '']"
+                :class="[
+                    props.multiple && Array.isArray(modelValueName)
+                        ? modelValueName?.includes(node.props?.name)
+                            ? 'n-tab--active'
+                            : ''
+                        : node.props?.name === modelValueName
+                          ? 'n-tab--active'
+                          : ''
+                ]"
                 @click="() => handleTabNodeClick(node)"
             />
         </template>
@@ -20,13 +28,15 @@
 
     const slots = useSlots()
     const attrs = useAttrs()
-    const modelValueName = defineModel<string>()
+    const modelValueName = defineModel<string | string[]>()
     const props = withDefaults(
         defineProps<{
             tag?: string
+            multiple?: boolean
         }>(),
         {
-            tag: 'div'
+            tag: 'div',
+            multiple: false
         }
     )
 
@@ -53,7 +63,17 @@
 
     // Event handler
     function handleTabNodeClick(tabNode: VNode) {
-        modelValueName.value = tabNode.props?.name ?? ''
+        if (!tabNode.props?.name) return
+        if (props.multiple && Array.isArray(modelValueName.value)) {
+            if (modelValueName.value.indexOf(tabNode.props?.name) >= 0) {
+                modelValueName.value = modelValueName.value.toSpliced(
+                    modelValueName.value.indexOf(tabNode.props?.name),
+                    1
+                )
+            } else {
+                modelValueName.value = [...modelValueName.value, tabNode.props?.name]
+            }
+        } else modelValueName.value = tabNode.props?.name ?? ''
     }
 </script>
 
@@ -66,8 +86,16 @@
             @apply relative
             flex flex-row items-center;
 
+            & > .n-tab:last-child {
+                @apply border-r-2;
+            }
+
             &.individual > .n-tab {
-                @apply rounded-element;
+                @apply rounded-element border-r-2;
+            }
+
+            &.separator > .n-tab:not(.n-tab--active) + .n-tab {
+                @apply border-l-current;
             }
         }
     }

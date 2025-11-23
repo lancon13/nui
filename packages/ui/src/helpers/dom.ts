@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { h, isVNode, VNode } from 'vue'
+import { h, isVNode, VNode, Text as VueText } from 'vue'
 
 interface ComponentTypeWithName {
     name?: string
@@ -101,7 +101,7 @@ export function wrapTextNode(
 
     return nodeList.map(node => {
         // 1. Check if it is a Text Node
-        if (node.type === Text) {
+        if (node.type === VueText) {
             const content = node.children as string
 
             // 2. Only wrap if it contains actual text (ignore purely whitespace/newlines)

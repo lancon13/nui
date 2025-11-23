@@ -29,7 +29,7 @@
 @layer components {
     [class*='n-'] {
         @apply transition-shadow duration-200 ease-in-out;
-        @apply focus:outline-0 focus:ring-2 focus:ring-focus;
+        @apply focus:outline-0 focus:ring-2 focus:ring-focus focus:z-20;
 
         a[href]&,
         [class*='--clickable']& {
