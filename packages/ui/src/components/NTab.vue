@@ -124,37 +124,40 @@
 
             &.n-tab--active {
                 @apply border-current bg-bg text-text;
+                &:not(.n-tab--loading) {
+                    @apply disabled:border-current disabled:bg-bg disabled:text-text;
+                }
             }
 
-            .n-tabs.primary &,
+            .primary &,
             &.primary {
                 @apply bg-primary;
                 &.n-tab--active {
                     @apply bg-primary/15 text-primary;
                 }
             }
-            .n-tabs.success &,
+            .success &,
             &.success {
                 @apply bg-success;
                 &.n-tab--active {
                     @apply bg-success/15 text-success;
                 }
             }
-            .n-tabs.error &,
+            .error &,
             &.error {
                 @apply bg-error;
                 &.n-tab--active {
                     @apply bg-error/15 text-error;
                 }
             }
-            .n-tabs.warning &,
+            .warning &,
             &.warning {
                 @apply bg-warning;
                 &.n-tab--active {
                     @apply bg-warning/15 text-warning;
                 }
             }
-            .n-tabs.info &,
+            .info &,
             &.info {
                 @apply bg-info;
                 &.n-tab--active {
@@ -181,44 +184,47 @@
                 }
             }
 
-            .n-tabs.flat &,
+            .flat &,
             &.flat {
                 @apply bg-current/20 text-current;
                 &.n-tab--active {
                     @apply border-text bg-text text-bg;
+                    &:not(.n-tab--loading) {
+                        @apply disabled:border-text disabled:bg-text disabled:text-bg;
+                    }
                 }
 
-                .n-tabs.primary &,
+                .primary &,
                 &.primary {
-                    @apply bg-primary-bright text-primary;
+                    @apply bg-primary-alt text-primary;
                     &.n-tab--active {
                         @apply border-primary bg-primary text-bg;
                     }
                 }
-                .n-tabs.success &,
+                .success &,
                 &.success {
-                    @apply bg-success-bright text-success;
+                    @apply bg-success-alt text-success;
                     &.n-tab--active {
                         @apply border-success bg-success text-bg;
                     }
                 }
-                .n-tabs.error &,
+                .error &,
                 &.error {
-                    @apply bg-error-bright text-error;
+                    @apply bg-error-alt text-error;
                     &.n-tab--active {
                         @apply border-error bg-error text-bg;
                     }
                 }
-                .n-tabs.warning &,
+                .warning &,
                 &.warning {
-                    @apply bg-warning-bright text-warning;
+                    @apply bg-warning-alt text-warning;
                     &.n-tab--active {
                         @apply border-warning bg-warning text-bg;
                     }
                 }
-                .n-tabs.info &,
+                .info &,
                 &.info {
-                    @apply bg-info-bright text-info;
+                    @apply bg-info-alt text-info;
                     &.n-tab--active {
                         @apply border-info bg-info text-bg;
                     }
@@ -228,15 +234,22 @@
                 }
             }
 
-            .n-tabs.outlined &,
+            .outlined &,
             &.outlined {
-                @apply bg-transparent border-current text-current
+                @apply border-current text-current
                     hover:bg-current/10 hover:opacity-50;
+                &:not(.flat) {
+                    @apply bg-transparent;
+                }
                 &.n-tab--active {
                     @apply border-text bg-text text-bg;
+                    &:not(.n-tab--loading) {
+                        @apply disabled:border-text disabled:bg-text disabled:text-bg;
+                        @apply disabled:hover:bg-text;
+                    }
                 }
 
-                .n-tabs.primary &,
+                .primary &,
                 &.primary {
                     @apply border-primary text-primary 
                         hover:bg-current/10;
@@ -245,7 +258,7 @@
                     }
                 }
 
-                .n-tabs.success &,
+                .success &,
                 &.success {
                     @apply border-success text-success
                         hover:bg-current/10;
@@ -254,7 +267,7 @@
                     }
                 }
 
-                .n-tabs.error &,
+                .error &,
                 &.error {
                     @apply border-error text-error
                         hover:bg-current/10;
@@ -263,7 +276,7 @@
                     }
                 }
 
-                .n-tabs.warning &,
+                .warning &,
                 &.warning {
                     @apply border-warning text-warning
                         hover:bg-current/10;
@@ -272,7 +285,7 @@
                     }
                 }
 
-                .n-tabs.info &,
+                .info &,
                 &.info {
                     @apply border-info text-info
                         hover:bg-current/10;
@@ -285,15 +298,19 @@
                 }
             }
 
-            .n-tabs.texted &,
+            .texted &,
             &.texted {
                 @apply bg-transparent text-current
                     hover:bg-current/10;
                 &.n-tab--active {
                     @apply border-text bg-text text-bg;
+                    &:not(.n-tab--loading) {
+                        @apply disabled:border-text disabled:bg-text disabled:text-bg;
+                        @apply disabled:hover:bg-text;
+                    }
                 }
 
-                .n-tabs.primary &,
+                .primary &,
                 &.primary {
                     @apply text-primary
                         hover:bg-current/10;
@@ -302,7 +319,7 @@
                     }
                 }
 
-                .n-tabs.success &,
+                .success &,
                 &.success {
                     @apply text-success
                         hover:bg-current/10;
@@ -311,7 +328,7 @@
                     }
                 }
 
-                .n-tabs.error &,
+                .error &,
                 &.error {
                     @apply text-error
                         hover:bg-current/10;
@@ -320,7 +337,7 @@
                     }
                 }
 
-                .n-tabs.warning &,
+                .warning &,
                 &.warning {
                     @apply text-warning
                         hover:bg-current/10;
@@ -329,7 +346,7 @@
                     }
                 }
 
-                .n-tabs.info &,
+                .info &,
                 &.info {
                     @apply text-info
                         hover:bg-current/10;

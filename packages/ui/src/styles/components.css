@@ -29,7 +29,7 @@
 @layer components {
     [class*='n-'] {
         @apply transition-shadow duration-200 ease-in-out;
-        @apply focus:outline-0 focus:ring-2 focus:ring-focus focus:z-20;
+        @apply focus-visible:outline-0 focus-visible:ring-2 focus-visible:ring-focus focus-visible:z-20;
 
         a[href]&,
         [class*='--clickable']& {
@@ -39,7 +39,6 @@
             @apply focus:outline-0 focus:ring-2 focus:ring-focus;
             @apply hover:opacity-75;
         }
-
         .pilled {
             @apply rounded-full;
         }
@@ -62,11 +61,15 @@
             @apply border-l border-b-0;
         }
     }
+}
 
-    .n-content-row {
-        @apply flex flex-row gap-4;
-    }
-    .n-content-col {
-        @apply flex flex-col gap-4;
-    }
+@utility content-row {
+    display: flex;
+    flex-direction: row;
+    gap: var(--spacing-4);
+}
+@utility content-col {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4);
 }

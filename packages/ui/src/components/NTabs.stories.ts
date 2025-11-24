@@ -388,3 +388,225 @@ export const Shadowed: Story = {
         `
     })
 }
+
+export const Disabled: Story = {
+    args: {},
+    render: args => ({
+        components: { NTabs, NTab },
+        setup() {
+            return { args }
+        },
+        template: `
+            <div class="flex flex-col gap-4 p-4">
+                <div class="p-2 bg-surface flex flex-col gap-2">
+                    <NTabs v-bind="args" model-value="item-2" class="">
+                        <!-- This is the default slot contains the tab nodes -->
+                        <NTab name="item-1" disabled>Item 1</NTab>
+                        <NTab name="item-2" disabled>Item 2</NTab>
+                        <NTab name="item-3" disabled>Item 3</NTab>
+                    </NTabs>
+
+                    <NTabs v-bind="args" model-value="item-2" class="primary">
+                        <!-- This is the default slot contains the tab nodes -->
+                        <NTab name="item-1" disabled>Item 1</NTab>
+                        <NTab name="item-2" disabled>Item 2</NTab>
+                        <NTab name="item-3" disabled>Item 3</NTab>
+                    </NTabs>
+                </div>
+
+                <div class="p-2 bg-surface flex flex-col gap-2">
+                    <NTabs v-bind="args" model-value="item-2" class="flat">
+                        <!-- This is the default slot contains the tab nodes -->
+                        <NTab name="item-1" disabled>Item 1</NTab>
+                        <NTab name="item-2" disabled>Item 2</NTab>
+                        <NTab name="item-3" disabled>Item 3</NTab>
+                    </NTabs>
+
+                    <NTabs v-bind="args" model-value="item-2" class="flat primary">
+                        <!-- This is the default slot contains the tab nodes -->
+                        <NTab name="item-1" disabled>Item 1</NTab>
+                        <NTab name="item-2" disabled>Item 2</NTab>
+                        <NTab name="item-3" disabled>Item 3</NTab>
+                    </NTabs>
+                </div>
+
+
+                <div class="p-2 bg-surface flex flex-col gap-2">
+                    <NTabs v-bind="args" model-value="item-2" class="outlined">
+                        <!-- This is the default slot contains the tab nodes -->
+                        <NTab name="item-1" disabled>Item 1</NTab>
+                        <NTab name="item-2" disabled>Item 2</NTab>
+                        <NTab name="item-3" disabled>Item 3</NTab>
+                    </NTabs>
+
+                    <NTabs v-bind="args" model-value="item-2" class="outlined primary">
+                        <!-- This is the default slot contains the tab nodes -->
+                        <NTab name="item-1" disabled>Item 1</NTab>
+                        <NTab name="item-2" disabled>Item 2</NTab>
+                        <NTab name="item-3" disabled>Item 3</NTab>
+                    </NTabs>
+                </div>
+
+                <div class="p-2 bg-surface flex flex-col gap-2">
+                    <NTabs v-bind="args" model-value="item-2" class="texted">
+                        <!-- This is the default slot contains the tab nodes -->
+                        <NTab name="item-1" disabled>Item 1</NTab>
+                        <NTab name="item-2" disabled>Item 2</NTab>
+                        <NTab name="item-3" disabled>Item 3</NTab>
+                    </NTabs>
+
+                    <NTabs v-bind="args" model-value="item-2" class="texted primary">
+                        <!-- This is the default slot contains the tab nodes -->
+                        <NTab name="item-1" disabled>Item 1</NTab>
+                        <NTab name="item-2" disabled>Item 2</NTab>
+                        <NTab name="item-3" disabled>Item 3</NTab>
+                    </NTabs>
+                </div>
+
+
+                <div class="p-2 bg-surface flex flex-col gap-2">
+                    <NTabs v-bind="args" model-value="item-2" class="active-bottom-line">
+                        <!-- This is the default slot contains the tab nodes -->
+                        <NTab name="item-1" disabled>Item 1</NTab>
+                        <NTab name="item-2" disabled>Item 2</NTab>
+                        <NTab name="item-3" disabled>Item 3</NTab>
+                    </NTabs>
+
+                    <NTabs v-bind="args" model-value="item-2" class="active-bottom-line primary">
+                        <!-- This is the default slot contains the tab nodes -->
+                        <NTab name="item-1" disabled>Item 1</NTab>
+                        <NTab name="item-2" disabled>Item 2</NTab>
+                        <NTab name="item-3" disabled>Item 3</NTab>
+                    </NTabs>
+                </div>
+
+                <div class="p-2 bg-surface flex flex-col gap-2">
+                    <NTabs v-bind="args" model-value="item-2" class="active-bottom-line flat">
+                        <!-- This is the default slot contains the tab nodes -->
+                        <NTab name="item-1" disabled>Item 1</NTab>
+                        <NTab name="item-2" disabled>Item 2</NTab>
+                        <NTab name="item-3" disabled>Item 3</NTab>
+                    </NTabs>
+
+                    <NTabs v-bind="args" model-value="item-2" class="active-bottom-line flat primary">
+                        <!-- This is the default slot contains the tab nodes -->
+                        <NTab name="item-1" disabled>Item 1</NTab>
+                        <NTab name="item-2" disabled>Item 2</NTab>
+                        <NTab name="item-3" disabled>Item 3</NTab>
+                    </NTabs>
+                </div>
+
+                <div class="p-2 bg-surface flex flex-col gap-2">
+                    <NTabs v-bind="args" model-value="item-2" class="active-bottom-line texted">
+                        <!-- This is the default slot contains the tab nodes -->
+                        <NTab name="item-1" disabled>Item 1</NTab>
+                        <NTab name="item-2" disabled>Item 2</NTab>
+                        <NTab name="item-3" disabled>Item 3</NTab>
+                    </NTabs>
+
+                    <NTabs v-bind="args" model-value="item-2" class="active-bottom-line texted primary">
+                        <!-- This is the default slot contains the tab nodes -->
+                        <NTab name="item-1" disabled>Item 1</NTab>
+                        <NTab name="item-2" disabled>Item 2</NTab>
+                        <NTab name="item-3" disabled>Item 3</NTab>
+                    </NTabs>
+                </div>
+
+            </div>
+        `
+    })
+}
+
+export const ActiveBottomLine: Story = {
+    args: {},
+    render: args => ({
+        components: { NTabs, NTab },
+        setup() {
+            return { args }
+        },
+        template: `
+            <div class="flex flex-col gap-4 p-4">
+                <div class="p-2 bg-surface flex flex-col gap-2">
+                    <NTabs v-bind="args" model-value="item-2" class="active-bottom-line">
+                        <!-- This is the default slot contains the tab nodes -->
+                        <NTab name="item-1" >Item 1</NTab>
+                        <NTab name="item-2" >Item 2</NTab>
+                        <NTab name="item-3" >Item 3</NTab>
+                    </NTabs>
+                
+                    <NTabs v-bind="args" model-value="item-2" class="active-bottom-line primary">
+                        <!-- This is the default slot contains the tab nodes -->
+                        <NTab name="item-1" >Item 1</NTab>
+                        <NTab name="item-2" >Item 2</NTab>
+                        <NTab name="item-3" >Item 3</NTab>
+                    </NTabs>
+                </div>
+
+                <div class="p-2 bg-surface flex flex-col gap-2">
+                    <NTabs v-bind="args" model-value="item-2" class="active-bottom-line flat ">
+                        <!-- This is the default slot contains the tab nodes -->
+                        <NTab name="item-1" >Item 1</NTab>
+                        <NTab name="item-2" >Item 2</NTab>
+                        <NTab name="item-3" >Item 3</NTab>
+                    </NTabs>
+                
+                    <NTabs v-bind="args" model-value="item-2" class="active-bottom-line flat primary">
+                        <!-- This is the default slot contains the tab nodes -->
+                        <NTab name="item-1" >Item 1</NTab>
+                        <NTab name="item-2" >Item 2</NTab>
+                        <NTab name="item-3" >Item 3</NTab>
+                    </NTabs>
+                </div>
+
+                <div class="p-2 bg-surface flex flex-col text-center gap-2">
+                    <div>No outlined</div>
+                </div>
+
+                <div class="p-2 bg-surface flex flex-col gap-2">
+                    <NTabs v-bind="args" model-value="item-2" class="active-bottom-line texted ">
+                        <!-- This is the default slot contains the tab nodes -->
+                        <NTab name="item-1" >Item 1</NTab>
+                        <NTab name="item-2" >Item 2</NTab>
+                        <NTab name="item-3" >Item 3</NTab>
+                    </NTabs>
+                
+                    <NTabs v-bind="args" model-value="item-2" class="active-bottom-line texted primary">
+                        <!-- This is the default slot contains the tab nodes -->
+                        <NTab name="item-1" >Item 1</NTab>
+                        <NTab name="item-2" >Item 2</NTab>
+                        <NTab name="item-3" >Item 3</NTab>
+                    </NTabs>
+                </div>
+
+            </div>
+        `
+    })
+}
+
+export const Icons: Story = {
+    args: {},
+    render: args => ({
+        components: { NTabs, NTab },
+        setup() {
+            return { args }
+        },
+        template: `
+            <div class="flex flex-col gap-4">
+                <NTabs v-bind="args" model-value="item-2" class="">
+                    <!-- This is the default slot contains the tab nodes -->
+                    <NTab name="item-1" icon="account">Item 1</NTab>
+                    <NTab name="item-2" icon="account">Item 2</NTab>
+                    <NTab name="item-3" icon="account">Item 3</NTab>
+                </NTabs>
+                
+                <NTabs v-bind="args" model-value="item-2" class="">
+                    <!-- This is the default slot contains the tab nodes -->
+                    <NTab name="item-1" append-icon="account">Item 1</NTab>
+                    <NTab name="item-2" append-icon="account">Item 2</NTab>
+                    <NTab name="item-3" append-icon="account">Item 3</NTab>
+                </NTabs>      
+
+            </div>
+        `
+    })
+}

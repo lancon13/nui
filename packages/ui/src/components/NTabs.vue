@@ -97,6 +97,98 @@
             &.separator > .n-tab:not(.n-tab--active) + .n-tab {
                 @apply border-l-current;
             }
+
+            &.active-bottom-line {
+                & {
+                    & > .n-tab {
+                        @apply text-bg/50;
+                        &.n-tab--active {
+                            @apply border-transparent border-b-current bg-text text-bg;
+                            @apply disabled:border-transparent disabled:border-b-current disabled:bg-text disabled:text-bg;
+                        }
+                    }
+                    &.primary > .n-tab.n-tab--active {
+                        @apply bg-primary text-text-invert;
+                        @apply disabled:bg-text disabled:text-text-invert;
+                    }
+                    &.success > .n-tab.n-tab--active {
+                        @apply bg-success text-text-invert;
+                        @apply disabled:bg-text disabled:text-text-invert;
+                    }
+                    &.error > .n-tab.n-tab--active {
+                        @apply bg-error text-text-invert;
+                        @apply disabled:bg-text disabled:text-text-invert;
+                    }
+                    &.warning > .n-tab.n-tab--active {
+                        @apply bg-warning text-text-invert;
+                        @apply disabled:bg-text disabled:text-text-invert;
+                    }
+                    &.info > .n-tab.n-tab--active {
+                        @apply bg-info text-text-invert;
+                        @apply disabled:bg-text disabled:text-text-invert;
+                    }
+                }
+
+                &.flat {
+                    & > .n-tab {
+                        @apply text-current/45;
+                        &.n-tab--active {
+                            @apply border-transparent border-b-current bg-current/20 text-current;
+                            @apply disabled:border-transparent disabled:border-b-current disabled:bg-current/20 disabled:text-current;
+                        }
+                    }
+                    &.primary > .n-tab.n-tab--active {
+                        @apply bg-primary-alt text-primary;
+                        @apply disabled:bg-current/20 disabled:text-current;
+                    }
+                    &.success > .n-tab.n-tab--active {
+                        @apply bg-success text-text-invert;
+                        @apply disabled:bg-current/20 disabled:text-current;
+                    }
+                    &.error > .n-tab.n-tab--active {
+                        @apply bg-error text-text-invert;
+                        @apply disabled:bg-current/20 disabled:text-current;
+                    }
+                    &.warning > .n-tab.n-tab--active {
+                        @apply bg-warning text-text-invert;
+                        @apply disabled:bg-current/20 disabled:text-current;
+                    }
+                    &.info > .n-tab.n-tab--active {
+                        @apply bg-info text-text-invert;
+                        @apply disabled:bg-current/20 disabled:text-current;
+                    }
+                }
+
+                &.texted {
+                    & > .n-tab {
+                        @apply text-current/50;
+                        &.n-tab--active {
+                            @apply border-transparent border-b-current bg-transparent text-current;
+                            @apply disabled:border-transparent disabled:border-b-current disabled:bg-transparent disabled:text-current;
+                        }
+                    }
+                    &.primary > .n-tab.n-tab--active {
+                        @apply text-primary;
+                        @apply disabled:text-current;
+                    }
+                    &.success > .n-tab.n-tab--active {
+                        @apply text-text-invert;
+                        @apply disabled:text-current;
+                    }
+                    &.error > .n-tab.n-tab--active {
+                        @apply text-text-invert;
+                        @apply disabled:text-current;
+                    }
+                    &.warning > .n-tab.n-tab--active {
+                        @apply text-text-invert;
+                        @apply disabled:text-current;
+                    }
+                    &.info > .n-tab.n-tab--active {
+                        @apply text-text-invert;
+                        @apply disabled:text-current;
+                    }
+                }
+            }
         }
     }
 </style>

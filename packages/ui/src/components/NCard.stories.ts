@@ -93,7 +93,7 @@ export const Complex2: Story = {
         template: `
             <NCard v-bind="args" class="w-96 shadowed">
                 <div class="n-card-header p-0">
-                    <div class="w-full h-64 bg-primary text-text-invert n-content-col items-center justify-center">Image</div>
+                    <div class="w-full h-64 bg-primary text-text-invert content-col items-center justify-center">Image</div>
                 </div>
 
                 <div class="n-card-header">
@@ -124,10 +124,10 @@ export const Nested: Story = {
         template: `
             <NCard v-bind="args" class="w-96">
                 <div class="n-card-header">List of items</div>
-                <div class="n-card-body n-content-col">
+                <div class="n-card-body content-col">
                     <NCard v-for="(item, index) in ['Item 1', 'Item 2', 'Item 3']" :key="index">
                         <span v-if="index !== 2">{{item}}</span>
-                        <div v-else class="n-card-body n-content-col">
+                        <div v-else class="n-card-body content-col">
                             <NCard v-for="(item, index) in ['Item 1', 'Item 2', 'Item 3']" :key="index">
                                 <span>{{ item }}</span>
                             </NCard>

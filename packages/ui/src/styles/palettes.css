@@ -132,26 +132,32 @@
         --color-primary: var(--color-primary-light);
         --color-primary-bright: var(--color-primary-bright-light);
         --color-primary-dim: var(--color-primary-dim-light);
+        --color-primary-alt: var(--color-primary-bright-light);
 
         --color-neutral: var(--color-neutral-light);
         --color-neutral-bright: var(--color-neutral-bright-light);
         --color-neutral-dim: var(--color-neutral-dim-light);
+        --color-neutral-alt: var(--color-neutral-bright-light);
 
         --color-success: var(--color-success-light);
         --color-success-bright: var(--color-success-bright-light);
         --color-success-dim: var(--color-success-dim-light);
+        --color-success-alt: var(--color-success-bright-light);
 
         --color-error: var(--color-error-light);
         --color-error-bright: var(--color-error-bright-light);
         --color-error-dim: var(--color-error-dim-light);
+        --color-error-alt: var(--color-error-bright-light);
 
         --color-warning: var(--color-warning-light);
         --color-warning-bright: var(--color-warning-bright-light);
         --color-warning-dim: var(--color-warning-dim-light);
+        --color-warning-alt: var(--color-warning-bright-light);
 
         --color-info: var(--color-info-light);
         --color-info-bright: var(--color-info-bright-light);
         --color-info-dim: var(--color-info-dim-light);
+        --color-info-alt: var(--color-info-bright-light);
 
         --color-focus: var(--color-focus-light);
 
@@ -183,26 +189,32 @@
         --color-primary: var(--color-primary-dark);
         --color-primary-bright: var(--color-primary-bright-dark);
         --color-primary-dim: var(--color-primary-dim-dark);
+        --color-primary-alt: var(--color-primary-dim-dark);
 
         --color-neutral: var(--color-neutral-dark);
         --color-neutral-bright: var(--color-neutral-bright-dark);
         --color-neutral-dim: var(--color-neutral-dim-dark);
+        --color-neutral-alt: var(--color-neutral-dim-dark);
 
         --color-success: var(--color-success-dark);
         --color-success-bright: var(--color-success-bright-dark);
         --color-success-dim: var(--color-success-dim-dark);
+        --color-success-alt: var(--color-success-dim-dark);
 
         --color-error: var(--color-error-dark);
         --color-error-bright: var(--color-error-bright-dark);
         --color-error-dim: var(--color-error-dim-dark);
+        --color-error-alt: var(--color-error-dim-dark);
 
         --color-warning: var(--color-warning-dark);
         --color-warning-bright: var(--color-warning-bright-dark);
         --color-warning-dim: var(--color-warning-dim-dark);
+        --color-warning-alt: var(--color-warning-dim-dark);
 
         --color-info: var(--color-info-dark);
         --color-info-bright: var(--color-info-bright-dark);
         --color-info-dim: var(--color-info-dim-dark);
+        --color-info-alt: var(--color-info-dim-dark);
 
         --color-focus: var(--color-focus-dark);
 
@@ -234,26 +246,32 @@
         --color-primary: var(--color-primary);
         --color-primary-bright: var(--color-primary-bright);
         --color-primary-dim: var(--color-primary-dim);
+        --color-primary-alt: var(--color-primary-alt);
 
         --color-neutral: var(--color-neutral);
         --color-neutral-bright: var(--color-neutral-bright);
         --color-neutral-dim: var(--color-neutral-dim);
+        --color-neutral-alt: var(--color-neutral-alt);
 
         --color-success: var(--color-success);
         --color-success-bright: var(--color-success-bright);
         --color-success-dim: var(--color-success-dim);
+        --color-success-alt: var(--color-success-alt);
 
         --color-error: var(--color-error);
         --color-error-bright: var(--color-error-bright);
         --color-error-dim: var(--color-error-dim);
+        --color-error-alt: var(--color-error-alt);
 
         --color-warning: var(--color-warning);
         --color-warning-bright: var(--color-warning-bright);
         --color-warning-dim: var(--color-warning-dim);
+        --color-warning-alt: var(--color-warning-alt);
 
         --color-info: var(--color-info);
         --color-info-bright: var(--color-info-bright);
         --color-info-dim: var(--color-info-dim);
+        --color-info-alt: var(--color-info-alt);
 
         --color-focus: var(--color-focus);
 

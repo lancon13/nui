@@ -94,24 +94,27 @@
             &.flat {
                 @apply bg-current/20 text-current;
                 &.primary {
-                    @apply bg-primary-bright text-primary;
+                    @apply bg-primary-alt text-primary;
                 }
                 &.success {
-                    @apply bg-success-bright text-success;
+                    @apply bg-success-alt text-success;
                 }
                 &.error {
-                    @apply bg-error-bright text-error;
+                    @apply bg-error-alt text-error;
                 }
                 &.warning {
-                    @apply bg-warning-bright text-warning;
+                    @apply bg-warning-alt text-warning;
                 }
                 &.info {
-                    @apply bg-info-bright text-info;
+                    @apply bg-info-alt text-info;
                 }
             }
 
             &.outlined {
-                @apply bg-transparent border-2 border-current text-current;
+                @apply border-2 border-current text-current;
+                &:not(.flat) {
+                    @apply bg-transparent;
+                }
                 &.primary {
                     @apply border-primary text-primary;
                 }
