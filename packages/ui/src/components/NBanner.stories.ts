@@ -146,38 +146,38 @@ export const Actions: Story = {
                 <NBanner v-bind="args" icon="account" class="">
                     This is a banner message
                     <template #actions>
-                        <NButton label="Dismiss" class="text-xs outlined" />
+                        <NButton label="Dismiss" class="text-xs flat" />
                     </template>
                 </NBanner>
                 <NBanner v-bind="args" icon="account" class="success">
                     This is a banner message
                     <template #actions>
-                        <NButton label="Dismiss" class="text-xs outlined" />
+                        <NButton label="Dismiss" class="text-xs flat" />
                     </template>
                 </NBanner>
                 <NBanner v-bind="args" icon="account" class="error">
                     This is a banner message
                     <template #actions>
-                        <NButton label="Dismiss" class="text-xs outlined"/>
+                        <NButton label="Dismiss" class="text-xs flat"/>
                     </template>
                 </NBanner>
                 <NBanner v-bind="args" icon="account" class="warning">
                     This is a banner message
                     <template #actions>
-                        <NButton label="Dismiss" class="text-xs outlined"/>
+                        <NButton label="Dismiss" class="text-xs flat"/>
                     </template>
                 </NBanner>
                 <NBanner v-bind="args" icon="account" class="info">
                     This is a banner message
                     <template #actions>
-                        <NButton label="Dismiss" class="text-xs outlined"/>
+                        <NButton label="Dismiss" class="text-xs flat"/>
                     </template>
                 </NBanner>
 
                 <NBanner v-bind="args" icon="account" :inline-actions="false" class="">
                     This is a banner message
                     <template #actions>
-                        <NButton label="Dismiss" class="text-xs outlined" />
+                        <NButton label="Dismiss" class="text-xs flat" />
                     </template>
                 </NBanner>
             </div>

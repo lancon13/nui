@@ -1,6 +1,7 @@
 <template>
     <div ref="placeholderRef" class="hidden" />
-    <transition v-if="props.nested" name="n-tooltip">
+
+    <transition v-if="props.stacked" name="n-tooltip">
         <component
             :is="props.tag"
             v-if="model"
@@ -17,6 +18,30 @@
             <slot name="default" v-html="props.content"></slot>
         </component>
     </transition>
+
+    <!-- Overlay -->
+    <teleport v-else-if="props.overlay" to="body">
+        <transition name="n-tooltip-overlay">
+            <div v-if="model" class="n-tooltip-overlay">
+                <component
+                    :is="props.tag"
+                    ref="contentRef"
+                    role="tooltip"
+                    :style="compStyles"
+                    :class="compClasses"
+                    v-bind="compBind"
+                    @mouseenter="handleTooltipHoverFocusIn"
+                    @mouseleave="handleTooltipHoverFocusOut"
+                    @focusin="handleTooltipHoverFocusIn"
+                    @focusout="handleTooltipHoverFocusOut"
+                >
+                    <slot name="default" v-html="props.content"></slot>
+                </component>
+            </div>
+        </transition>
+    </teleport>
+
+    <!-- Without Overlay -->
     <teleport v-else to="body">
         <transition name="n-tooltip">
             <component
@@ -40,8 +65,8 @@
 
 <script setup lang="ts">
     import { autoUpdate, flip, offset, shift, useFloating, type Placement } from '@floating-ui/vue'
-    import { useTimeoutFn } from '@vueuse/core'
-    import { computed, nextTick, ref, useAttrs, useTemplateRef, watch } from 'vue'
+    import { useTimeoutFn, useEventListener } from '@vueuse/core' // [UPDATED] Added useEventListener
+    import { computed, nextTick, ref, useAttrs, useTemplateRef, watch, watchEffect } from 'vue'
     import { getElement } from '../helpers/dom'
 
     export type NTooltipDirection = 'top' | 'bottom' | 'left' | 'right'
@@ -65,7 +90,8 @@
             margin?: number
             offset?: [number, number]
             autoReposition?: boolean
-            nested?: boolean
+            stacked?: boolean
+            overlay?: boolean
         }>(),
         {
             tag: 'span',
@@ -77,7 +103,8 @@
             margin: 8,
             offset: () => [0, 0],
             autoReposition: true,
-            nested: false
+            stacked: false,
+            overlay: false
         }
     )
 
@@ -151,7 +178,9 @@
                 }
                 hoverTriggerAnchorEl.value = props.hoverTriggerAnchor
                     ? getElement(props.hoverTriggerAnchor)
-                    : attachParentEl.value
+                    : typeof props.hoverTriggerAnchor === 'undefined'
+                      ? attachParentEl.value
+                      : null
                 if (hoverTriggerAnchorEl.value) {
                     hoverTriggerAnchorEl.value.addEventListener('mouseenter', handleTriggerAnchorHoverFocusIn)
                     hoverTriggerAnchorEl.value.addEventListener('mouseleave', handleTriggerAnchorHoverFocusOut)
@@ -164,7 +193,9 @@
                 }
                 focusTriggerAnchorEl.value = props.focusTriggerAnchor
                     ? getElement(props.focusTriggerAnchor)
-                    : attachParentEl.value
+                    : typeof props.focusTriggerAnchor === 'undefined'
+                      ? attachParentEl.value
+                      : null
                 if (focusTriggerAnchorEl.value) {
                     focusTriggerAnchorEl.value.addEventListener('focus', handleTriggerAnchorHoverFocusIn)
                     focusTriggerAnchorEl.value.addEventListener('blur', handleTriggerAnchorHoverFocusOut)
@@ -195,12 +226,32 @@
         if (!hideTimer.isPending.value) hideTimer.start()
     }
 
+    useEventListener('keydown', e => {
+        if (model.value && e.key === 'Escape') {
+            e.preventDefault()
+            e.stopPropagation()
+            hide()
+        }
+    })
+
     // Methods
     const show = () => {
         model.value = true
     }
-    const hide = () => {
+
+    const hide = (skipReturnFocus = false) => {
+        // Check if focus is currently inside the tooltip content
+        const isFocusInside = contentRef.value?.contains(document.activeElement)
         model.value = false
+
+        console.log(skipReturnFocus)
+        // Return focus if explicitly requested OR if focus was lost inside the tooltip
+        if (!skipReturnFocus && isFocusInside) {
+            nextTick(() => {
+                if (focusTriggerAnchorEl.value) focusTriggerAnchorEl.value.focus()
+                else if (attachParentEl.value) attachParentEl.value?.focus()
+            })
+        }
     }
     defineExpose({ show, hide })
 </script>
@@ -210,6 +261,45 @@
     @reference '../styles/index.css';
 
     @layer components {
+        .n-tooltip-overlay {
+            @apply bg-bg-invert/50 fixed inset-0 grid place-content-center;
+
+            &.n-tooltip-overlay-enter-active,
+            &.n-tooltip-overlay-leave-active {
+                @apply transition-[opacity,translate] duration-200 ease-in-out;
+            }
+            &.n-tooltip-overlay-leave-active {
+                @apply delay-200;
+                .n-tooltip {
+                    @apply delay-0;
+                }
+            }
+            &.n-tooltip-overlay-enter-from,
+            &.n-tooltip-overlay-leave-to {
+                @apply opacity-0;
+                .n-tooltip {
+                    @apply opacity-0;
+                    &.n-tooltip--direction-top {
+                        @apply translate-y-2;
+                    }
+                    &.n-tooltip--direction-bottom {
+                        @apply -translate-y-2;
+                    }
+                    &.n-tooltip--direction-left {
+                        @apply translate-x-2;
+                    }
+                    &.n-tooltip--direction-right {
+                        @apply -translate-x-2;
+                    }
+                }
+            }
+
+            .n-tooltip {
+                @apply transition-[opacity,translate] delay-200 duration-200 ease-in-out;
+                @apply translate-x-0 translate-y-0;
+            }
+        }
+
         .n-tooltip {
             @apply z-10
                 bg-bg-invert text-text-invert 
@@ -222,9 +312,10 @@
 
             &.n-tooltip-enter-active,
             &.n-tooltip-leave-active {
-                @apply transition-[opacity,translate] duration-200 ease-in-out;
+                @apply transition-[opacity,translate] delay-5000 duration-5000 ease-in-out;
                 @apply translate-x-0 translate-y-0;
             }
+
             &.n-tooltip-enter-from,
             &.n-tooltip-leave-to {
                 @apply opacity-0;

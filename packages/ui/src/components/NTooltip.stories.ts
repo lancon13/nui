@@ -3,6 +3,7 @@ import type { Meta, StoryObj } from '@storybook/vue3-vite'
 import NTooltip from './NTooltip.vue'
 import NButton from './NButton.vue'
 import NIcon from './NIcon.vue'
+import { ref, useTemplateRef } from 'vue'
 
 const meta = {
     title: 'UI/NTooltip',
@@ -83,7 +84,7 @@ export const Content: Story = {
                     <p>Here is a more advanced example that transitions multiple properties, with different durations and easing curves for enter and leave:</p>
                     <a href="#" >
                         Link to somewhere
-                         <NTooltip nested>
+                         <NTooltip stacked>
                             <p class="p-8">Nested tooltip</p>
                         </NTooltip>                
                     </a>
@@ -104,6 +105,40 @@ export const IconButton: Story = {
         template: `
             <NButton icon="close" class="pilled icon text-xs">
                 <NTooltip v-bind="args" >This is a tooltip</NTooltip>
+            </NButton>
+        `
+    })
+}
+
+export const OverlayButton: Story = {
+    args: {},
+    render: args => ({
+        components: { NTooltip, NButton },
+        setup() {
+            const tooltipRef = useTemplateRef<typeof NTooltip>('tooltipRef')
+            const showTooltip = ref(false)
+
+            function handleButtonClick() {
+                // showTooltip.value = !showTooltip.value
+                if (showTooltip.value && tooltipRef.value) tooltipRef.value.hide()
+                else if (!showTooltip.value && tooltipRef.value) tooltipRef.value.show()
+            }
+            return { args, showTooltip, handleButtonClick }
+        },
+        template: `
+            <NButton icon="information-symbol" class="pilled icon text-3xl p-0" @click="handleButtonClick">
+                <NTooltip v-bind="args"
+                    ref="tooltipRef"
+                    v-model="showTooltip"
+                    overlay
+                    persistent
+                    :hoverTriggerAnchor="null"
+                    :focusTriggerAnchor="null"
+                    class="flex flex-col gap-4 items-center"
+                >
+                    <div class="p-4">This is a tooltip</div>
+                    <NButton @click="handleButtonClick">Close</NButton>
+                </NTooltip>
             </NButton>
         `
     })
