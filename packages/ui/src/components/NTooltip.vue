@@ -65,8 +65,8 @@
 
 <script setup lang="ts">
     import { autoUpdate, flip, offset, shift, useFloating, type Placement } from '@floating-ui/vue'
-    import { useTimeoutFn, useEventListener } from '@vueuse/core' // [UPDATED] Added useEventListener
-    import { computed, nextTick, ref, useAttrs, useTemplateRef, watch, watchEffect } from 'vue'
+    import { useEventListener, useTimeoutFn } from '@vueuse/core'
+    import { computed, nextTick, ref, useAttrs, useTemplateRef, watch } from 'vue'
     import { getElement } from '../helpers/dom'
 
     export type NTooltipDirection = 'top' | 'bottom' | 'left' | 'right'
@@ -262,7 +262,7 @@
 
     @layer components {
         .n-tooltip-overlay {
-            @apply bg-bg-invert/50 fixed inset-0 grid place-content-center;
+            @apply bg-bg-invert/50 fixed inset-0 grid place-content-center z-10;
 
             &.n-tooltip-overlay-enter-active,
             &.n-tooltip-overlay-leave-active {
@@ -312,7 +312,7 @@
 
             &.n-tooltip-enter-active,
             &.n-tooltip-leave-active {
-                @apply transition-[opacity,translate] delay-5000 duration-5000 ease-in-out;
+                @apply transition-[opacity,translate] duration-200 ease-in-out;
                 @apply translate-x-0 translate-y-0;
             }
 
