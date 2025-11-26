@@ -32,18 +32,18 @@ export const Default: Story = {
     render: args => ({
         components: { NModal, NButton, NCard },
         setup() {
-            const showingModal = ref(false)
+            const showModal = ref(false)
 
             function handleButtonClick() {
-                showingModal.value = !showingModal.value
+                showModal.value = !showModal.value
             }
 
-            return { args, showingModal, handleButtonClick }
+            return { args, showModal, handleButtonClick }
         },
         template: `
             <NButton @click="handleButtonClick">
                 Show modal
-                <NModal v-bind="args" v-model="showingModal" >
+                <NModal v-bind="args" v-model="showModal" >
                     <NCard class="shadowed">
                         <div class="n-card-body flex flex-col items-center gap-4">
                             <div>This is a content</div>
@@ -61,18 +61,18 @@ export const Simple: Story = {
     render: args => ({
         components: { NModal, NButton, NCard },
         setup() {
-            const showingModal = ref(false)
+            const showModal = ref(false)
 
             function handleButtonClick() {
-                showingModal.value = !showingModal.value
+                showModal.value = !showModal.value
             }
 
-            return { args, showingModal, handleButtonClick }
+            return { args, showModal, handleButtonClick }
         },
         template: `
             <NButton @click="handleButtonClick">
                 Show modal
-                <NModal v-bind="args" v-model="showingModal" noOverlayHide >
+                <NModal v-bind="args" v-model="showModal" noOverlayHide >
                     <div class="p-5 bg-bg-invert text-text-invert">Simple content, use ESC to close</div>
                 </NModal>
             </NButton>
@@ -85,18 +85,18 @@ export const NoOverlay: Story = {
     render: args => ({
         components: { NModal, NButton, NCard },
         setup() {
-            const showingModal = ref(false)
+            const showModal = ref(false)
 
             function handleButtonClick() {
-                showingModal.value = !showingModal.value
+                showModal.value = !showModal.value
             }
 
-            return { args, showingModal, handleButtonClick }
+            return { args, showModal, handleButtonClick }
         },
         template: `
             <NButton @click="handleButtonClick">
                 Show modal
-                <NModal v-bind="args" v-model="showingModal" :overlay="false" >
+                <NModal v-bind="args" v-model="showModal" :overlay="false" >
                     <div class="p-5 bg-bg-invert text-text-invert shadowed rounded-element">Simple content, use ESC to close</div>
                 </NModal>
             </NButton>
@@ -109,19 +109,19 @@ export const Dialog: Story = {
     render: args => ({
         components: { NModal, NButton, NCard, NIcon, NTooltip },
         setup() {
-            const showingModal = ref(false)
+            const showModal = ref(false)
 
             function handleButtonClick() {
-                showingModal.value = !showingModal.value
+                showModal.value = !showModal.value
             }
 
-            return { args, showingModal, handleButtonClick }
+            return { args, showModal, handleButtonClick }
         },
         template: `
             <NButton @click="handleButtonClick" icon="account">
                 Profile
                 <NTooltip>Show profile</NTooltip>
-                <NModal v-bind="args" v-model="showingModal" >
+                <NModal v-bind="args" v-model="showModal" >
                      <NCard v-bind="args" class="w-96 shadowed">
                         <div class="n-card-header p-0">
                             <div class="w-full h-64 bg-primary text-text-invert content-col items-center justify-center">Image</div>
@@ -157,19 +157,19 @@ export const NestedDialog: Story = {
     render: args => ({
         components: { NModal, NButton, NCard, NIcon, NTooltip },
         setup() {
-            const showingModal = ref(false)
+            const showModal = ref(false)
             const anotherDialogRef = useTemplateRef('anotherDialogRef')
 
             function handleButtonClick() {
-                showingModal.value = !showingModal.value
+                showModal.value = !showModal.value
             }
 
-            return { args, showingModal, handleButtonClick, anotherDialogRef }
+            return { args, showModal, handleButtonClick, anotherDialogRef }
         },
         template: `
             <NButton @click="handleButtonClick" icon="open-in-new">
                 Open
-                <NModal v-bind="args" v-model="showingModal" >
+                <NModal v-bind="args" v-model="showModal" >
                      <NCard v-bind="args" class="w-96 shadowed">                        
                         <div class="n-card-body">
                             <p>Please click the following button to open another dialog.</p>

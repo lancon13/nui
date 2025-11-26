@@ -46,7 +46,8 @@
                 "vue.volar",
                 "wix.vscode-import-cost",
                 "yoavbls.pretty-ts-errors",
-                "yrm.vscode-vueuse"
+                "yrm.vscode-vueuse",
+                "esbenp.prettier-vscode"
             ]
         }
     },

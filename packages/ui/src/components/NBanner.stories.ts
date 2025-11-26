@@ -114,6 +114,26 @@ export const FlatOutlined: Story = {
     })
 }
 
+export const Durations: Story = {
+    args: {},
+    render: args => ({
+        components: { NBanner },
+        setup() {
+            return { args }
+        },
+        template: `
+            <div class="flex flex-col gap-4">
+                <NBanner v-bind="args">This is a banner message</NBanner>
+                <NBanner v-bind="args" class="primary" :duration="10000" show-progress>This is a banner message</NBanner>
+                <NBanner v-bind="args" class="success" :duration="10000" show-progress>This is a banner message</NBanner>
+                <NBanner v-bind="args" class="error" :duration="10000" show-progress>This is a banner message</NBanner>
+                <NBanner v-bind="args" class="warning" :duration="10000" show-progress>This is a banner message</NBanner>
+                <NBanner v-bind="args" class="info" :duration="10000" show-progress>This is a banner message</NBanner>
+            </div>
+        `
+    })
+}
+
 export const Icon: Story = {
     args: {},
     render: args => ({

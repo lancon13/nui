@@ -28,7 +28,7 @@
 <script setup lang="ts">
     import { useEventListener } from '@vueuse/core'
     import { useFocusTrap } from '@vueuse/integrations/useFocusTrap'
-    import { computed, nextTick, onUnmounted, useAttrs, useSlots, useTemplateRef, watch } from 'vue'
+    import { computed, nextTick, onUnmounted, useAttrs, useTemplateRef, watch } from 'vue'
     import { useComponentStack } from '../composables/use-component-stack'
     import { useTeleportContainer } from '../composables/use-teleport-container'
 
@@ -53,10 +53,10 @@
             noEscHide: false
         }
     )
-    const { isReady } = useTeleportContainer('n-modals-container')
-    const { register, unregister, getZIndex, isTop } = useComponentStack('n-modal')
 
     const model = defineModel<boolean>({ default: false })
+    const { isReady } = useTeleportContainer('n-modals-container')
+    const { register, unregister, getZIndex, isTop } = useComponentStack('n-modal')
     const contentRef = useTemplateRef<HTMLElement | null>('contentRef')
     const { hasFocus, activate, deactivate, pause, unpause } = useFocusTrap(contentRef)
     const modalId = Symbol('modal-id')
