@@ -20,7 +20,7 @@
     </transition>
 
     <!-- Overlay -->
-    <teleport v-else-if="props.overlay" to="body">
+    <teleport v-else-if="isReady && props.overlay" to="#n-tooltips-container">
         <transition name="n-tooltip-overlay">
             <div v-if="model" class="n-tooltip-overlay">
                 <component
@@ -42,7 +42,7 @@
     </teleport>
 
     <!-- Without Overlay -->
-    <teleport v-else to="body">
+    <teleport v-else-if="isReady" to="#n-tooltips-container">
         <transition name="n-tooltip">
             <component
                 :is="props.tag"
@@ -67,6 +67,7 @@
     import { autoUpdate, flip, offset, shift, useFloating, type Placement } from '@floating-ui/vue'
     import { useEventListener, useTimeoutFn } from '@vueuse/core'
     import { computed, nextTick, ref, useAttrs, useTemplateRef, watch } from 'vue'
+    import { useTeleportContainer } from '../composables/use-teleport-container'
     import { getElement } from '../helpers/dom'
 
     export type NTooltipDirection = 'top' | 'bottom' | 'left' | 'right'
@@ -112,6 +113,7 @@
     const placeholderRef = useTemplateRef<HTMLElement | null>('placeholderRef')
     const contentRef = useTemplateRef<HTMLElement | null>('contentRef')
     const isContentHoverFocus = ref(false)
+    const { isReady } = useTeleportContainer('n-tooltips-container')
     const showTimer = useTimeoutFn(
         () => {
             show()
@@ -262,7 +264,7 @@
 
     @layer components {
         .n-tooltip-overlay {
-            @apply bg-bg-invert/50 fixed inset-0 grid place-content-center z-10;
+            @apply bg-bg-invert/50 fixed inset-0 grid place-content-center z-2000;
 
             &.n-tooltip-overlay-enter-active,
             &.n-tooltip-overlay-leave-active {
@@ -301,7 +303,7 @@
         }
 
         .n-tooltip {
-            @apply z-10
+            @apply z-2000
                 bg-bg-invert text-text-invert 
                 text-center
                 text-xs

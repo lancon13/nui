@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite'
 // import { fn } from '@storybook/test'
-import { ref } from 'vue'
+import { ref, useTemplateRef } from 'vue'
 import NButton from './NButton.vue'
 import NCard from './NCard.vue'
 import NIcon from './NIcon.vue'
@@ -80,6 +80,30 @@ export const Simple: Story = {
     })
 }
 
+export const NoOverlay: Story = {
+    args: {},
+    render: args => ({
+        components: { NModal, NButton, NCard },
+        setup() {
+            const showingModal = ref(false)
+
+            function handleButtonClick() {
+                showingModal.value = !showingModal.value
+            }
+
+            return { args, showingModal, handleButtonClick }
+        },
+        template: `
+            <NButton @click="handleButtonClick">
+                Show modal
+                <NModal v-bind="args" v-model="showingModal" :overlay="false" >
+                    <div class="p-5 bg-bg-invert text-text-invert shadowed rounded-element">Simple content, use ESC to close</div>
+                </NModal>
+            </NButton>
+        `
+    })
+}
+
 export const Dialog: Story = {
     args: {},
     render: args => ({
@@ -104,7 +128,7 @@ export const Dialog: Story = {
                             <NButton icon="close" class="icon absolute right-2 top-2 pilled flat"  @click="handleButtonClick">
                                 <NTooltip>
                                     Close this card <a href="#">here</a>
-                                </NTooltip>
+                                        </NTooltip>
                             </NButton>
                         </div>
 
@@ -119,6 +143,56 @@ export const Dialog: Story = {
                             <NButton label="More info" class="texted primary" tabindex="1" />
                             <NButton label="Close" class="primary" @click="handleButtonClick"  >
                                 <NTooltip>Close this card</NTooltip>
+                            </NButton>
+                        </div>
+                    </NCard>
+                </NModal>
+            </NButton>
+        `
+    })
+}
+
+export const NestedDialog: Story = {
+    args: {},
+    render: args => ({
+        components: { NModal, NButton, NCard, NIcon, NTooltip },
+        setup() {
+            const showingModal = ref(false)
+            const anotherDialogRef = useTemplateRef('anotherDialogRef')
+
+            function handleButtonClick() {
+                showingModal.value = !showingModal.value
+            }
+
+            return { args, showingModal, handleButtonClick, anotherDialogRef }
+        },
+        template: `
+            <NButton @click="handleButtonClick" icon="open-in-new">
+                Open
+                <NModal v-bind="args" v-model="showingModal" >
+                     <NCard v-bind="args" class="w-96 shadowed">                        
+                        <div class="n-card-body">
+                            <p>Please click the following button to open another dialog.</p>
+                        </div>
+                        
+                        <div class="n-card-footer justify-end pt-8">
+                            <NButton label="Open another dialog" class="flat primary" tabindex="1" @click="() => anotherDialogRef.show()" />
+                            <NButton label="Close" class="primary" @click="handleButtonClick"  >
+                                <NTooltip>Close this card</NTooltip>
+                            </NButton>
+                        </div>
+                    </NCard>                    
+                </NModal>
+                
+                
+                <NModal v-bind="args" ref="anotherDialogRef">
+                    <NCard v-bind="args" class="w-64 h-64 shadowed">                        
+                        <div class="n-card-body">
+                            <p>This is another dialog.</p>
+                        </div>
+                        
+                        <div class="n-card-footer pt-8">
+                            <NButton label="Close" class="w-full justify-center primary" @click="() => anotherDialogRef.hide()"  >                                    
                             </NButton>
                         </div>
                     </NCard>

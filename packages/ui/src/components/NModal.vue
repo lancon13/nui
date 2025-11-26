@@ -1,8 +1,12 @@
 <template>
-    <teleport to="body">
-        <!-- Overlay -->
+    <teleport v-if="isReady" to="#n-modals-container">
         <transition name="n-modal-overlay">
-            <div v-if="model" class="n-modal-overlay" tabindex="-1" @mousedown="handleOverlayClick">
+            <div
+                v-if="model"
+                :class="['n-modal-overlay', props.overlay ? 'n-modal-overlay--solid' : 'n-modal-overlay--empty']"
+                tabindex="-1"
+                @mousedown="handleOverlayClick"
+            >
                 <transition name="n-modal">
                     <component
                         :is="props.tag"
@@ -24,13 +28,14 @@
 <script setup lang="ts">
     import { useEventListener } from '@vueuse/core'
     import { useFocusTrap } from '@vueuse/integrations/useFocusTrap'
-    import { computed, nextTick, useAttrs, useSlots, useTemplateRef, watch } from 'vue'
+    import { computed, nextTick, onUnmounted, useAttrs, useSlots, useTemplateRef, watch } from 'vue'
+    import { useComponentStack } from '../composables/use-component-stack'
+    import { useTeleportContainer } from '../composables/use-teleport-container'
 
     defineOptions({
         inheritAttrs: false
     })
 
-    const slots = useSlots()
     const attrs = useAttrs()
     const props = withDefaults(
         defineProps<{
@@ -48,22 +53,27 @@
             noEscHide: false
         }
     )
+    const { isReady } = useTeleportContainer('n-modals-container')
+    const { register, unregister, getZIndex, isTop } = useComponentStack('n-modal')
 
     const model = defineModel<boolean>({ default: false })
     const contentRef = useTemplateRef<HTMLElement | null>('contentRef')
     const { hasFocus, activate, deactivate, pause, unpause } = useFocusTrap(contentRef)
+    const modalId = Symbol('modal-id')
 
     const compClasses = computed(() => {
         return ['n-modal']
     })
     const compBind = computed(() => {
         return {
-            ...attrs
+            ...attrs,
+            'z-index': getZIndex(modalId)
         }
     })
 
     useEventListener('keydown', e => {
-        if (model.value && e.key === 'Escape' && !props.noEscHide) {
+        console.log('esc')
+        if (model.value && e.key === 'Escape' && !props.noEscHide && isTop(modalId)) {
             e.preventDefault()
             e.stopPropagation()
             hide()
@@ -74,12 +84,21 @@
     watch(model, async value => {
         await nextTick() // Need it for focus-trap to work correctly for v-if
         try {
-            if (value && !hasFocus.value) activate()
-            else if (!value && hasFocus.value) deactivate()
+            if (value) {
+                if (!hasFocus.value) activate()
+                register(modalId)
+            } else if (!value) {
+                if (hasFocus.value) deactivate()
+                unregister(modalId)
+            }
             // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
         } catch (error) {
             // ...
         }
+    })
+
+    onUnmounted(() => {
+        unregister(modalId)
     })
 
     // Event handlers
@@ -112,7 +131,10 @@
 
     @layer components {
         .n-modal-overlay {
-            @apply bg-bg-invert/50 fixed inset-0 grid place-content-center-safe z-10 overflow-auto;
+            @apply bg-bg-invert/50 fixed inset-0 grid place-content-center-safe z-1000 overflow-auto;
+            &.n-modal-overlay--empty {
+                @apply bg-transparent;
+            }
 
             &.n-modal-overlay-enter-active,
             &.n-modal-overlay-leave-active {
@@ -137,7 +159,7 @@
             }
         }
         .n-modal {
-            @apply relative;
+            @apply relative z-1000;
 
             &.n-modal-enter-active,
             &.n-modal-leave-active {
