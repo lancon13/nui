@@ -47,7 +47,8 @@
                 "wix.vscode-import-cost",
                 "yoavbls.pretty-ts-errors",
                 "yrm.vscode-vueuse",
-                "esbenp.prettier-vscode"
+                "esbenp.prettier-vscode",
+                "maattdd.gitless"
             ]
         }
     },

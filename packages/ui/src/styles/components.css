@@ -73,3 +73,53 @@
     flex-direction: column;
     gap: var(--spacing-4);
 }
+
+/* NToastContainer */
+@layer components {
+    /* --- The Container (Holds the stack) --- */
+    [id^='n-toasts-container--'] {
+        @apply fixed z-1000
+            transition-[opacity,translate] duration-200 ease-in-out delay-200
+            hidden;
+        &:has(*) {
+            @apply grid grid-cols-1 place-items-center place-content-center-safe gap-2;
+        }
+        &:has(.n-toast-overlay) {
+            @apply z-1001;
+        }
+    }
+    /* TOP */
+    #n-toasts-container--position-top-left {
+        @apply top-0 left-0 mt-4 ml-4 place-items-start;
+    }
+    #n-toasts-container--position-top-center,
+    #n-toasts-container--position-top {
+        @apply top-0 w-full mt-4;
+    }
+    #n-toasts-container--position-top-right {
+        @apply top-0 right-0 mt-4 mr-4 place-items-end-safe;
+    }
+
+    /* CENTER */
+    #n-toasts-container--position-center-left {
+        @apply top-0 left-0 h-full ml-4 place-items-start;
+    }
+    #n-toasts-container--position-center-center {
+        @apply top-0 w-full;
+    }
+    #n-toasts-container--position-center-right {
+        @apply top-0 right-0 h-full mr-4 place-items-end-safe;
+    }
+
+    /* BOTTOM */
+    #n-toasts-container--position-bottom-left {
+        @apply bottom-0 left-0 mb-4 ml-4 place-items-start;
+    }
+    #n-toasts-container--position-bottom-center,
+    #n-toasts-container--position-bottom {
+        @apply bottom-0 w-full mb-4;
+    }
+    #n-toasts-container--position-bottom-right {
+        @apply bottom-0 right-0 mb-4 mr-4 place-items-end-safe;
+    }
+}

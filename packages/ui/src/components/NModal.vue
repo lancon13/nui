@@ -31,6 +31,7 @@
     import { computed, nextTick, onUnmounted, useAttrs, useTemplateRef, watch } from 'vue'
     import { useComponentStack } from '../composables/use-component-stack'
     import { useTeleportContainer } from '../composables/use-teleport-container'
+    import { generatePseudoRandomKey } from '../helpers/tools'
 
     defineOptions({
         inheritAttrs: false
@@ -59,7 +60,7 @@
     const { register, unregister, getZIndex, isTop } = useComponentStack('n-modal')
     const contentRef = useTemplateRef<HTMLElement | null>('contentRef')
     const { hasFocus, activate, deactivate, pause, unpause } = useFocusTrap(contentRef)
-    const modalId = Symbol('modal-id')
+    const modalId = Symbol(`modal-id-${generatePseudoRandomKey()}`)
 
     const compClasses = computed(() => {
         return ['n-modal']
@@ -72,7 +73,6 @@
     })
 
     useEventListener('keydown', e => {
-        console.log('esc')
         if (model.value && e.key === 'Escape' && !props.noEscHide && isTop(modalId)) {
             e.preventDefault()
             e.stopPropagation()

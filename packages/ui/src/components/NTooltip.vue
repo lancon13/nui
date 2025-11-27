@@ -151,7 +151,7 @@
     })
 
     const compClasses = computed(() => {
-        return ['n-tooltip', model.value ? 'n-tooltip--visible' : '', `n-tooltip--direction-${placement.value}`]
+        return ['n-tooltip', `n-tooltip--direction-${placement.value}`]
     })
     const compBind = computed(() => {
         return {
@@ -246,7 +246,6 @@
         const isFocusInside = contentRef.value?.contains(document.activeElement)
         model.value = false
 
-        console.log(skipReturnFocus)
         // Return focus if explicitly requested OR if focus was lost inside the tooltip
         if (!skipReturnFocus && isFocusInside) {
             nextTick(() => {
