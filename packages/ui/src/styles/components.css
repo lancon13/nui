@@ -78,48 +78,48 @@
 @layer components {
     /* --- The Container (Holds the stack) --- */
     [id^='n-toasts-container--'] {
-        @apply fixed z-1000
+        @apply fixed z-1001
             transition-[opacity,translate] duration-200 ease-in-out delay-200
             hidden;
         &:has(*) {
-            @apply grid grid-cols-1 place-items-center place-content-center-safe gap-2;
+            @apply flex gap-2;
         }
         &:has(.n-toast-overlay) {
-            @apply z-1001;
+            @apply z-1002;
         }
     }
     /* TOP */
     #n-toasts-container--position-top-left {
-        @apply top-0 left-0 mt-4 ml-4 place-items-start;
+        @apply top-0 left-0 mt-4 ml-4 flex-col items-start;
     }
     #n-toasts-container--position-top-center,
     #n-toasts-container--position-top {
-        @apply top-0 w-full mt-4;
+        @apply top-0 w-full h-0 mt-4 flex-col items-center z-1000;
     }
     #n-toasts-container--position-top-right {
-        @apply top-0 right-0 mt-4 mr-4 place-items-end-safe;
+        @apply top-0 right-0 mt-4 mr-4 flex-col items-end;
     }
 
     /* CENTER */
     #n-toasts-container--position-center-left {
-        @apply top-0 left-0 h-full ml-4 place-items-start;
+        @apply top-[calc(50%-(var(--spacing)*8))] left-0 ml-4 flex-col justify-center items-start z-1000;
     }
     #n-toasts-container--position-center-center {
-        @apply top-0 w-full;
+        @apply top-[calc(50%-(var(--spacing)*8))] left-0 w-full flex-col justify-center items-center z-1000;
     }
     #n-toasts-container--position-center-right {
-        @apply top-0 right-0 h-full mr-4 place-items-end-safe;
+        @apply top-[calc(50%-(var(--spacing)*8))] right-0 mr-4 flex-col justify-center items-end z-1000;
     }
 
     /* BOTTOM */
     #n-toasts-container--position-bottom-left {
-        @apply bottom-0 left-0 mb-4 ml-4 place-items-start;
+        @apply bottom-0 left-0 mb-4 ml-4 flex-col-reverse items-start;
     }
     #n-toasts-container--position-bottom-center,
     #n-toasts-container--position-bottom {
-        @apply bottom-0 w-full mb-4;
+        @apply bottom-0 w-full h-0 mb-4 flex-col-reverse items-center z-1000;
     }
     #n-toasts-container--position-bottom-right {
-        @apply bottom-0 right-0 mb-4 mr-4 place-items-end-safe;
+        @apply bottom-0 right-0 mb-4 mr-4 flex-col-reverse items-end;
     }
 }
