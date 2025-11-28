@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/vue3-vite'
 // import { fn } from '@storybook/test'
 import NBanner from './NBanner.vue'
 import NButton from './NButton.vue'
+import { ref } from 'vue'
 
 const meta = {
     title: 'UI/NBanner',
@@ -200,6 +201,32 @@ export const Actions: Story = {
                         <NButton label="Dismiss" class="text-xs flat" />
                     </template>
                 </NBanner>
+            </div>
+        `
+    })
+}
+
+export const ActionSlots: Story = {
+    args: {},
+    render: args => ({
+        components: { NBanner },
+        setup() {
+            function handleCancelClick() {
+                console.log('cancel clicked')
+            }
+            function handleOkClick() {
+                console.log('ok clicked')
+            }
+
+            const actions = ref([
+                { label: 'Cancel', class: 'flat', onClick: handleCancelClick },
+                { label: 'OK', class: 'outlined', onClick: handleOkClick }
+            ])
+            return { args, actions, handleCancelClick }
+        },
+        template: `
+            <div class="flex flex-col gap-4">
+                <NBanner v-bind="args" :actions="actions">This is a banner message</NBanner>                
             </div>
         `
     })

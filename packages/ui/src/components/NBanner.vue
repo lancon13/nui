@@ -20,8 +20,12 @@
             </template>
         </div>
 
-        <div v-if="$slots['actions']" :class="['n-banner-actions', props.actionsClass]">
-            <slot name="actions" />
+        <div v-if="$slots['actions'] || props.actions" :class="['n-banner-actions', props.actionsClass]">
+            <slot name="actions">
+                <template v-for="(action, index) in props.actions" :key="index">
+                    <n-button v-bind="action" />
+                </template>
+            </slot>
         </div>
 
         <slot v-if="props.showProgress && props.duration > 0" name="progress">
@@ -37,14 +41,27 @@
 
 <script setup lang="ts">
     /* eslint-disable no-unused-vars */
-    import { computed, useAttrs, useSlots, watch } from 'vue'
+    import { computed, HTMLAttributes, useAttrs, useSlots, watch } from 'vue'
     import { wrapTextNode } from '../helpers/dom'
     import { usePausableTimer } from '../composables/use-pausable-timer'
     import NIcon from './NIcon.vue'
+    import NButton, { NButtonProps } from './NButton.vue'
 
     defineOptions({
         inheritAttrs: false
     })
+
+    export type NBannerProps = Partial</* @vue-ignore */ HTMLAttributes> & {
+        tag?: string
+        icon?: string
+        iconClass?: string | object | string[]
+        labelClass?: string | object | string[]
+        actionsClass?: string | object | string[]
+        inlineActions?: boolean
+        duration?: number
+        showProgress?: boolean
+        actions?: NButtonProps[]
+    }
 
     // --- Emits Definition ---
     const emits = defineEmits<{
@@ -56,24 +73,13 @@
 
     const slots = useSlots()
     const attrs = useAttrs()
-    const props = withDefaults(
-        defineProps<{
-            tag?: string
-            icon?: string
-            iconClass?: string | object | string[]
-            labelClass?: string | object | string[]
-            actionsClass?: string | object | string[]
-            inlineActions?: boolean
-            duration?: number
-            showProgress?: boolean
-        }>(),
-        {
-            tag: 'div',
-            inlineActions: true,
-            duration: 0,
-            showProgress: false
-        }
-    )
+    const props = withDefaults(defineProps<NBannerProps>(), {
+        tag: 'div',
+        inlineActions: true,
+        duration: 0,
+        showProgress: false,
+        actions: () => [] as NButtonProps[]
+    })
 
     const model = defineModel<boolean>({ default: true })
 

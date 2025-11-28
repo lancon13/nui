@@ -44,9 +44,27 @@
 </template>
 
 <script setup lang="ts">
-    import { computed, useAttrs, useSlots } from 'vue'
+    import { computed, HTMLAttributes, useAttrs, useSlots } from 'vue'
     import { wrapTextNode } from '../helpers/dom'
     import NIcon from './NIcon.vue'
+
+    export type NButtonProps = Partial</* @vue-ignore */ HTMLAttributes> & {
+        icon?: string
+        iconClass?: string | object | string[]
+        prependIcon?: string
+        prependIconClass?: string | object | string[]
+        appendIcon?: string
+        appendIconClass?: string | object | string[]
+        label?: string
+        tag?: string
+        type?: string
+        loading?: boolean
+        loadingIcon?: string
+        loadingIconClass?: string | string[] | object
+        to?: string | object
+        href?: string
+        target?: string
+    }
 
     defineOptions({
         inheritAttrs: false
@@ -54,30 +72,11 @@
 
     const slots = useSlots()
     const attrs = useAttrs()
-    const props = withDefaults(
-        defineProps<{
-            icon?: string
-            iconClass?: string | object | string[]
-            prependIcon?: string
-            prependIconClass?: string | object | string[]
-            appendIcon?: string
-            appendIconClass?: string | object | string[]
-            label?: string
-            tag?: string
-            type?: string
-            loading?: boolean
-            loadingIcon?: string
-            loadingIconClass?: string | string[] | object
-            to?: string | object
-            href?: string
-            target?: string
-        }>(),
-        {
-            tag: 'button',
-            type: 'button',
-            loadingIcon: 'loading'
-        }
-    )
+    const props = withDefaults(defineProps<NButtonProps>(), {
+        tag: 'button',
+        type: 'button',
+        loadingIcon: 'loading'
+    })
 
     const compClasses = computed(() => {
         return ['n-button', props.loading ? 'n-button--loading' : '']

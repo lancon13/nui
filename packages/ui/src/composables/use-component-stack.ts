@@ -53,6 +53,7 @@ export function useComponentStack(stackName: MaybeRefOrGetter<string>) {
         return BASE_Z_INDEX + index * Z_INDEX_STEP
     }
 
+    // Return order index based on position in stack
     const getOrderIndex = (itemId: symbol) => {
         const stack = getStack()
         return stack.findIndex(({ itemId: _itemId }) => _itemId === itemId)

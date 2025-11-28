@@ -29,32 +29,31 @@
 
 <script setup lang="ts">
     import { useEventListener } from '@vueuse/core'
-    import { computed, nextTick, onUnmounted, ref, useAttrs, watch } from 'vue'
+    import { computed, HTMLAttributes, nextTick, onUnmounted, ref, useAttrs, watch } from 'vue'
     import { useComponentStack } from '../composables/use-component-stack'
     import { useTeleportContainer } from '../composables/use-teleport-container'
     import { generatePseudoRandomKey } from '../helpers/tools'
 
     defineOptions({ inheritAttrs: false })
 
+    export type NToastProps = Partial</* @vue-ignore */ HTMLAttributes> & {
+        tag?: string
+        content?: string
+        overlay?: boolean
+        noOverlayHide?: boolean
+        noEscHide?: boolean
+        position?: string
+    }
+
     const attrs = useAttrs()
-    const props = withDefaults(
-        defineProps<{
-            tag?: string
-            content?: string
-            overlay?: boolean
-            noOverlayHide?: boolean
-            noEscHide?: boolean
-            position?: string
-        }>(),
-        {
-            tag: 'div',
-            content: '',
-            overlay: false,
-            noOverlayHide: false,
-            noEscHide: false,
-            position: 'top-center'
-        }
-    )
+    const props = withDefaults(defineProps<NToastProps>(), {
+        tag: 'div',
+        content: '',
+        overlay: false,
+        noOverlayHide: false,
+        noEscHide: false,
+        position: 'top-center'
+    })
 
     const model = defineModel<boolean>({ default: false })
     const { isReady } = useTeleportContainer(computed(() => `n-toasts-container--position-${props.position}`))
