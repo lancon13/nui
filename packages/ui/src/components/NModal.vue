@@ -1,26 +1,31 @@
 <template>
     <teleport v-if="isReady" to="#n-modals-container">
+        <!-- Overlay -->
         <transition name="n-modal-overlay">
             <div
-                v-if="model"
-                :class="['n-modal-overlay', props.overlay ? 'n-modal-overlay--solid' : 'n-modal-overlay--empty']"
+                v-if="props.overlay && model"
+                :class="overlayClasses"
+                :style="overlayStyles"
                 tabindex="-1"
                 @mousedown="handleOverlayClick"
+            ></div>
+        </transition>
+
+        <!-- Modal -->
+        <transition name="n-modal">
+            <component
+                :is="props.tag"
+                v-if="model"
+                ref="contentRef"
+                role="dialog"
+                :class="modalClasses"
+                :style="modalStyles"
+                v-bind="modalBind"
+                @mousedown="handleModalMouseDown"
+                @mouseup="handleModalMouseUp"
             >
-                <transition name="n-modal">
-                    <component
-                        :is="props.tag"
-                        ref="contentRef"
-                        role="dialog"
-                        :class="compClasses"
-                        v-bind="compBind"
-                        @mousedown="handleModalMouseDown"
-                        @mouseup="handleModalMouseUp"
-                    >
-                        <slot name="default" v-html="props.content"></slot>
-                    </component>
-                </transition>
-            </div>
+                <slot name="default" v-html="props.content"></slot>
+            </component>
         </transition>
     </teleport>
 </template>
@@ -28,7 +33,7 @@
 <script setup lang="ts">
     import { useEventListener } from '@vueuse/core'
     import { useFocusTrap } from '@vueuse/integrations/useFocusTrap'
-    import { computed, nextTick, onUnmounted, useAttrs, useTemplateRef, watch } from 'vue'
+    import { computed, HTMLAttributes, nextTick, onUnmounted, useAttrs, useTemplateRef, watch } from 'vue'
     import { useComponentStack } from '../composables/use-component-stack'
     import { useTeleportContainer } from '../composables/use-teleport-container'
     import { generatePseudoRandomKey } from '../helpers/tools'
@@ -37,38 +42,53 @@
         inheritAttrs: false
     })
 
+    export type NModalProps = Partial</* @vue-ignore */ HTMLAttributes> & {
+        tag?: string
+        content?: string
+        overlay?: boolean
+        noOverlayHide?: boolean
+        noEscHide?: boolean
+        focusOnShow?: boolean
+    }
+
     const attrs = useAttrs()
-    const props = withDefaults(
-        defineProps<{
-            tag?: string
-            content?: string
-            overlay?: boolean
-            noOverlayHide?: boolean
-            noEscHide?: boolean
-        }>(),
-        {
-            tag: 'div',
-            content: '',
-            overlay: true,
-            noOverlayHide: false,
-            noEscHide: false
-        }
-    )
+    const props = withDefaults(defineProps<NModalProps>(), {
+        tag: 'div',
+        content: '',
+        overlay: true,
+        noOverlayHide: false,
+        noEscHide: false
+    })
 
     const model = defineModel<boolean>({ default: false })
     const { isReady } = useTeleportContainer('n-modals-container')
+
+    const modalId = Symbol(`modal-id-${generatePseudoRandomKey()}`)
     const { register, unregister, getZIndex, isTop } = useComponentStack('n-modal')
     const contentRef = useTemplateRef<HTMLElement | null>('contentRef')
     const { hasFocus, activate, deactivate, pause, unpause } = useFocusTrap(contentRef)
-    const modalId = Symbol(`modal-id-${generatePseudoRandomKey()}`)
 
-    const compClasses = computed(() => {
+    const stackZIndex = computed(() => getZIndex(modalId))
+
+    const overlayClasses = computed(() => {
+        return ['n-modal-overlay']
+    })
+    const overlayStyles = computed(() => {
+        return {
+            zIndex: stackZIndex.value
+        }
+    })
+    const modalClasses = computed(() => {
         return ['n-modal']
     })
-    const compBind = computed(() => {
+    const modalStyles = computed(() => {
         return {
-            ...attrs,
-            'z-index': getZIndex(modalId)
+            zIndex: stackZIndex.value
+        }
+    })
+    const modalBind = computed(() => {
+        return {
+            ...attrs
         }
     })
 
@@ -85,11 +105,11 @@
         await nextTick() // Need it for focus-trap to work correctly for v-if
         try {
             if (value) {
-                if (!hasFocus.value) activate()
                 register(modalId)
+                if (!hasFocus.value) activate()
             } else if (!value) {
-                if (hasFocus.value) deactivate()
                 unregister(modalId)
+                if (hasFocus.value) deactivate()
             }
             // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
         } catch (error) {
@@ -109,10 +129,10 @@
         hide()
     }
     function handleModalMouseDown() {
-        pause()
+        pause() // To allows text highlight
     }
     function handleModalMouseUp() {
-        unpause()
+        unpause() // To disable text highlight
     }
 
     // Methods
@@ -131,41 +151,28 @@
 
     @layer components {
         .n-modal-overlay {
-            @apply bg-bg-invert/50 fixed inset-0 grid place-content-center-safe z-1000 overflow-auto;
-            &.n-modal-overlay--empty {
-                @apply bg-transparent;
-            }
+            @apply fixed inset-0 z-1000 bg-bg-invert/50;
 
             &.n-modal-overlay-enter-active,
             &.n-modal-overlay-leave-active {
                 @apply transition-[opacity,translate] duration-200 ease-in-out;
             }
-            &.n-modal-overlay-leave-active {
-                @apply delay-200;
-                .n-modal {
-                    @apply delay-0;
-                }
-            }
+
             &.n-modal-overlay-enter-from,
             &.n-modal-overlay-leave-to {
                 @apply opacity-0;
-                .n-modal {
-                    @apply opacity-0;
-                    @apply translate-y-2;
-                }
             }
-            .n-modal {
-                @apply transition-[opacity,translate] delay-200 duration-200 ease-in-out;
+
+            &.n-modal-overlay-leave-active {
+                @apply delay-200;
+                & + .n-modal {
+                    @apply delay-0;
+                }
             }
         }
         .n-modal {
-            @apply relative z-1000;
-
-            &.n-modal-enter-active,
-            &.n-modal-leave-active {
-                @apply transition-[opacity,translate] duration-200 ease-in-out;
-                @apply translate-x-0 translate-y-0;
-            }
+            @apply absolute z-1000 w-auto;
+            @apply transition-[opacity,translate] duration-200 ease-in-out;
 
             &.n-modal-enter-from,
             &.n-modal-leave-to {

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-unused-vars */
 import { createVNode, getCurrentInstance, h, nextTick, render } from 'vue'
 import NBanner, { NBannerProps } from '../components/NBanner.vue'
@@ -6,13 +7,15 @@ import NToast, { NToastProps } from '../components/NToast.vue'
 import { generatePseudoRandomKey } from '../helpers/tools'
 
 // Options for the notify function
-type NNotifyAction = Omit<NButtonProps, 'onClick'> & { onClick?: (params: { hide: () => Promise<void> }) => void }
+type NNotifyAction = Omit<NButtonProps, 'onClick'> & {
+    onClick?: (params: { hide: () => Promise<void>; executeCallbacks(eventName: string): void }) => void
+}
 type NNotifyOptions = Omit<NToastProps, 'tag' | 'onClick'> &
     Omit<NBannerProps, 'tag' | 'onClick' | 'actions'> & {
         toastTag?: NToastProps['tag']
         bannerTag?: NBannerProps['tag']
-        showImmediate?: boolean
-        hideOnDismiss?: boolean
+        bannerClass?: string | string[] | object
+        hideOnAction?: boolean
 
         actions?: NNotifyAction[]
 
@@ -35,18 +38,19 @@ export function useNotify() {
         document.body.appendChild(container)
 
         options = options ?? {}
-        options.showImmediate ??= false
-        options.hideOnDismiss ??= true
+        options.hideOnAction ??= true
 
         const toastProps = {
             tag: options['toastTag'],
             overlay: options['overlay'],
             noOverlayHide: options['noOverlayHide'],
             noEscHide: options['noEscHide'],
-            position: options['position']
+            position: options['position'],
+            focusOnShow: options['focusOnShow']
         }
         const bannerProps = {
             tag: options['bannerTag'],
+            class: options['bannerClass'],
             icon: options['icon'],
             iconClass: options['iconClass'],
             labelClass: options['labelClass'],
@@ -56,14 +60,17 @@ export function useNotify() {
             showProgress: options['showProgress'],
             actions: options['actions']
         }
-        const eventCallbacks = new Map<string, (() => void)[]>()
+        const eventCallbacks = new Map<string, ((...params: any[]) => void)[]>()
 
         if (Array.isArray(bannerProps.actions)) {
             bannerProps.actions = bannerProps.actions.map(action => {
-                const userProvidedOnClick = action.onClick as unknown as (params: { hide: () => Promise<void> }) => void
+                const userProvidedOnClick = action.onClick as unknown as (params: {
+                    hide: () => Promise<void>
+                    executeCallbacks(eventName: string): void
+                }) => void
                 const buttonOnClick = () => {
                     if (typeof userProvidedOnClick === 'function') {
-                        userProvidedOnClick({ hide })
+                        userProvidedOnClick({ hide, executeCallbacks })
                     } else {
                         // Default actions if no userProvidedOnClick is supplied
                         if (action.label?.toLocaleLowerCase() === 'ok') {
@@ -72,7 +79,7 @@ export function useNotify() {
                             executeCallbacks('cancel')
                         }
                         executeCallbacks('dismiss')
-                        if (options.hideOnDismiss) hide()
+                        if (options.hideOnAction) hide()
                     }
                 }
                 // Return a new action object with the NButtonProps compatible onClick
@@ -116,31 +123,31 @@ export function useNotify() {
             container.remove()
         }
 
-        function addCallbackToEvent(eventName: string, callback: () => void) {
+        function addCallbackToEvent(eventName: string, callback: (...params: any[]) => void) {
             const callbacks = eventCallbacks.get(eventName) || []
             callbacks.push(callback)
             eventCallbacks.set(eventName, callbacks)
         }
-        function executeCallbacks(eventName: string) {
+        function executeCallbacks(eventName: string, ...params: any[]) {
             const callbacks = eventCallbacks.get(eventName) || []
             for (const callback of callbacks) {
-                callback()
+                callback(params)
             }
         }
 
-        function onHide(callback: () => void) {
+        function onHide(callback: (...params: any[]) => void) {
             addCallbackToEvent('hide', callback)
         }
-        function onDismiss(callback: () => void) {
+        function onDismiss(callback: (...params: any[]) => void) {
             addCallbackToEvent('dismiss', callback)
         }
-        function onCancel(callback: () => void) {
+        function onCancel(callback: (...params: any[]) => void) {
             addCallbackToEvent('cancel', callback)
         }
-        function onOk(callback: () => void) {
+        function onOk(callback: (...params: any[]) => void) {
             addCallbackToEvent('ok', callback)
         }
-        function onShow(callback: () => void) {
+        function onShow(callback: (...params: any[]) => void) {
             addCallbackToEvent('show', callback)
         }
 
@@ -159,42 +166,54 @@ export function useNotify() {
             }
         }
 
-        if (options.showImmediate) {
-            await nextTick()
-            show()
-        }
-
         return {
             show,
             onShow
         }
     }
 
-    const notify = async (options: NNotifyOptions) => {
-        console.warn('alert is not implemented yet', options)
-        return Promise.resolve({ hide: () => {} })
+    const notify = async (message: string, options?: NNotifyOptions) => {
+        const notification = await create({
+            hideOnAction: true,
+            content: message,
+            actions: [
+                {
+                    label: 'OK',
+                    class: 'flat'
+                }
+            ],
+            duration: 3000,
+            showProgress: true,
+            focusOnShow: false,
+            ...options
+        })
+
+        return notification.show()
     }
 
-    const alert = async (options: NNotifyOptions) => {
-        console.warn('alert is not implemented yet', options)
-        return Promise.resolve({ hide: () => {} })
+    const success = (message: string, options?: NNotifyOptions) => {
+        return notify(message, { bannerClass: 'success', ...options })
     }
 
-    const confirm = async (options: NNotifyOptions) => {
-        console.warn('confirm is not implemented yet', options)
-        return Promise.resolve({ hide: () => {} })
+    const error = (message: string, options?: NNotifyOptions) => {
+        return notify(message, { bannerClass: 'error', ...options })
     }
 
-    const prompt = async (options: NNotifyOptions) => {
-        console.warn('prompt is not implemented yet', options)
-        return Promise.resolve({ hide: () => {} })
+    const warning = (message: string, options?: NNotifyOptions) => {
+        return notify(message, { bannerClass: 'warning', ...options })
     }
+
+    const info = (message: string, options?: NNotifyOptions) => {
+        return notify(message, { bannerClass: 'info', ...options })
+    }
+
     return {
         create,
 
         notify,
-        alert,
-        confirm,
-        prompt
+        success,
+        error,
+        warning,
+        info
     }
 }

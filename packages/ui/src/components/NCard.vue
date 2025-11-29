@@ -21,7 +21,7 @@
 </template>
 
 <script setup lang="ts">
-    import { computed, useAttrs, useSlots } from 'vue'
+    import { computed, HTMLAttributes, useAttrs, useSlots } from 'vue'
     import { isVNodeClassContain } from '../helpers/dom'
     import NIcon from './NIcon.vue'
 
@@ -29,24 +29,23 @@
         inheritAttrs: false
     })
 
+    export type NCardProps = Partial</* @vue-ignore */ HTMLAttributes> & {
+        tag?: string
+        loading?: boolean
+        loadingIcon?: string
+        loadingIconClass?: string | string[] | object
+        clickable?: boolean
+        to?: string | object
+        href?: string
+        target?: string
+    }
+
     const slots = useSlots()
     const attrs = useAttrs()
-    const props = withDefaults(
-        defineProps<{
-            tag?: string
-            loading?: boolean
-            loadingIcon?: string
-            loadingIconClass?: string | string[] | object
-            clickable?: boolean
-            to?: string | object
-            href?: string
-            target?: string
-        }>(),
-        {
-            tag: 'div',
-            loadingIcon: 'loading'
-        }
-    )
+    const props = withDefaults(defineProps<NCardProps>(), {
+        tag: 'div',
+        loadingIcon: 'loading'
+    })
     const compClasses = computed(() => {
         return ['n-card', props.loading ? 'n-card--loading' : '', ...(props.clickable ? ['n-card--clickable'] : [])]
     })

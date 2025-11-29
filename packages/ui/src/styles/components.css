@@ -74,20 +74,36 @@
     gap: var(--spacing-4);
 }
 
-/* NToastContainer */
+/* NModalsContainer */
 @layer components {
-    /* --- The Container (Holds the stack) --- */
-    [id^='n-toasts-container--'] {
-        @apply fixed z-1001
-            transition-[opacity,translate] duration-200 ease-in-out delay-200
+    #n-modals-container {
+        @apply fixed z-1000
+            top-0 left-0 w-full h-full
+            transition-[opacity,translate] duration-200 ease-in-out
             hidden;
         &:has(*) {
-            @apply flex gap-2;
+            @apply grid grid-cols-1 place-items-center-safe overflow-auto;
+        }
+        &:has(.n-modal-overlay) {
+            @apply z-1001;
+        }
+    }
+}
+
+/* NToastsContainer */
+@layer components {
+    [id^='n-toasts-container--'] {
+        @apply fixed z-1001
+            transition-[opacity,translate] duration-200 ease-in-out
+            hidden;
+        &:has(*) {
+            @apply flex gap-2 overflow-visible;
         }
         &:has(.n-toast-overlay) {
             @apply z-1002;
         }
     }
+
     /* TOP */
     #n-toasts-container--position-top-left {
         @apply top-0 left-0 mt-4 ml-4 flex-col items-start;

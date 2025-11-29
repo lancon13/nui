@@ -29,7 +29,7 @@
 
 <script setup lang="ts">
     import { useEventListener } from '@vueuse/core'
-    import { computed, HTMLAttributes, nextTick, onUnmounted, ref, useAttrs, watch } from 'vue'
+    import { computed, HTMLAttributes, nextTick, onUnmounted, ref, useAttrs, useTemplateRef, watch } from 'vue'
     import { useComponentStack } from '../composables/use-component-stack'
     import { useTeleportContainer } from '../composables/use-teleport-container'
     import { generatePseudoRandomKey } from '../helpers/tools'
@@ -43,6 +43,7 @@
         noOverlayHide?: boolean
         noEscHide?: boolean
         position?: string
+        focusOnShow?: boolean
     }
 
     const attrs = useAttrs()
@@ -52,13 +53,14 @@
         overlay: false,
         noOverlayHide: false,
         noEscHide: false,
-        position: 'top-center'
+        position: 'top-center',
+        focusOnShow: true
     })
 
     const model = defineModel<boolean>({ default: false })
     const { isReady } = useTeleportContainer(computed(() => `n-toasts-container--position-${props.position}`))
 
-    const contentRef = ref<HTMLElement | null>(null)
+    const contentRef = useTemplateRef<HTMLElement | null>('contentRef')
     const lastFocusedElement = ref<HTMLElement | null>(null)
 
     // --- Component Stack (Z-Index) ---
@@ -69,24 +71,17 @@
     const stackZIndex = computed(() => getZIndex(toastId))
     const stackOrderIndex = computed(() => getOrderIndex(toastId))
 
-    // ==========================================
-    // VIEW MODEL
-    // ==========================================
-
-    // --- Overlay Logic ---
     const overlayClasses = computed(() => ['n-toast-overlay', `n-toast-overlay--position-${props.position}`])
     const overlayStyles = computed(() => ({
         zIndex: stackZIndex.value,
         order: stackOrderIndex.value
     }))
 
-    // --- Toast Logic ---
     const toastClasses = computed(() => ['n-toast', `n-toast--position-${props.position}`])
     const toastStyles = computed(() => ({
         zIndex: stackZIndex.value,
         order: stackOrderIndex.value
     }))
-
     const toastBind = computed(() => ({
         role: 'log',
         'aria-live': 'polite',
@@ -123,7 +118,7 @@
             register(toastId)
             lastFocusedElement.value = document.activeElement as HTMLElement
             await nextTick()
-            focusFirstElement()
+            if (props.focusOnShow) focusFirstElement()
         } else {
             if (lastFocusedElement.value) {
                 lastFocusedElement.value.focus()
@@ -160,9 +155,6 @@
     @reference '../styles/index.css';
 
     @layer components {
-        /* 1. BASE LAYOUT & TRANSITIONS */
-
-        /* --- Overlay (Wrapper Mode) --- */
         .n-toast-overlay {
             @apply fixed inset-0 z-1000 bg-bg-invert/50;
 
@@ -184,7 +176,6 @@
             }
         }
 
-        /* --- Toast (The Notification) --- */
         .n-toast {
             @apply relative z-1000 w-auto;
             @apply transition-[opacity,translate] duration-200 ease-in-out;

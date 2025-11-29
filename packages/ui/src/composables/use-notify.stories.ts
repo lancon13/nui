@@ -23,16 +23,17 @@ export const Default: Story = {
             const { create } = useNotify()
 
             const showDefault = async () => {
-                await create({
-                    showImmediate: true,
-                    content: 'This is a default notification!',
-                    actions: [
-                        {
-                            label: 'Ok',
-                            class: 'flat'
-                        }
-                    ]
-                })
+                ;(
+                    await create({
+                        content: 'This is a default notification!',
+                        actions: [
+                            {
+                                label: 'Ok',
+                                class: 'flat'
+                            }
+                        ]
+                    })
+                ).show()
             }
 
             const showWithOverlay = async () => {
@@ -45,8 +46,8 @@ export const Default: Story = {
                 ).show()
             }
 
-            const showCustomPosition = (position: any) => {
-                create({ content: `Notification at ${position}`, position })
+            const showCustomPosition = async (position: any) => {
+                ;(await create({ content: `Notification at ${position}`, position })).show()
             }
 
             const showWithActions = async () => {
@@ -55,7 +56,7 @@ export const Default: Story = {
                         content: 'Do you want to dismiss this?',
                         actions: [
                             {
-                                label: 'Submit',
+                                label: 'Dismiss',
                                 class: 'outlined',
                                 onClick: ({ hide }) => {
                                     console.log('click')
@@ -71,49 +72,43 @@ export const Default: Story = {
         },
         template: `
             <div class="flex flex-col gap-4">
-                <NButton @click="showDefault">Show Default Notification</NButton>
-                <NButton @click="showWithOverlay">Show Notification with Overlay</NButton>
-                <NButton @click="showTimed">Show Timed Notification (3s)</NButton>
-                <NButton @click="showWithActions">Show Notification with Actions</NButton>
-                <div class="grid grid-cols-3 gap-2 w-96">
-                    <NButton @click="showCustomPosition('top-left')">Top-Left</NButton>
-                    <NButton @click="showCustomPosition('top-center')">Top-Center</NButton>
-                    <NButton @click="showCustomPosition('top-right')">Top-Right</NButton>
-                    <NButton @click="showCustomPosition('center-left')">Center-Left</NButton>
-                    <NButton @click="showCustomPosition('center-center')">Center-Center</NButton>
-                    <NButton @click="showCustomPosition('center-right')">Center-Right</NButton>
-                    <NButton @click="showCustomPosition('bottom-left')">Bottom-Left</NButton>
-                    <NButton @click="showCustomPosition('bottom-center')">Bottom-Center</NButton>
-                    <NButton @click="showCustomPosition('bottom-right')">Bottom-Right</NButton>
+                <NButton @click="showDefault" class="justify-center">Show default notification</NButton>
+                <NButton @click="showWithOverlay" class="justify-center">Show notification with overlay</NButton>
+                <NButton @click="showTimed" class="justify-center">Show timed notification (3s)</NButton>
+                <NButton @click="showWithActions" class="justify-center">Show notification with actions</NButton>
+                <div class="grid grid-cols-3 gap-2">
+                    <NButton @click="showCustomPosition('top-left')" class="justify-center">top-left</NButton>
+                    <NButton @click="showCustomPosition('top-center')" class="justify-center">top-center</NButton>
+                    <NButton @click="showCustomPosition('top-right')" class="justify-center">top-right</NButton>
+                    <NButton @click="showCustomPosition('center-left')" class="justify-center">center-left</NButton>
+                    <NButton @click="showCustomPosition('center-center')" class="justify-center">center-center</NButton>
+                    <NButton @click="showCustomPosition('center-right')" class="justify-center">center-right</NButton>
+                    <NButton @click="showCustomPosition('bottom-left')" class="justify-center">bottom-left</NButton>
+                    <NButton @click="showCustomPosition('bottom-center')" class="justify-center">bottom-center</NButton>
+                    <NButton @click="showCustomPosition('bottom-right')" class="justify-center">bottom-right</NButton>
                 </div>
             </div>
         `
     })
 }
 
-// export const CustomComponent: Story = {
-//     render: () => ({
-//         components: { NButton, NCard },
-//         setup() {
-//             const { create } = useNotify()
+export const Notify: Story = {
+    render: () => ({
+        components: { NButton },
+        setup() {
+            const { notify, success, error, warning, info } = useNotify()
 
-//             const showCustomComponent = () => {
-//                 create({
-//                     component: NCard,
-//                     componentProps: {
-//                         title: 'Custom Card Notification',
-//                         content: 'This notification uses an NCard component!',
-//                         class: 'p-4 w-64'
-//                     },
-//                     content: h('div', {}, 'Additional content inside card'),
-//                     position: 'bottom-right'
-//                 })
-//             }
-
-//             return { showCustomComponent }
-//         },
-//         template: `
-//             <NButton @click="showCustomComponent">Show Custom Component (NCard)</NButton>
-//         `
-//     })
-// }
+            return { notify, success, error, warning, info }
+        },
+        template: `
+            <div class="flex flex-col gap-4">
+                <NButton @click="notify('This is a default notification!')" class="justify-center">Show default notification</NButton>
+                <NButton @click="success('This is a success notification!')" class="justify-center">Show success notification</NButton>
+                <NButton @click="error('This is an error notification!')" class="justify-center">Show error notification</NButton>
+                <NButton @click="warning('This is a warning notification!')" class="justify-center">Show warning notification</NButton>
+                <NButton @click="info('This is an info notification!')" class="justify-center">Show info notification</NButton>
+                <NButton @click="notify('This will disappear in 15 seconds!', {duration: 15000, showProgress: true })" class="justify-center">Show timed notification</NButton>
+            </div>
+        `
+    })
+}
