@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite'
+import { ref } from 'vue'
 // import { fn } from '@storybook/test'
 import NIcon from './NIcon.vue'
 import NButton from './NButton.vue'
@@ -157,29 +158,26 @@ export const Clickable: Story = {
 }
 
 export const Loading: Story = {
-    args: {},
+    args: {
+        loadingClass: 'text-5xl text-primary'
+    },
     render: args => ({
-        components: { NCard },
+        components: { NCard, NButton },
         setup() {
-            return { args }
+            const loading = ref(true)
+            const toggleLoading = () => {
+                loading.value = !loading.value
+            }
+            return { args, loading, toggleLoading }
         },
         template: `
-            <div class="flex flex-row gap-4">
-                <NCard v-bind="args" class="w-96" loading>
+            <div class="flex flex-col items-center gap-4">
+                <NCard v-bind="args" class="w-96" :loading="loading">
                     <div class="n-card-header">Header</div>
                     <div class="n-card-body">Body</div>
                     <div class="n-card-footer">Footer</div>
                 </NCard>
-                <NCard v-bind="args" class="w-96" loading loadingClass="text-5xl">
-                    <div class="n-card-header">Header</div>
-                    <div class="n-card-body">Body</div>
-                    <div class="n-card-footer">Footer</div>
-                </NCard>
-                <NCard v-bind="args" class="w-96" loading loadingClass="text-primary">
-                    <div class="n-card-header">Header</div>
-                    <div class="n-card-body">Body</div>
-                    <div class="n-card-footer">Footer</div>
-                </NCard>
+                <NButton label="Toggle Loading" @click="toggleLoading" />
             </div>
         `
     })

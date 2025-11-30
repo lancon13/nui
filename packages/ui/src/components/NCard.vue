@@ -7,16 +7,16 @@
         :target="props.target"
         v-bind="compBind"
     >
-        <span v-if="props.loading && props.loadingType" class="n-card-loading-overlay">
-            <slot name="loading">
-                <n-loading :type="props.loadingType" :size="props.loadingSize" :class="props.loadingClass" />
-            </slot>
-        </span>
-
         <slot v-if="shouldNotAddWrapper" name="default"></slot>
         <template v-else>
             <div class="n-card-body"><slot name="default"> </slot></div>
         </template>
+
+        <slot name="loading">
+            <transition name="n-loading-overlay">
+                <n-loading v-if="props.loading" :overlay="true" :type="props.loadingType" :class="props.loadingClass" />
+            </transition>
+        </slot>
     </component>
 </template>
 
@@ -33,7 +33,6 @@
         tag?: string
         loading?: boolean
         loadingType?: string
-        loadingSize?: string
         loadingClass?: string | string[] | object
         clickable?: boolean
         to?: string | object
@@ -112,12 +111,15 @@
                 flex flex-row items-center gap-4;
             }
 
-            &.n-card--loading {
-                .n-card-loading-overlay {
-                    @apply absolute top-0 left-0 w-full h-full flex items-center justify-center z-10;
-                    & ~ * {
-                        @apply opacity-50;
-                    }
+            .n-loading-overlay {
+                &.n-loading-overlay-enter-active,
+                &.n-loading-overlay-leave-active {
+                    @apply transition-[opacity,translate] duration-200 ease-in-out;
+                }
+
+                &.n-loading-overlay-enter-from,
+                &.n-loading-overlay-leave-to {
+                    @apply opacity-0;
                 }
             }
         }

@@ -1,7 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite'
+import { ref } from 'vue'
 // import { fn } from '@storybook/test'
 import NTabs from './NTabs.vue'
 import NTab from './NTab.vue'
+import NButton from './NButton.vue'
 
 const meta = {
     title: 'UI/NTabs',
@@ -107,18 +109,25 @@ export const Multiple: Story = {
 export const Loading: Story = {
     args: {},
     render: args => ({
-        components: { NTabs, NTab },
+        components: { NTabs, NTab, NButton },
         setup() {
-            return { args }
+            const loading = ref(true)
+            const toggleLoading = () => {
+                loading.value = !loading.value
+            }
+            return { args, loading, toggleLoading }
         },
         template: `
-            <NTabs v-bind="args" model-value="item-2">
-                <!-- This is the default slot contains the tab nodes -->
-                <NTab name="item-1" loading>Item 1</NTab>
-                <NTab name="item-2">Item 2</NTab>
-                <NTab name="item-3" loading loadingClass="text-xl">Item 3</NTab>
-                <NTab name="item-4" loading loadingClass="text-warning">Item 4</NTab>
-            </NTabs>
+            <div class="flex flex-col items-center">
+                <NTabs v-bind="args" model-value="item-2">
+                    <!-- This is the default slot contains the tab nodes -->
+                    <NTab name="item-1" :loading="loading">Item 1</NTab>
+                    <NTab name="item-2">Item 2</NTab>
+                    <NTab name="item-3" :loading="loading" loadingClass="text-xl">Item 3</NTab>
+                    <NTab name="item-4" :loading="loading" loadingClass="text-warning">Item 4</NTab>
+                </NTabs>
+                <NButton @click="toggleLoading" label="Toggle loading" class="mt-4" />
+            </div>
         `
     })
 }

@@ -9,7 +9,8 @@ const meta = {
     },
     tags: ['autodocs'],
     argTypes: {
-        type: { control: 'select', options: ['normal'] }
+        type: { control: 'select', options: ['normal'] },
+        overlay: { control: 'boolean' }
     }
 } satisfies Meta
 
@@ -57,13 +58,13 @@ export const Colors: Story = {
         },
         template: `
             <div class="flex flex-row items-center gap-4">
-                <NLoading v-bind="args" class="text-primary"></NLoading>
-                <NLoading v-bind="args" class="text-success"></NLoading>
-                <NLoading v-bind="args" class="text-error"></NLoading>
-                <NLoading v-bind="args" class="text-warning"></NLoading>
-                                <NLoading v-bind="args" class="text-info"></NLoading>                
-                            </div>
-                        `
+                <NLoading v-bind="args" class="text-primary text-5xl"></NLoading>
+                <NLoading v-bind="args" class="text-success text-5xl"></NLoading>
+                <NLoading v-bind="args" class="text-error text-5xl"></NLoading>
+                <NLoading v-bind="args" class="text-warning text-5xl"></NLoading>
+                <NLoading v-bind="args" class="text-info text-5xl"></NLoading>                
+            </div>
+        `
     })
 }
 
@@ -78,6 +79,25 @@ export const Overrides: Story = {
             <div class="flex flex-row items-center gap-4">
                 <NLoading v-bind="args" name="mdi-cached"></NLoading>
                 <NLoading v-bind="args" name="mdi-cached" class="text-primary"></NLoading>
+            </div>
+        `
+    })
+}
+
+export const Overlay: Story = {
+    args: {
+        overlay: true,
+        class: 'text-5xl'
+    },
+    render: args => ({
+        components: { NLoading },
+        setup() {
+            return { args }
+        },
+        template: `
+            <div class="relative flex h-48 w-64 items-center justify-center rounded-lg border">
+                Some content
+                <NLoading v-bind="args"></NLoading>
             </div>
         `
     })

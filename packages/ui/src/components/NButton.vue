@@ -9,11 +9,11 @@
         :disabled="attrs.disabled || props.loading"
         v-bind="compBind"
     >
-        <span v-if="props.loading" class="n-button-loading-overlay">
-            <slot name="loading">
-                <n-loading :type="props.loadingType" :class="props.loadingClass" />
-            </slot>
-        </span>
+        <slot name="loading">
+            <transition name="n-loading-overlay">
+                <n-loading v-if="props.loading" :overlay="true" :type="props.loadingType" :class="props.loadingClass" />
+            </transition>
+        </slot>
 
         <slot name="prepend"></slot>
         <n-icon
@@ -138,14 +138,21 @@
 
             &.n-button--loading {
                 @apply disabled:grayscale-0 disabled:contrast-100;
-                .n-button-loading-overlay {
-                    @apply absolute top-0 left-0 w-full h-full flex items-center justify-center z-10;
-                    .n-icon {
-                        @apply animate-spin;
-                    }
-                    & ~ * {
-                        @apply opacity-0;
-                    }
+            }
+
+            .n-loading-overlay ~ * {
+                @apply opacity-0;
+            }
+
+            .n-loading-overlay {
+                &.n-loading-overlay-enter-active,
+                &.n-loading-overlay-leave-active {
+                    @apply transition-[opacity,translate] duration-200 ease-in-out;
+                }
+
+                &.n-loading-overlay-enter-from,
+                &.n-loading-overlay-leave-to {
+                    @apply opacity-0;
                 }
             }
 

@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite'
+import { ref } from 'vue'
 // import { fn } from '@storybook/test'
 import NButton from './NButton.vue'
 
@@ -409,13 +410,20 @@ export const Loading: Story = {
     render: args => ({
         components: { NButton },
         setup() {
-            return { args }
+            const loading = ref(true)
+            const toggleLoading = () => {
+                loading.value = !loading.value
+            }
+            return { args, loading, toggleLoading }
         },
         template: `
-            <div class="flex flex-row items-center gap-4">
-                <NButton v-bind="args" prependIcon="arrow-left" loading>Default</NButton>
-                <NButton v-bind="args" appendIcon="arrow-right" class="flat" loading loadingClass="text-xl">Small</NButton>
-                <NButton v-bind="args" icon="send" class="primary" loading loadingClass="text-warning">Color</NButton>
+            <div class="flex flex-col items-center gap-4">
+                <div class="flex flex-row items-center gap-4">
+                    <NButton v-bind="args" prependIcon="arrow-left" :loading="loading">Default</NButton>
+                    <NButton v-bind="args" appendIcon="arrow-right" class="flat" :loading="loading" loadingClass="text-xl">Small</NButton>
+                    <NButton v-bind="args" icon="send" class="primary" :loading="loading" loadingClass="text-warning">Color</NButton>
+                </div>
+                <NButton label="Toggle Loading" @click="toggleLoading" />
             </div>
         `
     })
