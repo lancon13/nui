@@ -83,6 +83,32 @@ export const Default: Story = {
     })
 }
 
+export const CustomLoading: Story = {
+    render: () => ({
+        components: { NButton },
+        setup() {
+            const { create } = useDialog()
+
+            const showCustomLoading = async () => {
+                const dialog = await create({
+                    title: 'Custom Loading...',
+                    loading: true,
+                    loadingClass: 'text-5xl text-primary'
+                })
+                const { hide } = await dialog.show()
+                setTimeout(hide, 3000)
+            }
+
+            return { showCustomLoading }
+        },
+        template: `
+            <div class="flex flex-col gap-4">
+                <NButton @click="showCustomLoading" class="justify-center">Show custom loading dialog (3s)</NButton>
+            </div>
+        `
+    })
+}
+
 export const Helpers: Story = {
     render: () => ({
         components: { NButton },

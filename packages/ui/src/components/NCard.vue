@@ -7,9 +7,9 @@
         :target="props.target"
         v-bind="compBind"
     >
-        <span v-if="props.loading" class="n-card-loading-overlay">
+        <span v-if="props.loading && props.loadingType" class="n-card-loading-overlay">
             <slot name="loading">
-                <n-icon :name="props.loadingIcon" :class="props.loadingIconClass" />
+                <n-loading :type="props.loadingType" :size="props.loadingSize" :class="props.loadingClass" />
             </slot>
         </span>
 
@@ -23,7 +23,7 @@
 <script setup lang="ts">
     import { computed, HTMLAttributes, useAttrs, useSlots } from 'vue'
     import { isVNodeClassContain } from '../helpers/dom'
-    import NIcon from './NIcon.vue'
+    import NLoading from './NLoading.vue'
 
     defineOptions({
         inheritAttrs: false
@@ -32,8 +32,9 @@
     export type NCardProps = Partial</* @vue-ignore */ HTMLAttributes> & {
         tag?: string
         loading?: boolean
-        loadingIcon?: string
-        loadingIconClass?: string | string[] | object
+        loadingType?: string
+        loadingSize?: string
+        loadingClass?: string | string[] | object
         clickable?: boolean
         to?: string | object
         href?: string
@@ -44,7 +45,7 @@
     const attrs = useAttrs()
     const props = withDefaults(defineProps<NCardProps>(), {
         tag: 'div',
-        loadingIcon: 'loading'
+        loadingType: 'normal'
     })
     const compClasses = computed(() => {
         return ['n-card', props.loading ? 'n-card--loading' : '', ...(props.clickable ? ['n-card--clickable'] : [])]
@@ -114,9 +115,6 @@
             &.n-card--loading {
                 .n-card-loading-overlay {
                     @apply absolute top-0 left-0 w-full h-full flex items-center justify-center z-10;
-                    .n-icon {
-                        @apply animate-spin;
-                    }
                     & ~ * {
                         @apply opacity-50;
                     }

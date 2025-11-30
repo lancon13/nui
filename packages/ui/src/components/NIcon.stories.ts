@@ -73,6 +73,17 @@ export const Colors: Story = {
     })
 }
 
+export const Loading: Story = {
+    args: {},
+    render: args => ({
+        components: { NIcon },
+        setup() {
+            return { args }
+        },
+        template: '<NIcon v-bind="args" name="mdi-loading" class="text-[3rem] animate-spin"></NIcon>'
+    })
+}
+
 export const Clickable: Story = {
     args: {},
     render: args => ({

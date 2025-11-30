@@ -19,7 +19,8 @@ export type NDialogOptions = Omit<NModalProps, 'tag' | 'content'> &
         title?: string
         content?: string | VNode
         hideOnAction?: boolean
-
+        loadingType?: string
+        loadingClass?: string | string[] | object
         actions?: NDialogAction[]
     }
 
@@ -49,8 +50,8 @@ export function useDialog() {
             tag: options['cardTag'],
             class: options['cardClass'],
             loading: options['loading'],
-            loadingIcon: options['loadingIcon'],
-            loadingIconClass: options['loadingIconClass']
+            loadingType: options['loadingType'],
+            loadingClass: options['loadingClass']
         }
         const eventCallbacks = new Map<string, ((...params: any[]) => void)[]>()
 
@@ -251,28 +252,12 @@ export function useDialog() {
         })
     }
 
-    const loading = async (
-        message: string = 'Loading...',
-        options?: Omit<NDialogOptions, 'content' | 'title' | 'loading'>
-    ) => {
-        return await dialog({
-            ...options,
-            title: message,
-            loading: true, // Force loading state
-            noEscHide: true, // Loading dialogs usually shouldn't be dismissible by Esc
-            noOverlayHide: true, // Or by clicking outside
-            actions: options?.actions // Allow passing actions for loading dialog if needed
-        })
-    }
-
     return {
         create,
         dialog,
 
         alert,
         confirm,
-        prompt,
-
-        loading
+        prompt
     }
 }

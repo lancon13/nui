@@ -11,7 +11,7 @@
     >
         <span v-if="props.loading" class="n-button-loading-overlay">
             <slot name="loading">
-                <n-icon :name="props.loadingIcon" :class="props.loadingIconClass" />
+                <n-loading :type="props.loadingType" :class="props.loadingClass" />
             </slot>
         </span>
 
@@ -47,6 +47,7 @@
     import { computed, HTMLAttributes, useAttrs, useSlots } from 'vue'
     import { wrapTextNode } from '../helpers/dom'
     import NIcon from './NIcon.vue'
+    import NLoading from './NLoading.vue'
 
     export type NButtonProps = Partial</* @vue-ignore */ HTMLAttributes> & {
         icon?: string
@@ -59,8 +60,8 @@
         tag?: string
         type?: string
         loading?: boolean
-        loadingIcon?: string
-        loadingIconClass?: string | string[] | object
+        loadingType?: string
+        loadingClass?: string | string[] | object
         to?: string | object
         href?: string
         target?: string
@@ -74,8 +75,7 @@
     const attrs = useAttrs()
     const props = withDefaults(defineProps<NButtonProps>(), {
         tag: 'button',
-        type: 'button',
-        loadingIcon: 'loading'
+        type: 'button'
     })
 
     const compClasses = computed(() => {

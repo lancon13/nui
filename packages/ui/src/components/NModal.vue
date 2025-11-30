@@ -48,6 +48,7 @@
         overlay?: boolean
         noOverlayHide?: boolean
         noEscHide?: boolean
+        persist?: boolean
         focusOnShow?: boolean
     }
 
@@ -57,7 +58,8 @@
         content: '',
         overlay: true,
         noOverlayHide: false,
-        noEscHide: false
+        noEscHide: false,
+        persist: false
     })
 
     const model = defineModel<boolean>({ default: false })
@@ -93,7 +95,7 @@
     })
 
     useEventListener('keydown', e => {
-        if (model.value && e.key === 'Escape' && !props.noEscHide && isTop(modalId)) {
+        if (model.value && e.key === 'Escape' && !props.persist && !props.noEscHide && isTop(modalId)) {
             e.preventDefault()
             e.stopPropagation()
             hide()
@@ -123,15 +125,18 @@
 
     // Event handlers
     function handleOverlayClick(e: MouseEvent) {
+        if (props.persist) return
         if (props.noOverlayHide) return
         const target = e.target as HTMLElement
         if (target.clientWidth < e.clientX || target.clientHeight < e.clientY) return
         hide()
     }
     function handleModalMouseDown() {
+        if (props.persist) return
         pause() // To allows text highlight
     }
     function handleModalMouseUp() {
+        if (props.persist) return
         unpause() // To disable text highlight
     }
 
@@ -170,6 +175,7 @@
                 }
             }
         }
+
         .n-modal {
             @apply absolute z-1000 w-auto;
             @apply transition-[opacity,translate] duration-200 ease-in-out;

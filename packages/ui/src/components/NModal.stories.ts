@@ -6,6 +6,7 @@ import NCard from './NCard.vue'
 import NIcon from './NIcon.vue'
 import NModal from './NModal.vue'
 import NTooltip from './NTooltip.vue'
+import NLoading from './NLoading.vue'
 
 const meta = {
     title: 'UI/NModal',
@@ -16,7 +17,10 @@ const meta = {
     tags: ['autodocs'],
     argTypes: {
         // Props
-        name: { control: 'text' }
+        name: { control: 'text' },
+        loading: { control: 'boolean' },
+        loadingType: { control: 'select', options: ['normal'] },
+        loadingClass: { control: 'text' }
     },
     args: {
         name: 'account'
@@ -146,6 +150,34 @@ export const Dialog: Story = {
                             </NButton>
                         </div>
                     </NCard>
+                </NModal>
+            </NButton>
+        `
+    })
+}
+
+export const Loading: Story = {
+    args: {},
+    render: args => ({
+        components: { NModal, NButton, NCard, NIcon, NLoading },
+        setup() {
+            const showModal = ref(false)
+
+            function handleButtonClick() {
+                showModal.value = true
+                setTimeout(() => {
+                    showModal.value = false
+                }, 3000)
+            }
+
+            return { args, showModal, handleButtonClick }
+        },
+        template: `
+            <NButton @click="handleButtonClick">
+                Show modal
+                <NModal v-bind="args" v-model="showModal" persist class="flex flex-col items-center gap-4 text-text-invert">
+                    <div>Please wait...</div>
+                    <NLoading class="text-5xl"/>
                 </NModal>
             </NButton>
         `

@@ -14,7 +14,10 @@ const meta = {
     tags: ['autodocs'],
     argTypes: {
         // Props
-        name: { control: 'text' }
+        name: { control: 'text' },
+        loading: { control: 'boolean' },
+        loadingType: { control: 'select', options: ['normal'] },
+        loadingClass: { control: 'text' }
     },
     args: {
         name: 'account'
@@ -161,11 +164,23 @@ export const Loading: Story = {
             return { args }
         },
         template: `
-            <NCard v-bind="args" class="w-96" loading>
-                <div class="n-card-header">Header</div>
-                <div class="n-card-body">Body</div>
-                <div class="n-card-footer">Footer</div>
-            </NCard>
+            <div class="flex flex-row gap-4">
+                <NCard v-bind="args" class="w-96" loading>
+                    <div class="n-card-header">Header</div>
+                    <div class="n-card-body">Body</div>
+                    <div class="n-card-footer">Footer</div>
+                </NCard>
+                <NCard v-bind="args" class="w-96" loading loadingClass="text-5xl">
+                    <div class="n-card-header">Header</div>
+                    <div class="n-card-body">Body</div>
+                    <div class="n-card-footer">Footer</div>
+                </NCard>
+                <NCard v-bind="args" class="w-96" loading loadingClass="text-primary">
+                    <div class="n-card-header">Header</div>
+                    <div class="n-card-body">Body</div>
+                    <div class="n-card-footer">Footer</div>
+                </NCard>
+            </div>
         `
     })
 }

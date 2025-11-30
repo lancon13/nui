@@ -8,7 +8,11 @@ const meta = {
     parameters: {
         layout: 'centered'
     },
-    tags: ['autodocs']
+    tags: ['autodocs'],
+    argTypes: {
+        loadingType: { control: 'select', options: ['normal'] },
+        loadingClass: { control: 'text' }
+    }
 } satisfies Meta
 
 export default meta
@@ -409,12 +413,9 @@ export const Loading: Story = {
         },
         template: `
             <div class="flex flex-row items-center gap-4">
-                <NButton v-bind="args" prependIcon="arrow-left" loading>Prev</NButton>
-                <NButton v-bind="args" appendIcon="arrow-right" class="flat" loading>Next</NButton>                
-                <div></div>
-                <NButton v-bind="args" icon="send" class="primary" loading>Send</NButton>
-                <div></div>
-                <NButton v-bind="args" prependIcon="alert" appendIcon="alert" loading class="texted error">Delete</NButton>
+                <NButton v-bind="args" prependIcon="arrow-left" loading>Default</NButton>
+                <NButton v-bind="args" appendIcon="arrow-right" class="flat" loading loadingClass="text-xl">Small</NButton>
+                <NButton v-bind="args" icon="send" class="primary" loading loadingClass="text-warning">Color</NButton>
             </div>
         `
     })

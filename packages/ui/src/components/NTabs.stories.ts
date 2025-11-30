@@ -12,7 +12,9 @@ const meta = {
     tags: ['autodocs'],
     argTypes: {
         // Props
-        name: { control: 'text' }
+        name: { control: 'text' },
+        loadingType: { control: 'select', options: ['normal'] },
+        loadingClass: { control: 'text' }
     },
     args: {
         name: 'account'
@@ -114,8 +116,8 @@ export const Loading: Story = {
                 <!-- This is the default slot contains the tab nodes -->
                 <NTab name="item-1" loading>Item 1</NTab>
                 <NTab name="item-2">Item 2</NTab>
-                <NTab name="item-3" loading>Item 3</NTab>
-                <NTab name="item-4">Item 4</NTab>
+                <NTab name="item-3" loading loadingClass="text-xl">Item 3</NTab>
+                <NTab name="item-4" loading loadingClass="text-warning">Item 4</NTab>
             </NTabs>
         `
     })
