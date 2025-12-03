@@ -13,14 +13,8 @@
             "type": "node",
             "request": "launch",
             "runtimeExecutable": "pnpm",
-            "runtimeArgs": [
-                "--filter",
-                "ui",
-                "storybook:dev"
-            ],
-            "skipFiles": [
-                "<node_internals>/**"
-            ]
-        },
+            "runtimeArgs": ["--filter", "ui", "storybook:dev"],
+            "skipFiles": ["<node_internals>/**"]
+        }
     ]
 }

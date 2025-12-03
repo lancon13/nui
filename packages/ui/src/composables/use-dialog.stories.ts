@@ -92,6 +92,7 @@ export const CustomLoading: Story = {
             const showCustomLoading = async () => {
                 const dialog = await create({
                     title: 'Custom Loading...',
+                    content: 'Click a button to close this dialog.',
                     loading: true,
                     loadingClass: 'text-5xl text-primary'
                 })
@@ -113,10 +114,9 @@ export const Helpers: Story = {
     render: () => ({
         components: { NButton },
         setup() {
-            const { alert, confirm, prompt, loading } = useDialog()
+            const { alert, confirm, prompt } = useDialog()
             const confirmResult = ref<'ok' | 'cancel' | null>(null)
             const promptResult = ref<string | null>(null)
-            let currentLoadingDialog: { hide: () => void } | null = null
 
             const showAlert = async () => {
                 await alert('Alert', 'This is an alert message.')
@@ -135,17 +135,7 @@ export const Helpers: Story = {
                 promptResult.value = result
             }
 
-            const showLoading = async () => {
-                if (currentLoadingDialog) return // Prevent multiple loading dialogs
-                currentLoadingDialog = await loading('Please wait while we process your request...');
-                // Simulate some async operation
-                setTimeout(() => {
-                    currentLoadingDialog?.hide();
-                    currentLoadingDialog = null;
-                }, 3000);
-            }
-
-            return { showAlert, showConfirm, confirmResult, showPrompt, promptResult, showLoading }
+            return { showAlert, showConfirm, confirmResult, showPrompt, promptResult }
         },
         template: `
             <div class="flex flex-col gap-4 items-center">
@@ -159,8 +149,6 @@ export const Helpers: Story = {
                 <div v-if="promptResult !== null" class="mt-4">
                     Prompt result: {{ promptResult }}
                 </div>
-
-                <NButton @click="showLoading" class="justify-center">Show Loading</NButton>
             </div>
         `
     })

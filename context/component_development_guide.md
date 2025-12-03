@@ -123,19 +123,19 @@ const compClasses = computed(() => [
 
 For interactive components, especially those involving lists or menus, ensure full keyboard accessibility.
 
--   **`focusable` Prop & `tabindex`**: Use a `focusable` prop (default `false`) on interactive elements (like `NuiListItem`) to conditionally apply `tabindex="0"`. This makes the element focusable via keyboard.
--   **`onKeydown` Handlers**: Implement `onKeydown` handlers to manage focus movement (e.g., `ArrowUp`, `ArrowDown`, `Space`, `ArrowLeft`, `ArrowRight`) within the component and its sub-components.
--   **`$el.focus()`**: When programmatically focusing a component instance, remember to use `componentInstance.$el.focus()` to target the underlying DOM element.
+- **`focusable` Prop & `tabindex`**: Use a `focusable` prop (default `false`) on interactive elements (like `NuiListItem`) to conditionally apply `tabindex="0"`. This makes the element focusable via keyboard.
+- **`onKeydown` Handlers**: Implement `onKeydown` handlers to manage focus movement (e.g., `ArrowUp`, `ArrowDown`, `Space`, `ArrowLeft`, `ArrowRight`) within the component and its sub-components.
+- **`$el.focus()`**: When programmatically focusing a component instance, remember to use `componentInstance.$el.focus()` to target the underlying DOM element.
 
 #### Nesting Patterns & State Management
 
 For components that involve complex nesting (like popovers or menus), consider the following patterns:
 
--   **`nested` Prop for Teleporting**: For components that use `<teleport>` (e.g., `NuiPopOver`), introduce a `nested: boolean` prop. When `true`, dynamically change the `teleport` target to the parent element of the component (e.g., `placeholderRef.value?.parentElement`) instead of `body`. This prevents unwanted style inheritance from the trigger while maintaining correct `onClickOutside` behavior.
--   **`provide`/`inject` for Shared State**: For recursive components or component trees that need to share state and handlers (e.g., `openSubmenus`, `handleSubmenuMouseOver`), use Vue's `provide` and `inject` system.
-    -   The root component (`NuiMenu.vue`) should `provide` the shared state and handlers.
-    -   Nested components (`RecursiveMenu.vue`) should `inject` them.
-    -   Use a consistent key (e.g., `'menu-state'`) for `provide`/`inject`.
+- **`nested` Prop for Teleporting**: For components that use `<teleport>` (e.g., `NuiPopOver`), introduce a `nested: boolean` prop. When `true`, dynamically change the `teleport` target to the parent element of the component (e.g., `placeholderRef.value?.parentElement`) instead of `body`. This prevents unwanted style inheritance from the trigger while maintaining correct `onClickOutside` behavior.
+- **`provide`/`inject` for Shared State**: For recursive components or component trees that need to share state and handlers (e.g., `openSubmenus`, `handleSubmenuMouseOver`), use Vue's `provide` and `inject` system.
+    - The root component (`NuiMenu.vue`) should `provide` the shared state and handlers.
+    - Nested components (`RecursiveMenu.vue`) should `inject` them.
+    - Use a consistent key (e.g., `'menu-state'`) for `provide`/`inject`.
 
 ### Template (`<template>`)
 
@@ -154,6 +154,7 @@ For components that involve complex nesting (like popovers or menus), consider t
     - All component-specific styles must be placed within the `@layer components { ... }` block.
 
     **Good Example:**
+
     ```css
     <style lang="css">
         @reference 'tailwindcss';

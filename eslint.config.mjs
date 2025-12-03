@@ -71,10 +71,7 @@ export default defineConfig([
             // e.g., 'no-unused-vars': 'warn',
             'no-unused-vars': 'warn',
             'prefer-promise-reject-errors': 'off',
-            'prefer-arrow-callback': [
-                'error',
-                { allowNamedFunctions: true, allowUnboundThis: false }
-            ]
+            'prefer-arrow-callback': ['error', { allowNamedFunctions: true, allowUnboundThis: false }]
         }
     },
 

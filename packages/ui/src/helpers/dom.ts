@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { h, isVNode, VNode, Text as VueText } from 'vue'
+import { h, isVNode, VNode, Text as VueText, getCurrentInstance } from 'vue'
 
 interface ComponentTypeWithName {
     name?: string
@@ -13,13 +13,25 @@ export const getElement = (selector: HTMLElement | string | null, parent = docum
     return selector
 }
 
+export const getParentElement = (selector: HTMLElement | string | null = null): HTMLElement | null => {
+    if (selector) {
+        return getElement(selector)?.parentElement || null
+    }
+    const instance = getCurrentInstance()
+    if (!instance) {
+        console.warn('getParentElement() without a selector can only be used inside setup() or lifecycle hooks.')
+        return null
+    }
+    return instance.proxy?.$el?.parentElement || null
+}
+
 export const getVNodeName = (node: VNode): string => {
     if (isVNode(node) && node.type) {
         if (typeof node.type === 'string') {
             return node.type
         } else if (typeof node.type === 'object' && node.type !== null) {
             const componentType = node.type as ComponentTypeWithName
-            return componentType.name ?? componentType.__name ?? ''
+            return componentType.name ?? componentType.__name__ ?? ''
         }
     }
     return ''

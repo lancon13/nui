@@ -1,12 +1,10 @@
 <template>
-    <div ref="placeholderRef" class="hidden" />
-
-    <transition v-if="props.stacked" name="n-tooltip">
+    <transition v-if="props.stacked" name="n-popover">
         <component
             :is="props.tag"
             v-if="model"
             ref="contentRef"
-            role="tooltip"
+            role="popover"
             :style="compStyles"
             :class="compClasses"
             v-bind="compBind"
@@ -20,13 +18,13 @@
     </transition>
 
     <!-- Overlay -->
-    <teleport v-else-if="isReady && props.overlay" to="#n-tooltips-container">
-        <transition name="n-tooltip-overlay">
-            <div v-if="model" class="n-tooltip-overlay">
+    <teleport v-else-if="isReady && props.overlay" to="#n-popovers-container">
+        <transition name="n-popover-overlay">
+            <div v-if="model" class="n-popover-overlay">
                 <component
                     :is="props.tag"
                     ref="contentRef"
-                    role="tooltip"
+                    role="popover"
                     :style="compStyles"
                     :class="compClasses"
                     v-bind="compBind"
@@ -42,13 +40,13 @@
     </teleport>
 
     <!-- Without Overlay -->
-    <teleport v-else-if="isReady" to="#n-tooltips-container">
-        <transition name="n-tooltip">
+    <teleport v-else-if="isReady" to="#n-popovers-container">
+        <transition name="n-popover">
             <component
                 :is="props.tag"
                 v-if="model"
                 ref="contentRef"
-                role="tooltip"
+                role="popover"
                 :style="compStyles"
                 :class="compClasses"
                 v-bind="compBind"
@@ -65,13 +63,14 @@
 
 <script setup lang="ts">
     import type { Placement } from '@floating-ui/vue'
-    import { computed, HTMLAttributes, nextTick, ref, useAttrs, useTemplateRef, watch } from 'vue'
+    import { computed, HTMLAttributes, onMounted, ref, useAttrs, useTemplateRef } from 'vue'
     import { useTeleportContainer } from '../composables/use-teleport-container'
-    import { getElement } from '../helpers/dom'
+    import { getElement, getParentElement } from '../helpers/dom'
     import { useFloating } from '../composables/use-floating'
 
-    export type NTooltipDirection = 'top' | 'bottom' | 'left' | 'right'
-    export type NTooltipProps = Partial</* @vue-ignore */ HTMLAttributes> & {
+    export type NPopoverDirection = 'top' | 'bottom' | 'left' | 'right'
+    export type NPopoverPosition = 'start' | '' | 'end'
+    export type NPopoverProps = Partial</* @vue-ignore */ HTMLAttributes> & {
         tag?: string
         content?: string
         showDelay?: number
@@ -80,7 +79,8 @@
         hoverTriggerAnchor?: HTMLElement | string | null
         focusTriggerAnchor?: HTMLElement | string | null
         attachParent?: HTMLElement | string | null
-        direction?: NTooltipDirection
+        direction?: NPopoverDirection
+        position?: NPopoverPosition
         margin?: number
         offset?: [number, number]
         autoReposition?: boolean
@@ -93,14 +93,14 @@
     })
 
     const attrs = useAttrs()
-    const props = withDefaults(defineProps<NTooltipProps>(), {
+    const props = withDefaults(defineProps<NPopoverProps>(), {
         tag: 'span',
         content: '',
         showDelay: 75,
         hideDelay: 250,
         persistent: false,
         direction: 'bottom',
-        margin: 8,
+        margin: 4,
         offset: () => [0, 0],
         autoReposition: true,
         stacked: false,
@@ -108,12 +108,18 @@
     })
 
     const model = defineModel<boolean>({ default: false })
-    const placeholderRef = useTemplateRef<HTMLElement | null>('placeholderRef')
     const contentRef = useTemplateRef<HTMLElement | null>('contentRef')
-    const { isReady } = useTeleportContainer('n-tooltips-container')
+    const { isReady } = useTeleportContainer('n-popovers-container')
 
-    const attachParentEl = ref<HTMLElement | null>(null)
-    const floatingPlacement = computed<Placement>(() => props.direction)
+    const parentEl = ref<HTMLElement | null>(null)
+    const attachParentEl = computed<HTMLElement | null>(() =>
+        props.attachParent ? getElement(props.attachParent) : parentEl.value
+    )
+
+    const floatingPlacement = computed<Placement>(() => {
+        const placement = `${props.direction}${props.position !== '' ? `-${props.position}` : ''}` as Placement
+        return placement
+    })
 
     const { show, hide, handleContentHoverFocusIn, handleContentHoverFocusOut, compStyles, placement } = useFloating(
         props,
@@ -123,7 +129,7 @@
                 set: (val: boolean) => {
                     model.value = val
                 }
-            }),
+            }), // Pass the writable computed ref
             contentRef,
             attachParentEl,
             placement: floatingPlacement
@@ -131,7 +137,7 @@
     )
 
     const compClasses = computed(() => {
-        return ['n-tooltip', `n-tooltip--direction-${placement.value}`]
+        return ['n-popover', `n-popover--direction-${placement.value}`]
     })
     const compBind = computed(() => {
         return {
@@ -140,17 +146,9 @@
     })
 
     // Lifecycle hooks
-    watch(
-        () => [props.attachParent, props.hoverTriggerAnchor, props.focusTriggerAnchor],
-        () => {
-            nextTick(() => {
-                attachParentEl.value = props.attachParent
-                    ? getElement(props.attachParent)
-                    : placeholderRef.value?.parentElement || null
-            })
-        },
-        { deep: true, immediate: true, flush: 'post' }
-    )
+    onMounted(() => {
+        parentEl.value = getParentElement()
+    })
 
     defineExpose({ show, hide })
 </script>
@@ -160,74 +158,67 @@
     @reference '../styles/index.css';
 
     @layer components {
-        .n-tooltip-overlay {
+        .n-popover-overlay {
             @apply bg-bg-invert/50 fixed inset-0 grid place-content-center z-2000;
 
-            &.n-tooltip-overlay-enter-active,
-            &.n-tooltip-overlay-leave-active {
+            &.n-popover-overlay-enter-active,
+            &.n-popover-overlay-leave-active {
                 @apply transition-[opacity,translate] duration-200 ease-in-out;
             }
-            &.n-tooltip-overlay-leave-active {
+            &.n-popover-overlay-leave-active {
                 @apply delay-200;
-                .n-tooltip {
+                .n-popover {
                     @apply delay-0;
                 }
             }
-            &.n-tooltip-overlay-enter-from,
-            &.n-tooltip-overlay-leave-to {
+            &.n-popover-overlay-enter-from,
+            &.n-popover-overlay-leave-to {
                 @apply opacity-0;
-                .n-tooltip {
+                .n-popover {
                     @apply opacity-0;
-                    &.n-tooltip--direction-top {
+                    &.n-popover--direction-top {
                         @apply translate-y-2;
                     }
-                    &.n-tooltip--direction-bottom {
+                    &.n-popover--direction-bottom {
                         @apply -translate-y-2;
                     }
-                    &.n-tooltip--direction-left {
+                    &.n-popover--direction-left {
                         @apply translate-x-2;
                     }
-                    &.n-tooltip--direction-right {
+                    &.n-popover--direction-right {
                         @apply -translate-x-2;
                     }
                 }
             }
 
-            .n-tooltip {
+            .n-popover {
                 @apply transition-[opacity,translate] delay-200 duration-200 ease-in-out;
                 @apply translate-x-0 translate-y-0;
             }
         }
 
-        .n-tooltip {
-            @apply z-2000
-                bg-bg-invert text-text-invert 
-                text-center
-                text-xs
-                px-2 py-1
-                rounded-element
-                shadow
-                max-w-1/3;
+        .n-popover {
+            @apply z-2000;
 
-            &.n-tooltip-enter-active,
-            &.n-tooltip-leave-active {
+            &.n-popover-enter-active,
+            &.n-popover-leave-active {
                 @apply transition-[opacity,translate] duration-200 ease-in-out;
                 @apply translate-x-0 translate-y-0;
             }
 
-            &.n-tooltip-enter-from,
-            &.n-tooltip-leave-to {
+            &.n-popover-enter-from,
+            &.n-popover-leave-to {
                 @apply opacity-0;
-                &.n-tooltip--direction-top {
+                &.n-popover--direction-top {
                     @apply translate-y-2;
                 }
-                &.n-tooltip--direction-bottom {
+                &.n-popover--direction-bottom {
                     @apply -translate-y-2;
                 }
-                &.n-tooltip--direction-left {
+                &.n-popover--direction-left {
                     @apply translate-x-2;
                 }
-                &.n-tooltip--direction-right {
+                &.n-popover--direction-right {
                     @apply -translate-x-2;
                 }
             }
