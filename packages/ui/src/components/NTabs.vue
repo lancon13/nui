@@ -54,11 +54,12 @@
         if (!nodes || nodes.length === 0) return []
 
         const nodeList = Array.isArray(nodes) ? nodes : [nodes]
-        return nodeList
+        const renderedNodeList = nodeList
             .map(node => {
                 return isVNodeNameContain(node, 'NTab') ? node : null
             })
             .filter(node => !!node)
+        return renderedNodeList
     })
 
     // Event handler

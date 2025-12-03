@@ -233,7 +233,25 @@ export const Clickable: Story = {
         },
         template: `
             <div class="flex flex-row items-center gap-4">
-                <NAvatar v-bind="args" icon="mdi-account" clickable @click="handleClick"></NAvatar>
+                <NAvatar v-bind="args" icon="mdi-account" @click="handleClick"></NAvatar>
+            </div>
+        `
+    })
+}
+
+export const Disabled: Story = {
+    args: {},
+    render: args => ({
+        components: { NAvatar },
+        setup() {
+            function handleClick() {
+                console.log('Click')
+            }
+            return { args, handleClick }
+        },
+        template: `
+            <div class="flex flex-row items-center gap-4">
+                <NAvatar v-bind="args" icon="mdi-account" disabled @click="handleClick"></NAvatar>
             </div>
         `
     })

@@ -336,7 +336,25 @@ export const Clickable: Story = {
         },
         template: `
             <div class="flex flex-row items-center gap-4">
-                <NChip v-bind="args" clickable @click="handleClick">Click me</NChip>
+                <NChip v-bind="args" @click="handleClick">Click me</NChip>
+            </div>
+        `
+    })
+}
+
+export const Disabled: Story = {
+    args: {},
+    render: args => ({
+        components: { NChip },
+        setup() {
+            function handleClick() {
+                console.log('Click')
+            }
+            return { args, handleClick }
+        },
+        template: `
+            <div class="flex flex-row items-center gap-4">
+                <NChip v-bind="args" disabled @click="handleClick">Click me</NChip>
             </div>
         `
     })

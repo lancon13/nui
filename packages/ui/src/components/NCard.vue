@@ -6,6 +6,7 @@
         :href="props.href"
         :target="props.target"
         v-bind="compBind"
+        @click="handleClick"
     >
         <slot v-if="shouldNotAddWrapper" name="default"></slot>
         <template v-else>
@@ -21,37 +22,50 @@
 </template>
 
 <script setup lang="ts">
-    import { computed, HTMLAttributes, useAttrs, useSlots } from 'vue'
+    /* eslint-disable no-unused-vars */
+    import { computed, getCurrentInstance, HTMLAttributes, useAttrs, useSlots } from 'vue'
     import { isVNodeClassContain } from '../helpers/dom'
     import NLoading from './NLoading.vue'
-
-    defineOptions({
-        inheritAttrs: false
-    })
 
     export type NCardProps = Partial</* @vue-ignore */ HTMLAttributes> & {
         tag?: string
         loading?: boolean
         loadingType?: string
         loadingClass?: string | string[] | object
-        clickable?: boolean
         to?: string | object
         href?: string
         target?: string
+        disabled?: boolean
     }
 
+    defineOptions({
+        inheritAttrs: false
+    })
+
+    const instance = getCurrentInstance()
     const slots = useSlots()
     const attrs = useAttrs()
     const props = withDefaults(defineProps<NCardProps>(), {
         tag: 'div',
         loadingType: 'normal'
     })
+
+    const emits = defineEmits<(event: 'click', e: MouseEvent) => void>()
+
+    const isClickable = computed(() => {
+        return props.to || props.href || !!instance?.vnode.props?.onClick
+    })
     const compClasses = computed(() => {
-        return ['n-card', props.loading ? 'n-card--loading' : '', ...(props.clickable ? ['n-card--clickable'] : [])]
+        return [
+            'n-card',
+            props.loading ? 'n-card--loading' : '',
+            isClickable.value ? 'n-card--clickable' : '',
+            props.disabled ? 'n-card--disabled' : ''
+        ]
     })
     const compBind = computed(() => {
         return {
-            ...(props.clickable
+            ...(isClickable.value
                 ? { tabindex: 0, role: 'button', to: props.to, href: props.href, target: props.target }
                 : {}),
             ...attrs
@@ -64,6 +78,15 @@
         if (nodes.length > 0 && isVNodeClassContain(nodes[0], ['n-card-body'])) return true
         return nodes.length > 1
     })
+
+    function handleClick(e: MouseEvent) {
+        if (props.disabled) {
+            e.preventDefault()
+            e.stopPropagation()
+            return
+        }
+        emits('click', e)
+    }
 </script>
 
 <style lang="css">
@@ -109,6 +132,19 @@
             & > .n-card-footer {
                 @apply px-4 py-4
                 flex flex-row items-center gap-4;
+            }
+
+            &.n-card--clickable {
+                @apply transition-[backdrop-filter] duration-200 ease-in-out;
+                @apply hover:backdrop-brightness-75;
+
+                &.n-card--disabled,
+                [class*='--clickable']&.n-card--disabled,
+                a[href]&.n-card--disabled {
+                    @apply backdrop-brightness-100;
+                    @apply ring-0;
+                    @apply opacity-50 hover:opacity-50 cursor-not-allowed grayscale;
+                }
             }
 
             .n-loading-overlay {

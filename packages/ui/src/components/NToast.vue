@@ -34,8 +34,6 @@
     import { useTeleportContainer } from '../composables/use-teleport-container'
     import { generatePseudoRandomKey } from '../helpers/tools'
 
-    defineOptions({ inheritAttrs: false })
-
     export type NToastProps = Partial</* @vue-ignore */ HTMLAttributes> & {
         tag?: string
         content?: string
@@ -45,6 +43,8 @@
         position?: string
         focusOnShow?: boolean
     }
+
+    defineOptions({ inheritAttrs: false })
 
     const attrs = useAttrs()
     const props = withDefaults(defineProps<NToastProps>(), {

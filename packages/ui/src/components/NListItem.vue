@@ -71,7 +71,6 @@
     const isClickable = computed(() => {
         return props.to || props.href || !!instance?.vnode.props?.onClick
     })
-
     const compClasses = computed(() => {
         return [
             'n-list-item',

@@ -1,5 +1,5 @@
 <template>
-    <component :is="props.tag" :class="compClasses" v-bind="compBind">
+    <component :is="props.tag" :class="compClasses" v-bind="compBind" @click="handleClick">
         <n-icon v-if="props.icon" :name="props.icon" />
         <span v-else-if="props.label || $slots['default']">
             <slot name="default">{{ props.label }}</slot>
@@ -8,41 +8,56 @@
 </template>
 
 <script setup lang="ts">
-    import { computed, useAttrs } from 'vue'
+    /* eslint-disable no-unused-vars */
+    import { computed, getCurrentInstance, HTMLAttributes, useAttrs } from 'vue'
     import NIcon from './NIcon.vue'
+
+    export type NAvatarProps = Partial</* @vue-ignore */ HTMLAttributes> & {
+        icon?: string
+        label?: string
+        tag?: string
+        to?: string | object
+        href?: string
+        target?: string
+        disabled?: boolean
+    }
 
     defineOptions({
         inheritAttrs: false
     })
 
+    const instance = getCurrentInstance()
     const attrs = useAttrs()
-    const props = withDefaults(
-        defineProps<{
-            icon?: string
-            label?: string
-            tag?: string
-            clickable?: boolean
-            to?: string | object
-            href?: string
-            target?: string
-        }>(),
-        {
-            tag: 'span',
-            href: '#'
-        }
-    )
+    const props = withDefaults(defineProps<NAvatarProps>(), {
+        tag: 'span'
+    })
+
+    const emits = defineEmits<(event: 'click', e: MouseEvent) => void>()
+
+    const isClickable = computed(() => {
+        return props.to || props.href || !!instance?.vnode.props?.onClick
+    })
 
     const compClasses = computed(() => {
-        return ['n-avatar', ...(props.clickable ? ['n-avatar--clickable'] : [])]
+        return ['n-avatar', isClickable.value ? 'n-avatar--clickable' : '', props.disabled ? 'n-avatar--disabled' : '']
     })
     const compBind = computed(() => {
         return {
-            ...(props.clickable
+            ...(isClickable.value
                 ? { tabindex: 0, role: 'button', to: props.to, href: props.href, target: props.target }
                 : {}),
             ...attrs
         }
     })
+
+    function handleClick(e: MouseEvent) {
+        if (props.disabled) {
+            e.preventDefault()
+            e.stopPropagation()
+            return
+        }
+        emits('click', e)
+    }
 </script>
 
 <style lang="css">
@@ -77,6 +92,16 @@
             }
             &.info {
                 @apply bg-info;
+            }
+
+            &.n-avatar--clickable {
+                &.n-avatar--disabled,
+                [class*='--clickable']&.n-avatar--disabled,
+                a[href]&.n-avatar--disabled {
+                    @apply backdrop-brightness-100;
+                    @apply ring-0;
+                    @apply opacity-50 hover:opacity-50 cursor-not-allowed grayscale;
+                }
             }
         }
     }

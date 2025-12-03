@@ -1,5 +1,5 @@
 <template>
-    <component :is="props.tag" :class="compClasses" v-bind="compBind">
+    <component :is="props.tag" :class="compClasses" v-bind="compBind" @click="handleClick">
         <slot name="prepend"></slot>
         <n-icon v-if="props.prependIcon || props.icon" :name="(props.prependIcon || props.icon) as string" />
         <span v-if="props.label || $slots['default']">
@@ -14,43 +14,45 @@
 </template>
 
 <script setup lang="ts">
-    import { computed, useAttrs } from 'vue'
+    /* eslint-disable no-unused-vars */
+    import { computed, getCurrentInstance, HTMLAttributes, useAttrs } from 'vue'
     import NIcon from './NIcon.vue'
+
+    export type NCardProps = Partial</* @vue-ignore */ HTMLAttributes> & {
+        icon?: string
+        prependIcon?: string
+        appendIcon?: string
+        tag?: string
+        label?: string
+        removable?: boolean
+        removableClass?: string | string[] | object
+        clickable?: boolean
+        to?: string | object
+        href?: string
+        target?: string
+        disabled?: boolean
+    }
 
     defineOptions({
         inheritAttrs: false
     })
 
+    const instance = getCurrentInstance()
     const attrs = useAttrs()
-    const props = withDefaults(
-        defineProps<{
-            icon?: string
-            prependIcon?: string
-            appendIcon?: string
-            tag?: string
-            label?: string
-            removable?: boolean
-            removableClass?: string | string[] | object
-            clickable?: boolean
-            to?: string | object
-            href?: string
-            target?: string
-        }>(),
-        {
-            tag: 'span',
-            href: '#'
-        }
-    )
-    const emits = defineEmits<{
-        remove: []
-    }>()
+    const props = withDefaults(defineProps<NCardProps>(), {
+        tag: 'span'
+    })
+    const emits = defineEmits<{ (event: 'click', e: MouseEvent): void; (event: 'remove'): void }>()
 
+    const isClickable = computed(() => {
+        return props.to || props.href || !!instance?.vnode.props?.onClick
+    })
     const compClasses = computed(() => {
-        return ['n-chip', ...(props.clickable ? ['n-chip--clickable'] : [])]
+        return ['n-chip', isClickable.value ? 'n-chip--clickable' : '', props.disabled ? 'n-chip--disabled' : '']
     })
     const compBind = computed(() => {
         return {
-            ...(props.clickable
+            ...(isClickable.value
                 ? { tabindex: 0, role: 'button', to: props.to, href: props.href, target: props.target }
                 : {}),
             ...attrs
@@ -59,6 +61,14 @@
 
     function handleRemovableClick() {
         emits('remove')
+    }
+    function handleClick(e: MouseEvent) {
+        if (props.disabled) {
+            e.preventDefault()
+            e.stopPropagation()
+            return
+        }
+        emits('click', e)
     }
 </script>
 
@@ -70,8 +80,9 @@
         .n-chip {
             @apply relative leading-none
                 inline-flex flex-row gap-2 items-center
-                bg-text text-text-invert 
+                bg-text text-text-invert
                 text-center
+                border-2 border-transparent
                 px-2 py-1
                 rounded-element;
 
@@ -111,7 +122,7 @@
             }
 
             &.outlined {
-                @apply border-2 border-current text-current;
+                @apply border-current text-current;
                 &:not(.flat) {
                     @apply bg-transparent;
                 }
@@ -152,6 +163,19 @@
 
                 &.shadowed {
                     @apply shadow-none text-shadow-outer;
+                }
+            }
+
+            &.n-chip--clickable {
+                @apply transition-[backdrop-filter] duration-200 ease-in-out;
+                @apply hover:backdrop-brightness-75;
+
+                &.n-chip--disabled,
+                [class*='--clickable']&.n-chip--disabled,
+                a[href]&.n-chip--disabled {
+                    @apply backdrop-brightness-100;
+                    @apply ring-0;
+                    @apply opacity-50 hover:opacity-50 cursor-not-allowed grayscale;
                 }
             }
         }

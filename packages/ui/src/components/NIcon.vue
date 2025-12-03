@@ -11,7 +11,6 @@
     export type NIconProps = Partial</* @vue-ignore */ HTMLAttributes> & {
         name: string
         tag?: string
-        clickable?: boolean
         to?: string | object
         href?: string
         target?: string
@@ -33,7 +32,6 @@
     const isClickable = computed(() => {
         return props.to || props.href || !!instance?.vnode.props?.onClick
     })
-
     const iconClasses = computed(() => {
         const name = props.name || 'mdi-account'
         const parts = name.split('-')

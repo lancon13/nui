@@ -2,6 +2,7 @@
 import { h, isVNode, VNode, Text as VueText, getCurrentInstance } from 'vue'
 
 interface ComponentTypeWithName {
+    __name__: string | undefined
     name?: string
     __name?: string
 }
@@ -31,7 +32,7 @@ export const getVNodeName = (node: VNode): string => {
             return node.type
         } else if (typeof node.type === 'object' && node.type !== null) {
             const componentType = node.type as ComponentTypeWithName
-            return componentType.name ?? componentType.__name__ ?? ''
+            return componentType.name || componentType.__name || componentType.__name__ || ''
         }
     }
     return ''

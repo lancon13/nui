@@ -153,7 +153,21 @@ export const Clickable: Story = {
             }
             return { args, handleClick }
         },
-        template: '<NCard v-bind="args" class="w-96" clickable @click="handleClick">I am a clickable card</NCard>'
+        template: '<NCard v-bind="args" class="w-96" @click="handleClick">I am a clickable card</NCard>'
+    })
+}
+
+export const Disabled: Story = {
+    args: {},
+    render: args => ({
+        components: { NCard },
+        setup() {
+            function handleClick() {
+                console.log('Click')
+            }
+            return { args, handleClick }
+        },
+        template: '<NCard v-bind="args" class="w-96" disabled @click="handleClick">I am a clickable card</NCard>'
     })
 }
 
