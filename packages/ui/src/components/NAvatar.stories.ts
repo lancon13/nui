@@ -123,12 +123,12 @@ export const Labels: Story = {
         },
         template: `
             <div class="flex flex-row items-center gap-4">
-                <div><NAvatar v-bind="args" class="rounded">A</NAvatar></div>
-                <div><NAvatar v-bind="args" class="rounded primary">B</NAvatar></div>
-                <div><NAvatar v-bind="args" class="rounded success">C</NAvatar></div>
-                <div><NAvatar v-bind="args" class="rounded error">D</NAvatar></div>
-                <div><NAvatar v-bind="args" class="rounded warning">E</NAvatar></div>
-                <div><NAvatar v-bind="args" class="rounded info">F</NAvatar></div>
+                <div><NAvatar v-bind="args" class="pilled">A</NAvatar></div>
+                <div><NAvatar v-bind="args" class="pilled primary">B</NAvatar></div>
+                <div><NAvatar v-bind="args" class="pilled success">C</NAvatar></div>
+                <div><NAvatar v-bind="args" class="pilled error">D</NAvatar></div>
+                <div><NAvatar v-bind="args" class="pilled warning">E</NAvatar></div>
+                <div><NAvatar v-bind="args" class="pilled info">F</NAvatar></div>
             </div>
         `
     })

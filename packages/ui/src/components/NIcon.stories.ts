@@ -91,6 +91,17 @@ export const Clickable: Story = {
         setup() {
             return { args }
         },
-        template: '<NIcon v-bind="args" tag="a" href="#" name="mdi-account" clickable class="text-[1.25rem]"></NIcon>'
+        template: '<NIcon v-bind="args" tag="a" href="#" name="mdi-account"  class="text-[1.25rem]"></NIcon>'
+    })
+}
+
+export const Disabled: Story = {
+    args: {},
+    render: args => ({
+        components: { NIcon },
+        setup() {
+            return { args }
+        },
+        template: '<NIcon v-bind="args" tag="a" href="#" name="mdi-account" disabled  class="text-[1.25rem]"></NIcon>'
     })
 }

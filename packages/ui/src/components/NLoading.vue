@@ -39,9 +39,9 @@
         }
 
         return {
-            ...attrs,
             name: props.name || name,
-            class: [animation, iconClass, props.class]
+            class: [animation, iconClass, props.class],
+            ...attrs
         }
     })
 </script>

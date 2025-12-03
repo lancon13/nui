@@ -63,6 +63,13 @@
     }
 }
 
+@layer components {
+    .n-list {
+        @apply rounded-element
+            flex flex-col;
+    }
+}
+
 @utility content-row {
     display: flex;
     flex-direction: row;

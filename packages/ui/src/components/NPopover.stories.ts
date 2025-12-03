@@ -66,6 +66,27 @@ export const Default: Story = {
     })
 }
 
+export const Menu: Story = {
+    args: {},
+    render: args => ({
+        components: { NPopover, NButton, NCard },
+        setup() {
+            return { args }
+        },
+        template: `
+            <NButton>
+                Menu
+                <NPopover v-bind="args" class="">
+                    <ul class="n-list shadowed min-w-64">
+                        <li tabindex="0" class="n-list-item clickable">Test 1</li>
+                        <li tabindex="0" class="n-list-item clickable">Test 2</li>                        
+                    </ul>
+                </NPopover>
+            </NButton>
+        `
+    })
+}
+
 export const OverlayButton: Story = {
     args: {},
     render: args => ({

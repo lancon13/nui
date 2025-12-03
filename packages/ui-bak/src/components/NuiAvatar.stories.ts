@@ -261,7 +261,7 @@ export const Clickable: Story = {
             return { args, handleClick }
         },
         template: `
-      <NuiAvatar v-bind="args" class="cursor-pointer transition-all duration-200 hover:opacity-80" @click="handleClick" />
+      <NuiAvatar v-bind="args" class="cursor-pointer transition-all duration-200 hover:opacity-75" @click="handleClick" />
     `
     }),
     args: {

@@ -100,6 +100,7 @@
         hideDelay: 250,
         persistent: false,
         direction: 'bottom',
+        position: 'start',
         margin: 4,
         offset: () => [0, 0],
         autoReposition: true,
