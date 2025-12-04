@@ -30,7 +30,8 @@ export const Default: Story = {
                             label: 'Ok',
                             class: 'flat'
                         }
-                    ]
+                    ],
+                    closeButton: true
                 })
                 await dialog.show()
             }

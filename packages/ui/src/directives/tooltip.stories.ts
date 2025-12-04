@@ -38,7 +38,7 @@ export const AllDirections: StoryObj = {
                 <div class="border rounded p-2 w-32 h-16 flex justify-center items-center" v-tooltip.top="'HTML <b>content</b> is also supported'">
                 HTML content
                 </div>
-                <div class="border rounded p-2 w-32 h-16 flex justify-center items-center" v-tooltip="'Default direction (top)'">
+                <div class="border rounded p-2 w-32 h-16 flex justify-center items-center" v-tooltip="'Default direction (bottom)'">
                 Default
                 </div>
       </div>

@@ -29,7 +29,7 @@ const mountTooltip = (el: TooltipElement, binding: any) => {
 
     const modifiers = Object.keys(binding.modifiers)
     const direction = (modifiers.find(m => ['top', 'bottom', 'left', 'right'].includes(m)) ||
-        'top') as NTooltipDirection
+        'bottom') as NTooltipDirection
 
     const props: NTooltipProps = {
         content,
@@ -66,7 +66,7 @@ const updateTooltip = (el: TooltipElement, binding: any) => {
         props.content = binding.value
         const modifiers = Object.keys(binding.modifiers)
         props.direction = (modifiers.find(m => ['top', 'bottom', 'left', 'right'].includes(m)) ||
-            'top') as NTooltipDirection
+            'bottom') as NTooltipDirection
     } else {
         unmountTooltip(el)
         mountTooltip(el, binding)

@@ -22,6 +22,7 @@ export type NDialogOptions = Omit<NModalProps, 'tag' | 'content'> &
         loadingType?: string
         loadingClass?: string | string[] | object
         actions?: NDialogAction[]
+        closeButton?: boolean
     }
 
 export function useDialog() {
@@ -107,11 +108,16 @@ export function useDialog() {
                             default: () =>
                                 [
                                     options.title
-                                        ? h(
-                                              'div',
-                                              { class: 'n-card-header' },
-                                              h('h1', { class: 'title-text text-xl' }, options.title)
-                                          )
+                                        ? h('div', { class: 'n-card-header' }, [
+                                              h('h1', { class: 'title-text text-xl' }, options.title),
+                                              options.closeButton
+                                                  ? h(NButton, {
+                                                        icon: 'close',
+                                                        class: 'icon pilled text-xs',
+                                                        onClick: () => hide()
+                                                    })
+                                                  : null
+                                          ])
                                         : null,
                                     h('div', { class: 'n-card-body' }, options.content || ''),
                                     cardActions.length > 0
@@ -241,8 +247,8 @@ export function useDialog() {
     const prompt = (
         title: string,
         message: string,
-        defaultValue = '',
-        options?: Omit<NDialogOptions, 'title' | 'content' | 'actions'>
+        defaultValue = ''
+        // options?: Omit<NDialogOptions, 'title' | 'content' | 'actions'>
     ) => {
         return new Promise<string | null>(async resolve => {
             // A real implementation would show a dialog with an input field.
