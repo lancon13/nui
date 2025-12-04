@@ -76,3 +76,37 @@ export const ListAndListItems: Story = {
         `
     })
 }
+
+export const WithItemsProp: Story = {
+    args: {
+        items: [
+            { label: 'Item 1', onClick: () => alert('Item 1 clicked') },
+            { label: 'Item 2', href: '#item2' },
+            {
+                label: 'Submenu',
+                href: '#item2',
+                items: [
+                    { label: 'Sub Item 1', onClick: () => alert('Sub Item 1 clicked') },
+                    { label: 'Sub Item 2', href: '#subitem2' },
+                    {
+                        label: 'Deep Submenu',
+                        items: [{ label: 'Deep Item 1' }, { label: 'Deep Item 2' }]
+                    }
+                ]
+            },
+            { label: 'Item 3' }
+        ]
+    },
+    render: args => ({
+        components: { NMenu, NButton },
+        setup() {
+            return { args }
+        },
+        template: `
+            <NButton>
+                Show menu
+                <NMenu v-bind="args"  />
+            </NButton>
+        `
+    })
+}

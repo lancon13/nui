@@ -1,7 +1,7 @@
 <template>
-    <n-popover v-bind="$props" class="n-menu">
+    <n-popover v-bind="compBind" class="n-menu">
         <ul :class="['n-list', props.listClass]">
-            <template v-for="(node, index) in wrappedSlotDefaultNodes" :key="index">
+            <template v-for="(node, index) in finalNodes" :key="index">
                 <component :is="node" />
             </template>
         </ul>
@@ -12,11 +12,9 @@
     /* eslint-disable @typescript-eslint/no-explicit-any */
     import { computed, h, HTMLAttributes, useSlots, VNode, isVNode } from 'vue'
     import NIcon from './NIcon.vue'
-    import NListItem from './NListItem.vue'
+    import NListItem, { NListItemProps } from './NListItem.vue'
     import NMenu from './NMenu.vue'
     import NPopover, { NPopoverProps } from './NPopover.vue'
-
-    // ... [Keep your defineOptions and types here] ...
 
     defineOptions({
         inheritAttrs: false
@@ -24,15 +22,27 @@
 
     export type NMenuDirection = 'top' | 'bottom' | 'left' | 'right'
     export type NMenuPosition = 'start' | '' | 'end'
+    export type NMenuItemData = NListItemProps & {
+        label: string
+        onClick?: () => void
+        items?: NMenuItemData[]
+    }
     export type NMenuProps = Partial</* @vue-ignore */ HTMLAttributes> &
         NPopoverProps & {
             listClass?: string | string[] | object
+            items?: NMenuItemData[]
         }
 
     const slots = useSlots()
     const props = withDefaults(defineProps<NMenuProps>(), {
         tag: 'div',
         listClass: 'bg-surface shadowed'
+    })
+
+    const compBind = computed(() => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
+        const { items, listClass, ...rest } = props
+        return rest
     })
 
     // 1. Define shared props for nested menus to avoid repetition
@@ -42,6 +52,34 @@
         listClass: props.listClass,
         stacked: true
     }))
+
+    const createNodesFromData = (items: NMenuItemData[]): VNode[] => {
+        return items.map(item => {
+            const { label, onClick, items: subItems, ...rest } = item
+
+            if (subItems && subItems.length) {
+                return h(
+                    NListItem,
+                    { ...rest, 'data-has-submenu': true },
+                    {
+                        default: () => [
+                            label,
+                            h(NMenu, {
+                                ...nestedMenuProps.value,
+                                items: subItems
+                            }),
+                            h(NIcon, {
+                                name: 'chevron-right',
+                                class: 'ml-8 -mr-2'
+                            })
+                        ]
+                    }
+                )
+            }
+
+            return h(NListItem, { ...rest, onClick }, { default: () => label })
+        })
+    }
 
     const wrappedSlotDefaultNodes = computed(() => {
         // 1. Helper to get raw children array from a node
@@ -143,6 +181,14 @@
         }
 
         return processNodes(slots.default?.() ?? [])
+    })
+
+    const finalNodes = computed(() => {
+        if (props.items && props.items.length) {
+            return createNodesFromData(props.items)
+        }
+
+        return wrappedSlotDefaultNodes.value
     })
 </script>
 
