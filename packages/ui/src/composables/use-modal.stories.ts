@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Meta, StoryObj } from '@storybook/vue3-vite'
 import { useModal } from '.'
 import NButton from '../components/NButton.vue'

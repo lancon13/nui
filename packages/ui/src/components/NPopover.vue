@@ -130,7 +130,7 @@
                 set: (val: boolean) => {
                     model.value = val
                 }
-            }), // Pass the writable computed ref
+            }),
             contentRef,
             attachParentEl,
             placement: floatingPlacement

@@ -1,6 +1,4 @@
 <template>
-    <div ref="placeholderRef" class="hidden" />
-
     <transition v-if="props.stacked" name="n-tooltip">
         <component
             :is="props.tag"
@@ -15,7 +13,10 @@
             @focusin="handleContentHoverFocusIn"
             @focusout="handleContentHoverFocusOut"
         >
-            <slot name="default" v-html="props.content"></slot>
+            <span v-if="props.content" v-html="props.content"></span>
+            <template v-for="(node, index) in slotDefaultNodes" v-else :key="index">
+                <component :is="node" />
+            </template>
         </component>
     </transition>
 
@@ -35,7 +36,10 @@
                     @focusin="handleContentHoverFocusIn"
                     @focusout="handleContentHoverFocusOut"
                 >
-                    <slot name="default" v-html="props.content"></slot>
+                    <span v-if="props.content" v-html="props.content"></span>
+                    <template v-for="(node, index) in slotDefaultNodes" v-else :key="index">
+                        <component :is="node" />
+                    </template>
                 </component>
             </div>
         </transition>
@@ -57,7 +61,10 @@
                 @focusin="handleContentHoverFocusIn"
                 @focusout="handleContentHoverFocusOut"
             >
-                <slot name="default" v-html="props.content"></slot>
+                <span v-if="props.content" v-html="props.content"></span>
+                <template v-for="(node, index) in slotDefaultNodes" v-else :key="index">
+                    <component :is="node" />
+                </template>
             </component>
         </transition>
     </teleport>
@@ -65,10 +72,10 @@
 
 <script setup lang="ts">
     import type { Placement } from '@floating-ui/vue'
-    import { computed, HTMLAttributes, nextTick, ref, useAttrs, useTemplateRef, watch } from 'vue'
-    import { useTeleportContainer } from '../composables/use-teleport-container'
-    import { getElement } from '../helpers/dom'
+    import { computed, HTMLAttributes, onMounted, ref, useAttrs, useSlots, useTemplateRef } from 'vue'
     import { useFloating } from '../composables/use-floating'
+    import { useTeleportContainer } from '../composables/use-teleport-container'
+    import { getElement, getParentElement, wrapTextNode } from '../helpers/dom'
 
     export type NTooltipDirection = 'top' | 'bottom' | 'left' | 'right'
     export type NTooltipProps = Partial</* @vue-ignore */ HTMLAttributes> & {
@@ -92,6 +99,7 @@
         inheritAttrs: false
     })
 
+    const slots = useSlots()
     const attrs = useAttrs()
     const props = withDefaults(defineProps<NTooltipProps>(), {
         tag: 'span',
@@ -108,12 +116,13 @@
     })
 
     const model = defineModel<boolean>({ default: false })
-    const placeholderRef = useTemplateRef<HTMLElement | null>('placeholderRef')
     const contentRef = useTemplateRef<HTMLElement | null>('contentRef')
     const { isReady } = useTeleportContainer('n-tooltips-container')
 
-    const attachParentEl = ref<HTMLElement | null>(null)
-    const floatingPlacement = computed<Placement>(() => props.direction)
+    const parentEl = ref<HTMLElement | null>(null)
+    const attachParentEl = computed<HTMLElement | null>(() =>
+        props.attachParent ? getElement(props.attachParent) : parentEl.value
+    )
 
     const { show, hide, handleContentHoverFocusIn, handleContentHoverFocusOut, compStyles, placement } = useFloating(
         props,
@@ -126,7 +135,7 @@
             }),
             contentRef,
             attachParentEl,
-            placement: floatingPlacement
+            placement: computed<Placement>(() => props.direction)
         }
     )
 
@@ -139,18 +148,14 @@
         }
     })
 
+    const slotDefaultNodes = computed(() => {
+        return wrapTextNode(slots.default?.() ?? [], 'span')
+    })
+
     // Lifecycle hooks
-    watch(
-        () => [props.attachParent, props.hoverTriggerAnchor, props.focusTriggerAnchor],
-        () => {
-            nextTick(() => {
-                attachParentEl.value = props.attachParent
-                    ? getElement(props.attachParent)
-                    : placeholderRef.value?.parentElement || null
-            })
-        },
-        { deep: true, immediate: true, flush: 'post' }
-    )
+    onMounted(() => {
+        parentEl.value = getParentElement()
+    })
 
     defineExpose({ show, hide })
 </script>

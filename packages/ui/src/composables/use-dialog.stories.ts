@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ref } from 'vue'
 import type { Meta, StoryObj } from '@storybook/vue3-vite'
 import { useDialog } from '.'

@@ -31,12 +31,12 @@ export function useDialog() {
     }
     const appContext = internalInstance.appContext
 
-    async function create(options: NDialogOptions) {
+    async function create(dialogOptions: NDialogOptions = {}) {
         const container = document.createElement('div')
         container.id = `dialog-app-${generatePseudoRandomKey()}`
         document.body.appendChild(container)
 
-        options = options ?? {}
+        const options = dialogOptions ?? {}
         options.hideOnAction ??= true
 
         const modalProps = {
@@ -197,7 +197,7 @@ export function useDialog() {
             ],
             cardClass: 'shadowed',
             noOverlayHide: true,
-            ...options
+            ...(options || {})
         })
         return new Promise<void>(resolve => {
             dialogShown.onHide(resolve)
@@ -206,7 +206,7 @@ export function useDialog() {
 
     const confirm = async (title: string, message: string, options?: Omit<NDialogOptions, 'title' | 'content'>) => {
         const dialogShown = await dialog({
-            ...options,
+            ...(options || {}),
             title,
             content: message,
             actions: [

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable no-async-promise-executor */
+
 /* eslint-disable no-unused-vars */
 import { createVNode, getCurrentInstance, h, nextTick, render, VNode } from 'vue'
 import NLoading from '../components/NLoading.vue'

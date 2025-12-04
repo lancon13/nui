@@ -29,7 +29,7 @@ export function useFloating(
         () => {
             show()
         },
-        computed(() => props.showDelay),
+        computed(() => props.showDelay ?? 0),
         {
             immediate: false
         }
@@ -41,7 +41,7 @@ export function useFloating(
                 hide()
             }
         },
-        computed(() => props.hideDelay),
+        computed(() => props.hideDelay ?? 0),
         {
             immediate: false
         }

@@ -5,10 +5,12 @@ import { resolve } from 'path'
 
 const config: StorybookConfig = {
     stories: [
-        '../src/stories/**/*.stories.@(js|jsx|mjs|ts|tsx)',
         '../src/components/**/*.mdx',
+
+        '../src/stories/**/*.stories.@(js|jsx|mjs|ts|tsx)',
         '../src/components/**/*.stories.@(js|jsx|mjs|ts|tsx)',
-        '../src/composables/**/*.stories.@(js|jsx|mjs|ts|tsx)'
+        '../src/composables/**/*.stories.@(js|jsx|mjs|ts|tsx)',
+        '../src/directives/**/*.stories.@(js|jsx|mjs|ts|tsx)'
     ],
     addons: [
         '@chromatic-com/storybook',
