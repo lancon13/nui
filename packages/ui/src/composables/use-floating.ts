@@ -22,9 +22,7 @@ export function useFloating(
     }
 ) {
     const { model, contentRef, attachParentEl, placement } = options
-
     const isContentHoverFocus = ref(false)
-
     const showTimer = useTimeoutFn(
         () => {
             show()
@@ -134,7 +132,7 @@ export function useFloating(
     }
 
     useEventListener('keydown', e => {
-        if (model.value && e.key === 'Escape') {
+        if (model.value && e.key === 'Escape' && !props.persistent) {
             e.preventDefault()
             e.stopPropagation()
             hide()

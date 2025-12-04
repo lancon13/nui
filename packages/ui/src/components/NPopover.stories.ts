@@ -40,7 +40,7 @@ export const Default: Story = {
         },
         template: `
             <NButton @click="handleButtonClick">
-                Show Popover
+                Show popover
                 <NPopover v-bind="args" v-model="showModal" class="">
                     <div class="bg-text-invert shadowed w-32 p-4">
                         <ul>

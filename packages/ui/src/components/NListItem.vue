@@ -113,7 +113,7 @@
 
             &.n-list-item--clickable {
                 @apply transition-[backdrop-filter] duration-200 ease-in-out;
-                @apply hover:backdrop-brightness-75;
+                @apply hover:backdrop-brightness-75 hover:opacity-100;
 
                 &.n-list-item--disabled,
                 [class*='--clickable']&.n-list-item--disabled,

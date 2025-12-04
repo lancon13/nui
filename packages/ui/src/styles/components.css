@@ -31,13 +31,10 @@
         @apply transition-shadow duration-200 ease-in-out;
         @apply focus-visible:outline-0 focus-visible:ring-2 focus-visible:ring-focus focus-visible:z-20;
 
-        a[href]&,
         [class*='--clickable']& {
             @apply cursor-pointer;
-            @apply transition-opacity duration-200 ease-in-out;
             @apply transition-shadow duration-200 ease-in-out;
             @apply focus:outline-0 focus:ring-2 focus:ring-focus;
-            @apply hover:opacity-75;
         }
         .pilled {
             @apply rounded-full;
@@ -66,7 +63,8 @@
 @layer components {
     .n-list {
         @apply rounded-element
-            flex flex-col;
+            text-nowrap
+            flex flex-col flex-nowrap;
     }
 }
 

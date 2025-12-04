@@ -78,6 +78,7 @@
     import { getElement, getParentElement, wrapTextNode } from '../helpers/dom'
 
     export type NTooltipDirection = 'top' | 'bottom' | 'left' | 'right'
+    export type NTooltipPosition = 'start' | '' | 'end'
     export type NTooltipProps = Partial</* @vue-ignore */ HTMLAttributes> & {
         tag?: string
         content?: string
@@ -88,6 +89,7 @@
         focusTriggerAnchor?: HTMLElement | string | null
         attachParent?: HTMLElement | string | null
         direction?: NTooltipDirection
+        position?: NTooltipPosition
         margin?: number
         offset?: [number, number]
         autoReposition?: boolean
@@ -108,6 +110,7 @@
         hideDelay: 250,
         persistent: false,
         direction: 'bottom',
+        position: '',
         margin: 8,
         offset: () => [0, 0],
         autoReposition: true,
@@ -124,6 +127,11 @@
         props.attachParent ? getElement(props.attachParent) : parentEl.value
     )
 
+    const floatingPlacement = computed<Placement>(() => {
+        const placement = `${props.direction}${props.position !== '' ? `-${props.position}` : ''}` as Placement
+        return placement
+    })
+
     const { show, hide, handleContentHoverFocusIn, handleContentHoverFocusOut, compStyles, placement } = useFloating(
         props,
         {
@@ -135,7 +143,7 @@
             }),
             contentRef,
             attachParentEl,
-            placement: computed<Placement>(() => props.direction)
+            placement: floatingPlacement
         }
     )
 

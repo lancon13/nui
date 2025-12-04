@@ -13,7 +13,10 @@
             @focusin="handleContentHoverFocusIn"
             @focusout="handleContentHoverFocusOut"
         >
-            <slot name="default" v-html="props.content"></slot>
+            <span v-if="props.content" v-html="props.content"></span>
+            <template v-for="(node, index) in slotDefaultNodes" v-else :key="index">
+                <component :is="node" />
+            </template>
         </component>
     </transition>
 
@@ -33,7 +36,10 @@
                     @focusin="handleContentHoverFocusIn"
                     @focusout="handleContentHoverFocusOut"
                 >
-                    <slot name="default" v-html="props.content"></slot>
+                    <span v-if="props.content" v-html="props.content"></span>
+                    <template v-for="(node, index) in slotDefaultNodes" v-else :key="index">
+                        <component :is="node" />
+                    </template>
                 </component>
             </div>
         </transition>
@@ -55,7 +61,10 @@
                 @focusin="handleContentHoverFocusIn"
                 @focusout="handleContentHoverFocusOut"
             >
-                <slot name="default" v-html="props.content"></slot>
+                <span v-if="props.content" v-html="props.content"></span>
+                <template v-for="(node, index) in slotDefaultNodes" v-else :key="index">
+                    <component :is="node" />
+                </template>
             </component>
         </transition>
     </teleport>
@@ -63,9 +72,9 @@
 
 <script setup lang="ts">
     import type { Placement } from '@floating-ui/vue'
-    import { computed, HTMLAttributes, onMounted, ref, useAttrs, useTemplateRef } from 'vue'
+    import { computed, HTMLAttributes, onMounted, ref, useAttrs, useSlots, useTemplateRef } from 'vue'
     import { useTeleportContainer } from '../composables/use-teleport-container'
-    import { getElement, getParentElement } from '../helpers/dom'
+    import { getElement, getParentElement, wrapTextNode } from '../helpers/dom'
     import { useFloating } from '../composables/use-floating'
 
     export type NPopoverDirection = 'top' | 'bottom' | 'left' | 'right'
@@ -92,6 +101,7 @@
         inheritAttrs: false
     })
 
+    const slots = useSlots()
     const attrs = useAttrs()
     const props = withDefaults(defineProps<NPopoverProps>(), {
         tag: 'span',
@@ -100,7 +110,7 @@
         hideDelay: 250,
         persistent: false,
         direction: 'bottom',
-        position: 'start',
+        position: '',
         margin: 4,
         offset: () => [0, 0],
         autoReposition: true,
@@ -118,8 +128,7 @@
     )
 
     const floatingPlacement = computed<Placement>(() => {
-        const placement = `${props.direction}${props.position !== '' ? `-${props.position}` : ''}` as Placement
-        return placement
+        return `${props.direction}${props.position !== '' ? `-${props.position}` : ''}` as Placement
     })
 
     const { show, hide, handleContentHoverFocusIn, handleContentHoverFocusOut, compStyles, placement } = useFloating(
@@ -144,6 +153,10 @@
         return {
             ...attrs
         }
+    })
+
+    const slotDefaultNodes = computed(() => {
+        return wrapTextNode(slots.default?.() ?? [], 'span')
     })
 
     // Lifecycle hooks
