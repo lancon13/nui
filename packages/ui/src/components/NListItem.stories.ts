@@ -140,3 +140,24 @@ export const Disabled: Story = {
         `
     })
 }
+
+export const Expanded: Story = {
+    args: {},
+    render: args => ({
+        components: { NListItem },
+        setup() {
+            return { args }
+        },
+        template: `
+            <ul class="n-list w-64 bg-white text-black shadowed">
+                <NListItem v-bind="args" expandable icon="mdi-account"  iconClass="text-primary">
+                    <div>This is the header</div>
+                    <template #content>
+                        <p>知名貨車駕駛模擬名作《歐洲卡車模擬 2》（Euro Truck Simulator 2），自 2012 年推出後人氣歷久不衰，它跟其他像《Left 4 Dead 2》等作品在 Steam 同時上線榜長年維持在百名以內，如今這個數字在遊戲上市後更向上推進破了自身紀錄。</p>
+                        <a href="#">www.google.com</a>
+                    </template>
+                </NListItem>
+            </ul>
+        `
+    })
+}
