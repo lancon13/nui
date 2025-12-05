@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { h, isVNode, VNode, Text as VueText, getCurrentInstance } from 'vue'
+import { getCurrentInstance, h, isVNode, VNode } from 'vue'
 
 interface ComponentTypeWithName {
     __name__: string | undefined
@@ -95,36 +95,54 @@ export const isVNodeClassContain = (node: VNode, className: string | string[]): 
 }
 
 /**
- * Wraps any "meaningful" Text nodes in the provided list with a specific tag.
- * Leaves other nodes (Elements, Components) untouched.
+ * Wraps meaningful text content (strings and non-empty Text nodes) in a specified HTML tag.
+ * Preserves Elements, Components, and whitespace-only Text nodes without modification.
  *
- * @param nodes - A single VNode or an array of VNodes (usually from slots.default())
- * @param tag - The HTML tag to wrap text with (e.g., 'span', 'div')
- * @param props - Optional props to pass to the wrapper (e.g., class, style)
+ * This is useful for styling mixed content slots where you want to target text specifically
+ * without breaking the structure of existing components or elements.
+ *
+ * @param {string | VNode | VNode[] | undefined} nodes - The content to process. Usually coming from `slots.default()`.
+ * @param {string} [tag='span'] - The HTML tag to wrap the text with.
+ * @param {Record<string, any>} [props={}] - Attributes or props to apply to the wrapper tag (e.g., `{ class: 'text-bold' }`).
+ * @returns {VNode[]} A normalized array of VNodes with text content wrapped.
+ *
+ * @example
+ * // If slots.default() returns: [Text("Hello "), h('span', "World"), Text("\n")]
+ * // And we call: wrapTextNode(slots.default(), 'strong', { class: 'highlight' })
+ *
+ * // The result will be:
+ * // [
+ * //   h('strong', { class: 'highlight' }, "Hello "), // Wrapped
+ * //   h('span', "World"),                            // Left alone (Element)
+ * //   Text("\n")                                     // Left alone (Whitespace)
+ * // ]
  */
 export function wrapTextNode(
-    nodes: VNode | VNode[] | undefined,
-    tag: string = 'span',
+    nodes: string | VNode | VNode[] | undefined,
+    tag = 'span',
     props: Record<string, any> = {}
 ): VNode[] {
     if (!nodes) return []
 
-    // Normalize to array
+    // Ensure we always work with an array
     const nodeList = Array.isArray(nodes) ? nodes : [nodes]
 
     return nodeList.map(node => {
-        // 1. Check if it is a Text Node
-        if (node.type === VueText) {
-            const content = node.children as string
+        // 1. Handle raw strings (always wrap)
+        if (typeof node === 'string') {
+            return h(tag, props, node)
+        }
 
-            // 2. Only wrap if it contains actual text (ignore purely whitespace/newlines)
-            //    If you want to wrap whitespace too, remove this if-check.
-            if (content && content.trim().length > 0) {
+        // 2. Handle Vue Text Nodes
+        // We only wrap if there is meaningful content (not just whitespace)
+        if (node.type === Text) {
+            const content = node.children as string
+            if (content?.trim()) {
                 return h(tag, props, content)
             }
         }
 
-        // 3. Return non-text nodes (or whitespace text nodes) as-is
+        // 3. Return everything else as-is (Elements, Components, empty Text)
         return node
     })
 }

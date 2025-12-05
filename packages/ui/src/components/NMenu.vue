@@ -10,7 +10,7 @@
 
 <script setup lang="ts">
     /* eslint-disable @typescript-eslint/no-explicit-any */
-    import { computed, h, HTMLAttributes, useSlots, VNode, isVNode } from 'vue'
+    import { computed, h, HTMLAttributes, isVNode, useSlots, VNode } from 'vue'
     import NIcon from './NIcon.vue'
     import NListItem, { NListItemProps } from './NListItem.vue'
     import NMenu from './NMenu.vue'
