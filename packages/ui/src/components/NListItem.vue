@@ -11,7 +11,7 @@
         <slot name="prepend"></slot>
         <n-icon
             v-if="props.prependIcon || props.icon"
-            :name="(props.prependIcon || props.icon) as string"
+            :name="(props.prependIcon || props.icon)!"
             :class="[
                 ...(props.iconClass
                     ? ['string', 'object'].includes(typeof props.iconClass)

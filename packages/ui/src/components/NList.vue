@@ -9,7 +9,7 @@
 <script setup lang="ts">
     /* eslint-disable @typescript-eslint/no-explicit-any */
     import { computed, Fragment, h, HTMLAttributes, useAttrs, useSlots, VNode } from 'vue'
-    import { wrapTextNode } from '../helpers/dom'
+    import { useMenuTransform } from '../composables/use-menu-transform'
     import NListItem, { NListItemProps } from './NListItem.vue'
 
     export type NListItemData = Record<string, any> & Partial<NListItemProps>
@@ -28,6 +28,7 @@
         tag: 'ul'
     })
 
+    const { transformedNodes } = useMenuTransform(slots)
     const compClasses = computed(() => {
         return ['n-list']
     })
@@ -38,21 +39,15 @@
     })
 
     const slotDefaultNodes = computed(() => {
-        return props.items && props.items.length
-            ? createNodesFromData(props.items)
-            : wrapTextNode(slots.default?.() ?? [], 'span')
+        return props.items && props.items.length ? createNodesFromData(props.items) : transformedNodes.value
     })
 
     function createNodesFromData(items: NListItemData[]): VNode[] {
         return items.map(item => {
             const { content, ...rest } = item
             return slots['item']
-                ? h(Fragment, null, slots['item']?.(item) ?? [])
-                : h(
-                      NListItem,
-                      { ...(rest as any) },
-                      () => slots['item-content']?.(item) ?? [wrapTextNode(content, 'span')]
-                  )
+                ? h(Fragment, null, slots['item'](item) ?? [])
+                : h(NListItem, { ...(rest as any) }, () => slots['item-content']?.(item) ?? content)
         })
     }
 </script>

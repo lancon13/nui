@@ -80,21 +80,21 @@ export const ListAndListItems: Story = {
 export const WithItemsProp: Story = {
     args: {
         items: [
-            { label: 'Item 1', onClick: () => alert('Item 1 clicked') },
-            { label: 'Item 2', href: '#item2' },
+            { content: 'Item 1', onClick: () => alert('Item 1 clicked') },
+            { content: 'Item 2', href: '#item2' },
             {
-                label: 'Submenu',
+                content: 'Submenu',
                 href: '#item2',
                 items: [
-                    { label: 'Sub Item 1', onClick: () => alert('Sub Item 1 clicked') },
-                    { label: 'Sub Item 2', href: '#subitem2' },
+                    { content: 'Sub Item 1', onClick: () => alert('Sub Item 1 clicked') },
+                    { content: 'Sub Item 2', href: '#subitem2' },
                     {
-                        label: 'Deep Submenu',
-                        items: [{ label: 'Deep Item 1' }, { label: 'Deep Item 2' }]
+                        content: 'Deep Submenu',
+                        items: [{ content: 'Deep Item 1' }, { content: 'Deep Item 2' }]
                     }
                 ]
             },
-            { label: 'Item 3' }
+            { content: 'Item 3' }
         ]
     },
     render: args => ({
@@ -105,7 +105,7 @@ export const WithItemsProp: Story = {
         template: `
             <NButton>
                 Show menu
-                <NMenu v-bind="args"  />
+                <NMenu v-bind="args" persistent />
             </NButton>
         `
     })
