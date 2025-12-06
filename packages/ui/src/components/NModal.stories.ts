@@ -60,6 +60,57 @@ export const Default: Story = {
     })
 }
 
+export const Direction: Story = {
+    args: {},
+    render: args => ({
+        components: { NModal, NButton, NCard },
+        setup() {
+            const showCenter = ref(false)
+            const showTop = ref(false)
+            const showBottom = ref(false)
+            const showLeft = ref(false)
+            const showRight = ref(false)
+
+            return { args, showCenter, showTop, showBottom, showLeft, showRight }
+        },
+        template: `
+            <div class="flex flex-row items-center gap-4">
+                <NButton @click="() => showCenter = !showCenter">Center</NButton>
+                <NButton @click="() => showTop = !showTop">Top</NButton>
+                <NButton @click="() => showBottom = !showBottom">Bottom</NButton>
+                <NButton @click="() => showLeft = !showLeft">Left</NButton>
+                <NButton @click="() => showRight = !showRight">Right</NButton>
+
+                <NModal v-model="showCenter" direction="center" :overlay="true">
+                    <NCard class="w-96 shadowed">
+                        <div class="p-4">Center Modal</div>
+                    </NCard>
+                </NModal>
+                <NModal v-model="showTop" direction="top" :overlay="true">
+                    <NCard class="w-full h-48 shadowed">
+                        <div class="p-4">Top Modal</div>
+                    </NCard>
+                </NModal>
+                <NModal v-model="showBottom" direction="bottom" :overlay="true">
+                    <NCard class="w-full h-48 shadowed">
+                        <div class="p-4">Bottom Modal</div>
+                    </NCard>
+                </NModal>
+                <NModal v-model="showLeft" direction="left" :overlay="true">
+                    <NCard class="h-full w-48 shadowed">
+                        <div class="p-4">Left Modal</div>
+                    </NCard>
+                </NModal>
+                <NModal v-model="showRight" direction="right" :overlay="true">
+                    <NCard class="h-full w-48 shadowed">
+                        <div class="p-4">Right Modal</div>
+                    </NCard>
+                </NModal>
+            </div>
+        `
+    })
+}
+
 export const Simple: Story = {
     args: {},
     render: args => ({

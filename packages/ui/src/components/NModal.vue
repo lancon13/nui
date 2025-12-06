@@ -32,25 +32,27 @@
 
 <script setup lang="ts">
     import { useEventListener } from '@vueuse/core'
-    import { useFocusTrap } from '@vueuse/integrations/useFocusTrap'
     import { computed, HTMLAttributes, nextTick, onUnmounted, useAttrs, useTemplateRef, watch } from 'vue'
     import { useComponentStack } from '../composables/use-component-stack'
     import { useTeleportContainer } from '../composables/use-teleport-container'
     import { generatePseudoRandomKey } from '../helpers/tools'
+    import { useFocusable } from '../composables/use-focusable'
 
-    defineOptions({
-        inheritAttrs: false
-    })
-
+    export type NModalDirection = 'center' | 'top' | 'bottom' | 'left' | 'right'
     export type NModalProps = Partial</* @vue-ignore */ HTMLAttributes> & {
         tag?: string
         content?: string
         overlay?: boolean
         noOverlayHide?: boolean
         noEscHide?: boolean
+        direction?: NModalDirection
         persist?: boolean
         focusOnShow?: boolean
     }
+
+    defineOptions({
+        inheritAttrs: false
+    })
 
     const attrs = useAttrs()
     const props = withDefaults(defineProps<NModalProps>(), {
@@ -59,7 +61,9 @@
         overlay: true,
         noOverlayHide: false,
         noEscHide: false,
-        persist: false
+        direction: 'center',
+        persist: false,
+        focusOnShow: true
     })
 
     const model = defineModel<boolean>({ default: false })
@@ -68,7 +72,12 @@
     const modalId = Symbol(`modal-id-${generatePseudoRandomKey()}`)
     const { register, unregister, getZIndex, isTop } = useComponentStack('n-modal')
     const contentRef = useTemplateRef<HTMLElement | null>('contentRef')
-    const { hasFocus, activate, deactivate, pause, unpause } = useFocusTrap(contentRef)
+    const { pause, unpause } = useFocusable(
+        model,
+        contentRef,
+        computed(() => props.overlay),
+        computed(() => props.focusOnShow)
+    )
 
     const stackZIndex = computed(() => getZIndex(modalId))
 
@@ -81,7 +90,7 @@
         }
     })
     const modalClasses = computed(() => {
-        return ['n-modal']
+        return ['n-modal', `n-modal--direction-${props.direction}`]
     })
     const modalStyles = computed(() => {
         return {
@@ -105,17 +114,10 @@
     // Watcher
     watch(model, async value => {
         await nextTick() // Need it for focus-trap to work correctly for v-if
-        try {
-            if (value) {
-                register(modalId)
-                if (!hasFocus.value) activate()
-            } else if (!value) {
-                unregister(modalId)
-                if (hasFocus.value) deactivate()
-            }
-            // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
-        } catch (error) {
-            // ...
+        if (value) {
+            register(modalId)
+        } else if (!value) {
+            unregister(modalId)
         }
     })
 
@@ -163,27 +165,72 @@
                 @apply transition-[opacity,translate] duration-200 ease-in-out;
             }
 
-            &.n-modal-overlay-enter-from,
-            &.n-modal-overlay-leave-to {
-                @apply opacity-0;
-            }
-
             &.n-modal-overlay-leave-active {
                 @apply delay-200;
                 & + .n-modal {
                     @apply delay-0;
                 }
             }
+            &.n-modal-overlay-enter-from,
+            &.n-modal-overlay-leave-to {
+                @apply opacity-0;
+                .n-modal {
+                    @apply opacity-0;
+                    &.n-modal--direction-center {
+                        @apply translate-y-2;
+                    }
+                    &.n-modal--direction-top {
+                        @apply -translate-y-full;
+                    }
+                    &.n-modal--direction-bottom {
+                        @apply translate-y-full;
+                    }
+                    &.n-modal--direction-left {
+                        @apply -translate-x-full;
+                    }
+                    &.n-modal--direction-right {
+                        @apply translate-x-full;
+                    }
+                }
+            }
         }
 
         .n-modal {
             @apply absolute z-1000 w-auto;
-            @apply transition-[opacity,translate] duration-200 ease-in-out;
+            @apply transition-[opacity,translate] delay-200 duration-200 ease-in-out;
+            @apply translate-x-0 translate-y-0;
+
+            &.n-modal--direction-top {
+                @apply w-full top-0 left-0;
+            }
+            &.n-modal--direction-bottom {
+                @apply w-full bottom-0 left-0;
+            }
+            &.n-modal--direction-left {
+                @apply h-full top-0 left-0;
+            }
+            &.n-modal--direction-right {
+                @apply h-full top-0 right-0;
+            }
 
             &.n-modal-enter-from,
             &.n-modal-leave-to {
                 @apply opacity-0;
-                @apply translate-y-2;
+                &.n-modal--direction-center {
+                    @apply translate-y-2;
+                }
+                &.n-modal--direction-top {
+                    @apply -translate-y-full;
+                }
+                &.n-modal--direction-bottom {
+                    @apply translate-y-full;
+                }
+                &.n-modal--direction-left {
+                    @apply -translate-x-full;
+                }
+                &.n-modal--direction-right {
+                    @apply translate-x-full;
+                }
             }
         }
     }
