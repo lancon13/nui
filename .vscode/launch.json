@@ -13,8 +13,16 @@
             "type": "node",
             "request": "launch",
             "runtimeExecutable": "pnpm",
-            "runtimeArgs": ["--filter", "ui", "storybook:dev"],
-            "skipFiles": ["<node_internals>/**"]
+            "runtimeArgs": [
+                "--filter",
+                "ui",
+                "storybook:dev",
+                "-p",
+                "9000"
+            ],
+            "skipFiles": [
+                "<node_internals>/**"
+            ]
         }
     ]
 }

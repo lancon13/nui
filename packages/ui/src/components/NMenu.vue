@@ -10,13 +10,13 @@
 
 <script setup lang="ts">
     /* eslint-disable @typescript-eslint/no-explicit-any */
+    import { merge } from 'es-toolkit/object'
     import { computed, Fragment, h, HTMLAttributes, useSlots, VNode } from 'vue'
     import { useMenuTransform } from '../composables'
     import NIcon from './NIcon.vue'
     import NListItem, { NListItemProps } from './NListItem.vue'
     import NMenu from './NMenu.vue'
     import NPopover, { NPopoverProps } from './NPopover.vue'
-    import { merge } from 'es-toolkit/object'
 
     export type NMenuDirection = 'top' | 'bottom' | 'left' | 'right'
     export type NMenuPosition = 'start' | '' | 'end'
@@ -32,10 +32,6 @@
         position: 'start',
         stacked: true
     }
-
-    defineOptions({
-        inheritAttrs: false
-    })
 
     const slots = useSlots()
     const props = withDefaults(defineProps<NMenuProps>(), {

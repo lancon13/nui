@@ -38,7 +38,7 @@
             <component :is="node" />
         </template>
 
-        <n-icon v-if="props.appendIcon" :name="props.appendIcon" :class="props.prependIconClass" />
+        <n-icon v-if="props.appendIcon" :name="props.appendIcon" :class="props.appendIconClass" />
         <slot name="append"></slot>
     </component>
 </template>

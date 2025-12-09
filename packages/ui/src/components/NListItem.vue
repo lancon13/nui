@@ -39,7 +39,7 @@
                 <component :is="node" />
             </template>
 
-            <n-icon v-if="props.appendIcon" :name="props.appendIcon" :class="props.prependIconClass" />
+            <n-icon v-if="props.appendIcon" :name="props.appendIcon" :class="props.appendIconClass" />
             <slot name="append"></slot>
         </div>
         <template v-else>
@@ -65,7 +65,7 @@
                 <component :is="node" />
             </template>
 
-            <n-icon v-if="props.appendIcon" :name="props.appendIcon" :class="props.prependIconClass" />
+            <n-icon v-if="props.appendIcon" :name="props.appendIcon" :class="props.appendIconClass" />
             <slot name="append"></slot>
         </template>
 

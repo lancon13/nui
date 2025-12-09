@@ -82,7 +82,7 @@
 
         --color-bg-invert-light: var(--color-background-invert-light);
         --color-surface-light: oklch(0.9 0 0);
-        --color-sub-surface-light: oklch(0.76 0 0);
+        --color-input-light: oklch(0.76 0 0);
         --color-border-light: oklch(0.69 0 0);
         --color-surface-indent-light: color-mix(in oklab, var(--color-surface-light) 90%, black 10%);
         --color-surface-indent-indent-light: color-mix(in oklab, var(--color-surface-indent-light) 90%, black 10%);
@@ -112,7 +112,7 @@
         --color-bg-invert-dark: var(--color-background-invert-dark);
 
         --color-surface-dark: oklch(0.2 0 0);
-        --color-sub-surface-dark: oklch(0.34 0 0);
+        --color-input-dark: oklch(0.34 0 0);
         --color-border-dark: oklch(0.48 0 0);
         --color-surface-indent-dark: color-mix(in oklab, var(--color-surface-dark) 90%, white 10%);
         --color-surface-indent-indent-dark: color-mix(in oklab, var(--color-surface-indent-dark) 90%, white 10%);
@@ -175,7 +175,7 @@
         --color-bg-invert: var(--color-bg-invert-light);
 
         --color-surface: var(--color-surface-light);
-        --color-sub-surface: var(--color-sub-surface-light);
+        --color-input: var(--color-input-light);
         --color-border: var(--color-border-light);
         --color-surface-indent: var(--color-surface-indent-light);
         --color-surface-indent-indent: var(--color-surface-indent-indent-light);
@@ -232,7 +232,7 @@
         --color-bg-invert: var(--color-bg-invert-dark);
 
         --color-surface: var(--color-surface-dark);
-        --color-sub-surface: var(--color-sub-surface-dark);
+        --color-input: var(--color-input-dark);
         --color-border: var(--color-border-dark);
         --color-surface-indent: var(--color-surface-indent-dark);
         --color-surface-indent-indent: var(--color-surface-indent-indent-dark);
@@ -290,7 +290,7 @@
         --color-bg-invert: var(--color-bg-invert);
 
         --color-surface: var(--color-surface);
-        --color-sub-surface: var(--color-sub-surface);
+        --color-input: var(--color-input);
         --color-border: var(--color-border);
         --color-surface-indent: var(--color-surface-indent);
         --color-surface-indent-indent: var(--color-surface-indent-indent);
