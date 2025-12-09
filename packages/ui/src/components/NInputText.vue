@@ -1,24 +1,12 @@
 <template>
     <forward-slots :slots="$slots">
         <n-input-field :class="compClasses" v-bind="compBind">
-            <template
-                #="{
-                    inputId,
-                    onUpdateModelValue,
-                    modelValue,
-                    formattedModelValue,
-                    modifiers,
-                    onInput,
-                    onChange,
-                    format,
-                    ...slotProps
-                }"
-            >
+            <template #="{ inputId, onUpdateModelValue, formattedModelValue, modifiers, onInput, onChange, format }">
                 <input
-                    v-bind="slotProps"
                     :id="inputId"
                     :name="props.name"
                     :type="props.type"
+                    :class="props.inputClass"
                     :value="formattedModelValue"
                     @input="
                         async (e: InputEvent) => {
@@ -54,6 +42,7 @@
     export type NInputTextProps = Partial</* @vue-ignore */ HTMLAttributes> &
         NInputFieldProps & {
             type?: string
+            inputClass?: string | string[] | object
         }
 
     defineOptions({
@@ -70,9 +59,8 @@
     })
     const compBind = computed(() => {
         // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
-        const { type, ...rest } = props
+        const { type, inputClass, ...rest } = { ...attrs, ...props }
         return {
-            ...attrs,
             ...rest
         }
     })

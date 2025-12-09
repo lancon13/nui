@@ -58,6 +58,10 @@
             @apply border-l border-b-0;
         }
     }
+
+    .animate-dropdown {
+        @apply transition-transform duration-250 peer-focus:rotate-180;
+    }
 }
 
 @layer components {

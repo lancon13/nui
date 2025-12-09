@@ -135,7 +135,7 @@ export function wrapTextNode(
 
         // 2. Handle Vue Text Nodes
         // We only wrap if there is meaningful content (not just whitespace)
-        if (node.type === Text || node.type === Comment || (node?.shapeFlag & 8) > 0) {
+        if ((node.type === Text || node.type === Comment) && (node?.shapeFlag & 8) > 0) {
             const content = node.children as string
             if (content?.trim()) {
                 return h(tag, props, content)

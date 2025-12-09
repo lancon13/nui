@@ -61,8 +61,11 @@ export const Wrapper: Story = {
             return { args, value }
         },
         template: `
-            <div class="flex flex-col gap-2">
+            <div class="flex flex-col gap-2 w-128">
                 <NInputField v-bind="args" v-model="value" label="Value" name="demo" message="Hello world!"  >
+                    <template #before>
+                        R
+                    </template>
                     <template #="props">
                         <div>
                             <pre>{{props}}</pre>

@@ -4,7 +4,7 @@
             <component :is="node" />
         </template>
 
-        <div :classClass="containerClasses">
+        <div :class="containerClasses">
             <slot v-if="props.label || $slots['label']" name="label">
                 <label :class="labelClasses" :for="inputId.description">{{ props.label }}</label>
             </slot>
@@ -212,14 +212,15 @@
 
     @layer components {
         .n-input-field-wrapper {
-            @apply flex flex-row items-center gap-2;
+            @apply inline-flex flex-row items-center gap-2 grow;
 
             .n-input-field-container {
-                @apply flex flex-row items-center gap-2;
+                @apply flex flex-col flex-1;
             }
 
             .n-input-field {
                 @apply relative
+                    flex-1
                     flex flex-row items-center gap-2
                     border-2 border-transparent
                     rounded-element py-1 px-2
@@ -231,7 +232,14 @@
                 textarea {
                     @apply appearance-none
                     focus:outline-0 focus:ring-0
-                    w-auto;
+                    box-border
+                    w-full;
+                }
+                &:has(select) {
+                    @apply p-0;
+                }
+                select {
+                    @apply py-1 px-2;
                 }
 
                 &.primary {
@@ -252,7 +260,7 @@
             }
 
             .n-input-field-label {
-                @apply text-sm font-semibold leading-none;
+                @apply text-sm font-semibold;
             }
             .n-input-field-message {
                 @apply text-sm;

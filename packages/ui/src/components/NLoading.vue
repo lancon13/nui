@@ -52,7 +52,9 @@
 
     @layer components {
         .n-loading-overlay {
-            @apply absolute inset-0  flex items-center justify-center z-10 bg-bg-invert/50 text-text-invert;
+            @apply absolute inset-0  
+                flex items-center justify-center z-10 
+                bg-bg-invert/50 text-text-invert;
         }
     }
 </style>
