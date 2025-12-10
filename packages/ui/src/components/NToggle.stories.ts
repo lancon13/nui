@@ -34,7 +34,7 @@ export const Default: Story = {
                 <NToggle v-bind="args" label="Members Agreement" v-model="value" >
                     I agree with the terms and conditions.
                     <NTooltip>Tooltip</NTooltip>
-                </NToggle>'
+                </NToggle>
             </div>
         `
     })

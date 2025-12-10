@@ -50,9 +50,7 @@
     defineOptions({ inheritAttrs: false })
     const model = defineModel<string | number>()
     const attrs = useAttrs()
-    const inputId = computed(
-        () => (attrs.id as string) || `nui-input-${Math.random().toString(36).slice(2)}`
-    )
+    const inputId = computed(() => (attrs.id as string) || `nui-input-${Math.random().toString(36).slice(2)}`)
 
     export type NuiInputSize = 'small' | 'medium' | 'large'
     export type NuiInputColor = 'primary' | 'success' | 'error' | 'warning' | 'info' | 'current'
@@ -123,7 +121,7 @@
                     py-[var(--nui-input-padding-y)] px-[var(--nui-input-padding-x)]
                     rounded-[var(--nui-input-radius)]
                     border-[length:var(--nui-input-border-size)] border-[var(--nui-input-border-color)]
-                    transition-all duration-250 ease-in-out;
+                    transition-all duration-200 ease-in-out;
 
                 /* Focus */
                 &:has(.nui-input:focus) {

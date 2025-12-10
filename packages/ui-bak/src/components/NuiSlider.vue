@@ -6,12 +6,7 @@
         @mouseout="handlerSliderMouseOut"
     >
         <label v-if="props.label" :for="inputId" class="nui-slider-label">{{ props.label }}</label>
-        <label
-            ref="sliderRef"
-            :for="inputId"
-            class="nui-slider-host"
-            @mousedown.stop="handleSliderMouseDown"
-        >
+        <label ref="sliderRef" :for="inputId" class="nui-slider-host" @mousedown.stop="handleSliderMouseDown">
             <div class="nui-slider-track">
                 <div v-if="props.markers" class="nui-slider-markers">
                     <span
@@ -42,9 +37,7 @@
                         :step="props.step"
                         :value="model[0]"
                         aria-label="Minimum value"
-                        @input="
-                            model = [Number(($event.target as HTMLInputElement).value), model[1]]
-                        "
+                        @input="model = [Number(($event.target as HTMLInputElement).value), model[1]]"
                         @focus="() => (isThumbFocusing = true)"
                         @blur="() => (isThumbFocusing = false)"
                     />
@@ -63,16 +56,8 @@
                         @focus="() => (isThumbFocusing = true)"
                         @blur="() => (isThumbFocusing = false)"
                     />
-                    <nui-tooltip
-                        v-if="props.tooltipVisibility !== false"
-                        v-bind="mergedTooltipPropsMin"
-                    >
-                        <slot
-                            v-if="$slots['tooltip-content']"
-                            name="tooltip-content"
-                            :value="minVal"
-                            thumb="min"
-                        />
+                    <nui-tooltip v-if="props.tooltipVisibility !== false" v-bind="mergedTooltipPropsMin">
+                        <slot v-if="$slots['tooltip-content']" name="tooltip-content" :value="minVal" thumb="min" />
                     </nui-tooltip>
                 </label>
                 <!-- Max Thumb -->
@@ -95,22 +80,12 @@
                         :step="props.step"
                         :value="model[1]"
                         aria-label="Maximum value"
-                        @input="
-                            model = [model[0], Number(($event.target as HTMLInputElement).value)]
-                        "
+                        @input="model = [model[0], Number(($event.target as HTMLInputElement).value)]"
                         @focus="() => (isThumbFocusing = true)"
                         @blur="() => (isThumbFocusing = false)"
                     />
-                    <nui-tooltip
-                        v-if="props.tooltipVisibility !== false"
-                        v-bind="mergedTooltipPropsMax"
-                    >
-                        <slot
-                            v-if="$slots['tooltip-content']"
-                            name="tooltip-content"
-                            :value="maxVal"
-                            thumb="max"
-                        />
+                    <nui-tooltip v-if="props.tooltipVisibility !== false" v-bind="mergedTooltipPropsMax">
+                        <slot v-if="$slots['tooltip-content']" name="tooltip-content" :value="maxVal" thumb="max" />
                     </nui-tooltip>
                 </label>
             </div>
@@ -166,9 +141,7 @@
 
     const model = defineModel<number | number[]>()
     const attrs = useAttrs()
-    const inputId = computed(
-        () => (attrs.id as string) || `nui-slider-${Math.random().toString(36).slice(2)}`
-    )
+    const inputId = computed(() => (attrs.id as string) || `nui-slider-${Math.random().toString(36).slice(2)}`)
 
     const isRange = computed(() => Array.isArray(model.value))
     const isTooltipVisible = computed(() => isWrapperHovering.value || isThumbFocusing.value)
@@ -193,21 +166,15 @@
         return ((clampedVal - props.min) / range) * 100
     }
 
-    const minVal = computed(() =>
-        isRange.value ? (model.value as number[])[0] : (model.value as number)
-    )
-    const maxVal = computed(() =>
-        isRange.value && Array.isArray(model.value) ? model.value[1] : 0
-    )
+    const minVal = computed(() => (isRange.value ? (model.value as number[])[0] : (model.value as number)))
+    const maxVal = computed(() => (isRange.value && Array.isArray(model.value) ? model.value[1] : 0))
 
     const mergedTooltipPropsMin = computed<NuiTooltipProps>(() => ({
         text: `${minVal.value}`,
         displayPosition: 'top',
         hoverTriggerParent: null,
         focusTriggerParent: null,
-        modelValue:
-            props.tooltipVisibility === true ||
-            (props.tooltipVisibility !== false && isTooltipVisible.value),
+        modelValue: props.tooltipVisibility === true || (props.tooltipVisibility !== false && isTooltipVisible.value),
         ...props.tooltipProps
     }))
 
@@ -216,9 +183,7 @@
         displayPosition: 'top',
         hoverTriggerParent: null,
         focusTriggerParent: null,
-        modelValue:
-            props.tooltipVisibility === true ||
-            (props.tooltipVisibility !== false && isTooltipVisible.value),
+        modelValue: props.tooltipVisibility === true || (props.tooltipVisibility !== false && isTooltipVisible.value),
         ...props.tooltipProps
     }))
 
@@ -420,7 +385,7 @@
                 size-[var(--nui-slider-thumb-size)] rounded-[var(--nui-slider-thumb-radius)]
                 bg-[var(--nui-slider-thumb-background-color)]
                 z-10
-                transition-[left] duration-250 ease-in-out
+                transition-[left] duration-200 ease-in-out
                 cursor-pointer;
 
                 &:focus-within {

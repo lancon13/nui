@@ -44,13 +44,7 @@
 <script setup lang="ts">
     import { computed, type CSSProperties } from 'vue'
 
-    export type NuiCircularProgressColor =
-        | 'primary'
-        | 'success'
-        | 'error'
-        | 'warning'
-        | 'info'
-        | 'current'
+    export type NuiCircularProgressColor = 'primary' | 'success' | 'error' | 'warning' | 'info' | 'current'
     export type NuiCircularProgressSize = 'small' | 'medium' | 'large'
 
     export interface NuiCircularProgressProps {
@@ -139,7 +133,7 @@
             }
 
             .nui-circular-progress-bar {
-                @apply transition-all duration-250 ease-out stroke-current;
+                @apply transition-all duration-200 ease-out stroke-current;
             }
 
             .nui-circular-progress-track,

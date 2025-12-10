@@ -1,12 +1,12 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite'
 import { ref } from 'vue'
 // import { fn } from '@storybook/test'
-import NCheckbox from './NCheckbox.vue'
+import NRadio from './NRadio.vue'
 import NTooltip from './NTooltip.vue'
 
 const meta = {
-    title: 'UI/NCheckbox',
-    component: NCheckbox,
+    title: 'UI/NRadio',
+    component: NRadio,
     parameters: {
         layout: 'centered'
     },
@@ -22,7 +22,7 @@ type Story = StoryObj<typeof meta>
 export const Default: Story = {
     args: {},
     render: args => ({
-        components: { NCheckbox, NTooltip },
+        components: { NRadio, NTooltip },
         setup() {
             const value = ref<boolean | null>(null)
             return { args, value }
@@ -31,10 +31,14 @@ export const Default: Story = {
             <div class="flex flex-col gap-2">
                 <div>Value: {{value}}</div>
                 <div></div>
-                <NCheckbox v-bind="args" label="Members Agreement" v-model="value" >
+                <NRadio v-bind="args" label="Members Agreement" v-model="value" value="v1" >
                     I agree with the terms and conditions.
                     <NTooltip>Tooltip</NTooltip>
-                </NCheckbox>
+                </NRadio>
+                <NRadio v-bind="args" label="Members Agreement" v-model="value" value="v2" >
+                    I agree with the terms and conditions.
+                    <NTooltip>Tooltip</NTooltip>
+                </NRadio>
             </div>
         `
     })

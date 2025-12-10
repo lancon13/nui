@@ -81,11 +81,11 @@
         appendIconClass?: string | object | string[]
         inputClass?: string | string[] | object
         message?: string
-        uncheckedIcon: string
+        uncheckedIcon?: string
         uncheckedIconClass?: string | object | string[]
-        checkedIcon: string
+        checkedIcon?: string
         checkedIconClass?: string | object | string[]
-        indeterminateIcon: string
+        indeterminateIcon?: string
         indeterminateIconClass?: string | object | string[]
     }
 

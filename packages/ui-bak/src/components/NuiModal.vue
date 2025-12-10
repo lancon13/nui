@@ -51,10 +51,7 @@
     const modalContentRef = ref<HTMLElement | null>(null)
     let trap: FocusTrap | null = null
 
-    const compClasses = computed(() => [
-        'nui-modal',
-        model.value ? 'nui-modal--status-show' : 'nui-modal--status-hide'
-    ])
+    const compClasses = computed(() => ['nui-modal', model.value ? 'nui-modal--status-show' : 'nui-modal--status-hide'])
 
     const compStyles = computed(() => ({
         zIndex: `calc(var(--nui-modal-z-index) + ${props.level})`
@@ -140,7 +137,7 @@
             /* Overlay Fade Transition */
             .nui-modal-fade-enter-active,
             .nui-modal-fade-leave-active {
-                @apply transition-opacity duration-250 ease-in-out;
+                @apply transition-opacity duration-200 ease-in-out;
             }
 
             .nui-modal-fade-enter-from,
@@ -151,7 +148,7 @@
             /* Content Scale/Slide Transition */
             .nui-modal-content-scale-enter-active,
             .nui-modal-content-scale-leave-active {
-                @apply transition-all duration-250 ease-in-out;
+                @apply transition-all duration-200 ease-in-out;
             }
 
             .nui-modal-content-scale-enter-from,

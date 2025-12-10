@@ -178,10 +178,7 @@
         element.removeEventListener('blur', handleParentFocusOut)
     }
 
-    const getElement = (
-        selector: HTMLElement | string | null,
-        parent: HTMLElement | null
-    ): HTMLElement | null => {
+    const getElement = (selector: HTMLElement | string | null, parent: HTMLElement | null): HTMLElement | null => {
         if (typeof selector === 'string') {
             return document.querySelector(selector)
         }
@@ -232,18 +229,9 @@
         }
     }
 
-    watch(
-        () => [
-            props.attachParent,
-            props.hoverTriggerParent,
-            props.focusTriggerParent,
-            placeholderRef.value
-        ],
-        setup,
-        {
-            flush: 'post'
-        }
-    )
+    watch(() => [props.attachParent, props.hoverTriggerParent, props.focusTriggerParent, placeholderRef.value], setup, {
+        flush: 'post'
+    })
 
     onUnmounted(() => {
         if (hoverTriggerTarget.value) {
@@ -301,7 +289,7 @@
                 font-normal
                 whitespace-nowrap
                 opacity-0
-                transition-[opacity,translate] duration-250 ease-in-out;
+                transition-[opacity,translate] duration-200 ease-in-out;
 
             &.nui-tooltip--visible {
                 @apply opacity-100;

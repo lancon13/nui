@@ -142,7 +142,7 @@
                 rounded-[var(--nui-button-radius)]
                 border-[length:var(--nui-button-border-size)]
                 cursor-pointer
-                transition-all duration-250 ease-in-out
+                transition-all duration-200 ease-in-out
                 hover:opacity-75
                 disabled:cursor-not-allowed;
 

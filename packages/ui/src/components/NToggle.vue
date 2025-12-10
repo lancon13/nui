@@ -200,7 +200,7 @@
                     /* Default "Off" State: Gray rounded pill */
                     @apply w-8 h-4 rounded-full
                            bg-input 
-                           transition-colors duration-250 ease-in-out
+                           transition-colors duration-200 ease-in-out
                            flex items-center;
 
                     /* Focus ring (applied to track when input has focus) */
@@ -211,7 +211,7 @@
                 .n-toggle-thumb {
                     /* White circle inside the track */
                     @apply h-full aspect-square bg-white rounded-full shadow;
-                    @apply transform transition-transform duration-250 ease-in-out
+                    @apply transform transition-transform duration-200 ease-in-out
                            flex items-center justify-center;
 
                     /* Icon handling inside thumb */

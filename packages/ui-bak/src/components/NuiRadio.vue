@@ -38,9 +38,7 @@
     defineOptions({ inheritAttrs: false })
     const model = defineModel<string | number | boolean | Record<string, any>>()
     const attrs = useAttrs()
-    const inputId = computed(
-        () => (attrs.id as string) || `nui-radio-${Math.random().toString(36).slice(2)}`
-    )
+    const inputId = computed(() => (attrs.id as string) || `nui-radio-${Math.random().toString(36).slice(2)}`)
 
     export type NuiRadioSize = 'small' | 'medium' | 'large'
     export type NuiRadioColor = 'primary' | 'success' | 'error' | 'warning' | 'info' | 'current'
@@ -123,7 +121,7 @@
                     rounded-[var(--nui-radio-radius)]
                     border-[length:var(--nui-radio-border-size)] border-[var(--nui-radio-border-color)]
                     hover:opacity-70
-                    transition-all duration-250 ease-in-out;
+                    transition-all duration-200 ease-in-out;
             }
 
             .nui-radio-dot {

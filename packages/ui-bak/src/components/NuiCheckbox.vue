@@ -39,9 +39,7 @@
     defineOptions({ inheritAttrs: false })
     const model = defineModel<boolean | null>()
     const attrs = useAttrs()
-    const inputId = computed(
-        () => (attrs.id as string) || `nui-checkbox-${Math.random().toString(36).slice(2)}`
-    )
+    const inputId = computed(() => (attrs.id as string) || `nui-checkbox-${Math.random().toString(36).slice(2)}`)
 
     export type NuiCheckboxSize = 'small' | 'medium' | 'large'
     export type NuiCheckboxColor = 'primary' | 'success' | 'error' | 'warning' | 'info' | 'current'
@@ -129,7 +127,7 @@
                     rounded-[var(--nui-checkbox-radius)]
                     border-[length:var(--nui-checkbox-border-size)] border-[var(--nui-checkbox-border-color)]
                     hover:opacity-70
-                    transition-all duration-250 ease-in-out;
+                    transition-all duration-200 ease-in-out;
             }
 
             /* Icons are hidden by default */

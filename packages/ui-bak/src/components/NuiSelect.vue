@@ -35,10 +35,7 @@
                 <select
                     :id="inputId"
                     v-model="model"
-                    :class="[
-                        'nui-select-native',
-                        { 'nui-select-native--multiple': props.multiple }
-                    ]"
+                    :class="['nui-select-native', { 'nui-select-native--multiple': props.multiple }]"
                     :name="props.name"
                     :multiple="props.multiple"
                     :disabled="props.disabled || props.loading"
@@ -56,9 +53,7 @@
                         :key="option.value"
                         :value="option.value"
                         :selected="
-                            Array.isArray(modelValue)
-                                ? modelValue.includes(option.value)
-                                : option.value === modelValue
+                            Array.isArray(modelValue) ? modelValue.includes(option.value) : option.value === modelValue
                         "
                     >
                         {{ option.label }}
@@ -77,10 +72,7 @@
                     <slot name="append" />
                 </div>
 
-                <div
-                    v-if="props.disabled || props.loading"
-                    class="absolute inset-0 z-10 cursor-not-allowed"
-                />
+                <div v-if="props.disabled || props.loading" class="absolute inset-0 z-10 cursor-not-allowed" />
             </div>
 
             <div v-if="$slots.after" class="nui-select-after">
@@ -106,11 +98,7 @@
                                 :class="{ 'nui-list-item--active': isSelected(option.value) }"
                                 @click="() => select(option.value)"
                             >
-                                <slot
-                                    name="item"
-                                    :option="option"
-                                    :selected="isSelected(option.value)"
-                                >
+                                <slot name="item" :option="option" :selected="isSelected(option.value)">
                                     {{ option.label }}
                                 </slot>
                             </nui-list-item>
@@ -138,9 +126,7 @@
     defineOptions({ inheritAttrs: false })
     const model = defineModel<string | string[]>()
     const attrs = useAttrs()
-    const inputId = computed(
-        () => (attrs.id as string) || `nui-select-${Math.random().toString(36).slice(2)}`
-    )
+    const inputId = computed(() => (attrs.id as string) || `nui-select-${Math.random().toString(36).slice(2)}`)
 
     export interface NuiSelectOption {
         label: string
@@ -269,7 +255,7 @@
                 py-[var(--nui-input-padding-y)] px-[var(--nui-input-padding-x)]
                 rounded-[var(--nui-input-radius)]
                 border-[length:var(--nui-input-border-size)] border-[var(--nui-input-border-color)]
-                transition-all duration-250 ease-in-out;
+                transition-all duration-200 ease-in-out;
 
                 &.nui-select-outer--active,
                 &:has(.nui-select-native:focus) {
@@ -289,7 +275,7 @@
                 }
 
                 .nui-select-icon {
-                    @apply transition-transform duration-250 ease-in-out;
+                    @apply transition-transform duration-200 ease-in-out;
                 }
                 &.nui-select-outer--active .nui-select-icon {
                     @apply rotate-180;

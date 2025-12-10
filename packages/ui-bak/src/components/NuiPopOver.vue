@@ -1,13 +1,7 @@
 <template>
     <div ref="placeholderRef" class="hidden" />
     <teleport :to="teleportTarget">
-        <div
-            v-if="model || isVisible"
-            ref="contentRef"
-            :class="contentClasses"
-            :style="floatingStyles"
-            v-bind="attrs"
-        >
+        <div v-if="model || isVisible" ref="contentRef" :class="contentClasses" :style="floatingStyles" v-bind="attrs">
             <slot />
         </div>
     </teleport>
@@ -55,8 +49,7 @@
 
     const teleportTarget = computed(() => {
         if (props.nested) {
-            const triggerEl =
-                positionTarget.value || clickTrigger.value || placeholderRef.value?.parentElement
+            const triggerEl = positionTarget.value || clickTrigger.value || placeholderRef.value?.parentElement
             return triggerEl?.parentElement || 'body'
         }
         return 'body'
@@ -133,8 +126,7 @@
         // Determine position target
         let posTarget: HTMLElement | null = null
         if (props.attachParent)
-            if (typeof props.attachParent === 'string')
-                posTarget = document.querySelector(props.attachParent)
+            if (typeof props.attachParent === 'string') posTarget = document.querySelector(props.attachParent)
             else posTarget = props.attachParent
         else if (placeholderRef.value) posTarget = placeholderRef.value.parentElement
         positionTarget.value = posTarget
@@ -142,8 +134,7 @@
         // Determine click trigger
         let trig: HTMLElement | null = null
         if (props.triggerParent)
-            if (typeof props.triggerParent === 'string')
-                trig = document.querySelector(props.triggerParent)
+            if (typeof props.triggerParent === 'string') trig = document.querySelector(props.triggerParent)
             else trig = props.triggerParent
         else if (placeholderRef.value) trig = placeholderRef.value.parentElement
         clickTrigger.value = trig
@@ -185,7 +176,7 @@
     @layer components {
         .nui-popover-content {
             @apply z-[var(--nui-popover-z-index)] 
-                duration-250 ease-in-out transition-[opacity,translate]
+                duration-200 ease-in-out transition-[opacity,translate]
                 opacity-0;
 
             /* Visible */

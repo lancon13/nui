@@ -70,7 +70,7 @@
     @layer components {
         .nui-card {
             @apply flex flex-col bg-[var(--nui-card-background-color)] rounded-[var(--nui-card-radius)] overflow-hidden
-            transition-all duration-250 ease-in-out;
+            transition-all duration-200 ease-in-out;
 
             &.nui-card--shadow {
                 @apply shadow-[var(--nui-card-shadow)];

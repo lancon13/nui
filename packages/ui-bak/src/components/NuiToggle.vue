@@ -44,9 +44,7 @@
     defineOptions({ inheritAttrs: false })
     const model = defineModel<boolean | null>()
     const attrs = useAttrs()
-    const inputId = computed(
-        () => (attrs.id as string) || `nui-toggle-${Math.random().toString(36).slice(2)}`
-    )
+    const inputId = computed(() => (attrs.id as string) || `nui-toggle-${Math.random().toString(36).slice(2)}`)
 
     export type NuiToggleSize = 'small' | 'medium' | 'large'
     export type NuiToggleColor = 'primary' | 'success' | 'error' | 'warning' | 'info' | 'current'
@@ -119,7 +117,7 @@
                     rounded-[var(--nui-toggle-radius)]
                     border-[length:var(--nui-toggle-border-size)] border-[var(--nui-toggle-border-color)]
                     hover:opacity-70
-                    transition-all duration-250 ease-in-out;
+                    transition-all duration-200 ease-in-out;
             }
 
             /* On/Off content slots */
@@ -140,7 +138,7 @@
                     bg-[var(--nui-toggle-thumb-background-color)]
                     rounded-[var(--nui-toggle-radius)]
                     translate-x-[var(--nui-toggle-thumb-translate-x-start)]
-                    transition-all duration-250 ease-in-out;
+                    transition-all duration-200 ease-in-out;
             }
 
             /* --- States --- */
