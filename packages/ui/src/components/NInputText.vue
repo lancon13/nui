@@ -1,42 +1,43 @@
 <template>
-    <forward-slots :slots="$slots">
-        <n-input-field :class="compClasses" v-bind="compBind">
-            <template #="{ inputId, onUpdateModelValue, formattedModelValue, modifiers, onInput, onChange, format }">
-                <input
-                    :id="inputId"
-                    :name="props.name"
-                    :type="props.type"
-                    :class="props.inputClass"
-                    :value="formattedModelValue"
-                    @input="
-                        async (e: InputEvent) => {
-                            onInput(e)
-                            if (modifiers['input']) {
-                                const input = e.target as HTMLInputElement
-                                onUpdateModelValue(input.value)
-                                input.value = formattedModelValue
-                            }
+    <n-input-field :class="compClasses" v-bind="compBind">
+        <template v-for="(index, name) in otherSlots" #[name]="data">
+            <slot :name="name" v-bind="data" />
+        </template>
+        <template #="{ inputId, onUpdateModelValue, formattedModelValue, modifiers, onInput, onChange, format }">
+            <input
+                :id="inputId"
+                :name="props.name"
+                :type="props.type"
+                :class="props.inputClass"
+                :value="formattedModelValue"
+                @input="
+                    async (e: InputEvent) => {
+                        onInput(e)
+                        if (modifiers['input']) {
+                            const input = e.target as HTMLInputElement
+                            onUpdateModelValue(input.value)
+                            input.value = formattedModelValue
                         }
-                    "
-                    @change="
-                        (e: Event) => {
-                            onChange(e)
-                            if (modifiers['change'] || !modifiers['input']) {
-                                const input = e.target as HTMLInputElement
-                                onUpdateModelValue(input.value)
-                                input.value = formattedModelValue
-                            }
+                    }
+                "
+                @change="
+                    (e: Event) => {
+                        onChange(e)
+                        if (modifiers['change'] || !modifiers['input']) {
+                            const input = e.target as HTMLInputElement
+                            onUpdateModelValue(input.value)
+                            input.value = formattedModelValue
                         }
-                    "
-                />
-            </template>
-        </n-input-field>
-    </forward-slots>
+                    }
+                "
+            />
+        </template>
+    </n-input-field>
 </template>
 
 <script setup lang="ts">
-    import { computed, HTMLAttributes, useAttrs } from 'vue'
-    import { ForwardSlots } from 'vue-forward-slots'
+    import { omit } from 'es-toolkit/object'
+    import { computed, HTMLAttributes, useAttrs, useSlots } from 'vue'
     import NInputField, { NInputFieldProps } from './NInputField.vue'
 
     export type NInputTextProps = Partial</* @vue-ignore */ HTMLAttributes> &
@@ -49,11 +50,13 @@
         inheritAttrs: false
     })
 
+    const slots = useSlots()
     const attrs = useAttrs()
     const props = withDefaults(defineProps<NInputTextProps>(), {
         type: 'text'
     })
 
+    const otherSlots = computed(() => omit(slots, ['default']))
     const compClasses = computed(() => {
         return ['n-input-text']
     })

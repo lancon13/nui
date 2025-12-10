@@ -12,43 +12,40 @@
             <slot name="top"></slot>
 
             <component :is="props.tag" :class="compClasses" v-bind="compBind">
-                <slot name="loading">
-                    <transition name="n-loading-overlay">
-                        <n-loading
-                            v-if="props.loading"
-                            :overlay="true"
-                            :type="props.loadingType"
-                            :class="props.loadingClass"
-                        />
-                    </transition>
-                </slot>
-
                 <slot name="prepend"></slot>
                 <n-icon
                     v-if="props.prependIcon || props.icon"
                     :name="(props.prependIcon || props.icon) as string"
-                    :class="[
-                        ...(props.iconClass
-                            ? ['string', 'object'].includes(typeof props.iconClass)
-                                ? [props.iconClass]
-                                : (props.iconClass as string[])
-                            : []),
-                        ...(props.prependIconClass
-                            ? ['string', 'object'].includes(typeof props.prependIconClass)
-                                ? [props.prependIconClass]
-                                : (props.prependIconClass as string[])
-                            : [])
-                    ]"
+                    :class="iconClasses"
                 />
 
-                <slot name="default" v-bind="exportedProps">
-                    <input :id="inputId.description" v-model="model" type="text" />
-                </slot>
+                <input
+                    :id="inputId.description"
+                    v-model="model"
+                    :name="props.name"
+                    type="checkbox"
+                    class="peer"
+                    :class="props.inputClass"
+                    :indeterminate.prop="model === null"
+                />
+                <div class="n-checkbox-display">
+                    <n-icon
+                        :name="props.uncheckedIcon"
+                        :class="['n-checkbox-display-unchecked', props.uncheckedIconClass]"
+                    />
+                    <n-icon :name="props.checkedIcon" :class="['n-checkbox-display-checked', props.checkedIconClass]" />
+                    <n-icon
+                        :name="props.indeterminateIcon"
+                        :class="['n-checkbox-display-indeterminate', , props.indeterminateIconClass]"
+                    />
+                </div>
+
+                <slot name="default" v-bind="exportedProps"></slot>
 
                 <n-icon v-if="props.appendIcon" :name="props.appendIcon" :class="props.appendIconClass" />
                 <slot name="append"></slot>
 
-                <div v-if="$slots['overlay']" class="n-input-field-overlay">
+                <div v-if="$slots['overlay']" class="n-checkbox-overlay">
                     <slot name="overlay"></slot>
                 </div>
             </component>
@@ -56,7 +53,7 @@
             <slot name="dropdown"></slot>
             <slot name="bottom"></slot>
 
-            <div v-if="props.message" class="n-input-field-message">{{ props.message }}</div>
+            <div v-if="props.message" class="n-checkbox-message">{{ props.message }}</div>
         </div>
 
         <template v-for="(node, index) in slotAfterNodes" :key="index">
@@ -68,12 +65,11 @@
 <script setup lang="ts">
     /* eslint-disable no-unused-vars */
     import { computed, HTMLAttributes, useAttrs, useSlots } from 'vue'
-    import { wrapTextNode } from '../helpers/dom'
+    import { resolveClassProp, wrapTextNode } from '../helpers/dom'
     import { generatePseudoRandomKey } from '../helpers/tools'
     import NIcon from './NIcon.vue'
-    import NLoading from './NLoading.vue'
 
-    export type NInputFieldProps = Partial</* @vue-ignore */ HTMLAttributes> & {
+    export type NCheckboxProps = Partial</* @vue-ignore */ HTMLAttributes> & {
         tag?: string
         name?: string
         label?: string
@@ -83,12 +79,14 @@
         prependIconClass?: string | object | string[]
         appendIcon?: string
         appendIconClass?: string | object | string[]
+        inputClass?: string | string[] | object
         message?: string
-        loading?: boolean
-        loadingType?: string
-        loadingClass?: string | string[] | object
-        format?: (value: string) => string
-        parse?: (value: string) => string
+        uncheckedIcon: string
+        uncheckedIconClass?: string | object | string[]
+        checkedIcon: string
+        checkedIconClass?: string | object | string[]
+        indeterminateIcon: string
+        indeterminateIconClass?: string | object | string[]
     }
 
     defineOptions({
@@ -97,16 +95,18 @@
 
     const slots = useSlots()
     const attrs = useAttrs()
-    const props = withDefaults(defineProps<NInputFieldProps>(), {
-        tag: 'div',
+    const props = withDefaults(defineProps<NCheckboxProps>(), {
+        tag: 'label',
         name: '',
-        label: ''
+        label: '',
+        uncheckedIcon: 'undefined',
+        checkedIcon: 'check-bold',
+        indeterminateIcon: 'minus'
     })
 
-    const [model, modifiers] = defineModel<string>({ default: '' })
+    const [model, modifiers] = defineModel<boolean | null>({ default: null })
     const emits = defineEmits<{
-        (event: 'update:modelValue', value: string): void
-        (event: 'input', e: InputEvent): void
+        (event: 'update:modelValue', value: boolean | null): void
         (event: 'change', e: Event): void
         (event: 'blur', e: FocusEvent): void
         (event: 'focus', e: FocusEvent): void
@@ -123,41 +123,38 @@
     }>()
     const inputId = Symbol(`input-id-${generatePseudoRandomKey()}`)
 
-    const formattedModelValue = computed(() => {
-        return typeof props.format === 'function' ? props.format(model.value) : model.value
-    })
     const compClasses = computed(() => {
-        return ['n-input-field']
+        return ['n-checkbox']
     })
     const compBind = computed(() => {
+        // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+        const { ...rest } = { ...attrs, ...props }
         return {
-            ...attrs
+            ...rest
         }
     })
     const containerClasses = computed(() => {
-        return ['n-input-field-container']
+        return ['n-checkbox-container']
     })
     const wrapperClasses = computed(() => {
-        return ['n-input-field-wrapper', props.loading ? 'n-input-field--loading' : '']
+        return ['n-checkbox-wrapper']
     })
     const labelClasses = computed(() => {
-        return ['n-input-field-label']
+        return ['n-checkbox-label']
     })
+    const iconClasses = computed(() => resolveClassProp(props.iconClass, props.prependIconClass))
+
     const exportedProps = computed(() => {
         return {
             ...props,
             modifiers,
             inputId: inputId.description,
             modelValue: model.value,
-            formattedModelValue: formattedModelValue.value,
-            onUpdateModelValue: (value: string) => {
-                emits('update:modelValue', typeof props.parse === 'function' ? props.parse(value) : value)
+            onUpdateModelValue: (value: boolean | null) => {
+                emits('update:modelValue', value)
             },
             onChange: (e: Event) => {
                 emits('change', e)
-            },
-            onInput: (e: InputEvent) => {
-                emits('input', e)
             },
             onFocus: (e: FocusEvent) => {
                 emits('focus', e)
@@ -211,21 +208,18 @@
     @reference '../styles/index.css';
 
     @layer components {
-        .n-input-field-wrapper {
+        .n-checkbox-wrapper {
             @apply inline-flex flex-row items-center gap-2 grow;
 
-            .n-input-field-container {
+            .n-checkbox-container {
                 @apply flex flex-col flex-1;
             }
 
-            .n-input-field {
+            .n-checkbox {
                 @apply relative
                     flex-1
                     flex flex-row items-center gap-2
-                    border-2 border-transparent
-                    rounded-element
-                    bg-input;
-                @apply has-[:focus-visible]:outline-0 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-focus has-[:focus-visible]:z-20;
+                    cursor-pointer;
 
                 & > .n-icon:first-child {
                     @apply ml-2;
@@ -234,14 +228,33 @@
                     @apply mr-2;
                 }
 
-                input,
-                select,
-                textarea {
-                    @apply appearance-none
-                    focus:outline-0 focus:ring-0
-                    py-1 px-2
-                    box-border
-                    w-full;
+                .n-checkbox-display {
+                    @apply inline-flex items-center justify-center shrink-0
+                        bg-input
+                        border-2 border-transparent
+                        rounded-element;
+                    @apply peer-focus:outline-0 peer-focus:ring-2 peer-focus:ring-focus peer-focus:z-20;
+
+                    .n-checkbox-display-unchecked,
+                    .n-checkbox-display-checked,
+                    .n-checkbox-display-indeterminate {
+                        @apply hidden;
+                    }
+                }
+                input[type='checkbox'] {
+                    @apply appearance-none;
+                    @apply sr-only;
+                    @apply w-full h-full;
+
+                    &:not(:checked):not(:indeterminate) ~ .n-checkbox-display .n-checkbox-display-unchecked {
+                        @apply block;
+                    }
+                    &:checked ~ .n-checkbox-display .n-checkbox-display-checked {
+                        @apply block;
+                    }
+                    &:indeterminate ~ .n-checkbox-display .n-checkbox-display-indeterminate {
+                        @apply block;
+                    }
                 }
 
                 &.primary {
@@ -261,29 +274,29 @@
                 }
             }
 
-            .n-input-field-label {
+            .n-checkbox-label {
                 @apply text-sm font-semibold;
             }
-            .n-input-field-message {
+            .n-checkbox-message {
                 @apply text-sm;
             }
-            .n-input-field-overlay {
+            .n-checkbox-overlay {
                 @apply absolute inset-0;
             }
 
-            :has(.n-input-field.primary) {
+            :has(.n-checkbox.primary) {
                 @apply text-primary;
             }
-            :has(.n-input-field.success) {
+            :has(.n-checkbox.success) {
                 @apply text-success;
             }
-            :has(.n-input-field.error) {
+            :has(.n-checkbox.error) {
                 @apply text-error;
             }
-            :has(.n-input-field.warning) {
+            :has(.n-checkbox.warning) {
                 @apply text-warning;
             }
-            :has(.n-input-field.info) {
+            :has(.n-checkbox.info) {
                 @apply text-info;
             }
 

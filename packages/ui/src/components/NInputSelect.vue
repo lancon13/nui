@@ -52,6 +52,8 @@
             dropdownIcon?: string
             dropdownIconClass?: string | object | string[]
             options?: NInputSelectOption[] | NInputSelectOptionGroup[]
+            formatOption?: (value: string) => string
+            formatOptGroup?: (value: string) => string
         }
 
     defineOptions({
@@ -71,7 +73,10 @@
     })
     const compBind = computed(() => {
         // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
-        const { inputClass, dropdownIcon, dropdownIconClass, ...rest } = { ...attrs, ...props }
+        const { inputClass, dropdownIcon, dropdownIconClass, formatOption, formatOptGroup, ...rest } = {
+            ...attrs,
+            ...props
+        }
         return {
             ...rest
         }
@@ -84,12 +89,35 @@
                 const children =
                     groupOptions?.map(childOption => {
                         const { label: childLabel, value, ...restChild } = childOption
-                        return h('option', { ...restChild, value }, childLabel)
+                        return h(
+                            'option',
+                            {
+                                ...restChild,
+                                value,
+                                label: typeof props.formatOption === 'function' ? props.formatOption(label) : label
+                            },
+                            childLabel
+                        )
                     }) ?? []
-                return h('optgroup', { ...restGroup, label }, children)
+                return h(
+                    'optgroup',
+                    {
+                        ...restGroup,
+                        label: typeof props.formatOptGroup === 'function' ? props.formatOptGroup(label) : label
+                    },
+                    children
+                )
             } else {
                 const { label, value, ...rest } = option as NInputSelectOption
-                return h('option', { ...rest, value }, label)
+                return h(
+                    'option',
+                    {
+                        ...rest,
+                        value,
+                        label: typeof props.formatOption === 'function' ? props.formatOption(label) : label
+                    },
+                    label
+                )
             }
         })
     }

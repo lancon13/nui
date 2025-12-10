@@ -146,3 +146,27 @@ export function wrapTextNode(
         return node
     })
 }
+
+// helpers/classes.ts
+
+/**
+ * Normalizes Vue class props (string, array, object) into a single flat array.
+ * Useful for merging multiple class props (like iconClass + prependIconClass).
+ */
+export function resolveClassProp(...args: (string | object | string[] | undefined | null)[]) {
+    const classes: any[] = []
+
+    args.forEach(cls => {
+        if (!cls) return
+
+        if (typeof cls === 'string') {
+            classes.push(cls)
+        } else if (Array.isArray(cls)) {
+            classes.push(...cls)
+        } else if (typeof cls === 'object') {
+            classes.push(cls)
+        }
+    })
+
+    return classes
+}
