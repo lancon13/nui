@@ -7,14 +7,19 @@
             <select
                 :id="inputId"
                 :name="props.name"
-                :value="formattedModelValue"
+                :value="getSelectValue(formattedModelValue)"
+                :multiple="props.multiple"
                 :class="['peer', props.inputClass]"
                 @change="
                     (e: Event) => {
                         onChange(e)
-                        const input = e.target as HTMLInputElement
-                        onUpdateModelValue(input.value)
-                        input.value = formattedModelValue
+                        const target = e.target as HTMLSelectElement
+                        if (props.multiple) {
+                            const values = Array.from(target.selectedOptions).map(o => o.value)
+                            onUpdateModelValue(JSON.stringify(values))
+                        } else {
+                            onUpdateModelValue(target.value)
+                        }
                     }
                 "
             >
@@ -49,6 +54,7 @@
     export type NInputSelectProps = Partial</* @vue-ignore */ HTMLAttributes> &
         NInputFieldProps & {
             inputClass?: string | string[] | object
+            multiple?: boolean
             dropdownIcon?: string
             dropdownIconClass?: string | object | string[]
             options?: NInputSelectOption[] | NInputSelectOptionGroup[]
@@ -63,9 +69,25 @@
     const slots = useSlots()
     const attrs = useAttrs()
     const props = withDefaults(defineProps<NInputSelectProps>(), {
+        multiple: false,
         dropdownIcon: 'menu-down',
         dropdownIconClass: 'text-xl animate-dropdown'
     })
+
+    const getSelectValue = (modelValue: any) => {
+        if (props.multiple) {
+            if (!modelValue) {
+                return []
+            }
+            try {
+                const parsed = JSON.parse(modelValue)
+                return Array.isArray(parsed) ? parsed : []
+            } catch (e) {
+                return []
+            }
+        }
+        return modelValue
+    }
 
     const otherSlots = computed(() => omit(slots, ['default', 'append']))
     const compClasses = computed(() => {
@@ -73,7 +95,7 @@
     })
     const compBind = computed(() => {
         // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
-        const { inputClass, dropdownIcon, dropdownIconClass, formatOption, formatOptGroup, ...rest } = {
+        const { inputClass, dropdownIcon, dropdownIconClass, formatOption, formatOptGroup, multiple, ...rest } = {
             ...attrs,
             ...props
         }

@@ -95,6 +95,7 @@
         autoReposition?: boolean
         stacked?: boolean
         overlay?: boolean
+        fit?: boolean
     }
 
     defineOptions({
@@ -115,7 +116,8 @@
         offset: () => [0, 0],
         autoReposition: true,
         stacked: false,
-        overlay: false
+        overlay: false,
+        fit: false
     })
 
     const model = defineModel<boolean>({ default: false })
@@ -132,20 +134,33 @@
         return placement
     })
 
-    const { show, hide, handleContentHoverFocusIn, handleContentHoverFocusOut, compStyles, placement } = useFloating(
-        props,
-        {
-            model: computed<boolean>({
-                get: () => model.value,
-                set: (val: boolean) => {
-                    model.value = val
-                }
-            }),
-            contentRef,
-            attachParentEl,
-            placement: floatingPlacement
+    const {
+        show,
+        hide,
+        handleContentHoverFocusIn,
+        handleContentHoverFocusOut,
+        compStyles: floatingStyles,
+        placement,
+        parentWidth
+    } = useFloating(props, {
+        model: computed<boolean>({
+            get: () => model.value,
+            set: (val: boolean) => {
+                model.value = val
+            }
+        }),
+        contentRef,
+        attachParentEl,
+        placement: floatingPlacement
+    })
+
+    const compStyles = computed(() => {
+        const styles: Record<string, any> = { ...floatingStyles.value }
+        if (props.fit) {
+            styles.width = `${parentWidth.value}px`
         }
-    )
+        return styles
+    })
 
     const compClasses = computed(() => {
         return ['n-tooltip', `n-tooltip--direction-${placement.value}`]

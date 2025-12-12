@@ -69,7 +69,6 @@
             <slot name="append"></slot>
         </template>
 
-        <!-- Expandable content -->
         <div
             v-if="props.expandable"
             :class="['n-list-item-content', model ? 'n-list-item-content--expanded' : 'n-list-item-content--collapsed']"
@@ -178,6 +177,7 @@
             & > .n-list-item-header--clickable {
                 @apply transition-[backdrop-filter] duration-200 ease-in-out;
                 @apply hover:backdrop-brightness-85 hover:opacity-100;
+                @apply focus:backdrop-brightness-85 focus:opacity-100;
 
                 &.n-list-item--disabled,
                 [class*='--clickable']&.n-list-item--disabled,
@@ -186,6 +186,9 @@
                     @apply ring-0;
                     @apply opacity-50 hover:opacity-50 cursor-not-allowed grayscale;
                 }
+            }
+            &.n-list-item--active {
+                @apply bg-primary-bright;
             }
             &.n-list-item--expandable {
                 @apply gap-0 p-0

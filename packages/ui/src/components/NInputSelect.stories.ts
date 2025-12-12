@@ -95,3 +95,28 @@ export const SlotForOptions: Story = {
         `
     })
 }
+
+export const MultipleSelect: Story = {
+    args: {
+        multiple: true
+    },
+    render: args => ({
+        components: { NInputSelect },
+        setup() {
+            const value = ref(['test1', 'test3'])
+            const options1 = [
+                { label: 'Test 1', value: 'test1' },
+                { label: 'Test 2', value: 'test2' },
+                { label: 'Test 3', value: 'test3' },
+                { label: 'Test 4', value: 'test4' }
+            ]
+            return { args, value, options1 }
+        },
+        template: `
+            <div class="flex flex-col gap-2 w-64">
+                <p>Selected: {{ value }}</p>
+                <NInputSelect v-bind="args" v-model="value" :options="options1" label="Multiple Select" name="demo-multiple" />
+            </div>
+        `
+    })
+}

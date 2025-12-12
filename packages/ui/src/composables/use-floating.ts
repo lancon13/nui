@@ -1,5 +1,5 @@
 import { autoUpdate, flip, offset, shift, useFloating as useFloatingUI, type Placement } from '@floating-ui/vue'
-import { useEventListener, useTimeoutFn } from '@vueuse/core'
+import { useElementSize, useEventListener, useTimeoutFn } from '@vueuse/core'
 import { computed, nextTick, ref, watch, type Ref, type WritableComputedRef, toValue } from 'vue'
 import { getElement } from '../helpers/dom'
 
@@ -47,6 +47,7 @@ export function useFloating(
 
     const hoverTriggerAnchorEl = ref<HTMLElement | null>(null)
     const focusTriggerAnchorEl = ref<HTMLElement | null>(null)
+    const { width: parentWidth, height: parentHeight } = useElementSize(attachParentEl)
 
     const {
         x,
@@ -161,6 +162,8 @@ export function useFloating(
         handleContentHoverFocusIn,
         handleContentHoverFocusOut,
         compStyles,
-        placement: floatingPlacement
+        placement: floatingPlacement,
+        parentWidth,
+        parentHeight
     }
 }
