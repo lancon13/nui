@@ -1,6 +1,6 @@
 <template>
     <component :is="props.tag" :class="compClasses" v-bind="compBind">
-        <template v-for="(node, index) in slotDefaultNodes" :key="index">
+        <template v-for="(node, index) in slotDefaultNodes" :key="(node as VNode)?.key || index">
             <component :is="node" />
         </template>
     </component>
@@ -11,11 +11,13 @@
     import { computed, Fragment, h, HTMLAttributes, useAttrs, useSlots, VNode } from 'vue'
     import { useMenuTransform } from '../composables/use-menu-transform'
     import NListItem, { NListItemProps } from './NListItem.vue'
+    import { generatePseudoRandomKey } from '../helpers/tools'
 
     export type NListItemData = Record<string, any> & Partial<NListItemProps>
     export type NListProps = Partial</* @vue-ignore */ HTMLAttributes> & {
         tag?: string
         items?: NListItemData[]
+        valueField?: string
     }
 
     defineOptions({
@@ -25,7 +27,8 @@
     const slots = useSlots()
     const attrs = useAttrs()
     const props = withDefaults(defineProps<NListProps>(), {
-        tag: 'ul'
+        tag: 'ul',
+        valueField: 'value'
     })
 
     const { transformedNodes } = useMenuTransform(slots)
@@ -39,15 +42,23 @@
     })
 
     const slotDefaultNodes = computed(() => {
-        return props.items && props.items.length ? createNodesFromData(props.items) : transformedNodes.value
+        return props.items ? createNodesFromData(props.items) : transformedNodes.value
     })
 
     function createNodesFromData(items: NListItemData[]): VNode[] {
+        if (items.length === 0)
+            return [
+                slots['empty']
+                    ? h(Fragment, null, slots['empty']({ items }) ?? [])
+                    : h(NListItem, { items }, () => slots['empty-content']?.() ?? 'No item found.')
+            ]
+
         return items.map(item => {
             const { content, ...rest } = item
+            const key = item?.[props.valueField] || generatePseudoRandomKey()
             return slots['item']
-                ? h(Fragment, null, slots['item'](item) ?? [])
-                : h(NListItem, { ...(rest as any) }, () => slots['item-content']?.(item) ?? content)
+                ? h(Fragment, { key }, slots['item'](item) ?? [])
+                : h(NListItem, { key, ...(rest as any) }, () => slots['item-content']?.(item) ?? content)
         })
     }
 </script>

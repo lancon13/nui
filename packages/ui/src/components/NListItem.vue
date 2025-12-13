@@ -188,7 +188,7 @@
                 }
             }
             &.n-list-item--active {
-                @apply bg-primary-bright;
+                @apply bg-primary text-text-invert;
             }
             &.n-list-item--expandable {
                 @apply gap-0 p-0

@@ -3,7 +3,7 @@
         <slot name="prepend"></slot>
         <n-icon v-if="props.prependIcon || props.icon" :name="(props.prependIcon || props.icon) as string" />
         <span v-if="props.label || $slots['default']">
-            <slot name="default"><{{ props.label }}</slot>
+            <slot name="default">{{ props.label }}</slot>
         </span>
         <n-icon v-if="props.appendIcon" :name="props.appendIcon" />
         <slot name="append"></slot>
@@ -81,7 +81,7 @@
             @apply relative leading-none
                 inline-flex flex-row gap-2 items-center
                 bg-text text-text-invert
-                text-center
+                text-center text-nowrap
                 border-2 border-transparent
                 px-2 py-1
                 rounded-element;
