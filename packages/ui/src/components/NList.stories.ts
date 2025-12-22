@@ -112,11 +112,86 @@ export const WithItemsDataWithItemContentSlot: Story = {
         },
         template: `
              <NList v-bind="args" class="bg-surface" :items="items">
-                <template #item-content="{content, icon}">
-                    <div>{{content}} {{icon}}</div>
-                </template>
             </NList>
 
+        `
+    })
+}
+
+export const NestedData: Story = {
+    args: {},
+    render: args => ({
+        components: { NList, NListItem },
+        setup() {
+            const items = ref([
+                {
+                    content: 'Item 1 (Parent)',
+                    icon: 'mdi-account',
+                    children: [
+                        { content: 'Item 1.1', icon: 'mdi-chevron-right' },
+                        {
+                            content: 'Item 1.2 (Sub-Parent)',
+                            icon: 'mdi-chevron-right',
+                            children: [{ content: 'Item 1.2.1', icon: 'mdi-circle-small' }]
+                        }
+                    ]
+                },
+                { content: 'Item 2', icon: 'mdi-cog' }
+            ])
+            return { args, items }
+        },
+        template: `
+             <NList v-bind="args" class="bg-surface w-64 shadowed" :items="items" />
+        `
+    })
+}
+
+export const NestedExpandableData: Story = {
+    args: {},
+    render: args => ({
+        components: { NList, NListItem },
+        setup() {
+            const items = ref([
+                {
+                    content: 'Expandable Parent',
+                    icon: 'mdi-account',
+                    expandable: true,
+                    children: [
+                        { content: 'Child 1', icon: 'mdi-chevron-right' },
+                        { content: 'Child 2', icon: 'mdi-chevron-right' }
+                    ]
+                },
+                {
+                    content: 'Static Parent',
+                    icon: 'mdi-cog',
+                    children: [{ content: 'Child A', icon: 'mdi-circle-small' }]
+                }
+            ])
+            return { args, items }
+        },
+        template: `
+             <NList v-bind="args" class="bg-surface w-64 shadowed" :items="items" />
+        `
+    })
+}
+
+export const GroupedData: Story = {
+    args: {},
+    render: args => ({
+        components: { NList, NListItem },
+        setup() {
+            const items = ref([
+                { content: 'User Account', heading: true },
+                { content: 'Profile', icon: 'mdi-account' },
+                { content: 'Settings', icon: 'mdi-cog' },
+                { content: 'System', heading: true },
+                { content: 'Notifications', icon: 'mdi-bell' },
+                { content: 'Logout', icon: 'mdi-logout', class: 'text-error' }
+            ])
+            return { args, items }
+        },
+        template: `
+             <NList v-bind="args" class="bg-surface w-64 shadowed" :items="items" />
         `
     })
 }

@@ -110,3 +110,65 @@ export const WithItemsProp: Story = {
         `
     })
 }
+
+export const WithHeadings: Story = {
+    args: {
+        items: [
+            { content: 'User Account', heading: true },
+            { content: 'Profile', icon: 'mdi-account' },
+            { content: 'Settings', icon: 'mdi-cog' },
+            {
+                content: 'Preferences',
+                items: [{ content: 'Theme', heading: true }, { content: 'Dark Mode' }, { content: 'Light Mode' }]
+            },
+            { content: 'System', heading: true },
+            { content: 'Help', icon: 'mdi-help-circle' },
+            { content: 'Logout', icon: 'mdi-logout', class: 'text-error' }
+        ]
+    },
+    render: args => ({
+        components: { NMenu, NButton },
+        setup() {
+            return { args }
+        },
+        template: `
+            <NButton>
+                Show menu
+            </NButton>
+        `
+    })
+}
+
+export const WithHeadingsSlots: Story = {
+    args: {},
+    render: args => ({
+        components: { NMenu, NListItem, NButton },
+        setup() {
+            return { args }
+        },
+        template: `
+            <NButton>
+                Show menu
+                <NMenu v-bind="args">
+                    <NListItem heading>Application</NListItem>
+                    <NListItem icon="mdi-view-dashboard">Dashboard</NListItem>
+                    <NListItem icon="mdi-chart-bar">Analytics</NListItem>
+
+                    <NListItem heading>User Settings</NListItem>
+                    <NListItem icon="mdi-account">Profile</NListItem>
+                    <NListItem icon="mdi-shield-lock">
+                        Security
+                        <NMenu>
+                             <NListItem heading>Security Settings</NListItem>
+                             <NListItem>Change Password</NListItem>
+                             <NListItem>2FA</NListItem>
+                        </NMenu>
+                    </NListItem>
+
+                    <NListItem heading>Danger Zone</NListItem>
+                    <NListItem icon="mdi-delete" class="text-error">Delete Account</NListItem>
+                </NMenu>
+            </NButton>
+        `
+    })
+}

@@ -97,6 +97,7 @@
         appendIconClass?: string | object | string[]
         disabled?: boolean
         expandable?: boolean
+        heading?: boolean
     }
 
     defineOptions({
@@ -114,14 +115,15 @@
     const emits = defineEmits<(event: 'click', e: MouseEvent) => void>()
 
     const isClickable = computed(() => {
-        return props.to || props.href || !!instance?.vnode.props?.onClick
+        return !props.heading && (props.to || props.href || !!instance?.vnode.props?.onClick)
     })
     const compClasses = computed(() => {
         return [
             'n-list-item',
             isClickable.value && !props.expandable ? 'n-list-item--clickable' : '',
             props.disabled ? 'n-list-item--disabled' : '',
-            props.expandable ? 'n-list-item--expandable' : ''
+            props.expandable ? 'n-list-item--expandable' : '',
+            props.heading ? 'n-list-item--heading' : ''
         ]
     })
     const compBind = computed(() => {
@@ -137,7 +139,7 @@
     })
 
     function handleClick(e: MouseEvent) {
-        if (props.disabled) {
+        if (props.disabled || props.heading) {
             e.preventDefault()
             e.stopPropagation()
             return
@@ -209,6 +211,11 @@
                         @apply py-0 h-0 max-h-0 overflow-hidden;
                     }
                 }
+            }
+            &.n-list-item--heading {
+                @apply text-xs font-bold uppercase text-text-subtle
+                    mt-2 mb-1 cursor-default;
+                @apply hover:bg-transparent hover:backdrop-brightness-100;
             }
         }
     }

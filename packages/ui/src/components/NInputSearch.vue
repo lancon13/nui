@@ -60,37 +60,24 @@
             <n-popover
                 v-if="!props.disabled"
                 v-model="dropdown"
-                :class="props.popoverClass"
+                class="n-input-search-menu"
+                :popover-class="props.popoverClass"
                 fit
                 :hover-trigger-anchor="inputRef"
                 :focus-trigger-anchor="focusInputRef"
             >
-                <n-list ref="listRef" :items="filteredItems" :class="props.listClass">
-                    <template #item="itemData">
-                        <n-list-item
-                            v-bind="itemData"
-                            tabindex="0"
-                            :class="{
-                                'n-list-item--active': isSelected(itemData)
-                            }"
-                            @click="handleSelect(itemData)"
-                            @keydown.enter.prevent="handleSelect(itemData)"
-                            @keydown.space.prevent="handleSelect(itemData)"
-                            @keydown.down.prevent="handleFocusNext"
-                            @keydown.up.prevent="handleFocusPrev"
-                            @keydown.esc.prevent="handleCloseDropdown"
-                        >
-                            <template #default>
-                                <slot name="item-content" v-bind="itemData">
-                                    {{ getItemLabel(itemData) }}
-                                </slot>
-                            </template>
-                        </n-list-item>
+                <n-input-search-list
+                    ref="listRef"
+                    :items="processedItems"
+                    :list-class="props.listClass"
+                    :label-field="props.labelField"
+                >
+                    <template #item-content="itemData">
+                        <slot name="item-content" v-bind="itemData">
+                            {{ getItemLabel(itemData) }}
+                        </slot>
                     </template>
-                    <template #empty-content>
-                        <slot name="empty">No results found</slot>
-                    </template>
-                </n-list>
+                </n-input-search-list>
             </n-popover>
         </template>
 
@@ -109,12 +96,13 @@
 <script setup lang="ts">
     /* eslint-disable @typescript-eslint/no-explicit-any, no-unused-vars */
     import { omit } from 'es-toolkit/object'
-    import { computed, HTMLAttributes, nextTick, ref, useAttrs, useSlots, useTemplateRef } from 'vue'
+    import { computed, defineComponent, h, HTMLAttributes, nextTick, ref, useAttrs, useSlots, useTemplateRef } from 'vue'
     import { resolveClassProp } from '../helpers/dom'
+    import { generatePseudoRandomKey } from '../helpers/tools'
     import NChip from './NChip.vue'
     import NIcon from './NIcon.vue'
     import NInputField, { NInputFieldProps } from './NInputField.vue'
-    import NList, { NListItemData } from './NList.vue'
+    import { NListItemData } from './NList.vue'
     import NListItem from './NListItem.vue'
     import NPopover from './NPopover.vue'
 
@@ -171,6 +159,39 @@
     const isFocusing = ref(false)
     const focusPaused = ref(false)
 
+    // Internal Recursive List Component
+    const NInputSearchList = defineComponent({
+        name: 'NInputSearchList',
+        props: ['items', 'listClass', 'labelField'],
+        setup(props, { slots }) {
+            return () => h('ul', { class: ['n-list', props.listClass] }, 
+                props.items.map((item: any) => {
+                    const hasChildren = item.items && item.items.length
+                    return h(NListItem, { ...item }, {
+                        default: () => [
+                            slots['item-content']?.(item) ?? item[props.labelField],
+                            hasChildren ? h(NPopover, { 
+                                id: item._submenuId, 
+                                direction: 'right', 
+                                position: 'start', 
+                                stacked: false 
+                            }, {
+                                default: () => h(NInputSearchList, { 
+                                    items: item.items, 
+                                    listClass: props.listClass, 
+                                    labelField: props.labelField 
+                                }, {
+                                    'item-content': slots['item-content']
+                                })
+                            }) : null,
+                            hasChildren ? h(NIcon, { name: 'chevron-right', class: 'ml-auto' }) : null
+                        ]
+                    })
+                })
+            )
+        }
+    })
+
     const selectedOptions = computed(() => {
         if (props.multiple) {
             if (!Array.isArray(modelValue.value)) return []
@@ -186,27 +207,96 @@
         return props.items.find(item => item[props.valueField] === value) || null
     })
 
-    // Placeholder logic: Show standard placeholder if empty, or hide it if items selected (in multiple mode)
-    // const displayPlaceholder = computed(() => {
-    //     if (props.multiple && Array.isArray(modelValue.value) && modelValue.value.length > 0) {
-    //         return ''
-    //     }
-    //     return attrs.placeholder as string
-    // })
-
     const filteredItems = computed(() => {
         if (!inputValue.value) {
             return props.items
         }
         const search = inputValue.value.toLowerCase()
         return props.items.filter(item => {
-            return (item[props.valueField] || '').toLowerCase().includes(search)
+            return (item[props.labelField] || '').toLowerCase().includes(search)
         })
     })
 
     const isCloseOnSelect = computed(() => {
         if (typeof props.closeOnSelect === 'boolean') return props.closeOnSelect
         return !props.multiple
+    })
+
+    // Transform items to inject event handlers and state classes
+    function processItems(items: NListItemData[], parentId?: string): NListItemData[] {
+        return items.map(item => {
+            const isHeading = !!item.heading
+            const isDisabled = !!item.disabled
+            const isSel = isSelected(item)
+
+            // Destructure children and rename to items for compatibility
+            const { children, ...rest } = item
+            
+            const itemId = generatePseudoRandomKey()
+            const submenuId = children && children.length ? generatePseudoRandomKey() : undefined
+
+            const processed: NListItemData = {
+                ...rest,
+                id: itemId,
+                _submenuId: submenuId,
+                class: resolveClassProp(
+                    item.class,
+                    isSel ? 'n-list-item--active' : ''
+                ),
+                tabindex: isHeading || isDisabled ? undefined : '0',
+                onClick: (e: MouseEvent) => {
+                    if (isHeading || isDisabled) return
+                    e.stopPropagation()
+                    handleSelect(item)
+                },
+                onKeydown: (e: KeyboardEvent) => {
+                    if (isHeading || isDisabled) return
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault()
+                        handleSelect(item)
+                    } else if (e.key === 'ArrowDown') {
+                        e.preventDefault()
+                        handleFocusNext(e)
+                    } else if (e.key === 'ArrowUp') {
+                        e.preventDefault()
+                        handleFocusPrev(e)
+                    } else if (e.key === 'Escape') {
+                        e.preventDefault()
+                        handleCloseDropdown()
+                    } else if (e.key === 'ArrowRight' && submenuId) {
+                        e.preventDefault()
+                        const submenuEl = document.getElementById(submenuId)
+                        const firstItem = submenuEl?.querySelector('[tabindex="0"]') as HTMLElement
+                        if (firstItem) firstItem.focus()
+                    } else if (e.key === 'ArrowLeft') {
+                        e.preventDefault()
+                        if (parentId) {
+                            const parentEl = document.getElementById(parentId)
+                            if (parentEl) parentEl.focus()
+                        } else {
+                            inputRef.value?.focus()
+                        }
+                    }
+                }
+            }
+
+            if (children && Array.isArray(children)) {
+                processed.items = processItems(children, itemId)
+            }
+
+            return processed
+        })
+    }
+
+    const processedItems = computed(() => {
+        if (filteredItems.value.length === 0) {
+            return [{ 
+                [props.labelField]: slots.empty?.() || 'No results found', 
+                heading: true,
+                value: 'empty-state'
+            }]
+        }
+        return processItems(filteredItems.value)
     })
 
     const otherSlots = computed(() => omit(slots, ['default', 'item', 'item-content', 'chip', 'append', 'no-option']))
@@ -229,7 +319,7 @@
             ...attrs,
             ...props
         }
-        return omit(rest, ['modelValue', 'class']) // Prevent standard bindings from interfering
+        return omit(rest, ['modelValue', 'class'])
     })
     const valueClasses = computed(() => ['n-input-search-value', ...resolveClassProp(props.valueClass)])
     const focusInputRef = computed(() => (focusPaused.value ? null : inputRef.value))
@@ -245,7 +335,6 @@
         return modelValue.value === value
     }
 
-    // Event Handlers
     function handleContainerClick() {
         inputRef.value?.focus()
         if (!dropdown.value) dropdown.value = true
@@ -258,13 +347,14 @@
     }
 
     function handleSelect(item: NListItemData) {
+        if (item.heading) return
         const val = item[props.valueField]
         if (props.multiple) {
             const current = Array.isArray(modelValue.value) ? [...modelValue.value] : []
             const idx = current.indexOf(val)
             if (idx > -1)
-                current.splice(idx, 1) // Toggle off
-            else current.push(val) // Toggle on
+                current.splice(idx, 1)
+            else current.push(val)
             modelValue.value = current as any
             inputValue.value = ''
         } else {
@@ -288,7 +378,6 @@
         emits('clear')
     }
 
-    // Handle Backspace to remove last tag in multiple mode
     function handleBackspace() {
         if (
             props.multiple &&
@@ -303,13 +392,11 @@
     }
 
     function handleEnter() {
-        // If one item matches exactly or is highlighted, select it (simplified logic)
         if (dropdown.value && filteredItems.value.length > 0) {
             handleSelect(filteredItems.value[0])
         }
     }
 
-    // --- Navigation Logic (Preserved from your code) ---
     async function handleCloseDropdown() {
         focusPaused.value = true
         dropdown.value = false
@@ -321,23 +408,53 @@
         if (!dropdown.value) dropdown.value = true
         nextTick(() => {
             const listEl = listRef.value?.$el as HTMLElement
-            const firstItem = listEl?.querySelector('[tabindex="0"]') as HTMLElement
-            firstItem?.focus()
+            if (!listEl) return
+            const items = listEl.querySelectorAll('[tabindex="0"]')
+            for (const item of items) {
+                const el = item as HTMLElement
+                if (!el.classList.contains('n-list-item--heading') && !el.classList.contains('n-list-item--disabled')) {
+                    el.focus()
+                    return
+                }
+            }
         })
     }
 
     function handleFocusNext(e: KeyboardEvent) {
-        const currentItem = e.target as HTMLElement
-        const nextItem = currentItem.nextElementSibling as HTMLElement
-        if (nextItem && nextItem?.getAttribute('tabindex') !== null) nextItem.focus()
+        let currentItem = e.target as HTMLElement
+        while (currentItem) {
+            const nextItem = currentItem.nextElementSibling as HTMLElement
+            if (!nextItem) break
+            if (
+                nextItem.getAttribute('tabindex') !== null &&
+                !nextItem.classList.contains('n-list-item--heading') &&
+                !nextItem.classList.contains('n-list-item--disabled')
+            ) {
+                nextItem.focus()
+                break
+            }
+            currentItem = nextItem
+        }
     }
 
     function handleFocusPrev(e: KeyboardEvent) {
-        const currentItem = e.target as HTMLElement
-        const prevItem = currentItem.previousElementSibling as HTMLElement
-        if (prevItem && prevItem?.getAttribute('tabindex') !== null) {
-            prevItem.focus()
-        } else inputRef.value?.focus()
+        let currentItem = e.target as HTMLElement
+        while (currentItem) {
+            const prevItem = currentItem.previousElementSibling as HTMLElement
+            if (!prevItem) {
+                inputRef.value?.focus()
+                break
+            }
+            if (
+                prevItem.getAttribute('tabindex') !== null &&
+                !prevItem.classList.contains('n-list-item--heading') &&
+                !prevItem.classList.contains('n-list-item--disabled')
+            ) {
+                prevItem.focus()
+                break
+            }
+            currentItem = prevItem
+        }
     }
 </script>
 
@@ -354,7 +471,7 @@
             }
             .n-input-search-display-container {
                 @apply relative
-                    flex flex-wrap items-center;
+                    flex flex-wrap items-center grow;
 
                 .n-input-search-value {
                     @apply absolute
@@ -363,7 +480,7 @@
                 }
 
                 .n-input-search-input {
-                    @apply w-auto grow;
+                    @apply basis-full;
                 }
             }
         }

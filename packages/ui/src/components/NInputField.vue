@@ -215,12 +215,12 @@
             @apply inline-flex flex-row items-center gap-2 grow;
 
             .n-input-field-container {
-                @apply flex flex-col flex-1;
+                @apply flex flex-col grow;
             }
 
             .n-input-field {
                 @apply relative
-                    flex-1
+                    grow
                     flex flex-row items-center gap-2
                     border-2 border-transparent
                     rounded-element

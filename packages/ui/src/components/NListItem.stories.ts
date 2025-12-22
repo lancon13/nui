@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite'
 // import { fn } from '@storybook/test'
 import NListItem from './NListItem.vue'
+import NList from './NList.vue'
 import NIcon from './NIcon.vue'
 import NAvatar from './NAvatar.vue'
 import { ref } from 'vue'
@@ -158,6 +159,28 @@ export const Expanded: Story = {
                     </template>
                 </NListItem>
             </ul>
+        `
+    })
+}
+
+export const ManualNested: Story = {
+    args: {},
+    render: args => ({
+        components: { NList, NListItem },
+        setup() {
+            return { args }
+        },
+        template: `
+            <NList class="w-64 bg-white text-black shadowed">
+                <NListItem icon="mdi-account">
+                    Parent Item
+                    <NList class="w-full pl-4">
+                        <NListItem icon="mdi-chevron-right">Child Item 1</NListItem>
+                        <NListItem icon="mdi-chevron-right">Child Item 2</NListItem>
+                    </NList>
+                </NListItem>
+                <NListItem icon="mdi-cog">Other Item</NListItem>
+            </NList>
         `
     })
 }

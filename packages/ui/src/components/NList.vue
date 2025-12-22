@@ -10,6 +10,7 @@
     /* eslint-disable @typescript-eslint/no-explicit-any */
     import { computed, Fragment, h, HTMLAttributes, useAttrs, useSlots, VNode } from 'vue'
     import { useMenuTransform } from '../composables/use-menu-transform'
+    import NList from './NList.vue'
     import NListItem, { NListItemProps } from './NListItem.vue'
     import { generatePseudoRandomKey } from '../helpers/tools'
 
@@ -18,6 +19,7 @@
         tag?: string
         items?: NListItemData[]
         valueField?: string
+        childrenField?: string
     }
 
     defineOptions({
@@ -28,7 +30,8 @@
     const attrs = useAttrs()
     const props = withDefaults(defineProps<NListProps>(), {
         tag: 'ul',
-        valueField: 'value'
+        valueField: 'value',
+        childrenField: 'children'
     })
 
     const { transformedNodes } = useMenuTransform(slots)
@@ -54,11 +57,44 @@
             ]
 
         return items.map(item => {
-            const { content, ...rest } = item
+            const content = item.content
+            const childrenData = item[props.childrenField]
+            const rest = { ...item }
+            delete rest.content
+            delete rest[props.childrenField]
+
             const key = item?.[props.valueField] || generatePseudoRandomKey()
-            return slots['item']
-                ? h(Fragment, { key }, slots['item'](item) ?? [])
-                : h(NListItem, { key, ...(rest as any) }, () => slots['item-content']?.(item) ?? content)
+
+            const childNodes =
+                childrenData && Array.isArray(childrenData) && childrenData.length > 0
+                    ? h(NList, {
+                          items: childrenData,
+                          tag: props.tag,
+                          valueField: props.valueField,
+                          childrenField: props.childrenField,
+                          class: 'w-full pl-4'
+                      })
+                    : null
+
+            if (slots['item']) {
+                return h(Fragment, { key }, slots['item']({ ...item, childrenNodes: childNodes }) ?? [])
+            }
+
+            const itemProps = { key, ...(rest as any) }
+            const itemSlots: any = {
+                default: () => slots['item-content']?.(item) ?? content
+            }
+
+            if (childNodes) {
+                if (itemProps.expandable) {
+                    itemSlots.content = () => childNodes
+                } else {
+                    const originalDefault = itemSlots.default
+                    itemSlots.default = () => [originalDefault(), childNodes]
+                }
+            }
+
+            return h(NListItem, itemProps, itemSlots)
         })
     }
 </script>
@@ -73,6 +109,10 @@
                 rounded-element
                 text-nowrap
                 flex flex-col flex-nowrap;
+
+            .n-list {
+                @apply basis-full;
+            }
         }
     }
 </style>
