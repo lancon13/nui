@@ -80,7 +80,7 @@
 
 <script setup lang="ts">
     /* eslint-disable no-unused-vars */
-    import { computed, getCurrentInstance, HTMLAttributes, useAttrs, useSlots } from 'vue'
+    import { computed, getCurrentInstance, HTMLAttributes, useAttrs, useSlots, VNode } from 'vue'
     import { wrapTextNode } from '../helpers/dom'
     import NIcon from './NIcon.vue'
 
@@ -98,6 +98,7 @@
         disabled?: boolean
         expandable?: boolean
         heading?: boolean
+        contentField?: string
     }
 
     defineOptions({
@@ -108,7 +109,8 @@
     const slots = useSlots()
     const attrs = useAttrs()
     const props = withDefaults(defineProps<NListItemProps>(), {
-        tag: 'li'
+        tag: 'li',
+        contentField: 'content'
     })
 
     const model = defineModel<boolean>({ default: false })
@@ -134,8 +136,16 @@
             ...attrs
         }
     })
-    const slotDefaultNodes = computed(() => {
-        return wrapTextNode(slots.default?.() ?? [], 'span')
+    const slotDefaultNodes = computed<VNode[]>(() => {
+        const defaultSlot = slots.default?.()
+        if (defaultSlot && defaultSlot.length > 0) {
+            return wrapTextNode(defaultSlot, 'span')
+        }
+
+        if (props.contentField && attrs[props.contentField]) {
+            return wrapTextNode(attrs[props.contentField] as string, 'span')
+        }
+        return []
     })
 
     function handleClick(e: MouseEvent) {
@@ -171,7 +181,7 @@
     @layer components {
         .n-list-item {
             @apply relative appearance-none
-                flex items-baseline gap-2 flex-wrap
+                flex items-baseline gap-2 flex-nowrap
                 px-4 py-2;
             @apply disabled:opacity-80 disabled:hover:opacity-80 disabled:cursor-not-allowed;
 

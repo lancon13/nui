@@ -57,28 +57,21 @@
                 />
             </div>
 
-            <n-popover
+            <n-menu
                 v-if="!props.disabled"
+                ref="listRef"
                 v-model="dropdown"
                 class="n-input-search-menu"
                 :popover-class="props.popoverClass"
                 fit
+                :items="processedItems"
+                :content-field="props.labelField"
+                :children-field="props.childrenField"
+                :value-field="props.valueField"
                 :hover-trigger-anchor="inputRef"
                 :focus-trigger-anchor="focusInputRef"
             >
-                <n-input-search-list
-                    ref="listRef"
-                    :items="processedItems"
-                    :list-class="props.listClass"
-                    :label-field="props.labelField"
-                >
-                    <template #item-content="itemData">
-                        <slot name="item-content" v-bind="itemData">
-                            {{ getItemLabel(itemData) }}
-                        </slot>
-                    </template>
-                </n-input-search-list>
-            </n-popover>
+            </n-menu>
         </template>
 
         <template #append>
@@ -94,17 +87,17 @@
 </template>
 
 <script setup lang="ts">
-    /* eslint-disable @typescript-eslint/no-explicit-any, no-unused-vars */
+    /* eslint-disable @typescript-eslint/no-explicit-any */
+    /* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
     import { omit } from 'es-toolkit/object'
-    import { computed, defineComponent, h, HTMLAttributes, nextTick, ref, useAttrs, useSlots, useTemplateRef } from 'vue'
+    import { computed, HTMLAttributes, nextTick, ref, useAttrs, useSlots, useTemplateRef } from 'vue'
     import { resolveClassProp } from '../helpers/dom'
     import { generatePseudoRandomKey } from '../helpers/tools'
     import NChip from './NChip.vue'
     import NIcon from './NIcon.vue'
     import NInputField, { NInputFieldProps } from './NInputField.vue'
     import { NListItemData } from './NList.vue'
-    import NListItem from './NListItem.vue'
-    import NPopover from './NPopover.vue'
+    import NMenu from './NMenu.vue'
 
     export type NInputSearchProps = Partial</* @vue-ignore */ HTMLAttributes> &
         NInputFieldProps & {
@@ -117,6 +110,7 @@
             popoverClass?: string | string[] | object
             listClass?: string | string[] | object
             labelField?: string
+            childrenField?: string
             valueField?: string
             useInput?: boolean
             clearable?: boolean
@@ -133,6 +127,7 @@
         items: () => [],
         listClass: 'bg-surface shadowed overflow-auto',
         labelField: 'label',
+        childrenField: 'children',
         valueClass: '',
         valueField: 'value',
         dropdownIcon: 'menu-down',
@@ -159,52 +154,32 @@
     const isFocusing = ref(false)
     const focusPaused = ref(false)
 
-    // Internal Recursive List Component
-    const NInputSearchList = defineComponent({
-        name: 'NInputSearchList',
-        props: ['items', 'listClass', 'labelField'],
-        setup(props, { slots }) {
-            return () => h('ul', { class: ['n-list', props.listClass] }, 
-                props.items.map((item: any) => {
-                    const hasChildren = item.items && item.items.length
-                    return h(NListItem, { ...item }, {
-                        default: () => [
-                            slots['item-content']?.(item) ?? item[props.labelField],
-                            hasChildren ? h(NPopover, { 
-                                id: item._submenuId, 
-                                direction: 'right', 
-                                position: 'start', 
-                                stacked: false 
-                            }, {
-                                default: () => h(NInputSearchList, { 
-                                    items: item.items, 
-                                    listClass: props.listClass, 
-                                    labelField: props.labelField 
-                                }, {
-                                    'item-content': slots['item-content']
-                                })
-                            }) : null,
-                            hasChildren ? h(NIcon, { name: 'chevron-right', class: 'ml-auto' }) : null
-                        ]
-                    })
-                })
-            )
+    function findItemRecursive(items: any[], value: any): any {
+        for (const item of items) {
+            if (item[props.valueField] === value) {
+                return item
+            }
+            if (item[props.childrenField] && Array.isArray(item[props.childrenField])) {
+                const found = findItemRecursive(item[props.childrenField], value)
+                if (found) return found
+            }
         }
-    })
+        return null
+    }
 
     const selectedOptions = computed(() => {
         if (props.multiple) {
             if (!Array.isArray(modelValue.value)) return []
             return modelValue.value.map(
                 val =>
-                    props.items.find(i => i[props.valueField] === val) || {
+                    findItemRecursive(props.items, val) || {
                         [props.valueField]: val,
                         [props.labelField]: val
                     }
             )
         }
         const value = modelValue.value
-        return props.items.find(item => item[props.valueField] === value) || null
+        return findItemRecursive(props.items, value) || null
     })
 
     const filteredItems = computed(() => {
@@ -229,9 +204,11 @@
             const isDisabled = !!item.disabled
             const isSel = isSelected(item)
 
-            // Destructure children and rename to items for compatibility
-            const { children, ...rest } = item
-            
+            // Destructure children using props.childrenField
+            const children = item[props.childrenField]
+            const rest = { ...item }
+            delete rest[props.childrenField]
+
             const itemId = generatePseudoRandomKey()
             const submenuId = children && children.length ? generatePseudoRandomKey() : undefined
 
@@ -239,10 +216,7 @@
                 ...rest,
                 id: itemId,
                 _submenuId: submenuId,
-                class: resolveClassProp(
-                    item.class,
-                    isSel ? 'n-list-item--active' : ''
-                ),
+                class: resolveClassProp(item.class, isSel ? 'n-list-item--active' : ''),
                 tabindex: isHeading || isDisabled ? undefined : '0',
                 onClick: (e: MouseEvent) => {
                     if (isHeading || isDisabled) return
@@ -253,6 +227,7 @@
                     if (isHeading || isDisabled) return
                     if (e.key === 'Enter' || e.key === ' ') {
                         e.preventDefault()
+                        e.stopPropagation()
                         handleSelect(item)
                     } else if (e.key === 'ArrowDown') {
                         e.preventDefault()
@@ -263,16 +238,21 @@
                     } else if (e.key === 'Escape') {
                         e.preventDefault()
                         handleCloseDropdown()
-                    } else if (e.key === 'ArrowRight' && submenuId) {
-                        e.preventDefault()
-                        const submenuEl = document.getElementById(submenuId)
-                        const firstItem = submenuEl?.querySelector('[tabindex="0"]') as HTMLElement
-                        if (firstItem) firstItem.focus()
+                    } else if (e.key === 'ArrowRight') {
+                        const itemEl = e.target as HTMLElement
+                        const submenu = itemEl.querySelector('.n-menu')
+                        if (submenu) {
+                            e.preventDefault()
+                            const firstItem = submenu.querySelector('[tabindex="0"]') as HTMLElement
+                            if (firstItem) firstItem.focus()
+                        }
                     } else if (e.key === 'ArrowLeft') {
                         e.preventDefault()
-                        if (parentId) {
-                            const parentEl = document.getElementById(parentId)
-                            if (parentEl) parentEl.focus()
+                        const itemEl = e.target as HTMLElement
+                        const parentMenu = itemEl.closest('.n-menu')
+                        const parentItem = parentMenu?.closest('.n-list-item') as HTMLElement
+                        if (parentItem && parentItem.getAttribute('tabindex') === '0') {
+                            parentItem.focus()
                         } else {
                             inputRef.value?.focus()
                         }
@@ -281,7 +261,7 @@
             }
 
             if (children && Array.isArray(children)) {
-                processed.items = processItems(children, itemId)
+                processed[props.childrenField] = processItems(children, itemId)
             }
 
             return processed
@@ -290,11 +270,13 @@
 
     const processedItems = computed(() => {
         if (filteredItems.value.length === 0) {
-            return [{ 
-                [props.labelField]: slots.empty?.() || 'No results found', 
-                heading: true,
-                value: 'empty-state'
-            }]
+            return [
+                {
+                    [props.labelField]: slots.empty?.() || 'No results found',
+                    heading: true,
+                    value: 'empty-state'
+                }
+            ]
         }
         return processItems(filteredItems.value)
     })
@@ -313,6 +295,7 @@
             chipProps,
             clearable,
             labelField,
+            childrenField,
             valueField,
             ...rest
         } = {
@@ -352,8 +335,7 @@
         if (props.multiple) {
             const current = Array.isArray(modelValue.value) ? [...modelValue.value] : []
             const idx = current.indexOf(val)
-            if (idx > -1)
-                current.splice(idx, 1)
+            if (idx > -1) current.splice(idx, 1)
             else current.push(val)
             modelValue.value = current as any
             inputValue.value = ''
@@ -407,7 +389,7 @@
     function handleInputKeydown() {
         if (!dropdown.value) dropdown.value = true
         nextTick(() => {
-            const listEl = listRef.value?.$el as HTMLElement
+            const listEl = listRef.value?.popoverRef?.contentRef as HTMLElement
             if (!listEl) return
             const items = listEl.querySelectorAll('[tabindex="0"]')
             for (const item of items) {

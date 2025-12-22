@@ -78,62 +78,61 @@ export const ListAndListItems: Story = {
 }
 
 export const WithItemsProp: Story = {
-    args: {
-        items: [
-            { content: 'Item 1', onClick: () => alert('Item 1 clicked') },
-            { content: 'Item 2', href: '#item2' },
-            {
-                content: 'Submenu',
-                href: '#item2',
-                items: [
-                    { content: 'Sub Item 1', onClick: () => alert('Sub Item 1 clicked') },
-                    { content: 'Sub Item 2', href: '#subitem2' },
-                    {
-                        content: 'Deep Submenu',
-                        items: [{ content: 'Deep Item 1' }, { content: 'Deep Item 2' }]
-                    }
-                ]
-            },
-            { content: 'Item 3' }
-        ]
-    },
+    args: {},
     render: args => ({
         components: { NMenu, NButton },
         setup() {
-            return { args }
+            const items = [
+                { content: 'Item 1', onClick: () => alert('Item 1 clicked') },
+                { content: 'Item 2', href: '#item2' },
+                {
+                    content: 'Submenu',
+                    href: '#item2',
+                    items: [
+                        { content: 'Sub Item 1', onClick: () => alert('Sub Item 1 clicked') },
+                        { content: 'Sub Item 2', href: '#subitem2' },
+                        {
+                            content: 'Deep Submenu',
+                            items: [{ content: 'Deep Item 1' }, { content: 'Deep Item 2' }]
+                        }
+                    ]
+                },
+                { content: 'Item 3' }
+            ]
+            return { args, items }
         },
         template: `
             <NButton>
                 Show menu
-                <NMenu v-bind="args" persistent />
+                <NMenu v-bind="args" :items="items" persistent />
             </NButton>
         `
     })
 }
 
 export const WithHeadings: Story = {
-    args: {
-        items: [
-            { content: 'User Account', heading: true },
-            { content: 'Profile', icon: 'mdi-account' },
-            { content: 'Settings', icon: 'mdi-cog' },
-            {
-                content: 'Preferences',
-                items: [{ content: 'Theme', heading: true }, { content: 'Dark Mode' }, { content: 'Light Mode' }]
-            },
-            { content: 'System', heading: true },
-            { content: 'Help', icon: 'mdi-help-circle' },
-            { content: 'Logout', icon: 'mdi-logout', class: 'text-error' }
-        ]
-    },
+    args: {},
     render: args => ({
         components: { NMenu, NButton },
         setup() {
-            return { args }
+            const items = [
+                { content: 'User Account', heading: true },
+                { content: 'Profile', icon: 'mdi-account' },
+                { content: 'Settings', icon: 'mdi-cog' },
+                {
+                    content: 'Preferences',
+                    items: [{ content: 'Theme', heading: true }, { content: 'Dark Mode' }, { content: 'Light Mode' }]
+                },
+                { content: 'System', heading: true },
+                { content: 'Help', icon: 'mdi-help-circle' },
+                { content: 'Logout', icon: 'mdi-logout', class: 'text-error' }
+            ]
+            return { args, items }
         },
         template: `
             <NButton>
                 Show menu
+                <NMenu v-bind="args" :items="items" />
             </NButton>
         `
     })
@@ -168,6 +167,70 @@ export const WithHeadingsSlots: Story = {
                     <NListItem heading>Danger Zone</NListItem>
                     <NListItem icon="mdi-delete" class="text-error">Delete Account</NListItem>
                 </NMenu>
+            </NButton>
+        `
+    })
+}
+
+export const WithCustomFields: Story = {
+    args: {
+        contentField: 'label',
+        childrenField: 'sub'
+    },
+    render: args => ({
+        components: { NMenu, NButton },
+        setup() {
+            const items = [
+                { label: 'Custom Label 1', onClick: () => alert('Item 1 clicked') },
+                {
+                    label: 'Submenu with Custom Fields',
+                    sub: [
+                        { label: 'Sub Item 1', onClick: () => alert('Sub Item 1 clicked') },
+                        {
+                            label: 'Deep Submenu',
+                            sub: [{ label: 'Deep Item 1' }, { label: 'Deep Item 2' }]
+                        }
+                    ]
+                }
+            ]
+            return { args, items }
+        },
+        template: `
+            <NButton>
+                Show menu
+                <NMenu v-bind="args" :items="items" persistent />
+            </NButton>
+        `
+    })
+}
+
+export const CustomDataStructure: Story = {
+    args: {
+        contentField: 'title',
+        childrenField: 'nodes',
+        valueField: 'id'
+    },
+    render: args => ({
+        components: { NMenu, NButton },
+        setup() {
+            const items = [
+                { id: '1', title: 'Dashboard', icon: 'mdi-view-dashboard' },
+                {
+                    id: '2',
+                    title: 'Reports',
+                    icon: 'mdi-file-chart',
+                    nodes: [
+                        { id: '2-1', title: 'Sales Report' },
+                        { id: '2-2', title: 'Inventory Report' }
+                    ]
+                }
+            ]
+            return { args, items }
+        },
+        template: `
+            <NButton>
+                Custom Data Structure
+                <NMenu v-bind="args" :items="items" persistent />
             </NButton>
         `
     })

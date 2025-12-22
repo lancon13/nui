@@ -184,3 +184,19 @@ export const ManualNested: Story = {
         `
     })
 }
+
+export const WithContentField: Story = {
+    args: {},
+    render: args => ({
+        components: { NListItem },
+        setup() {
+            return { args }
+        },
+        template: `
+            <ul class="n-list w-64 bg-white text-black shadowed">
+                <NListItem v-bind="args" contentField="text" text="Content from 'text' attribute" />
+                <NListItem contentField="title" title="Content from 'title' attribute" />
+            </ul>
+        `
+    })
+}

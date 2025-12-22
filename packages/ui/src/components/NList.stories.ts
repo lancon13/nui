@@ -195,3 +195,21 @@ export const GroupedData: Story = {
         `
     })
 }
+
+export const WithCustomContentField: Story = {
+    args: {},
+    render: args => ({
+        components: { NList },
+        setup() {
+            const items = ref([
+                { label: 'Custom Label 1', icon: 'mdi-account' },
+                { label: 'Custom Label 2', icon: 'mdi-cog' },
+                { label: 'Custom Label 3', icon: 'mdi-logout' }
+            ])
+            return { args, items }
+        },
+        template: `
+             <NList v-bind="args" contentField="label" class="bg-surface w-64 shadowed" :items="items" />
+        `
+    })
+}

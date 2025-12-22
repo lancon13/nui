@@ -180,7 +180,7 @@
         parentEl.value = getParentElement()
     })
 
-    defineExpose({ show, hide })
+    defineExpose({ show, hide, contentRef })
 </script>
 
 <style lang="css">

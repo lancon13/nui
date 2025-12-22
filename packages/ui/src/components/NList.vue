@@ -20,6 +20,7 @@
         items?: NListItemData[]
         valueField?: string
         childrenField?: string
+        contentField?: string
     }
 
     defineOptions({
@@ -31,7 +32,8 @@
     const props = withDefaults(defineProps<NListProps>(), {
         tag: 'ul',
         valueField: 'value',
-        childrenField: 'children'
+        childrenField: 'children',
+        contentField: 'content'
     })
 
     const { transformedNodes } = useMenuTransform(slots)
@@ -57,10 +59,10 @@
             ]
 
         return items.map(item => {
-            const content = item.content
+            const content = item[props.contentField]
             const childrenData = item[props.childrenField]
             const rest = { ...item }
-            delete rest.content
+            delete rest[props.contentField]
             delete rest[props.childrenField]
 
             const key = item?.[props.valueField] || generatePseudoRandomKey()
@@ -72,6 +74,7 @@
                           tag: props.tag,
                           valueField: props.valueField,
                           childrenField: props.childrenField,
+                          contentField: props.contentField,
                           class: 'w-full pl-4'
                       })
                     : null
