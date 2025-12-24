@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite'
-// import { fn } from '@storybook/test'
 import NBanner from './NBanner.vue'
 import NButton from './NButton.vue'
 import { ref } from 'vue'
@@ -12,11 +11,16 @@ const meta = {
     },
     tags: ['autodocs'],
     argTypes: {
-        // Props
-        name: { control: 'text' }
+        duration: { control: 'number' },
+        showProgress: { control: 'boolean' },
+        inlineActions: { control: 'boolean' },
+        icon: { control: 'text' }
     },
     args: {
-        name: 'account'
+        icon: 'mdi-information',
+        duration: 0,
+        showProgress: false,
+        inlineActions: true
     }
 } satisfies Meta
 
@@ -35,7 +39,7 @@ export const Default: Story = {
     })
 }
 
-export const Normal: Story = {
+export const Colors: Story = {
     args: {},
     render: args => ({
         components: { NBanner },
@@ -43,13 +47,13 @@ export const Normal: Story = {
             return { args }
         },
         template: `
-            <div class="flex flex-col gap-4">
-                <NBanner v-bind="args">This is a banner message</NBanner>
-                <NBanner v-bind="args" class="primary">This is a banner message</NBanner>
-                <NBanner v-bind="args" class="success">This is a banner message</NBanner>
-                <NBanner v-bind="args" class="error">This is a banner message</NBanner>
-                <NBanner v-bind="args" class="warning">This is a banner message</NBanner>
-                <NBanner v-bind="args" class="info">This is a banner message</NBanner>
+            <div class="flex flex-col gap-4 w-[600px]">
+                <NBanner v-bind="args">Default banner message</NBanner>
+                <NBanner v-bind="args" class="brand">Brand banner message</NBanner>
+                <NBanner v-bind="args" class="success">Success banner message</NBanner>
+                <NBanner v-bind="args" class="error">Error banner message</NBanner>
+                <NBanner v-bind="args" class="warning">Warning banner message</NBanner>
+                <NBanner v-bind="args" class="info">Info banner message</NBanner>
             </div>
         `
     })
@@ -63,13 +67,13 @@ export const Flat: Story = {
             return { args }
         },
         template: `
-            <div class="flex flex-col gap-4">
-                <NBanner v-bind="args" class="flat">This is a banner message</NBanner>
-                <NBanner v-bind="args" class="flat primary">This is a banner message</NBanner>
-                <NBanner v-bind="args" class="flat success">This is a banner message</NBanner>
-                <NBanner v-bind="args" class="flat error">This is a banner message</NBanner>
-                <NBanner v-bind="args" class="flat warning">This is a banner message</NBanner>
-                <NBanner v-bind="args" class="flat info">This is a banner message</NBanner>
+            <div class="flex flex-col gap-4 w-[600px]">
+                <NBanner v-bind="args" class="flat">Flat banner message</NBanner>
+                <NBanner v-bind="args" class="flat brand">Flat Brand</NBanner>
+                <NBanner v-bind="args" class="flat success">Flat Success</NBanner>
+                <NBanner v-bind="args" class="flat error">Flat Error</NBanner>
+                <NBanner v-bind="args" class="flat warning">Flat Warning</NBanner>
+                <NBanner v-bind="args" class="flat info">Flat Info</NBanner>
             </div>
         `
     })
@@ -83,79 +87,41 @@ export const Outlined: Story = {
             return { args }
         },
         template: `
-            <div class="flex flex-col gap-4">
-                <NBanner v-bind="args" class="outlined">This is a banner message</NBanner>
-                <NBanner v-bind="args" class="outlined primary">This is a banner message</NBanner>
-                <NBanner v-bind="args" class="outlined success">This is a banner message</NBanner>
-                <NBanner v-bind="args" class="outlined error">This is a banner message</NBanner>
-                <NBanner v-bind="args" class="outlined warning">This is a banner message</NBanner>
-                <NBanner v-bind="args" class="outlined info">This is a banner message</NBanner>
+            <div class="flex flex-col gap-4 w-[600px]">
+                <NBanner v-bind="args" class="outlined">Outlined banner message</NBanner>
+                <NBanner v-bind="args" class="outlined brand">Outlined Brand</NBanner>
+                <NBanner v-bind="args" class="outlined success">Outlined Success</NBanner>
+                <NBanner v-bind="args" class="outlined error">Outlined Error</NBanner>
+                <NBanner v-bind="args" class="outlined warning">Outlined Warning</NBanner>
+                <NBanner v-bind="args" class="outlined info">Outlined Info</NBanner>
             </div>
         `
     })
 }
 
-export const FlatOutlined: Story = {
-    args: {},
+export const WithProgress: Story = {
+    args: {
+        duration: 5000,
+        showProgress: true
+    },
     render: args => ({
-        components: { NBanner },
+        components: { NBanner, NButton },
         setup() {
-            return { args }
+            const show = ref(true)
+            return { args, show }
         },
         template: `
-            <div class="flex flex-col gap-4">
-                <NBanner v-bind="args" class="flat outlined">This is a banner message</NBanner>
-                <NBanner v-bind="args" class="flat outlined primary">This is a banner message</NBanner>
-                <NBanner v-bind="args" class="flat outlined success">This is a banner message</NBanner>
-                <NBanner v-bind="args" class="flat outlined error">This is a banner message</NBanner>
-                <NBanner v-bind="args" class="flat outlined warning">This is a banner message</NBanner>
-                <NBanner v-bind="args" class="flat outlined info">This is a banner message</NBanner>
+            <div class="flex flex-col gap-4 w-[600px]">
+                <NButton @click="show = true" :disabled="show">Reset Banner</NButton>
+                <NBanner v-if="show" v-bind="args" class="info" @timer-end="show = false">
+                    This banner will close in 5 seconds.
+                </NBanner>
             </div>
         `
     })
 }
 
-export const Durations: Story = {
-    args: {},
-    render: args => ({
-        components: { NBanner },
-        setup() {
-            return { args }
-        },
-        template: `
-            <div class="flex flex-col gap-4">
-                <NBanner v-bind="args">This is a banner message</NBanner>
-                <NBanner v-bind="args" class="primary" :duration="10000" show-progress>This is a banner message</NBanner>
-                <NBanner v-bind="args" class="success" :duration="10000" show-progress>This is a banner message</NBanner>
-                <NBanner v-bind="args" class="error" :duration="10000" show-progress>This is a banner message</NBanner>
-                <NBanner v-bind="args" class="warning" :duration="10000" show-progress>This is a banner message</NBanner>
-                <NBanner v-bind="args" class="info" :duration="10000" show-progress>This is a banner message</NBanner>
-            </div>
-        `
-    })
-}
-
-export const Icon: Story = {
-    args: {},
-    render: args => ({
-        components: { NBanner },
-        setup() {
-            return { args }
-        },
-        template: `
-            <div class="flex flex-col gap-4">
-                <NBanner v-bind="args" icon="account" class="">This is a banner message</NBanner>
-                <NBanner v-bind="args" icon="account" class=" primary">This is a banner message</NBanner>
-                <NBanner v-bind="args" icon="account" class=" success">This is a banner message</NBanner>
-                <NBanner v-bind="args" icon="account" class=" error">This is a banner message</NBanner>
-                <NBanner v-bind="args" icon="account" class=" warning">This is a banner message</NBanner>
-                <NBanner v-bind="args" icon="account"class=" info">This is a banner message</NBanner>
-            </div>
-        `
-    })
-}
-
-export const Actions: Story = {
+export const WithActions: Story = {
     args: {},
     render: args => ({
         components: { NBanner, NButton },
@@ -163,42 +129,19 @@ export const Actions: Story = {
             return { args }
         },
         template: `
-            <div class="flex flex-col gap-4">
-                <NBanner v-bind="args" icon="account" class="">
-                    This is a banner message
+            <div class="flex flex-col gap-4 w-[600px]">
+                <NBanner v-bind="args" class="info">
+                    Update available
                     <template #actions>
-                        <NButton label="Dismiss" class="text-xs flat" />
-                    </template>
-                </NBanner>
-                <NBanner v-bind="args" icon="account" class="success">
-                    This is a banner message
-                    <template #actions>
-                        <NButton label="Dismiss" class="text-xs flat" />
-                    </template>
-                </NBanner>
-                <NBanner v-bind="args" icon="account" class="error">
-                    This is a banner message
-                    <template #actions>
-                        <NButton label="Dismiss" class="text-xs flat"/>
-                    </template>
-                </NBanner>
-                <NBanner v-bind="args" icon="account" class="warning">
-                    This is a banner message
-                    <template #actions>
-                        <NButton label="Dismiss" class="text-xs flat"/>
-                    </template>
-                </NBanner>
-                <NBanner v-bind="args" icon="account" class="info">
-                    This is a banner message
-                    <template #actions>
-                        <NButton label="Dismiss" class="text-xs flat"/>
+                        <NButton class="text-xs texted pilled" label="Later" />
+                        <NButton class="text-xs flat pilled brand" label="Update Now" />
                     </template>
                 </NBanner>
 
-                <NBanner v-bind="args" icon="account" :inline-actions="false" class="">
-                    This is a banner message
+                <NBanner v-bind="args" class="error" :inline-actions="false">
+                    Connection lost. Please check your internet connection.
                     <template #actions>
-                        <NButton label="Dismiss" class="text-xs flat" />
+                        <NButton class="text-xs outlined " label="Retry" />
                     </template>
                 </NBanner>
             </div>
@@ -206,27 +149,23 @@ export const Actions: Story = {
     })
 }
 
-export const ActionSlots: Story = {
+export const Dismissible: Story = {
     args: {},
     render: args => ({
-        components: { NBanner },
+        components: { NBanner, NButton },
         setup() {
-            function handleCancelClick() {
-                console.log('cancel clicked')
-            }
-            function handleOkClick() {
-                console.log('ok clicked')
-            }
-
-            const actions = ref([
-                { label: 'Cancel', class: 'flat', onClick: handleCancelClick },
-                { label: 'OK', class: 'outlined', onClick: handleOkClick }
-            ])
-            return { args, actions, handleCancelClick }
+            const show = ref(true)
+            return { args, show }
         },
         template: `
-            <div class="flex flex-col gap-4">
-                <NBanner v-bind="args" :actions="actions">This is a banner message</NBanner>                
+            <div class="flex flex-col gap-4 w-[600px]">
+                <NButton v-if="!show" @click="show = true">Show Banner</NButton>
+                <NBanner v-model="show" v-bind="args" class="warning">
+                    This is a dismissible banner.
+                    <template #actions>
+                        <NButton icon="mdi-close" class="flat icon" @click="show = false" aria-label="Dismiss" />
+                    </template>
+                </NBanner>
             </div>
         `
     })

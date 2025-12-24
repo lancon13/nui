@@ -96,7 +96,6 @@
     )
 
     // --- Interaction Handlers ---
-    // We wrap the timer calls to emit events
     const handlePause = () => {
         if (props.duration > 0 && !timer.isPaused.value) {
             timer.pause()
@@ -119,7 +118,6 @@
                 timer.start()
                 emits('timer-begin')
             } else {
-                // If the model is turned off manually (not by timer), stop the timer
                 timer.stop()
             }
         },
@@ -148,6 +146,7 @@
 
     @layer components {
         .n-banner {
+            /* Base */
             @apply relative
                 flex flex-col gap-2 
                 bg-text text-text-invert
@@ -158,8 +157,9 @@
                 transition-all duration-200 ease-in-out
                 overflow-hidden;
 
+            /* Content Layout */
             .n-banner-label {
-                @apply flex flex-row gap-4 items-center;
+                @apply flex flex-row gap-4 items-center grow;
             }
             .n-banner-actions {
                 @apply flex flex-row gap-4 items-center justify-end;
@@ -168,7 +168,7 @@
                 @apply flex flex-row gap-4;
             }
 
-            /* --- Progress Bar --- */
+            /* Progress Bar */
             .n-banner-progress {
                 @apply absolute bottom-0 left-0 right-0 h-1 
                        w-full bg-current/25;
@@ -180,8 +180,8 @@
                 }
             }
 
-            /* Colors & Variants (No changes) */
-            &.primary {
+            /* Colors & Variants */
+            &.brand {
                 @apply bg-brand text-brand-light;
             }
             &.success {
@@ -197,9 +197,11 @@
                 @apply bg-info text-info-light;
             }
 
+            /* Flat Variant */
             &.flat {
                 @apply bg-current/20 text-current;
-                &.primary {
+
+                &.brand {
                     @apply bg-brand-light text-brand;
                 }
                 &.success {
@@ -216,12 +218,15 @@
                 }
             }
 
+            /* Outlined Variant */
             &.outlined {
                 @apply border-2 border-current text-current;
+
                 &:not(.flat) {
                     @apply bg-transparent;
                 }
-                &.primary {
+
+                &.brand {
                     @apply border-brand text-brand;
                 }
                 &.success {
