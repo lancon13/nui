@@ -63,7 +63,7 @@ export const Colors: Story = {
         template: `
             <div class="flex flex-row items-center gap-4">
                 <NIcon v-bind="args" name="mdi-magnify" class="text-[3rem]"></NIcon>
-                <NIcon v-bind="args" name="mdi-magnify" class="text-[3rem] text-primary"></NIcon>
+                <NIcon v-bind="args" name="mdi-magnify" class="text-[3rem] text-brand"></NIcon>
                 <NIcon v-bind="args" name="mdi-magnify" class="text-[3rem] text-success"></NIcon>
                 <NIcon v-bind="args" name="mdi-magnify" class="text-[3rem] text-error"></NIcon>
                 <NIcon v-bind="args" name="mdi-magnify" class="text-[3rem] text-warning"></NIcon>

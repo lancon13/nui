@@ -87,7 +87,7 @@
                 rounded-element;
 
             &.primary {
-                @apply bg-primary;
+                @apply bg-brand;
             }
             &.success {
                 @apply bg-success;
@@ -105,19 +105,19 @@
             &.flat {
                 @apply bg-current/20 text-current;
                 &.primary {
-                    @apply bg-primary-alt text-primary;
+                    @apply bg-brand-light text-brand;
                 }
                 &.success {
-                    @apply bg-success-alt text-success;
+                    @apply bg-success-light text-success;
                 }
                 &.error {
-                    @apply bg-error-alt text-error;
+                    @apply bg-error-light text-error;
                 }
                 &.warning {
-                    @apply bg-warning-alt text-warning;
+                    @apply bg-warning-light text-warning;
                 }
                 &.info {
-                    @apply bg-info-alt text-info;
+                    @apply bg-info-light text-info;
                 }
             }
 
@@ -127,7 +127,7 @@
                     @apply bg-transparent;
                 }
                 &.primary {
-                    @apply border-primary text-primary;
+                    @apply border-brand text-brand;
                 }
                 &.success {
                     @apply border-success text-success;
@@ -146,7 +146,7 @@
             &.texted {
                 @apply bg-transparent text-current;
                 &.primary {
-                    @apply text-primary;
+                    @apply text-brand;
                 }
                 &.success {
                     @apply text-success;

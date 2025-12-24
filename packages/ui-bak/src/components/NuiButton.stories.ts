@@ -332,7 +332,7 @@ export const CurrentColor: Story = {
             return { args }
         },
         template: `
-            <div class="text-primary-500">
+            <div class="text-brand-500">
                 <div class="flex gap-sm">
                     <NuiButton v-bind="args" variant="solid" label="Solid" />
                     <NuiButton v-bind="args" variant="outlined" label="Outlined" />

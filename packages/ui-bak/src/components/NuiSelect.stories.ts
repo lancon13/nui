@@ -191,7 +191,7 @@ export const Slots: Story = {
         template: `
             <NuiSelect v-bind="args" v-model="model">
                 <template #before>
-                    <NuiIcon name="search" class="text-primary" />
+                    <NuiIcon name="search" class="text-brand" />
                 </template>
                 <template #prepend>
                     <NuiIcon name="user" />
@@ -200,7 +200,7 @@ export const Slots: Story = {
                     <NuiIcon name="arrow-right" />
                 </template>
                 <template #after>
-                    <NuiIcon name="settings" class="text-primary" />
+                    <NuiIcon name="settings" class="text-brand" />
                 </template>
             </NuiSelect>
         `
@@ -298,7 +298,7 @@ export const CustomItem: Story = {
                     <div class="flex items-center gap-2">
                         <NuiAvatar :src="option.avatar" size="small" />
                         <div>
-                            <p :class="selected ? 'text-primary' : 'text-text'">{{ option.label }}</p>
+                            <p :class="selected ? 'text-brand' : 'text-text'">{{ option.label }}</p>
                             <p class="text-xs text-text/70">{{ option.desc }}</p>
                         </div>
                     </div>

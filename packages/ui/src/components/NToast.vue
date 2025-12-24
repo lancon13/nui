@@ -156,7 +156,7 @@
 
     @layer components {
         .n-toast-overlay {
-            @apply fixed inset-0 z-1000 bg-bg-invert/50;
+            @apply fixed inset-0 z-1000 bg-background-invert/50;
 
             &.n-toast-overlay-enter-active,
             &.n-toast-overlay-leave-active {

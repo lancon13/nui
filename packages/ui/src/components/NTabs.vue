@@ -106,7 +106,7 @@
                         }
                     }
                     &.primary > .n-tab.n-tab--active {
-                        @apply bg-primary text-text-invert;
+                        @apply bg-brand text-text-invert;
                         @apply disabled:bg-text disabled:text-text-invert;
                     }
                     &.success > .n-tab.n-tab--active {
@@ -136,7 +136,7 @@
                         }
                     }
                     &.primary > .n-tab.n-tab--active {
-                        @apply bg-primary-alt text-primary;
+                        @apply bg-brand-light text-brand;
                         @apply disabled:bg-current/20 disabled:text-current;
                     }
                     &.success > .n-tab.n-tab--active {
@@ -166,7 +166,7 @@
                         }
                     }
                     &.primary > .n-tab.n-tab--active {
-                        @apply text-primary;
+                        @apply text-brand;
                         @apply disabled:text-current;
                     }
                     &.success > .n-tab.n-tab--active {

@@ -169,7 +169,7 @@ export const CustomMessage: Story = {
             <div class="w-96">
                 <NForm v-bind="args">
                     <template #message>
-                        <div class="p-4 bg-primary/10 text-primary rounded text-sm border border-primary/20">
+                        <div class="p-4 bg-brand/10 text-brand rounded text-sm border border-brand/20">
                             This is a completely custom message area not using NBanner.
                         </div>
                     </template>

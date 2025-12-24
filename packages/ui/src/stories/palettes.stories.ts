@@ -21,9 +21,9 @@ export const Default: Story = {
         <div class="flex flex-col gap-4">
             <div class="grid grid-cols-2 gap-4">
                 <ul>
-                    <li><div class="bg-primary-dim px-4 py-2">Primary dim</div></li>
-                    <li><div class="bg-primary px-4 py-2">Primary</div></li>
-                    <li><div class="bg-primary-bright px-4 py-2">Primary bright </div></li>                
+                    <li><div class="bg-brand-dim px-4 py-2">Primary dim</div></li>
+                    <li><div class="bg-brand px-4 py-2">Primary</div></li>
+                    <li><div class="bg-brand-bright px-4 py-2">Primary bright </div></li>                
                 </ul>
 
                 <ul>
@@ -59,11 +59,11 @@ export const Default: Story = {
             <div class="bg-surface border-border border-1 flex flex-col justify-center items-center gap-4 p-4 rounded-container shadow-outer">
                 <div class="text-center">
                     <div>This is a card</div>
-                    <div class="text-text-subtle">This is a description</div>
+                    <div class="text-text-dark">This is a description</div>
                 </div>
                 <div class="bg-sub-surface border-border border-1 p-4 text-center rounded-container shadow-outer">
                     <div>This is a sub-card</div>
-                    <div class="text-text-subtle">This is a description</div>
+                    <div class="text-text-dark">This is a description</div>
                 </div>
 
                 <div class="bg-sub-surface border-border border-1 p-4 text-center rounded-full">

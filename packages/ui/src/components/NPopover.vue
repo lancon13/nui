@@ -189,7 +189,7 @@
 
     @layer components {
         .n-popover-overlay {
-            @apply bg-bg-invert/50 fixed inset-0 grid place-content-center z-2000;
+            @apply bg-background-invert/50 fixed inset-0 grid place-content-center z-2000;
 
             &.n-popover-overlay-enter-active,
             &.n-popover-overlay-leave-active {

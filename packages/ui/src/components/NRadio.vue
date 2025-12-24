@@ -198,7 +198,7 @@
 
             /* --- TEXT COLORS --- */
             &:has(.n-radio.primary) {
-                @apply text-primary;
+                @apply text-brand;
             }
             &:has(.n-radio.success) {
                 @apply text-success;
@@ -228,7 +228,7 @@
 
                 /* State Coloring - Applies to the border of the radio */
                 &.primary {
-                    @apply border-primary;
+                    @apply border-brand;
                 }
                 &.success {
                     @apply border-success;

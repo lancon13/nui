@@ -134,7 +134,7 @@ export const Controlled: Story = {
         template: `
         <div class="flex flex-col gap-sm">
             <NuiButton label="Toggle Tooltip" @click="show = !show" />
-            <div class="p-sm mt-md border border-dashed border-primary relative text-center">
+            <div class="p-sm mt-md border border-dashed border-brand relative text-center">
                 Attach Point
                 <NuiTooltip v-bind="args" v-model="show" />
             </div>
@@ -248,7 +248,7 @@ export const SeparateTriggerAndAttach: Story = {
             <div class="text-center">
                 <NuiButton label="This is the trigger" id="my-trigger-button-2" />
 
-                <div id="my-attach-point" class="p-sm mt-md border border-dashed border-primary-200 bg-primary-50 text-neutral relative">
+                <div id="my-attach-point" class="p-sm mt-md border border-dashed border-brand-200 bg-brand-50 text-neutral relative">
                     The tooltip will be attached here.
                 </div>
 
@@ -315,7 +315,7 @@ export const Focusable: Story = {
                             This tooltip will stay open as long as it has focus.
                         </p>
                         <div class="mt-2">
-                            <a href="#" class="text-primary-400 hover:underline" @click.prevent>
+                            <a href="#" class="text-brand-400 hover:underline" @click.prevent>
                                 A link
                             </a>
                         </div>

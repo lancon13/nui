@@ -89,7 +89,7 @@
             &.nui-avatar--variant-solid {
                 @apply border-transparent;
                 &.nui-avatar--color-primary {
-                    @apply bg-primary text-input-highlight;
+                    @apply bg-brand text-input-highlight;
                 }
                 &.nui-avatar--color-success {
                     @apply bg-success text-input-highlight;
@@ -110,7 +110,7 @@
             &.nui-avatar--variant-outlined {
                 @apply bg-transparent;
                 &.nui-avatar--color-primary {
-                    @apply border-primary text-primary;
+                    @apply border-brand text-brand;
                 }
                 &.nui-avatar--color-success {
                     @apply border-success text-success;
@@ -131,7 +131,7 @@
             &.nui-avatar--variant-flat {
                 @apply border-transparent;
                 &.nui-avatar--color-primary {
-                    @apply bg-primary/20 text-primary;
+                    @apply bg-brand/20 text-brand;
                 }
                 &.nui-avatar--color-success {
                     @apply bg-success/20 text-success;
@@ -152,7 +152,7 @@
             &.nui-avatar--variant-text {
                 @apply border-transparent bg-transparent;
                 &.nui-avatar--color-primary {
-                    @apply text-primary;
+                    @apply text-brand;
                 }
                 &.nui-avatar--color-success {
                     @apply text-success;

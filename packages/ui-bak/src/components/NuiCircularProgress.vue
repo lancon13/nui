@@ -152,7 +152,7 @@
 
             /* Colors */
             &.nui-circular-progress--color-primary {
-                @apply text-primary;
+                @apply text-brand;
             }
             &.nui-circular-progress--color-success {
                 @apply text-success;

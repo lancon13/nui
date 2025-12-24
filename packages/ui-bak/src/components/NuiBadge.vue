@@ -59,7 +59,7 @@
 
             &.nui-badge--variant-solid {
                 &.nui-badge--color-primary {
-                    @apply bg-primary text-input-highlight;
+                    @apply bg-brand text-input-highlight;
                 }
                 &.nui-badge--color-info {
                     @apply bg-info text-input-highlight;
@@ -81,7 +81,7 @@
             &.nui-badge--variant-flat {
                 @apply border-transparent;
                 &.nui-badge--color-primary {
-                    @apply text-primary bg-primary/20;
+                    @apply text-brand bg-brand/20;
                 }
                 &.nui-badge--color-success {
                     @apply text-success bg-success/20;
@@ -103,7 +103,7 @@
             &.nui-badge--variant-outlined {
                 @apply bg-transparent border-[length:var(--nui-badge-border-size)];
                 &.nui-badge--color-primary {
-                    @apply border-primary text-primary;
+                    @apply border-brand text-brand;
                 }
                 &.nui-badge--color-success {
                     @apply border-success text-success;
@@ -125,7 +125,7 @@
             &.nui-badge--variant-text {
                 @apply border-transparent bg-transparent;
                 &.nui-badge--color-primary {
-                    @apply text-primary;
+                    @apply text-brand;
                 }
                 &.nui-badge--color-info {
                     @apply text-info;
@@ -174,50 +174,32 @@
                 &.nui-badge--position-top.nui-badge--direction-right {
                     --nui-badge-pos-translate-x: var(--nui-badge-translate-x);
                     --nui-badge-pos-translate-y: var(--nui-badge-translate-y);
-                    transform: translate(
-                        var(--nui-badge-pos-translate-x),
-                        var(--nui-badge-pos-translate-y)
-                    );
+                    transform: translate(var(--nui-badge-pos-translate-x), var(--nui-badge-pos-translate-y));
                 }
                 &.nui-badge--position-top.nui-badge--direction-left {
                     --nui-badge-pos-translate-x: calc(-1 * var(--nui-badge-translate-x));
                     --nui-badge-pos-translate-y: var(--nui-badge-translate-y);
-                    transform: translate(
-                        var(--nui-badge-pos-translate-x),
-                        var(--nui-badge-pos-translate-y)
-                    );
+                    transform: translate(var(--nui-badge-pos-translate-x), var(--nui-badge-pos-translate-y));
                 }
                 &.nui-badge--position-bottom.nui-badge--direction-right {
                     --nui-badge-pos-translate-x: var(--nui-badge-translate-x);
                     --nui-badge-pos-translate-y: calc(-1 * var(--nui-badge-translate-y));
-                    transform: translate(
-                        var(--nui-badge-pos-translate-x),
-                        var(--nui-badge-pos-translate-y)
-                    );
+                    transform: translate(var(--nui-badge-pos-translate-x), var(--nui-badge-pos-translate-y));
                 }
                 &.nui-badge--position-bottom.nui-badge--direction-left {
                     --nui-badge-pos-translate-x: calc(-1 * var(--nui-badge-translate-x));
                     --nui-badge-pos-translate-y: calc(-1 * var(--nui-badge-translate-y));
-                    transform: translate(
-                        var(--nui-badge-pos-translate-x),
-                        var(--nui-badge-pos-translate-y)
-                    );
+                    transform: translate(var(--nui-badge-pos-translate-x), var(--nui-badge-pos-translate-y));
                 }
                 &.nui-badge--position-center.nui-badge--direction-right {
                     --nui-badge-pos-translate-x: var(--nui-badge-translate-x);
                     --nui-badge-pos-translate-y: -50%;
-                    transform: translate(
-                        var(--nui-badge-pos-translate-x),
-                        var(--nui-badge-pos-translate-y)
-                    );
+                    transform: translate(var(--nui-badge-pos-translate-x), var(--nui-badge-pos-translate-y));
                 }
                 &.nui-badge--position-center.nui-badge--direction-left {
                     --nui-badge-pos-translate-x: calc(-1 * var(--nui-badge-translate-x));
                     --nui-badge-pos-translate-y: -50%;
-                    transform: translate(
-                        var(--nui-badge-pos-translate-x),
-                        var(--nui-badge-pos-translate-y)
-                    );
+                    transform: translate(var(--nui-badge-pos-translate-x), var(--nui-badge-pos-translate-y));
                 }
             }
         }

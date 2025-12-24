@@ -263,7 +263,7 @@
                 }
 
                 &.primary {
-                    @apply border-primary;
+                    @apply border-brand;
                 }
                 &.success {
                     @apply border-success;
@@ -290,7 +290,7 @@
             }
 
             :has(.n-checkbox.primary) {
-                @apply text-primary;
+                @apply text-brand;
             }
             :has(.n-checkbox.success) {
                 @apply text-success;

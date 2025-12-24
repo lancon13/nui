@@ -180,37 +180,37 @@
 
             /* Colors & Variants (No changes) */
             &.primary {
-                @apply bg-primary text-primary-alt;
+                @apply bg-brand text-brand-light;
             }
             &.success {
-                @apply bg-success text-success-alt;
+                @apply bg-success text-success-light;
             }
             &.error {
-                @apply bg-error text-error-alt;
+                @apply bg-error text-error-light;
             }
             &.warning {
-                @apply bg-warning text-warning-alt;
+                @apply bg-warning text-warning-light;
             }
             &.info {
-                @apply bg-info text-info-alt;
+                @apply bg-info text-info-light;
             }
 
             &.flat {
                 @apply bg-current/20 text-current;
                 &.primary {
-                    @apply bg-primary-alt text-primary;
+                    @apply bg-brand-light text-brand;
                 }
                 &.success {
-                    @apply bg-success-alt text-success;
+                    @apply bg-success-light text-success;
                 }
                 &.error {
-                    @apply bg-error-alt text-error;
+                    @apply bg-error-light text-error;
                 }
                 &.warning {
-                    @apply bg-warning-alt text-warning;
+                    @apply bg-warning-light text-warning;
                 }
                 &.info {
-                    @apply bg-info-alt text-info;
+                    @apply bg-info-light text-info;
                 }
             }
 
@@ -220,7 +220,7 @@
                     @apply bg-transparent;
                 }
                 &.primary {
-                    @apply border-primary text-primary;
+                    @apply border-brand text-brand;
                 }
                 &.success {
                     @apply border-success text-success;

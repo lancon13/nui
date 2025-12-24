@@ -9,7 +9,7 @@ const meta = {
     },
     tags: ['autodocs'],
     argTypes: {
-        type: { control: 'select', options: ['normal'] },
+        name: { control: 'text' },
         overlay: { control: 'boolean' }
     }
 } satisfies Meta
@@ -38,12 +38,12 @@ export const Sizes: Story = {
         },
         template: `
             <div class="flex flex-row items-center gap-4">
-                <NLoading v-bind="args" class="text-sm"></NLoading>
-                <NLoading v-bind="args" class="text-lg"></NLoading>
-                <NLoading v-bind="args" class="text-xl"></NLoading>
-                <NLoading v-bind="args" class="text-2xl"></NLoading>
-                <NLoading v-bind="args" class="text-[3rem]"></NLoading>
-                <NLoading v-bind="args" class="text-[5rem]"></NLoading>
+                <NLoading v-bind="args" class="text-sm animate-spin"></NLoading>
+                <NLoading v-bind="args" class="text-lg animate-spin"></NLoading>
+                <NLoading v-bind="args" class="text-xl animate-spin"></NLoading>
+                <NLoading v-bind="args" class="text-2xl animate-spin"></NLoading>
+                <NLoading v-bind="args" class="text-[3rem] animate-spin"></NLoading>
+                <NLoading v-bind="args" class="text-[5rem] animate-spin"></NLoading>
             </div>
         `
     })
@@ -58,17 +58,17 @@ export const Colors: Story = {
         },
         template: `
             <div class="flex flex-row items-center gap-4">
-                <NLoading v-bind="args" class="text-primary text-5xl"></NLoading>
-                <NLoading v-bind="args" class="text-success text-5xl"></NLoading>
-                <NLoading v-bind="args" class="text-error text-5xl"></NLoading>
-                <NLoading v-bind="args" class="text-warning text-5xl"></NLoading>
-                <NLoading v-bind="args" class="text-info text-5xl"></NLoading>                
+                <NLoading v-bind="args" class="text-[3rem] text-brand animate-spin"></NLoading>
+                <NLoading v-bind="args" class="text-[3rem] text-success animate-spin"></NLoading>
+                <NLoading v-bind="args" class="text-[3rem] text-error animate-spin"></NLoading>
+                <NLoading v-bind="args" class="text-[3rem] text-warning animate-spin"></NLoading>
+                <NLoading v-bind="args" class="text-[3rem] text-info animate-spin"></NLoading>                
             </div>
         `
     })
 }
 
-export const Overrides: Story = {
+export const CustomIcon: Story = {
     args: {},
     render: args => ({
         components: { NLoading },
@@ -77,8 +77,9 @@ export const Overrides: Story = {
         },
         template: `
             <div class="flex flex-row items-center gap-4">
-                <NLoading v-bind="args" name="mdi-cached"></NLoading>
-                <NLoading v-bind="args" name="mdi-cached" class="text-primary"></NLoading>
+                <NLoading v-bind="args" name="mdi-cached" class="text-[3rem] animate-spin"></NLoading>
+                <NLoading v-bind="args" name="mdi-cached" class="text-[3rem] text-brand animate-spin"></NLoading>
+                <NLoading v-bind="args" name="mdi-sync" class="text-[3rem] text-success animate-spin"></NLoading>
             </div>
         `
     })
@@ -87,7 +88,7 @@ export const Overrides: Story = {
 export const Overlay: Story = {
     args: {
         overlay: true,
-        class: 'text-5xl'
+        class: 'text-5xl animate-spin'
     },
     render: args => ({
         components: { NLoading },
@@ -95,8 +96,11 @@ export const Overlay: Story = {
             return { args }
         },
         template: `
-            <div class="relative flex h-48 w-64 items-center justify-center rounded-lg border">
-                Some content
+            <div class="relative flex h-64 w-64 flex-col items-center justify-center gap-4 border border-border bg-surface p-6 shadow-md">
+                <div class="h-12 w-full rounded bg-text/10"></div>
+                <div class="h-4 w-full rounded bg-text/10"></div>
+                <div class="h-4 w-2/3 rounded bg-text/10"></div>
+                <div class="mt-auto h-10 w-full rounded bg-brand/20"></div>
                 <NLoading v-bind="args"></NLoading>
             </div>
         `

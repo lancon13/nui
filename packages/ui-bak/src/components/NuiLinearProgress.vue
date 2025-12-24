@@ -18,13 +18,7 @@
 <script setup lang="ts">
     import { computed, type CSSProperties } from 'vue'
 
-    export type NuiLinearProgressColor =
-        | 'primary'
-        | 'success'
-        | 'error'
-        | 'warning'
-        | 'info'
-        | 'current'
+    export type NuiLinearProgressColor = 'primary' | 'success' | 'error' | 'warning' | 'info' | 'current'
     export type NuiLinearProgressSize = 'small' | 'medium' | 'large'
 
     export interface NuiLinearProgressProps {
@@ -163,10 +157,10 @@
             /* Colors */
 
             &.nui-linear-progress--color-primary {
-                @apply border-primary;
+                @apply border-brand;
 
                 .nui-linear-progress-bar {
-                    @apply bg-primary;
+                    @apply bg-brand;
                 }
             }
 
@@ -216,8 +210,7 @@
                 @apply w-3/4 [animation:nui-linear-progress-indeterminate_1.5s_ease-in-out_infinite];
             }
 
-            &.nui-linear-progress--indeterminate.nui-linear-progress--reversed
-                .nui-linear-progress-bar {
+            &.nui-linear-progress--indeterminate.nui-linear-progress--reversed .nui-linear-progress-bar {
                 @apply [animation-name:nui-linear-progress-indeterminate-reversed];
             }
         }

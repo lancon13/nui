@@ -158,7 +158,7 @@
 
     @layer components {
         .n-modal-overlay {
-            @apply fixed inset-0 z-1000 bg-bg-invert/50;
+            @apply fixed inset-0 z-1000 bg-background-invert/50;
 
             &.n-modal-overlay-enter-active,
             &.n-modal-overlay-leave-active {

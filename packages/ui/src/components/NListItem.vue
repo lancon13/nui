@@ -200,7 +200,7 @@
                 }
             }
             &.n-list-item--active {
-                @apply bg-primary text-text-invert;
+                @apply bg-brand text-text-invert;
             }
             &.n-list-item--expandable {
                 @apply gap-0 p-0
@@ -223,7 +223,7 @@
                 }
             }
             &.n-list-item--heading {
-                @apply text-xs font-bold uppercase text-text-subtle
+                @apply text-xs font-bold uppercase text-text-dark
                     mt-2 mb-1 cursor-default;
                 @apply hover:bg-transparent hover:backdrop-brightness-100;
             }

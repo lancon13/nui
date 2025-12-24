@@ -172,7 +172,7 @@
 
             /* --- TEXT COLORS --- */
             &:has(.n-toggle.primary) {
-                @apply text-primary;
+                @apply text-brand;
             }
             &:has(.n-toggle.success) {
                 @apply text-success;
@@ -239,7 +239,7 @@
                     /* 1. CHECKED STATE */
                     &:checked {
                         & ~ .n-toggle-track {
-                            @apply bg-primary;
+                            @apply bg-brand;
                         }
                         /* Slide 100% of the thumb's own width to the right */
                         & ~ .n-toggle-track .n-toggle-thumb {
@@ -269,7 +269,7 @@
                 }
 
                 /* --- COLOR VARIANTS (Overrides Track Color) --- */
-                /* When checked, these classes override the default bg-primary */
+                /* When checked, these classes override the default bg-brand */
                 &.success input:checked ~ .n-toggle-track {
                     @apply bg-success;
                 }

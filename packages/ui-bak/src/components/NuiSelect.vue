@@ -337,10 +337,10 @@
                 .nui-select-prepend,
                 .nui-select-append,
                 .nui-select-after {
-                    @apply text-primary;
+                    @apply text-brand;
                 }
                 .nui-select-outer {
-                    @apply border-primary text-primary;
+                    @apply border-brand text-brand;
                     &.nui-select-outer--active,
                     &:has(.nui-select-native:focus) {
                         @apply ring-primary/50;

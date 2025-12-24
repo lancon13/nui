@@ -90,7 +90,7 @@
             &.nui-chip--variant-solid {
                 @apply border-transparent;
                 &.nui-chip--color-primary {
-                    @apply bg-primary text-input-highlight;
+                    @apply bg-brand text-input-highlight;
                 }
                 &.nui-chip--color-success {
                     @apply bg-success text-input-highlight;
@@ -111,7 +111,7 @@
             &.nui-chip--variant-outlined {
                 @apply bg-transparent;
                 &.nui-chip--color-primary {
-                    @apply border-primary text-primary;
+                    @apply border-brand text-brand;
                 }
                 &.nui-chip--color-success {
                     @apply border-success text-success;
@@ -132,7 +132,7 @@
             &.nui-chip--variant-flat {
                 @apply border-transparent;
                 &.nui-chip--color-primary {
-                    @apply text-primary bg-primary/20;
+                    @apply text-brand bg-brand/20;
                 }
                 &.nui-chip--color-success {
                     @apply text-success bg-success/20;
@@ -153,7 +153,7 @@
             &.nui-chip--variant-text {
                 @apply border-transparent bg-transparent;
                 &.nui-chip--color-primary {
-                    @apply text-primary;
+                    @apply text-brand;
                 }
                 &.nui-chip--color-success {
                     @apply text-success;

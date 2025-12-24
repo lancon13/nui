@@ -204,7 +204,7 @@
             .nui-toggle-description,
             .nui-toggle-helper {
                 .nui-toggle-wrapper--color-primary & {
-                    @apply text-primary;
+                    @apply text-brand;
                 }
                 .nui-toggle-wrapper--color-success & {
                     @apply text-success;
@@ -223,7 +223,7 @@
             /* Thumb icon color */
             .nui-toggle-thumb {
                 .nui-toggle-wrapper--color-primary & {
-                    @apply text-primary;
+                    @apply text-brand;
                 }
                 .nui-toggle-wrapper--color-success & {
                     @apply text-success;
@@ -242,7 +242,7 @@
             /* Track colors (unchecked) */
             .nui-toggle-input ~ .nui-toggle-display {
                 .nui-toggle-wrapper--color-primary & {
-                    @apply bg-primary/20 border-primary;
+                    @apply bg-brand/20 border-brand;
                 }
                 .nui-toggle-wrapper--color-success & {
                     @apply bg-success/20 border-success;
@@ -261,7 +261,7 @@
             /* Track colors (checked) */
             .nui-toggle-input:checked ~ .nui-toggle-display {
                 .nui-toggle-wrapper--color-primary & {
-                    @apply bg-primary border-primary;
+                    @apply bg-brand border-brand;
                 }
                 .nui-toggle-wrapper--color-success & {
                     @apply bg-success border-success;

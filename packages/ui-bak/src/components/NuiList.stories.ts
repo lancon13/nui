@@ -74,7 +74,7 @@ export const VirtualScroll: Story = {
         <NuiList ref="listRef" v-bind="args">
           <template #item="{ item, index }">
             <div class="flex items-center gap-sm text-sm">
-              <span class="text-text-subtle">{{ index + 1 }}.</span>
+              <span class="text-text-dark">{{ index + 1 }}.</span>
               <span>{{ item }}</span>
             </div>
           </template>

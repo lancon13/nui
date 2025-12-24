@@ -97,7 +97,7 @@ export const Complex2: Story = {
         template: `
             <NCard v-bind="args" class="w-96 shadowed">
                 <div class="n-card-header p-0">
-                    <div class="w-full h-64 bg-primary text-text-invert content-col items-center justify-center">Image</div>
+                    <div class="w-full h-64 bg-brand text-text-invert content-col items-center justify-center">Image</div>
                 </div>
 
                 <div class="n-card-header">
@@ -173,7 +173,7 @@ export const Disabled: Story = {
 
 export const Loading: Story = {
     args: {
-        loadingClass: 'text-5xl text-primary'
+        loadingClass: 'text-5xl text-brand'
     },
     render: args => ({
         components: { NCard, NButton },

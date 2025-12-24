@@ -179,7 +179,7 @@
             .nui-checkbox-description,
             .nui-checkbox-helper {
                 .nui-checkbox-wrapper--color-primary & {
-                    @apply text-primary;
+                    @apply text-brand;
                 }
                 .nui-checkbox-wrapper--color-success & {
                     @apply text-success;
@@ -217,7 +217,7 @@
             /* Checked/Indeterminate state colors */
             .nui-checkbox-input:is(:checked, :indeterminate) ~ .nui-checkbox-display {
                 .nui-checkbox-wrapper--color-primary & {
-                    @apply bg-primary border-primary;
+                    @apply bg-brand border-brand;
                 }
                 .nui-checkbox-wrapper--color-success & {
                     @apply bg-success border-success;

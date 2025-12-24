@@ -436,7 +436,7 @@
             &.nui-slider-wrapper--color-primary {
                 .nui-slider-selection,
                 .nui-slider-thumb {
-                    @apply bg-primary;
+                    @apply bg-brand;
                 }
                 .nui-slider-thumb:focus-within {
                     @apply ring-primary/50;

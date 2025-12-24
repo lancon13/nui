@@ -106,7 +106,7 @@ export const CustomTooltip: Story = {
             <div class="w-64">
                 <NuiSlider v-bind="args" v-model="model">
                     <template #tooltip-content="{ value }">
-                        <div class="text-primary bg-white/80 p-2 rounded-lg shadow-lg">
+                        <div class="text-brand bg-white/80 p-2 rounded-lg shadow-lg">
                                 Value: {{ value }}
                             </div>
                     </template>

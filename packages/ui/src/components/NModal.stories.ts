@@ -128,7 +128,7 @@ export const Simple: Story = {
             <NButton @click="handleButtonClick">
                 Show modal
                 <NModal v-bind="args" v-model="showModal" noOverlayHide >
-                    <div class="p-5 bg-bg-invert text-text-invert">Simple content, use ESC to close</div>
+                    <div class="p-5 bg-background-invert text-text-invert">Simple content, use ESC to close</div>
                 </NModal>
             </NButton>
         `
@@ -152,7 +152,7 @@ export const NoOverlay: Story = {
             <NButton @click="handleButtonClick">
                 Show modal
                 <NModal v-bind="args" v-model="showModal" :overlay="false" >
-                    <div class="p-5 bg-bg-invert text-text-invert shadowed rounded-element">Simple content, use ESC to close</div>
+                    <div class="p-5 bg-background-invert text-text-invert shadowed rounded-element">Simple content, use ESC to close</div>
                 </NModal>
             </NButton>
         `
@@ -179,7 +179,7 @@ export const Dialog: Story = {
                 <NModal v-bind="args" v-model="showModal" >
                      <NCard v-bind="args" class="w-96 shadowed">
                         <div class="n-card-header p-0">
-                            <div class="w-full h-64 bg-primary text-text-invert content-col items-center justify-center">Image</div>
+                            <div class="w-full h-64 bg-brand text-text-invert content-col items-center justify-center">Image</div>
                             <NButton icon="close" class="icon absolute right-2 top-2 pilled flat"  @click="handleButtonClick">
                                 <NTooltip>
                                     Close this card <a href="#">here</a>

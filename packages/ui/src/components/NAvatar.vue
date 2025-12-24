@@ -79,7 +79,7 @@
             }
 
             &.primary {
-                @apply bg-primary;
+                @apply bg-brand;
             }
             &.success {
                 @apply bg-success;

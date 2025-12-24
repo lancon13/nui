@@ -6,11 +6,10 @@
 </template>
 
 <script setup lang="ts">
-    import { computed, HTMLAttributes, useAttrs } from 'vue'
+    import { computed, type HTMLAttributes, useAttrs } from 'vue'
     import NIcon from './NIcon.vue'
 
     export type NLoadingProps = Partial</* @vue-ignore */ HTMLAttributes> & {
-        type?: string
         name?: string
         class?: string | string[] | object
         overlay?: boolean
@@ -21,26 +20,11 @@
     })
 
     const attrs = useAttrs()
-    const props = withDefaults(defineProps<NLoadingProps>(), {
-        type: 'normal',
-        class: 'text-3xl'
-    })
-
+    const props = withDefaults(defineProps<NLoadingProps>(), {})
     const compBind = computed(() => {
-        let name = ''
-        let iconClass = ''
-        let animation = ''
-        switch (props.type) {
-            case 'normal':
-                name = 'loading'
-                animation = 'animate-spin'
-                iconClass = ''
-                break
-        }
-
         return {
-            name: props.name || name,
-            class: [animation, iconClass, props.class],
+            name: props.name || 'loading',
+            class: props.class || 'animate-spin',
             ...attrs
         }
     })
@@ -52,9 +36,9 @@
 
     @layer components {
         .n-loading-overlay {
-            @apply absolute inset-0  
-                flex items-center justify-center z-10 
-                bg-bg-invert/50 text-text-invert;
+            @apply absolute inset-0
+                flex items-center justify-center z-10
+                bg-background-invert/50 text-text-invert;
         }
     }
 </style>

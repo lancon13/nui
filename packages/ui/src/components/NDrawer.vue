@@ -131,7 +131,7 @@
 
     @layer components {
         .n-drawer-overlay {
-            @apply bg-bg-invert/50
+            @apply bg-background-invert/50
                 absolute inset-0 z-2000
                 overflow-hidden
                 grid place-content-center;

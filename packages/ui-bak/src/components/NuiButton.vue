@@ -202,7 +202,7 @@
             &.nui-button--variant-solid {
                 @apply border-transparent;
                 &.nui-button--color-primary {
-                    @apply bg-primary text-input-highlight;
+                    @apply bg-brand text-input-highlight;
                 }
                 &.nui-button--color-success {
                     @apply bg-success text-input-highlight;
@@ -223,7 +223,7 @@
             &.nui-button--variant-outlined {
                 @apply bg-transparent;
                 &.nui-button--color-primary {
-                    @apply border-primary text-primary hover:bg-primary/15;
+                    @apply border-brand text-brand hover:bg-brand/15;
                 }
                 &.nui-button--color-success {
                     @apply border-success text-success hover:bg-success/15;
@@ -244,7 +244,7 @@
             &.nui-button--variant-flat {
                 @apply border-transparent;
                 &.nui-button--color-primary {
-                    @apply text-primary bg-primary/20;
+                    @apply text-brand bg-brand/20;
                 }
                 &.nui-button--color-success {
                     @apply text-success bg-success/20;
@@ -266,7 +266,7 @@
             &.nui-button--variant-text {
                 @apply border-transparent bg-transparent;
                 &.nui-button--color-primary {
-                    @apply text-primary hover:bg-primary/15;
+                    @apply text-brand hover:bg-brand/15;
                 }
                 &.nui-button--color-success {
                     @apply text-success hover:bg-success/15;
@@ -325,7 +325,7 @@
                 &.nui-button--variant-text {
                     @apply hover:opacity-50;
                     &.nui-button--color-primary {
-                        @apply text-primary bg-input-highlight;
+                        @apply text-brand bg-input-highlight;
                     }
                     &.nui-button--color-success {
                         @apply text-success bg-input-highlight;

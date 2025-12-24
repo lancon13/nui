@@ -245,7 +245,7 @@
                 }
 
                 &.primary {
-                    @apply border-primary;
+                    @apply border-brand;
                 }
                 &.success {
                     @apply border-success;
@@ -272,7 +272,7 @@
             }
 
             :has(.n-input-field.primary) {
-                @apply text-primary;
+                @apply text-brand;
             }
             :has(.n-input-field.success) {
                 @apply text-success;

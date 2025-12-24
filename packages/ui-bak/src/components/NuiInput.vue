@@ -179,10 +179,10 @@
                 .nui-input-prepend,
                 .nui-input-append,
                 .nui-input-after {
-                    @apply text-primary;
+                    @apply text-brand;
                 }
                 .nui-input-outer {
-                    @apply border-primary text-primary;
+                    @apply border-brand text-brand;
                     &:has(.nui-input:focus) {
                         @apply ring-primary/50;
                     }

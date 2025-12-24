@@ -189,7 +189,7 @@
 
     @layer components {
         .n-tooltip-overlay {
-            @apply bg-bg-invert/50 fixed inset-0 grid place-content-center z-2000;
+            @apply bg-background-invert/50 fixed inset-0 grid place-content-center z-2000;
 
             &.n-tooltip-overlay-enter-active,
             &.n-tooltip-overlay-leave-active {
@@ -229,7 +229,7 @@
 
         .n-tooltip {
             @apply z-2000
-                bg-bg-invert text-text-invert 
+                bg-background-invert text-text-invert 
                 text-center
                 text-xs
                 px-2 py-1

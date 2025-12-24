@@ -11,7 +11,7 @@
     >
         <slot name="loading">
             <transition name="n-loading-overlay">
-                <n-loading v-if="props.loading" :overlay="true" :type="props.loadingType" :class="props.loadingClass" />
+                <n-loading v-if="props.loading" :overlay="true" :name="props.loadingName" :class="props.loadingClass" />
             </transition>
         </slot>
 
@@ -60,7 +60,7 @@
         tag?: string
         type?: string
         loading?: boolean
-        loadingType?: string
+        loadingName?: string
         loadingClass?: string | string[] | object
         to?: string | object
         href?: string
@@ -100,21 +100,31 @@
             @apply relative appearance-none
                 cursor-pointer
                 inline-flex flex-row gap-2 items-center
-                bg-text text-text-invert
+                bg-background-invert text-text-invert
                 font-semibold leading-none
                 rounded-element
                 border-2 border-transparent
                 outline-0
                 px-4 py-2
                 transition-all duration-200 ease-in-out;
+
+            /* Interaction States */
             @apply hover:opacity-80;
             @apply disabled:opacity-80 disabled:hover:opacity-80 disabled:cursor-not-allowed;
+
             &:not(.n-button--loading) {
-                @apply disabled:grayscale disabled:contrast-50 disabled:opacity-50 disabled:hover:opacity-50;
+                @apply disabled:grayscale disabled:contrast-50 disabled:opacity-50 disabled:hover:opacity-50
+                    disabled:bg-text disabled:text-text-invert;
             }
 
+            /* Loading State */
+            &.n-button--loading {
+                @apply disabled:grayscale-0 disabled:contrast-100;
+            }
+
+            /* Colors */
             &.primary {
-                @apply bg-primary;
+                @apply bg-brand;
             }
             &.success {
                 @apply bg-success;
@@ -128,51 +138,44 @@
             &.info {
                 @apply bg-info;
             }
-            &:not(.n-button--loading) {
-                @apply disabled:bg-text disabled:text-text-invert;
-            }
 
+            /* Icon Button */
             &.icon {
                 @apply aspect-square p-2;
             }
 
-            &.n-button--loading {
-                @apply disabled:grayscale-0 disabled:contrast-100;
-            }
-
-            .n-loading-overlay ~ * {
-                @apply opacity-0;
-            }
-
+            /* Loading Overlay */
             .n-loading-overlay {
                 &.n-loading-overlay-enter-active,
                 &.n-loading-overlay-leave-active {
                     @apply transition-[opacity,translate] duration-200 ease-in-out;
                 }
-
                 &.n-loading-overlay-enter-from,
                 &.n-loading-overlay-leave-to {
                     @apply opacity-0;
                 }
             }
 
+            /* Variants */
             &.flat {
                 @apply bg-current/20 text-current;
+
                 &.primary {
-                    @apply bg-primary-alt text-primary;
+                    @apply bg-brand-light text-brand;
                 }
                 &.success {
-                    @apply bg-success-alt text-success;
+                    @apply bg-success-light text-success;
                 }
                 &.error {
-                    @apply bg-error-alt text-error;
+                    @apply bg-error-light text-error;
                 }
                 &.warning {
-                    @apply bg-warning-alt text-warning;
+                    @apply bg-warning-light text-warning;
                 }
                 &.info {
-                    @apply bg-info-alt text-info;
+                    @apply bg-info-light text-info;
                 }
+
                 &:not(.n-button--loading) {
                     @apply disabled:bg-current/20 disabled:text-current;
                 }
@@ -181,29 +184,27 @@
             &.outlined {
                 @apply border-2 border-current text-current
                     hover:bg-current/10 hover:opacity-50;
+
                 &:not(.flat) {
                     @apply bg-transparent;
                 }
+
                 &.primary {
-                    @apply border-primary text-primary 
-                        hover:bg-current/10;
+                    @apply border-brand text-brand;
                 }
                 &.success {
-                    @apply border-success text-success
-                        hover:bg-current/10;
+                    @apply border-success text-success;
                 }
                 &.error {
-                    @apply border-error text-error
-                        hover:bg-current/10;
+                    @apply border-error text-error;
                 }
                 &.warning {
-                    @apply border-warning text-warning
-                        hover:bg-current/10;
+                    @apply border-warning text-warning;
                 }
                 &.info {
-                    @apply border-info text-info
-                        hover:bg-current/10;
+                    @apply border-info text-info;
                 }
+
                 &:not(.n-button--loading) {
                     @apply disabled:bg-transparent disabled:border-current disabled:text-current disabled:hover:bg-transparent;
                 }
@@ -212,25 +213,21 @@
             &.texted {
                 @apply bg-transparent text-current
                     hover:bg-current/10;
+
                 &.primary {
-                    @apply text-primary
-                        hover:bg-current/10;
+                    @apply text-brand;
                 }
                 &.success {
-                    @apply text-success
-                        hover:bg-current/10;
+                    @apply text-success;
                 }
                 &.error {
-                    @apply text-error
-                        hover:bg-current/10;
+                    @apply text-error;
                 }
                 &.warning {
-                    @apply text-warning
-                        hover:bg-current/10;
+                    @apply text-warning;
                 }
                 &.info {
-                    @apply text-info
-                        hover:bg-current/10;
+                    @apply text-info;
                 }
 
                 &.shadowed {

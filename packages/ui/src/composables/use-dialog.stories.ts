@@ -94,7 +94,7 @@ export const CustomLoading: Story = {
                     title: 'Custom Loading...',
                     content: 'Click a button to close this dialog.',
                     loading: true,
-                    loadingClass: 'text-5xl text-primary'
+                    loadingClass: 'text-5xl text-brand'
                 })
                 const { hide } = await dialog.show()
                 setTimeout(hide, 3000)

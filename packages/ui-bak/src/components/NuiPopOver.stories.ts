@@ -69,7 +69,7 @@ const NestedPopover = {
     <NuiButton :class="{'mt-sm': currentLevel > 1}">
       Level {{ currentLevel }} Trigger
       <NuiPopOver v-model="show" :display-position="displayPosition" :offset="[0, 8]" nested>
-        <NuiCard :class="{'bg-primary-alt': currentLevel % 2 === 0, 'bg-secondary-alt': currentLevel % 2 !== 0}">
+        <NuiCard :class="{'bg-brand-light': currentLevel % 2 === 0, 'bg-secondary-alt': currentLevel % 2 !== 0}">
           <template #header>
             <h3 class="font-bold">Level {{ currentLevel }} Popover</h3>
           </template>

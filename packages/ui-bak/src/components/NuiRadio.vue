@@ -168,7 +168,7 @@
             .nui-radio-description,
             .nui-radio-helper {
                 .nui-radio-wrapper--color-primary & {
-                    @apply text-primary;
+                    @apply text-brand;
                 }
                 .nui-radio-wrapper--color-success & {
                     @apply text-success;
@@ -206,7 +206,7 @@
             /* Checked state colors */
             .nui-radio-input:checked ~ .nui-radio-display {
                 .nui-radio-wrapper--color-primary & {
-                    @apply border-primary;
+                    @apply border-brand;
                 }
                 .nui-radio-wrapper--color-success & {
                     @apply border-success;
@@ -226,7 +226,7 @@
 
                 .nui-radio-dot {
                     .nui-radio-wrapper--color-primary & {
-                        @apply bg-primary;
+                        @apply bg-brand;
                     }
                     .nui-radio-wrapper--color-success & {
                         @apply bg-success;

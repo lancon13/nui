@@ -131,9 +131,9 @@
 
             .primary &,
             &.primary {
-                @apply bg-primary;
+                @apply bg-brand;
                 &.n-tab--active {
-                    @apply bg-primary/15 text-primary;
+                    @apply bg-brand/15 text-brand;
                 }
             }
             .success &,
@@ -203,35 +203,35 @@
 
                 .primary &,
                 &.primary {
-                    @apply bg-primary-alt text-primary;
+                    @apply bg-brand-light text-brand;
                     &.n-tab--active {
-                        @apply border-primary bg-primary text-bg;
+                        @apply border-brand bg-brand text-bg;
                     }
                 }
                 .success &,
                 &.success {
-                    @apply bg-success-alt text-success;
+                    @apply bg-success-light text-success;
                     &.n-tab--active {
                         @apply border-success bg-success text-bg;
                     }
                 }
                 .error &,
                 &.error {
-                    @apply bg-error-alt text-error;
+                    @apply bg-error-light text-error;
                     &.n-tab--active {
                         @apply border-error bg-error text-bg;
                     }
                 }
                 .warning &,
                 &.warning {
-                    @apply bg-warning-alt text-warning;
+                    @apply bg-warning-light text-warning;
                     &.n-tab--active {
                         @apply border-warning bg-warning text-bg;
                     }
                 }
                 .info &,
                 &.info {
-                    @apply bg-info-alt text-info;
+                    @apply bg-info-light text-info;
                     &.n-tab--active {
                         @apply border-info bg-info text-bg;
                     }
@@ -258,10 +258,10 @@
 
                 .primary &,
                 &.primary {
-                    @apply border-primary text-primary 
+                    @apply border-brand text-brand 
                         hover:bg-current/10;
                     &.n-tab--active {
-                        @apply border-primary bg-primary text-bg;
+                        @apply border-brand bg-brand text-bg;
                     }
                 }
 
@@ -319,10 +319,10 @@
 
                 .primary &,
                 &.primary {
-                    @apply text-primary
+                    @apply text-brand
                         hover:bg-current/10;
                     &.n-tab--active {
-                        @apply border-primary bg-primary text-bg;
+                        @apply border-brand bg-brand text-bg;
                     }
                 }
 

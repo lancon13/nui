@@ -118,7 +118,7 @@ export const CurrentColor: Story = {
     render: () => ({
         components: { NuiIcon },
         template: `
-            <div class="text-primary-500">
+            <div class="text-brand-500">
                 <NuiIcon name="account" color="current" />
             </div>
         `

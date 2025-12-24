@@ -34,16 +34,14 @@
         'nui-icon',
         ...iconClasses.value,
         {
-            [`nui-icon--size-${props.size}`]:
-                props.size && ['small', 'medium', 'large'].includes(props.size as string),
+            [`nui-icon--size-${props.size}`]: props.size && ['small', 'medium', 'large'].includes(props.size as string),
             [`nui-icon--color-${props.color}`]: props.color && props.color !== 'current'
         }
     ])
 
     const compStyles = computed(() => {
         const styles: Record<string, string> = {}
-        if (props.size && !['small', 'medium', 'large'].includes(props.size as string))
-            styles['font-size'] = props.size
+        if (props.size && !['small', 'medium', 'large'].includes(props.size as string)) styles['font-size'] = props.size
 
         return styles
     })
@@ -60,7 +58,7 @@
 
             /* Colors */
             &.nui-icon--color-primary {
-                @apply text-primary;
+                @apply text-brand;
             }
             &.nui-icon--color-success {
                 @apply text-success;

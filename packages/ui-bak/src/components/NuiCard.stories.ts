@@ -120,7 +120,7 @@ export const WithMedia: Story = {
         template: `
         <NuiCard v-bind="args">
             <template #media>
-                <div alt="placeholder" class="w-full h-[10rem] bg-primary text-white flex items-center justify-center">Image</div>
+                <div alt="placeholder" class="w-full h-[10rem] bg-brand text-white flex items-center justify-center">Image</div>
             </template>
             <h3 class="font-bold">Card Title</h3>
             <p class="text-sm">This is the card's main content.</p>

@@ -12,11 +12,7 @@
             </div>
             <slot name="actions">
                 <div v-if="props.actions" class="nui-banner-actions">
-                    <nui-button
-                        v-for="(action, index) in props.actions"
-                        :key="index"
-                        v-bind="action"
-                    />
+                    <nui-button v-for="(action, index) in props.actions" :key="index" v-bind="action" />
                 </div>
             </slot>
             <slot name="after" />
@@ -95,7 +91,7 @@
             }
 
             &.nui-banner--color-primary {
-                @apply bg-primary text-input-highlight;
+                @apply bg-brand text-input-highlight;
             }
             &.nui-banner--color-info {
                 @apply bg-info text-input-highlight;
