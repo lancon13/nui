@@ -7,11 +7,19 @@
         :target="props.target"
         :type="props.type"
         :disabled="attrs.disabled || props.loading"
+        :aria-disabled="attrs.disabled || props.loading ? 'true' : undefined"
+        :aria-busy="props.loading ? 'true' : undefined"
         v-bind="compBind"
     >
         <slot name="loading">
             <transition name="n-loading-overlay">
-                <n-loading v-if="props.loading" :overlay="true" :name="props.loadingName" :class="props.loadingClass" />
+                <n-loading
+                    v-if="props.loading"
+                    :overlay="true"
+                    :name="props.loadingName"
+                    :class="props.loadingClass"
+                    aria-hidden="true"
+                />
             </transition>
         </slot>
 
@@ -31,6 +39,7 @@
                         : (props.prependIconClass as string[])
                     : [])
             ]"
+            aria-hidden="true"
         />
 
         <span v-if="props.label">{{ props.label }}</span>
@@ -38,7 +47,7 @@
             <component :is="node" />
         </template>
 
-        <n-icon v-if="props.appendIcon" :name="props.appendIcon" :class="props.appendIconClass" />
+        <n-icon v-if="props.appendIcon" :name="props.appendIcon" :class="props.appendIconClass" aria-hidden="true" />
         <slot name="append"></slot>
     </component>
 </template>

@@ -5,7 +5,9 @@
         :class="compClasses"
         :style="compStyles"
         v-bind="compBind"
-        role="banner"
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
         @mouseenter="handlePause"
         @mouseleave="handleResume"
         @focusin="handlePause"
@@ -13,7 +15,7 @@
     >
         <div :class="['n-banner-label', props.labelClass]">
             <slot name="icon">
-                <n-icon v-if="props.icon" :name="props.icon" :class="props.iconClass" />
+                <n-icon v-if="props.icon" :name="props.icon" :class="props.iconClass" aria-hidden="true" />
             </slot>
             <template v-for="(node, index) in slotDefaultNodes" :key="index">
                 <component :is="node" />
@@ -29,7 +31,7 @@
         </div>
 
         <slot v-if="props.showProgress && props.duration > 0" name="progress">
-            <div class="n-banner-progress">
+            <div class="n-banner-progress" aria-hidden="true">
                 <div
                     class="n-banner-progress-bar"
                     :style="{ animationPlayState: timer.isPaused.value ? 'paused' : 'running' }"

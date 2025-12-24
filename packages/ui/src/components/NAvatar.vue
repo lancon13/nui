@@ -1,18 +1,39 @@
 <template>
-    <component :is="props.tag" :class="compClasses" v-bind="compBind" @click="handleClick">
-        <n-icon v-if="props.icon" :name="props.icon" />
-        <span v-else-if="props.label || $slots['default']">
-            <slot name="default">{{ props.label }}</slot>
+    <component
+        :is="props.tag"
+        :class="compClasses"
+        :role="isClickable && props.tag === 'span' ? 'button' : undefined"
+        :tabindex="isClickable && props.tag === 'span' ? 0 : undefined"
+        :aria-disabled="props.disabled ? 'true' : undefined"
+        v-bind="compBind"
+        @click="handleClick"
+        @keydown.enter.space.prevent="handleClick"
+    >
+        <!-- Content / Sizer -->
+        <n-icon v-if="props.icon" :name="props.icon" :class="{ 'opacity-0': props.src }" aria-hidden="true" />
+        <span
+            v-else-if="props.label || $slots['default']"
+            class="n-avatar-label"
+            :class="{ 'opacity-0': props.src }"
+            :aria-hidden="props.src ? 'true' : undefined"
+        >
+            <slot>{{ props.label }}</slot>
         </span>
+        <span v-else class="n-avatar-sizer" aria-hidden="true">&nbsp;</span>
+
+        <!-- Image Overlay -->
+        <img v-if="props.src" :src="props.src" :alt="props.alt || props.label || ''" class="n-avatar-image" />
     </component>
 </template>
 
 <script setup lang="ts">
     /* eslint-disable no-unused-vars */
-    import { computed, getCurrentInstance, HTMLAttributes, useAttrs } from 'vue'
+    import { computed, HTMLAttributes, useAttrs } from 'vue'
     import NIcon from './NIcon.vue'
 
     export type NAvatarProps = Partial</* @vue-ignore */ HTMLAttributes> & {
+        src?: string
+        alt?: string
         icon?: string
         label?: string
         tag?: string
@@ -26,37 +47,37 @@
         inheritAttrs: false
     })
 
-    const instance = getCurrentInstance()
     const attrs = useAttrs()
     const props = withDefaults(defineProps<NAvatarProps>(), {
         tag: 'span'
     })
 
-    const emits = defineEmits<(event: 'click', e: MouseEvent) => void>()
+    const emits = defineEmits<(event: 'click', e: MouseEvent | KeyboardEvent) => void>()
 
     const isClickable = computed(() => {
-        return props.to || props.href || !!instance?.vnode.props?.onClick
+        return !props.disabled && (props.to || props.href || !!attrs.onClick)
     })
 
     const compClasses = computed(() => {
         return ['n-avatar', isClickable.value ? 'n-avatar--clickable' : '', props.disabled ? 'n-avatar--disabled' : '']
     })
+
     const compBind = computed(() => {
         return {
-            ...(isClickable.value
-                ? { tabindex: 0, role: 'button', to: props.to, href: props.href, target: props.target }
-                : {}),
+            ...(isClickable.value ? { to: props.to, href: props.href, target: props.target } : {}),
             ...attrs
         }
     })
 
-    function handleClick(e: MouseEvent) {
+    function handleClick(e: MouseEvent | KeyboardEvent) {
         if (props.disabled) {
             e.preventDefault()
             e.stopPropagation()
             return
         }
-        emits('click', e)
+        if (isClickable.value) {
+            emits('click', e)
+        }
     }
 </script>
 
@@ -66,18 +87,34 @@
 
     @layer components {
         .n-avatar {
-            @apply relative 
+            /* Base */
+            @apply relative
                 aspect-square
                 inline-flex items-center justify-center
-                bg-text text-text-invert 
+                bg-text text-text-invert
                 text-center
                 font-semibold leading-none
+                rounded-element
+                overflow-hidden
                 p-2.5
-                rounded-element;
-            & > span {
-                @apply block aspect-square w-[1em];
+                transition-all duration-200 ease-in-out;
+
+            /* Sizer */
+            .n-avatar-sizer {
+                @apply inline-block w-[1em] h-[1em];
             }
 
+            /* Image */
+            .n-avatar-image {
+                @apply absolute inset-0 h-full w-full object-cover;
+            }
+
+            /* Label */
+            .n-avatar-label {
+                @apply block w-full truncate;
+            }
+
+            /* Colors */
             &.primary {
                 @apply bg-brand;
             }
@@ -94,14 +131,16 @@
                 @apply bg-info;
             }
 
+            /* Interaction States */
             &.n-avatar--clickable {
-                &.n-avatar--disabled,
-                [class*='--clickable']&.n-avatar--disabled,
-                a[href]&.n-avatar--disabled {
-                    @apply backdrop-brightness-100;
-                    @apply ring-0;
-                    @apply opacity-50 hover:opacity-50 cursor-not-allowed grayscale;
-                }
+                @apply cursor-pointer hover:opacity-80;
+            }
+
+            /* Disabled State */
+            &.n-avatar--disabled {
+                @apply opacity-50 cursor-not-allowed grayscale;
+                /* Reset hover opacity for disabled */
+                @apply hover:opacity-50;
             }
         }
     }

@@ -7,15 +7,17 @@ const meta = {
     title: 'UI/NAvatar',
     component: NAvatar,
     parameters: {
-        layout: 'centered'
+        layout: 'centered',
+        actions: { argTypesRegex: '^on.*' }
     },
     tags: ['autodocs'],
     argTypes: {
         // Props
-        name: { control: 'text' }
-    },
-    args: {
-        name: 'account'
+        src: { control: 'text' },
+        alt: { control: 'text' },
+        icon: { control: 'text' },
+        label: { control: 'text' },
+        onClick: { action: 'clicked' }
     }
 } satisfies Meta
 
@@ -31,6 +33,42 @@ export const Default: Story = {
             return { args }
         },
         template: '<NAvatar v-bind="args" icon="mdi-account"></NAvatar>'
+    })
+}
+
+export const Images: Story = {
+    args: {},
+    render: args => ({
+        components: { NAvatar },
+        setup() {
+            return { args }
+        },
+        template: `
+            <div class="flex flex-row items-center gap-4">
+                <NAvatar v-bind="args" src="https://i.pravatar.cc/150?u=1" class=""></NAvatar>
+                <NAvatar v-bind="args" src="https://i.pravatar.cc/150?u=2" class="pilled"></NAvatar>
+                <NAvatar v-bind="args" src="https://i.pravatar.cc/150?u=3" class="squared"></NAvatar>
+                <NAvatar v-bind="args" src="https://i.pravatar.cc/150?u=4" class="shadowed"></NAvatar>
+            </div>
+        `
+    })
+}
+
+export const ClickableImages: Story = {
+    args: {},
+    render: args => ({
+        components: { NAvatar },
+        setup() {
+            return { args }
+        },
+        template: `
+            <div class="flex flex-row items-center gap-4">
+                <NAvatar v-bind="args" src="https://i.pravatar.cc/150?u=5" href="#" @click="args.onClick"></NAvatar>
+                <NAvatar v-bind="args" src="https://i.pravatar.cc/150?u=6" href="#" class="pilled" @click="args.onClick"></NAvatar>
+                <NAvatar v-bind="args" src="https://i.pravatar.cc/150?u=7" href="#" class="squared" @click="args.onClick"></NAvatar>
+                <NAvatar v-bind="args" src="https://i.pravatar.cc/150?u=8" href="#" class="shadowed" @click="args.onClick"></NAvatar>
+            </div>
+        `
     })
 }
 
@@ -226,14 +264,11 @@ export const Clickable: Story = {
     render: args => ({
         components: { NAvatar },
         setup() {
-            function handleClick() {
-                console.log('Click')
-            }
-            return { args, handleClick }
+            return { args }
         },
         template: `
             <div class="flex flex-row items-center gap-4">
-                <NAvatar v-bind="args" icon="mdi-account" @click="handleClick"></NAvatar>
+                <NAvatar v-bind="args" icon="mdi-account" href="#" @click="args.onClick"></NAvatar>
             </div>
         `
     })
@@ -244,14 +279,11 @@ export const Disabled: Story = {
     render: args => ({
         components: { NAvatar },
         setup() {
-            function handleClick() {
-                console.log('Click')
-            }
-            return { args, handleClick }
+            return { args }
         },
         template: `
             <div class="flex flex-row items-center gap-4">
-                <NAvatar v-bind="args" icon="mdi-account" disabled @click="handleClick"></NAvatar>
+                <NAvatar v-bind="args" icon="mdi-account" href="#" disabled @click="args.onClick"></NAvatar>
             </div>
         `
     })
