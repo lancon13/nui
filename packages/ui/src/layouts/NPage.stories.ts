@@ -11,7 +11,7 @@ import NDrawer from '../components/NDrawer.vue'
 import NCard from '../components/NCard.vue'
 import NList from '../components/NList.vue'
 import NListItem from '../components/NListItem.vue'
-import NForm from './NForm.vue'
+import NForm from '../components/NForm.vue'
 
 import NInputText from '../components/NInputText.vue'
 import NInputSearch from '../components/NInputSearch.vue'

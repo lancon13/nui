@@ -5,7 +5,7 @@
         </template>
 
         <div :class="containerClasses">
-            <slot v-if="props.label || $slots['label']" name="label">
+            <slot v-if="props.inlineLabel === false && (props.label || $slots['label'])" name="label">
                 <label :class="labelClasses" :for="inputId.description">{{ props.label }}</label>
             </slot>
 
@@ -41,6 +41,9 @@
                 </div>
 
                 <slot name="default" v-bind="exportedProps"></slot>
+                <slot v-if="props.inlineLabel === true && (props.label || $slots['label'])" name="inlineLabel">
+                    <label :class="labelClasses" :for="inputId.description">{{ props.label }}</label>
+                </slot>
 
                 <n-icon v-if="props.appendIcon" :name="props.appendIcon" :class="props.appendIconClass" />
                 <slot name="append"></slot>
@@ -73,6 +76,7 @@
         tag?: string
         name?: string
         label?: string
+        inlineLabel?: boolean
         icon?: string
         iconClass?: string | object | string[]
         prependIcon?: string
@@ -99,6 +103,7 @@
         tag: 'label',
         name: '',
         label: '',
+        inlineLabel: false,
         uncheckedIcon: 'undefined',
         checkedIcon: 'check-bold',
         indeterminateIcon: 'minus'

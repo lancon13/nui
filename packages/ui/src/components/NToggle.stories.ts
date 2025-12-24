@@ -39,3 +39,24 @@ export const Default: Story = {
         `
     })
 }
+
+export const InlineLabel: Story = {
+    args: {},
+    render: args => ({
+        components: { NToggle, NTooltip },
+        setup() {
+            const value = ref<boolean | null>(null)
+            return { args, value }
+        },
+        template: `
+            <div class="flex flex-col gap-2">
+                <div>Value: {{value}}</div>
+                <div></div>
+                <NToggle v-bind="args" label="Members Agreement" inline-label v-model="value" >
+                    I agree with the terms and conditions.
+                    <NTooltip>Tooltip</NTooltip>
+                </NToggle>
+            </div>
+        `
+    })
+}

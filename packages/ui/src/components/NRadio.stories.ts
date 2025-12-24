@@ -43,3 +43,28 @@ export const Default: Story = {
         `
     })
 }
+
+export const InlineLabel: Story = {
+    args: {},
+    render: args => ({
+        components: { NRadio, NTooltip },
+        setup() {
+            const value = ref<boolean | null>(null)
+            return { args, value }
+        },
+        template: `
+            <div class="flex flex-col gap-2">
+                <div>Value: {{value}}</div>
+                <div></div>
+                <NRadio v-bind="args" label="Members Agreement" inline-label v-model="value" value="v1" >
+                    I agree with the terms and conditions.
+                    <NTooltip>Tooltip</NTooltip>
+                </NRadio>
+                <NRadio v-bind="args" label="Members Agreement" inline-label v-model="value" value="v2" >
+                    I agree with the terms and conditions.
+                    <NTooltip>Tooltip</NTooltip>
+                </NRadio>
+            </div>
+        `
+    })
+}
