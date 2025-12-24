@@ -1,24 +1,37 @@
 <template>
-    <component :is="props.tag" :class="compClasses" v-bind="compBind" @click="handleClick">
+    <component
+        :is="props.tag"
+        :class="compClasses"
+        :role="isClickable && props.tag === 'span' ? 'button' : undefined"
+        :tabindex="isClickable && props.tag === 'span' ? 0 : undefined"
+        :aria-disabled="props.disabled ? 'true' : undefined"
+        v-bind="compBind"
+        @click="handleClick"
+        @keydown.enter.space.prevent="handleClick"
+    >
         <slot name="prepend"></slot>
-        <n-icon v-if="props.prependIcon || props.icon" :name="(props.prependIcon || props.icon) as string" />
+        <n-icon
+            v-if="props.prependIcon || props.icon"
+            :name="(props.prependIcon || props.icon) as string"
+            aria-hidden="true"
+        />
         <span v-if="props.label || $slots['default']">
             <slot name="default">{{ props.label }}</slot>
         </span>
-        <n-icon v-if="props.appendIcon" :name="props.appendIcon" />
+        <n-icon v-if="props.appendIcon" :name="props.appendIcon" aria-hidden="true" />
         <slot name="append"></slot>
         <slot v-if="props.removable" name="removable">
-            <n-icon name="close" :class="props.removableClass" clickable @click="handleRemovableClick" />
+            <n-icon name="mdi-close" :class="props.removableClass" clickable @click.stop="handleRemovableClick" />
         </slot>
     </component>
 </template>
 
 <script setup lang="ts">
     /* eslint-disable no-unused-vars */
-    import { computed, getCurrentInstance, HTMLAttributes, useAttrs } from 'vue'
+    import { computed, HTMLAttributes, useAttrs } from 'vue'
     import NIcon from './NIcon.vue'
 
-    export type NCardProps = Partial</* @vue-ignore */ HTMLAttributes> & {
+    export type NChipProps = Partial</* @vue-ignore */ HTMLAttributes> & {
         icon?: string
         prependIcon?: string
         appendIcon?: string
@@ -37,24 +50,23 @@
         inheritAttrs: false
     })
 
-    const instance = getCurrentInstance()
     const attrs = useAttrs()
-    const props = withDefaults(defineProps<NCardProps>(), {
+    const props = withDefaults(defineProps<NChipProps>(), {
         tag: 'span'
     })
-    const emits = defineEmits<{ (event: 'click', e: MouseEvent): void; (event: 'remove'): void }>()
+    const emits = defineEmits<{ (event: 'click', e: MouseEvent | KeyboardEvent): void; (event: 'remove'): void }>()
 
     const isClickable = computed(() => {
-        return props.to || props.href || !!instance?.vnode.props?.onClick
+        return !props.disabled && (props.to || props.href || !!attrs.onClick)
     })
+
     const compClasses = computed(() => {
         return ['n-chip', isClickable.value ? 'n-chip--clickable' : '', props.disabled ? 'n-chip--disabled' : '']
     })
+
     const compBind = computed(() => {
         return {
-            ...(isClickable.value
-                ? { tabindex: 0, role: 'button', to: props.to, href: props.href, target: props.target }
-                : {}),
+            ...(isClickable.value ? { to: props.to, href: props.href, target: props.target } : {}),
             ...attrs
         }
     })
@@ -62,13 +74,16 @@
     function handleRemovableClick() {
         emits('remove')
     }
-    function handleClick(e: MouseEvent) {
+
+    function handleClick(e: MouseEvent | KeyboardEvent) {
         if (props.disabled) {
             e.preventDefault()
             e.stopPropagation()
             return
         }
-        emits('click', e)
+        if (isClickable.value) {
+            emits('click', e)
+        }
     }
 </script>
 
@@ -78,15 +93,18 @@
 
     @layer components {
         .n-chip {
+            /* Base */
             @apply relative leading-none
                 inline-flex flex-row gap-2 items-center
                 bg-text text-text-invert
                 text-center text-nowrap
                 border-2 border-transparent
                 px-2 py-1
-                rounded-element;
+                rounded-element
+                transition-all duration-200 ease-in-out;
 
-            &.primary {
+            /* Colors & Variants */
+            &.brand {
                 @apply bg-brand;
             }
             &.success {
@@ -102,9 +120,10 @@
                 @apply bg-info;
             }
 
+            /* Variant: Flat */
             &.flat {
                 @apply bg-current/20 text-current;
-                &.primary {
+                &.brand {
                     @apply bg-brand-light text-brand;
                 }
                 &.success {
@@ -121,12 +140,13 @@
                 }
             }
 
+            /* Variant: Outlined */
             &.outlined {
                 @apply border-current text-current;
                 &:not(.flat) {
                     @apply bg-transparent;
                 }
-                &.primary {
+                &.brand {
                     @apply border-brand text-brand;
                 }
                 &.success {
@@ -143,9 +163,10 @@
                 }
             }
 
+            /* Variant: Texted */
             &.texted {
                 @apply bg-transparent text-current;
-                &.primary {
+                &.brand {
                     @apply text-brand;
                 }
                 &.success {
@@ -166,17 +187,15 @@
                 }
             }
 
+            /* Interaction States */
             &.n-chip--clickable {
-                @apply transition-[backdrop-filter] duration-200 ease-in-out;
-                @apply hover:backdrop-brightness-75;
+                @apply cursor-pointer hover:opacity-80;
+            }
 
-                &.n-chip--disabled,
-                [class*='--clickable']&.n-chip--disabled,
-                a[href]&.n-chip--disabled {
-                    @apply backdrop-brightness-100;
-                    @apply ring-0;
-                    @apply opacity-50 hover:opacity-50 cursor-not-allowed grayscale;
-                }
+            /* Disabled State */
+            &.n-chip--disabled {
+                @apply opacity-50 cursor-not-allowed grayscale;
+                @apply hover:opacity-50;
             }
         }
     }

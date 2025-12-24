@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite'
 import { ref } from 'vue'
-// import { fn } from '@storybook/test'
 import NIcon from './NIcon.vue'
 import NButton from './NButton.vue'
 import NCard from './NCard.vue'
@@ -17,7 +16,7 @@ const meta = {
         // Props
         name: { control: 'text' },
         loading: { control: 'boolean' },
-        loadingType: { control: 'select', options: ['normal'] },
+        loadingName: { control: 'text' },
         loadingClass: { control: 'text' }
     },
     args: {
@@ -108,8 +107,8 @@ export const Complex2: Story = {
                 </div>
                 
                 <div class="n-card-footer justify-end pt-8">
-                    <NButton label="More info" class="texted primary" />
-                    <NButton label="Close" class="primary" >
+                    <NButton label="More info" class="texted brand" />
+                    <NButton label="Close" class="brand" >
                         <NTooltip>Close this card</NTooltip>
                     </NButton>
                 </div>
@@ -153,7 +152,7 @@ export const Clickable: Story = {
             }
             return { args, handleClick }
         },
-        template: '<NCard v-bind="args" class="w-96" @click="handleClick">I am a clickable card</NCard>'
+        template: '<NCard v-bind="args" class="w-96" href="#" @click="handleClick">I am a clickable card</NCard>'
     })
 }
 
@@ -167,13 +166,13 @@ export const Disabled: Story = {
             }
             return { args, handleClick }
         },
-        template: '<NCard v-bind="args" class="w-96" disabled @click="handleClick">I am a clickable card</NCard>'
+        template: '<NCard v-bind="args" class="w-96" href="#" disabled @click="handleClick">I am a clickable card</NCard>'
     })
 }
 
 export const Loading: Story = {
     args: {
-        loadingClass: 'text-5xl text-brand'
+        loadingClass: 'text-5xl text-brand animate-spin'
     },
     render: args => ({
         components: { NCard, NButton },
@@ -186,7 +185,7 @@ export const Loading: Story = {
         },
         template: `
             <div class="flex flex-col items-center gap-4">
-                <NCard v-bind="args" class="w-96" :loading="loading">
+                <NCard v-bind="args" class="w-96 h-64" :loading="loading">
                     <div class="n-card-header">Header</div>
                     <div class="n-card-body">Body</div>
                     <div class="n-card-footer">Footer</div>

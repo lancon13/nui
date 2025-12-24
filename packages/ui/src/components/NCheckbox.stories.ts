@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite'
 import { ref } from 'vue'
-// import { fn } from '@storybook/test'
 import NCheckbox from './NCheckbox.vue'
 import NTooltip from './NTooltip.vue'
 
@@ -11,8 +10,10 @@ const meta = {
         layout: 'centered'
     },
     tags: ['autodocs'],
-    argTypes: {},
-    args: {}
+    argTypes: {
+        inlineLabel: { control: 'boolean' },
+        message: { control: 'text' }
+    }
 } satisfies Meta
 
 export default meta
@@ -28,34 +29,92 @@ export const Default: Story = {
             return { args, value }
         },
         template: `
-            <div class="flex flex-col gap-2">
-                <div>Value: {{value}}</div>
-                <div></div>
-                <NCheckbox v-bind="args" label="Members Agreement" v-model="value" >
-                    I agree with the terms and conditions.
-                    <NTooltip>Tooltip</NTooltip>
+            <div class="flex flex-col gap-4 w-96">
+                <div>Value: {{ value }}</div>
+                <NCheckbox v-bind="args" label="Basic Checkbox" v-model="value" />
+                <NCheckbox v-bind="args" label="With Slot Content" v-model="value">
+                    I agree with the <a href="#" class="text-brand underline">terms and conditions</a>.
                 </NCheckbox>
             </div>
         `
     })
 }
 
-export const InlineLabel: Story = {
+export const Colors: Story = {
     args: {},
     render: args => ({
-        components: { NCheckbox, NTooltip },
+        components: { NCheckbox },
         setup() {
-            const value = ref<boolean | null>(null)
+            const value = ref(true)
             return { args, value }
         },
         template: `
-            <div class="flex flex-col gap-2">
-                <div>Value: {{value}}</div>
-                <div></div>
-                <NCheckbox v-bind="args" label="Members Agreement" inline-label v-model="value" >
-                    I agree with the terms and conditions.
-                    <NTooltip>Tooltip</NTooltip>
-                </NCheckbox>
+            <div class="flex flex-col gap-4 w-96">
+                <NCheckbox v-bind="args" class="brand" label="Brand" v-model="value" />
+                <NCheckbox v-bind="args" class="success" label="Success" v-model="value" />
+                <NCheckbox v-bind="args" class="error" label="Error" v-model="value" />
+                <NCheckbox v-bind="args" class="warning" label="Warning" v-model="value" />
+                <NCheckbox v-bind="args" class="info" label="Info" v-model="value" />
+            </div>
+        `
+    })
+}
+
+export const States: Story = {
+    args: {},
+    render: args => ({
+        components: { NCheckbox },
+        setup() {
+            const checked = ref(true)
+            const unchecked = ref(false)
+            const indeterminate = ref(null)
+            return { args, checked, unchecked, indeterminate }
+        },
+        template: `
+            <div class="flex flex-col gap-4 w-96">
+                <NCheckbox v-bind="args" label="Checked" v-model="checked" />
+                <NCheckbox v-bind="args" label="Unchecked" v-model="unchecked" />
+                <NCheckbox v-bind="args" label="Indeterminate" v-model="indeterminate" />
+                <NCheckbox v-bind="args" label="Disabled Checked" v-model="checked" disabled />
+                <NCheckbox v-bind="args" label="Disabled Unchecked" v-model="unchecked" disabled />
+            </div>
+        `
+    })
+}
+
+export const InlineLabel: Story = {
+    args: {
+        inlineLabel: true
+    },
+    render: args => ({
+        components: { NCheckbox },
+        setup() {
+            const value = ref(true)
+            return { args, value }
+        },
+        template: `
+            <div class="flex flex-col gap-4 w-96">
+                <NCheckbox v-bind="args" label="I am inline" v-model="value" />
+                <NCheckbox v-bind="args" class="brand" label="Brand Inline" v-model="value" />
+            </div>
+        `
+    })
+}
+
+export const Messages: Story = {
+    args: {
+        message: 'This is a helper message'
+    },
+    render: args => ({
+        components: { NCheckbox },
+        setup() {
+            const value = ref(false)
+            return { args, value }
+        },
+        template: `
+            <div class="flex flex-col gap-4 w-96">
+                <NCheckbox v-bind="args" label="Username" v-model="value" />
+                <NCheckbox v-bind="args" class="error" label="Error State" v-model="value" message="This field is required" />
             </div>
         `
     })

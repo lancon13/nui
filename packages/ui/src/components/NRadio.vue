@@ -5,45 +5,57 @@
         </template>
 
         <div :class="containerClasses">
-            <slot v-if="props.inlineLabel === false && (props.label || $slots['label'])" name="label">
-                <label :class="labelClasses" :for="inputId.description">{{ props.label }}</label>
+            <slot v-if="!props.inlineLabel && (props.label || $slots['label'])" name="label">
+                <label :class="labelClasses" :for="inputId">{{ props.label }}</label>
             </slot>
 
             <slot name="top"></slot>
 
-            <component :is="props.tag" :class="compClasses" v-bind="compBind">
+            <component :is="props.tag" :class="compClasses" v-bind="elementAttrs">
                 <slot name="prepend"></slot>
 
                 <n-icon
                     v-if="props.prependIcon || props.icon"
                     :name="(props.prependIcon || props.icon) as string"
                     :class="iconClasses"
+                    aria-hidden="true"
                 />
 
                 <input
-                    :id="inputId.description"
+                    :id="inputId"
                     v-model="model"
                     :value="props.value"
                     :name="props.name"
                     type="radio"
                     class="peer"
                     :class="props.inputClass"
+                    v-bind="inputAttrs"
                 />
 
                 <div class="n-radio-display">
                     <n-icon
                         :name="props.uncheckedIcon"
                         :class="['n-radio-display-unchecked', props.uncheckedIconClass]"
+                        aria-hidden="true"
                     />
-                    <n-icon :name="props.checkedIcon" :class="['n-radio-display-checked', props.checkedIconClass]" />
+                    <n-icon
+                        :name="props.checkedIcon"
+                        :class="['n-radio-display-checked', props.checkedIconClass]"
+                        aria-hidden="true"
+                    />
                 </div>
 
                 <slot name="default" v-bind="exportedProps"></slot>
-                <slot v-if="props.inlineLabel === true && (props.label || $slots['label'])" name="inlineLabel">
-                    <label :class="labelClasses" :for="inputId.description">{{ props.label }}</label>
+                <slot v-if="props.inlineLabel && (props.label || $slots['label'])" name="inlineLabel">
+                    <label :class="labelClasses" :for="inputId">{{ props.label }}</label>
                 </slot>
 
-                <n-icon v-if="props.appendIcon" :name="props.appendIcon" :class="props.appendIconClass" />
+                <n-icon
+                    v-if="props.appendIcon"
+                    :name="props.appendIcon"
+                    :class="props.appendIconClass"
+                    aria-hidden="true"
+                />
                 <slot name="append"></slot>
 
                 <div v-if="$slots['overlay']" class="n-radio-overlay">
@@ -66,9 +78,8 @@
 <script setup lang="ts">
     /* eslint-disable no-unused-vars, @typescript-eslint/no-explicit-any */
     import { computed, HTMLAttributes, useAttrs, useSlots } from 'vue'
-    import { wrapTextNode } from '../helpers/dom'
+    import { wrapTextNode, resolveClassProp } from '../helpers/dom'
     import { generatePseudoRandomKey } from '../helpers/tools'
-    import { resolveClassProp } from '../helpers/dom'
     import NIcon from './NIcon.vue'
 
     export type NRadioProps = Partial</* @vue-ignore */ HTMLAttributes> & {
@@ -103,81 +114,34 @@
         label: '',
         inlineLabel: false,
         uncheckedIcon: 'undefined',
-        checkedIcon: 'circle'
+        checkedIcon: 'mdi-circle'
     })
 
-    // Radio model is usually string, number, or object, not just boolean
-    const [model, modifiers] = defineModel<any>({ default: null })
-    const emits = defineEmits<{
-        (event: 'update:modelValue', value: any): void
-        (event: 'change', e: Event): void
-        (event: 'blur', e: FocusEvent): void
-        (event: 'focus', e: FocusEvent): void
-        (event: 'keydown', e: KeyboardEvent): void
-        (event: 'keyup', e: KeyboardEvent): void
-        (event: 'keypress', e: KeyboardEvent): void
-        (event: 'mousedown', e: MouseEvent): void
-        (event: 'mouseup', e: MouseEvent): void
-        (event: 'mouseenter', e: MouseEvent): void
-        (event: 'mouseleave', e: MouseEvent): void
-        (event: 'mouseover', e: MouseEvent): void
-        (event: 'mouseout', e: MouseEvent): void
-        (event: 'mousemove', e: MouseEvent): void
-    }>()
-    const inputId = Symbol(`input-id-${generatePseudoRandomKey()}`)
+    const model = defineModel<any>({ default: null })
+    const inputId = `input-id-${generatePseudoRandomKey()}`
 
     const compClasses = computed(() => ['n-radio'])
-
-    const compBind = computed(() => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { class: _, ...rest } = { ...attrs, ...props }
-        return rest
-    })
-
     const containerClasses = computed(() => ['n-radio-container'])
     const wrapperClasses = computed(() => ['n-radio-wrapper'])
     const labelClasses = computed(() => ['n-radio-label'])
     const iconClasses = computed(() => resolveClassProp(props.iconClass, props.prependIconClass))
 
+    // Split attributes: class/style go to wrapper, others to input
+    const elementAttrs = computed(() => {
+        const { class: className, style } = attrs
+        return { class: className, style }
+    })
+
+    const inputAttrs = computed(() => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { class: className, style, ...rest } = attrs
+        return rest
+    })
+
     const exportedProps = computed(() => ({
         ...props,
-        modifiers,
-        inputId: inputId.description,
-        modelValue: model.value,
-        onUpdateModelValue: (value: any) => emits('update:modelValue', value),
-        onChange: (e: Event) => emits('change', e),
-        onFocus: (e: FocusEvent) => emits('focus', e),
-        onBlur: (e: FocusEvent) => emits('blur', e),
-        onKeydown: (e: KeyboardEvent) => {
-            emits('keydown', e)
-        },
-        onKeyup: (e: KeyboardEvent) => {
-            emits('keyup', e)
-        },
-        onKeypress: (e: KeyboardEvent) => {
-            emits('keypress', e)
-        },
-        onMousedown: (e: MouseEvent) => {
-            emits('mousedown', e)
-        },
-        onMouseup: (e: MouseEvent) => {
-            emits('mouseup', e)
-        },
-        onMouseenter: (e: MouseEvent) => {
-            emits('mouseenter', e)
-        },
-        onMouseleave: (e: MouseEvent) => {
-            emits('mouseleave', e)
-        },
-        onMouseout: (e: MouseEvent) => {
-            emits('mouseout', e)
-        },
-        onMouseover: (e: MouseEvent) => {
-            emits('mouseover', e)
-        },
-        onMousemove: (e: MouseEvent) => {
-            emits('mousemove', e)
-        }
+        inputId,
+        modelValue: model.value
     }))
 
     const slotBeforeNodes = computed(() => wrapTextNode(slots.before?.(exportedProps.value) ?? [], 'span'))
@@ -196,23 +160,6 @@
                 @apply flex flex-col flex-1;
             }
 
-            /* --- TEXT COLORS --- */
-            &:has(.n-radio.primary) {
-                @apply text-brand;
-            }
-            &:has(.n-radio.success) {
-                @apply text-success;
-            }
-            &:has(.n-radio.error) {
-                @apply text-error;
-            }
-            &:has(.n-radio.warning) {
-                @apply text-warning;
-            }
-            &:has(.n-radio.info) {
-                @apply text-info;
-            }
-
             .n-radio {
                 @apply relative
                     flex-1
@@ -226,35 +173,19 @@
                     @apply mr-2;
                 }
 
-                /* State Coloring - Applies to the border of the radio */
-                &.primary {
-                    @apply border-brand;
-                }
-                &.success {
-                    @apply border-success;
-                }
-                &.error {
-                    @apply border-error;
-                }
-                &.warning {
-                    @apply border-warning;
-                }
-                &.info {
-                    @apply border-info;
-                }
-
-                /* --- DISPLAY BOX STYLING --- */
                 .n-radio-display {
                     @apply inline-flex items-center justify-center shrink-0
                         bg-input
                         border-2 border-transparent
                         p-0.5
-                        rounded-full; /* CRITICAL: Makes it round */
+                        rounded-full
+                        transition-all duration-200
+                        size-5;
 
                     @apply peer-focus:outline-0 peer-focus:ring-2 peer-focus:ring-focus peer-focus:z-20;
 
                     .n-icon {
-                        @apply text-sm; /* Relative sizing for the inner dot */
+                        @apply text-xs;
                     }
 
                     .n-radio-display-unchecked,
@@ -263,22 +194,32 @@
                     }
                 }
 
-                /* --- INPUT LOGIC --- */
                 input[type='radio'] {
                     @apply appearance-none sr-only w-full h-full;
 
-                    /* 1. UNCHECKED STATE */
                     &:not(:checked) ~ .n-radio-display .n-radio-display-unchecked {
                         @apply block;
                     }
-
-                    /* 2. CHECKED STATE */
-                    &:checked {
-                        /* Reveal the "Checked" icon (Dot) */
-                        & ~ .n-radio-display .n-radio-display-checked {
-                            @apply block;
-                        }
+                    &:checked ~ .n-radio-display .n-radio-display-checked {
+                        @apply block;
                     }
+                }
+
+                /* Colors applied to display box */
+                &.brand .n-radio-display {
+                    @apply border-brand;
+                }
+                &.success .n-radio-display {
+                    @apply border-success;
+                }
+                &.error .n-radio-display {
+                    @apply border-error;
+                }
+                &.warning .n-radio-display {
+                    @apply border-warning;
+                }
+                &.info .n-radio-display {
+                    @apply border-info;
                 }
             }
 
@@ -290,6 +231,23 @@
             }
             .n-radio-overlay {
                 @apply absolute inset-0;
+            }
+
+            /* Color logic for text label */
+            &:has(.n-radio.brand) {
+                @apply text-brand;
+            }
+            &:has(.n-radio.success) {
+                @apply text-success;
+            }
+            &:has(.n-radio.error) {
+                @apply text-error;
+            }
+            &:has(.n-radio.warning) {
+                @apply text-warning;
+            }
+            &:has(.n-radio.info) {
+                @apply text-info;
             }
         }
     }
