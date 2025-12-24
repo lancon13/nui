@@ -57,7 +57,7 @@
     const attrs = useAttrs()
     const props = withDefaults(
         defineProps<{
-            name: string
+            name?: string
             icon?: string
             iconClass?: string | object | string[]
             prependIcon?: string

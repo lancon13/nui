@@ -4,11 +4,11 @@
             <component
                 :is="node"
                 :class="[
-                    props.multiple && Array.isArray(modelValueName)
-                        ? modelValueName?.includes(node.props?.name)
+                    props.multiple && Array.isArray(model)
+                        ? model?.includes(node.props?.name)
                             ? 'n-tab--active'
                             : ''
-                        : node.props?.name === modelValueName
+                        : node.props?.name === model
                           ? 'n-tab--active'
                           : ''
                 ]"
@@ -28,7 +28,7 @@
 
     const slots = useSlots()
     const attrs = useAttrs()
-    const modelValueName = defineModel<string | string[]>()
+    const model = defineModel<string | string[]>()
     const props = withDefaults(
         defineProps<{
             tag?: string
@@ -65,16 +65,13 @@
     // Event handler
     function handleTabNodeClick(tabNode: VNode) {
         if (!tabNode.props?.name) return
-        if (props.multiple && Array.isArray(modelValueName.value)) {
-            if (modelValueName.value.indexOf(tabNode.props?.name) >= 0) {
-                modelValueName.value = modelValueName.value.toSpliced(
-                    modelValueName.value.indexOf(tabNode.props?.name),
-                    1
-                )
+        if (props.multiple && Array.isArray(model.value)) {
+            if (model.value.indexOf(tabNode.props?.name) >= 0) {
+                model.value = model.value.toSpliced(model.value.indexOf(tabNode.props?.name), 1)
             } else {
-                modelValueName.value = [...modelValueName.value, tabNode.props?.name]
+                model.value = [...model.value, tabNode.props?.name]
             }
-        } else modelValueName.value = tabNode.props?.name ?? ''
+        } else model.value = tabNode.props?.name ?? ''
     }
 </script>
 

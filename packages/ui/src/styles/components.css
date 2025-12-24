@@ -54,13 +54,17 @@
     .n-divider {
         @apply border-b border-border;
 
-        & + .n-vertical {
-            @apply border-l border-b-0;
+        &.n-vertical {
+            @apply border-l border-b-0 self-stretch;
         }
     }
 
     .animate-dropdown {
         @apply transition-transform duration-200 peer-focus:rotate-180;
+    }
+
+    .n-placeholder {
+        @apply !text-transparent !bg-text/50 animate-pulse;
     }
 }
 
@@ -75,12 +79,12 @@
 @utility content-row {
     display: flex;
     flex-direction: row;
-    gap: var(--spacing-4);
+    gap: var(--spacing-base);
 }
 @utility content-col {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-4);
+    gap: var(--spacing-base);
 }
 
 /* NModalsContainer */

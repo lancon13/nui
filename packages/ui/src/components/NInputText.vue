@@ -10,6 +10,7 @@
                 :type="props.type"
                 :class="props.inputClass"
                 :value="formattedModelValue"
+                v-bind="inputBind"
                 @input="
                     async (e: InputEvent) => {
                         onInput(e)
@@ -66,6 +67,10 @@
         return {
             ...rest
         }
+    })
+    const inputBind = computed(() => {
+        const { placeholder } = attrs
+        return { placeholder: placeholder as string | undefined }
     })
 </script>
 

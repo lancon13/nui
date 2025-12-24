@@ -1,7 +1,6 @@
 import { setup } from '@storybook/vue3-vite'
 import './main.css'
 import { withThemeByClassName } from '@storybook/addon-themes'
-import { h } from 'vue'
 
 setup(() => {
     // app.use(MyPlugin)

@@ -9,6 +9,7 @@ const config: StorybookConfig = {
 
         '../src/stories/**/*.stories.@(js|jsx|mjs|ts|tsx)',
         '../src/components/**/*.stories.@(js|jsx|mjs|ts|tsx)',
+        '../src/layouts/**/*.stories.@(js|jsx|mjs|ts|tsx)',
         '../src/composables/**/*.stories.@(js|jsx|mjs|ts|tsx)',
         '../src/directives/**/*.stories.@(js|jsx|mjs|ts|tsx)'
     ],

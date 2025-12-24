@@ -302,7 +302,7 @@
             ...attrs,
             ...props
         }
-        return omit(rest, ['modelValue', 'class'])
+        return omit(rest as any, ['modelValue', 'class'])
     })
     const valueClasses = computed(() => ['n-input-search-value', ...resolveClassProp(props.valueClass)])
     const focusInputRef = computed(() => (focusPaused.value ? null : inputRef.value))
@@ -313,7 +313,7 @@
     function isSelected(item: NListItemData): boolean {
         const value = item[props.valueField] as any
         if (props.multiple && Array.isArray(modelValue.value)) {
-            return modelValue.value.includes(value)
+            return (modelValue.value as any[]).includes(value)
         }
         return modelValue.value === value
     }
@@ -392,7 +392,7 @@
             const listEl = listRef.value?.popoverRef?.contentRef as HTMLElement
             if (!listEl) return
             const items = listEl.querySelectorAll('[tabindex="0"]')
-            for (const item of items) {
+            for (const item of items as any) {
                 const el = item as HTMLElement
                 if (!el.classList.contains('n-list-item--heading') && !el.classList.contains('n-list-item--disabled')) {
                     el.focus()
