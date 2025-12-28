@@ -1,11 +1,16 @@
 import { useFocusTrap } from '@vueuse/integrations/useFocusTrap'
 import { watch, nextTick, type Ref } from 'vue'
+import { delay } from '../helpers/tools'
 
 export function useFocusable(
     model: Ref<boolean>,
     contentRef: Ref<HTMLElement | null>,
     overlay: Ref<boolean>,
-    focusOnShow: Ref<boolean>
+    focusOnShow: Ref<boolean>,
+    delays?: {
+        show?: number
+        hide?: number
+    }
 ) {
     const {
         activate,
@@ -34,23 +39,23 @@ export function useFocusable(
         return element.querySelector(focusableSelector)
     }
 
-    watch(model, async value => {
+    watch(model, async isOpen => {
         await nextTick()
-        if (value) {
-            const firstFocusable = findFirstFocusable(contentRef.value as HTMLElement)
-            if (overlay.value && focusOnShow.value) {
-                if (firstFocusable) {
-                    activate()
-                }
-            } else if (focusOnShow.value) {
-                if (firstFocusable) {
-                    firstFocusable.focus()
-                }
-            }
-        } else if (!value) {
+        // Handle Close
+        if (!isOpen) {
             if (overlay.value) {
+                if (typeof delays?.hide === 'number') await delay(delays.hide)
                 deactivate()
             }
+            return
+        }
+
+        // Handle Open
+        const firstFocusable = findFirstFocusable(contentRef.value as HTMLElement)
+        if (focusOnShow.value && firstFocusable) {
+            if (typeof delays?.show === 'number') await delay(delays.show)
+            // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+            overlay.value ? activate() : firstFocusable.focus()
         }
     })
 

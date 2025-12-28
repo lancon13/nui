@@ -104,6 +104,28 @@
     }
 }
 
+/* NDrawersContainer */
+@layer components {
+    #n-drawers-container {
+        @apply fixed z-1000
+            top-0 left-0 w-full h-full
+            transition-[opacity,translate] duration-200 ease-in-out
+            overflow-auto
+            hidden;
+
+        &:has(*) {
+            @apply grid grid-cols-1 place-items-center-safe;
+        }
+        &:has(.n-drawer-enter-active),
+        &:has(.n-drawer-leave-active) {
+            @apply overflow-hidden;
+        }
+        &:has(.n-drawer-overlay) {
+            @apply z-1001;
+        }
+    }
+}
+
 /* NToastsContainer */
 @layer components {
     [id^='n-toasts-container--'] {
