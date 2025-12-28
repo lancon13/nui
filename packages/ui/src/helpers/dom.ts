@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { getCurrentInstance, h, isVNode, VNode } from 'vue'
+import { Comment, getCurrentInstance, h, isVNode, Text, VNode } from 'vue'
 
 interface ComponentTypeWithName {
     __name__: string | undefined

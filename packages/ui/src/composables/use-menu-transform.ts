@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // composables/useMenuTransform.ts
-import { computed, h, isVNode, Text, Comment, type Slots, type VNode, type VNodeChild } from 'vue' // <--- Import Text, Comment
-import NMenu from '../components/NMenu.vue'
-import NListItem from '../components/NListItem.vue'
-import NIcon from '../components/NIcon.vue'
 import { merge } from 'es-toolkit/object'
+import { Comment, computed, h, isVNode, Text, Fragment, type Slots, type VNode, type VNodeChild } from 'vue' // <--- Import Text, Comment
+import NIcon from '../components/NIcon.vue'
+import NListItem from '../components/NListItem.vue'
+import NMenu from '../components/NMenu.vue'
 
 // --- Configuration ---
 const defaultSubmenuProps = {
@@ -43,6 +43,11 @@ function transformNodes(nodes: VNodeChild[], submenuProps = defaultSubmenuProps)
             })
         }
 
+        // Handle Fragments (e.g. v-for loops)
+        if (node.type === Fragment) {
+            return h(Fragment, node.props, transformNodes(getChildren(node), submenuProps))
+        }
+
         // 2. List Items (NListItem or li)
         if (node.type === NListItem || node.type === 'li') {
             const children = getChildren(node)
@@ -57,9 +62,16 @@ function transformNodes(nodes: VNodeChild[], submenuProps = defaultSubmenuProps)
             // Processed content
             const processedContent = transformNodes(rawContent, submenuProps)
 
+            // Prepare slots object, preserving existing named slots
+            const existingSlots =
+                node.children && typeof node.children === 'object' && !Array.isArray(node.children)
+                    ? { ...node.children }
+                    : {}
+
             if (hasSubMenu) {
                 const subMenuNode = children[subMenuIndex] as VNode
                 return h(NListItem, node.props, {
+                    ...existingSlots,
                     default: () => [
                         ...processedContent,
                         h(NMenu, merge(defaultSubmenuProps, { ...node.props, ...submenuProps }) as any, {
@@ -70,7 +82,7 @@ function transformNodes(nodes: VNodeChild[], submenuProps = defaultSubmenuProps)
                 })
             }
 
-            return h(NListItem, node.props, { default: () => processedContent })
+            return h(NListItem, node.props, { ...existingSlots, default: () => processedContent })
         }
 
         // 3. Generic wrappers (div, etc) -> Recurse deeper

@@ -6,8 +6,7 @@
         :tabindex="isClickable ? 0 : undefined"
         :aria-disabled="props.disabled ? 'true' : undefined"
         v-bind="compBind"
-        @click="handleClick"
-        @keydown.enter.space.prevent="handleClick"
+        @keydown.enter.space.prevent="handleKey"
     >
         <slot name="default" />
     </component>
@@ -15,7 +14,7 @@
 
 <script setup lang="ts">
     /* eslint-disable no-unused-vars */
-    import { computed, type HTMLAttributes, useAttrs } from 'vue'
+    import { computed, getCurrentInstance, type HTMLAttributes, useAttrs } from 'vue'
 
     export type NIconProps = Partial</* @vue-ignore */ HTMLAttributes> & {
         name: string
@@ -31,11 +30,10 @@
     })
 
     const attrs = useAttrs()
+    const instance = getCurrentInstance()
     const props = withDefaults(defineProps<NIconProps>(), {
         tag: 'i'
     })
-
-    const emits = defineEmits<(event: 'click', e: MouseEvent | KeyboardEvent) => void>()
 
     const isClickable = computed(() => !props.disabled && (props.to || props.href || !!attrs.onClick))
 
@@ -57,13 +55,13 @@
         ...attrs
     }))
 
-    function handleClick(e: MouseEvent | KeyboardEvent) {
+    function handleKey(e: KeyboardEvent) {
         if (props.disabled) {
             e.preventDefault()
             e.stopPropagation()
             return
         }
-        if (isClickable.value) emits('click', e)
+        if (isClickable.value) instance?.emit('click', e)
     }
 </script>
 
@@ -80,7 +78,7 @@
             }
 
             &.n-icon--disabled {
-                @apply opacity-50 cursor-not-allowed grayscale;
+                @apply opacity-50 cursor-not-allowed grayscale pointer-events-none;
                 @apply hover:opacity-50;
             }
         }

@@ -1,5 +1,5 @@
 <template>
-    <component :is="props.tag" :class="compClasses" v-bind="compBind">
+    <component :is="props.tag" :class="compClasses" v-bind="compBind" role="list">
         <template v-for="(node, index) in slotDefaultNodes" :key="(node as VNode)?.key || index">
             <component :is="node" />
         </template>
@@ -8,11 +8,11 @@
 
 <script setup lang="ts">
     /* eslint-disable @typescript-eslint/no-explicit-any */
-    import { computed, Fragment, h, HTMLAttributes, useAttrs, useSlots, VNode } from 'vue'
+    import { computed, Fragment, h, type HTMLAttributes, useAttrs, useSlots, type VNode } from 'vue'
     import { useMenuTransform } from '../composables/use-menu-transform'
-    import NList from './NList.vue'
-    import NListItem, { NListItemProps } from './NListItem.vue'
     import { generatePseudoRandomKey } from '../helpers/tools'
+    import NList from './NList.vue'
+    import NListItem, { type NListItemProps } from './NListItem.vue'
 
     export type NListItemData = Record<string, any> & Partial<NListItemProps>
     export type NListProps = Partial</* @vue-ignore */ HTMLAttributes> & {
@@ -37,26 +37,21 @@
     })
 
     const { transformedNodes } = useMenuTransform(slots)
-    const compClasses = computed(() => {
-        return ['n-list']
-    })
-    const compBind = computed(() => {
-        return {
-            ...attrs
-        }
-    })
+    const compClasses = computed(() => ['n-list'])
+    const compBind = computed(() => ({ ...attrs }))
 
     const slotDefaultNodes = computed(() => {
         return props.items ? createNodesFromData(props.items) : transformedNodes.value
     })
 
     function createNodesFromData(items: NListItemData[]): VNode[] {
-        if (items.length === 0)
+        if (items.length === 0) {
             return [
                 slots['empty']
                     ? h(Fragment, null, slots['empty']({ items }) ?? [])
-                    : h(NListItem, { items }, () => slots['empty-content']?.() ?? 'No item found.')
+                    : h(NListItem, { key: 'empty' }, () => slots['empty-content']?.() ?? 'No item found.')
             ]
+        }
 
         return items.map(item => {
             const content = item[props.contentField]
@@ -69,7 +64,7 @@
 
             const childNodes =
                 childrenData && Array.isArray(childrenData) && childrenData.length > 0
-                    ? h(NList, {
+                    ? h(NList as any, {
                           items: childrenData,
                           tag: props.tag,
                           valueField: props.valueField,
@@ -83,7 +78,7 @@
                 return h(Fragment, { key }, slots['item']({ ...item, childrenNodes: childNodes }) ?? [])
             }
 
-            const itemProps = { key, ...(rest as any) }
+            const itemProps = { key, ...rest } as any
             const itemSlots: any = {
                 default: () => slots['item-content']?.(item) ?? content
             }
@@ -110,7 +105,6 @@
         .n-list {
             @apply relative appearance-none
                 rounded-element
-                text-nowrap
                 flex flex-col flex-nowrap;
 
             .n-list {

@@ -1,8 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite'
-// import { fn } from '@storybook/test'
 import NList from './NList.vue'
 import NListItem from './NListItem.vue'
-import { ref } from 'vue'
 
 const meta = {
     title: 'UI/NList',
@@ -11,8 +9,10 @@ const meta = {
         layout: 'centered'
     },
     tags: ['autodocs'],
-    argTypes: {},
-    args: {}
+    argTypes: {
+        tag: { control: 'text' },
+        items: { control: 'object' }
+    }
 } satisfies Meta
 
 export default meta
@@ -22,194 +22,166 @@ type Story = StoryObj<typeof meta>
 export const Default: Story = {
     args: {},
     render: args => ({
+        components: { NList, NListItem },
+        setup() {
+            return { args }
+        },
+        template: `
+            <div class="w-64 bg-surface shadowed border border-border">
+                <NList v-bind="args">
+                    <NListItem>Option 1</NListItem>
+                    <NListItem>Option 2</NListItem>
+                    <NListItem>Option 3</NListItem>
+                </NList>
+            </div>
+        `
+    })
+}
+
+export const InteractiveItems: Story = {
+    args: {},
+    render: args => ({
+        components: { NList, NListItem },
+        setup() {
+            return { args }
+        },
+        template: `
+            <div class="w-64 bg-surface shadowed border border-border">
+                <NList v-bind="args">
+                    <NListItem icon="mdi-account" href="#">Profile</NListItem>
+                    <NListItem icon="mdi-cog" href="#">Settings</NListItem>
+                    <NListItem icon="mdi-help-circle" href="#">Help Center</NListItem>
+                    <NListItem separator />
+                    <NListItem icon="mdi-logout" href="#" class="text-error">Logout</NListItem>
+                </NList>
+            </div>
+        `
+    })
+}
+
+export const DataItems: Story = {
+    args: {},
+    render: args => ({
         components: { NList },
         setup() {
-            return { args }
-        },
-        template: `
-            <NList v-bind="args">
-                <li>Item 1</li>
-                <li>Item 2</li>
-                <li>Item 3</li>
-            </NList>
-        `
-    })
-}
-
-export const WithListItem: Story = {
-    args: {},
-    render: args => ({
-        components: { NList, NListItem },
-        setup() {
-            return { args }
-        },
-        template: `
-             <NList v-bind="args" class="bg-surface">
-                <NListItem icon="mdi-account" to="www.google.com" class="n-separator">Profile</NListItem>
-                <NListItem icon="mdi-list-status" to="www.google.com">Options</NListItem>
-                <NListItem icon="mdi-cog" to="www.google.com" class="n-separator">Settings</NListItem>
-                <NListItem icon="mdi-logout" to="www.google.com">Sign out</NListItem>    
-            </NList>
-
-        `
-    })
-}
-
-export const WithItemsData: Story = {
-    args: {},
-    render: args => ({
-        components: { NList, NListItem },
-        setup() {
-            const items = ref([
-                { content: 'Item 1', icon: 'account' },
-                { content: 'Item 2', icon: 'cog' },
-                { content: 'Item 3', icon: 'logout' }
-            ])
+            const items = [
+                { content: 'Dashboard', icon: 'mdi-view-dashboard', onClick: () => console.log('Dashboard') },
+                { content: 'Analytics', icon: 'mdi-chart-bar' },
+                { content: 'Users', icon: 'mdi-account-multiple' }
+            ]
             return { args, items }
         },
         template: `
-             <NList v-bind="args" class="bg-surface" :items="items">                
-            </NList>
-
+            <div class="w-64 bg-surface shadowed border border-border">
+                <NList v-bind="args" :items="items" />
+            </div>
         `
     })
 }
 
-export const WithItemsDataWithItemSlot: Story = {
+export const Grouped: Story = {
     args: {},
     render: args => ({
-        components: { NList, NListItem },
+        components: { NList },
         setup() {
-            const items = ref([
-                { content: 'Item 1', icon: 'account' },
-                { content: 'Item 2', icon: 'cog' },
-                { content: 'Item 3', icon: 'logout' }
-            ])
+            const items = [
+                { content: 'Personal', heading: true },
+                { content: 'My Profile', icon: 'mdi-account' },
+                { content: 'Notifications', icon: 'mdi-bell' },
+                { content: 'Organization', heading: true },
+                { content: 'Team Settings', icon: 'mdi-account-group' },
+                { content: 'Project Billing', icon: 'mdi-credit-card' }
+            ]
             return { args, items }
         },
         template: `
-             <NList v-bind="args" class="bg-surface" :items="items">
-                <template #item="{content, icon}">
-                    <li class="n-list-item n-separator n-list-item--clickable">{{content}} {{icon}}</li>                    
-                </template>
-            </NList>
-
+            <div class="w-64 bg-surface shadowed border border-border">
+                <NList v-bind="args" :items="items" />
+            </div>
         `
     })
 }
 
-export const WithItemsDataWithItemContentSlot: Story = {
+export const NestedExpandable: Story = {
     args: {},
     render: args => ({
-        components: { NList, NListItem },
+        components: { NList },
         setup() {
-            const items = ref([
-                { content: 'Item 1', icon: 'account' },
-                { content: 'Item 2', icon: 'cog', href: '#' },
-                { content: 'Item 3', icon: 'logout' }
-            ])
-            return { args, items }
-        },
-        template: `
-             <NList v-bind="args" class="bg-surface" :items="items">
-            </NList>
-
-        `
-    })
-}
-
-export const NestedData: Story = {
-    args: {},
-    render: args => ({
-        components: { NList, NListItem },
-        setup() {
-            const items = ref([
+            const items = [
                 {
-                    content: 'Item 1 (Parent)',
-                    icon: 'mdi-account',
+                    content: 'Resources',
+                    icon: 'mdi-folder',
+                    expandable: true,
                     children: [
-                        { content: 'Item 1.1', icon: 'mdi-chevron-right' },
+                        { content: 'Documents', icon: 'mdi-file-document' },
+                        { content: 'Images', icon: 'mdi-image' },
                         {
-                            content: 'Item 1.2 (Sub-Parent)',
-                            icon: 'mdi-chevron-right',
-                            children: [{ content: 'Item 1.2.1', icon: 'mdi-circle-small' }]
+                            content: 'Video Content',
+                            icon: 'mdi-video',
+                            expandable: true,
+                            children: [
+                                { content: 'Tutorials', icon: 'mdi-play-circle' },
+                                { content: 'Interviews', icon: 'mdi-account-voice' }
+                            ]
                         }
                     ]
                 },
-                { content: 'Item 2', icon: 'mdi-cog' }
-            ])
+                { content: 'Favorites', icon: 'mdi-star' }
+            ]
             return { args, items }
         },
         template: `
-             <NList v-bind="args" class="bg-surface w-64 shadowed" :items="items" />
+            <div class="w-80 bg-surface shadowed border border-border">
+                <NList v-bind="args" :items="items" />
+            </div>
         `
     })
 }
 
-export const NestedExpandableData: Story = {
-    args: {},
-    render: args => ({
-        components: { NList, NListItem },
-        setup() {
-            const items = ref([
-                {
-                    content: 'Expandable Parent',
-                    icon: 'mdi-account',
-                    expandable: true,
-                    children: [
-                        { content: 'Child 1', icon: 'mdi-chevron-right' },
-                        { content: 'Child 2', icon: 'mdi-chevron-right' }
-                    ]
-                },
-                {
-                    content: 'Static Parent',
-                    icon: 'mdi-cog',
-                    children: [{ content: 'Child A', icon: 'mdi-circle-small' }]
-                }
-            ])
-            return { args, items }
-        },
-        template: `
-             <NList v-bind="args" class="bg-surface w-64 shadowed" :items="items" />
-        `
-    })
-}
-
-export const GroupedData: Story = {
-    args: {},
-    render: args => ({
-        components: { NList, NListItem },
-        setup() {
-            const items = ref([
-                { content: 'User Account', heading: true },
-                { content: 'Profile', icon: 'mdi-account' },
-                { content: 'Settings', icon: 'mdi-cog' },
-                { content: 'System', heading: true },
-                { content: 'Notifications', icon: 'mdi-bell' },
-                { content: 'Logout', icon: 'mdi-logout', class: 'text-error' }
-            ])
-            return { args, items }
-        },
-        template: `
-             <NList v-bind="args" class="bg-surface w-64 shadowed" :items="items" />
-        `
-    })
-}
-
-export const WithCustomContentField: Story = {
+export const EmptyState: Story = {
     args: {},
     render: args => ({
         components: { NList },
         setup() {
-            const items = ref([
-                { label: 'Custom Label 1', icon: 'mdi-account' },
-                { label: 'Custom Label 2', icon: 'mdi-cog' },
-                { label: 'Custom Label 3', icon: 'mdi-logout' }
-            ])
+            const items: never[] = []
             return { args, items }
         },
         template: `
-             <NList v-bind="args" contentField="label" class="bg-surface w-64 shadowed" :items="items" />
+            <div class="w-64 bg-surface shadowed border border-border italic text-text-muted">
+                <NList v-bind="args" :items="items">
+                    <template #empty-content>
+                        <div class="p-4 text-center">
+                            Custom Empty State
+                        </div>
+                    </template>
+                </NList>
+            </div>
+        `
+    })
+}
+
+export const CustomSlots: Story = {
+    args: {},
+    render: args => ({
+        components: { NList },
+        setup() {
+            const items = [
+                { id: 1, title: 'Item 1', desc: 'Description 1' },
+                { id: 2, title: 'Item 2', desc: 'Description 2' }
+            ]
+            return { args, items }
+        },
+        template: `
+            <div class="w-64 bg-surface shadowed border border-border">
+                <NList v-bind="args" :items="items">
+                    <template #item-content="{ title, desc }">
+                        <div class="flex flex-col">
+                            <span class="font-bold">{{ title }}</span>
+                            <span class="text-xs text-text-muted">{{ desc }}</span>
+                        </div>
+                    </template>
+                </NList>
+            </div>
         `
     })
 }
