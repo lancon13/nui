@@ -1,12 +1,21 @@
 <template>
-    <component :is="props.tag" :class="compClasses" v-bind="compBind" @click="handleClick">
-        <slot name="default"></slot>
+    <component
+        :is="props.tag"
+        :class="compClasses"
+        :role="isClickable ? 'button' : 'img'"
+        :tabindex="isClickable ? 0 : undefined"
+        :aria-disabled="props.disabled ? 'true' : undefined"
+        v-bind="compBind"
+        @click="handleClick"
+        @keydown.enter.space.prevent="handleClick"
+    >
+        <slot name="default" />
     </component>
 </template>
 
 <script setup lang="ts">
     /* eslint-disable no-unused-vars */
-    import { computed, getCurrentInstance, HTMLAttributes, useAttrs } from 'vue'
+    import { computed, type HTMLAttributes, useAttrs } from 'vue'
 
     export type NIconProps = Partial</* @vue-ignore */ HTMLAttributes> & {
         name: string
@@ -21,52 +30,40 @@
         inheritAttrs: false
     })
 
-    const instance = getCurrentInstance()
     const attrs = useAttrs()
     const props = withDefaults(defineProps<NIconProps>(), {
         tag: 'i'
     })
 
-    const emits = defineEmits<(event: 'click', e: MouseEvent) => void>()
+    const emits = defineEmits<(event: 'click', e: MouseEvent | KeyboardEvent) => void>()
 
-    const isClickable = computed(() => {
-        return props.to || props.href || !!instance?.vnode.props?.onClick
-    })
+    const isClickable = computed(() => !props.disabled && (props.to || props.href || !!attrs.onClick))
+
     const iconClasses = computed(() => {
         const name = props.name || 'mdi-account'
-        const parts = name.split('-')
-
-        // Assume short prefixes (e.g., 'fs', 'mdi', 'fa') for icon sets
-        if (parts.length > 1 && parts[0] === 'mdi') return ['mdi', name]
-
-        // Default to MDI for names without a recognizable prefix
+        if (name.startsWith('mdi-')) return ['mdi', name]
         return ['mdi', `mdi-${name}`]
     })
 
-    const compClasses = computed(() => {
-        return [
-            'n-icon',
-            isClickable.value ? 'n-icon--clickable' : '',
-            props.disabled ? 'n-icon--disabled' : '',
-            ...iconClasses.value
-        ]
-    })
-    const compBind = computed(() => {
-        return {
-            ...(isClickable.value
-                ? { tabindex: 0, role: 'button', to: props.to, href: props.href, target: props.target }
-                : {}),
-            ...attrs
-        }
-    })
+    const compClasses = computed(() => [
+        'n-icon',
+        isClickable.value ? 'n-icon--clickable' : '',
+        props.disabled ? 'n-icon--disabled' : '',
+        ...iconClasses.value
+    ])
 
-    function handleClick(e: MouseEvent) {
+    const compBind = computed(() => ({
+        ...(isClickable.value ? { to: props.to, href: props.href, target: props.target } : {}),
+        ...attrs
+    }))
+
+    function handleClick(e: MouseEvent | KeyboardEvent) {
         if (props.disabled) {
             e.preventDefault()
             e.stopPropagation()
             return
         }
-        emits('click', e)
+        if (isClickable.value) emits('click', e)
     }
 </script>
 
@@ -76,15 +73,15 @@
 
     @layer components {
         .n-icon {
-            @apply inline-block leading-none size-[1em] rounded-element;
+            @apply inline-block leading-none size-[1em] transition-all duration-200;
 
             &.n-icon--clickable {
-                &.n-icon--disabled,
-                [class*='--clickable']&.n-icon--disabled,
-                a[href]&.n-icon--disabled {
-                    @apply ring-0;
-                    @apply opacity-80 hover:opacity-80 cursor-not-allowed contrast-0 grayscale;
-                }
+                @apply cursor-pointer hover:opacity-80;
+            }
+
+            &.n-icon--disabled {
+                @apply opacity-50 cursor-not-allowed grayscale;
+                @apply hover:opacity-50;
             }
         }
     }
