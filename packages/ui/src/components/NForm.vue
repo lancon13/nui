@@ -1,18 +1,41 @@
 <template>
-    <component :is="props.tag" :class="compClasses" v-bind="compBind">
-        <slot name="message">
-            <n-banner v-if="props.message" :icon="bannerIcon" :class="bannerClasses">{{ props.message }}</n-banner>
+    <component :is="props.tag" :class="['n-form']" v-bind="compBind" :role="props.tag !== 'form' ? 'form' : undefined">
+        <slot name="title">
+            <component
+                :is="props.titleTag"
+                v-if="props.title"
+                :id="titleId"
+                :class="['n-form-title', props.titleClass]"
+            >
+                {{ props.title }}
+            </component>
         </slot>
-        <slot name="default"></slot>
+        <slot name="message">
+            <n-banner v-if="props.message" :icon="bannerIcon" :class="props.status">
+                {{ props.message }}
+            </n-banner>
+        </slot>
+        <slot />
     </component>
 </template>
 
 <script setup lang="ts">
-    import { computed, HTMLAttributes, useAttrs } from 'vue'
+    import { computed, type HTMLAttributes, useAttrs } from 'vue'
+    import { generatePseudoRandomKey } from '../helpers/tools'
     import NBanner from './NBanner.vue'
+
+    const statusIcons: Record<string, string> = {
+        success: 'mdi-check-circle',
+        error: 'mdi-close-circle',
+        info: 'mdi-information',
+        warning: 'mdi-alert-circle'
+    }
 
     export type NFormProps = Partial</* @vue-ignore */ HTMLAttributes> & {
         tag?: string
+        title?: string
+        titleTag?: string
+        titleClass?: string | string[] | object
         message?: string
         status?: 'success' | 'error' | 'warning' | 'info'
     }
@@ -24,34 +47,19 @@
     const attrs = useAttrs()
     const props = withDefaults(defineProps<NFormProps>(), {
         tag: 'form',
+        titleTag: 'h1',
         status: 'info'
     })
 
-    const compClasses = computed(() => {
-        return ['n-form']
-    })
-    const compBind = computed(() => {
-        return {
-            ...attrs
-        }
-    })
+    const titleId = `n-form-title-${generatePseudoRandomKey()}`
+    const bannerIcon = computed(() => statusIcons[props.status] || '')
 
-    const bannerClasses = computed(() => {
-        return [props.status]
-    })
-    const bannerIcon = computed(() => {
-        switch (props.status) {
-            case 'success':
-                return 'check-circle'
-            case 'error':
-                return 'close-circle'
-            case 'info':
-                return 'information'
-            case 'warning':
-                return 'alert-circle'
-            default:
-                return ''
+    const compBind = computed(() => {
+        const bind = { ...attrs }
+        if (props.title && !bind['aria-labelledby']) {
+            bind['aria-labelledby'] = titleId
         }
+        return bind
     })
 </script>
 
@@ -61,8 +69,11 @@
 
     @layer components {
         .n-form {
-            @apply w-full
-                flex flex-col gap-4;
+            @apply w-full flex flex-col gap-4;
+
+            .n-form-title {
+                @apply font-bold;
+            }
         }
     }
 </style>
