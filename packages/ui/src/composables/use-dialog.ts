@@ -19,10 +19,13 @@ export type NDialogOptions = Omit<NModalProps, 'tag' | 'content'> &
         title?: string
         content?: string | VNode
         hideOnAction?: boolean
-        loadingType?: string
+        loadingName?: string
         loadingClass?: string | string[] | object
         actions?: NDialogAction[]
         closeButton?: boolean
+        role?: string
+        cardHeaderClass?: string | string[] | object
+        cardFooterClass?: string | string[] | object
     }
 
 export function useDialog() {
@@ -45,13 +48,14 @@ export function useDialog() {
             overlay: options['overlay'],
             noOverlayHide: options['noOverlayHide'],
             noEscHide: options['noEscHide'],
-            focusOnShow: options['focusOnShow']
+            focusOnShow: options['focusOnShow'],
+            role: options['role']
         }
         const cardProps = {
             tag: options['cardTag'],
             class: options['cardClass'],
             loading: options['loading'],
-            loadingType: options['loadingType'],
+            loadingName: options['loadingName'],
             loadingClass: options['loadingClass']
         }
         const eventCallbacks = new Map<string, ((...params: any[]) => void)[]>()
@@ -59,14 +63,23 @@ export function useDialog() {
         // Helper to destroy the component
         async function hide() {
             const componentInstance = vnode.component
-            componentInstance?.exposed?.hide()
-            await nextTick()
-            executeCallbacks('hide')
-            destroy()
+            if (componentInstance?.exposed?.hide) {
+                componentInstance.exposed.hide()
+            }
+            // Cleanup handled by onUpdate:modelValue
         }
         async function destroy() {
-            render(null, container) // Unmount VNode
-            container.remove()
+            // Wait for transition? NModal has transition.
+            // Similar to useNotify, simpler to wait a tick or small timeout.
+            // But usually destroying immediately after model=false is okay if we don't care about exit animation?
+            // NModal uses v-if="model".
+            // If we set model=false, it starts leaving.
+            // If we destroy container, it vanishes.
+            // Let's defer destroy slightly.
+            setTimeout(() => {
+                render(null, container) // Unmount VNode
+                container.remove()
+            }, 300)
         }
 
         let cardActions: VNode[] = []
@@ -95,7 +108,13 @@ export function useDialog() {
         const vnode = createVNode(
             NModal,
             {
-                ...modalProps
+                ...modalProps,
+                'onUpdate:modelValue': (val: boolean) => {
+                    if (!val) {
+                        executeCallbacks('hide')
+                        destroy()
+                    }
+                }
             },
             {
                 default: () =>
@@ -108,7 +127,7 @@ export function useDialog() {
                             default: () =>
                                 [
                                     options.title
-                                        ? h('div', { class: 'n-card-header' }, [
+                                        ? h('div', { class: ['n-card-header', options.cardHeaderClass] }, [
                                               h('h1', { class: 'title-text text-xl' }, options.title),
                                               options.closeButton
                                                   ? h(NButton, {
@@ -121,7 +140,11 @@ export function useDialog() {
                                         : null,
                                     h('div', { class: 'n-card-body' }, options.content || ''),
                                     cardActions.length > 0
-                                        ? h('div', { class: 'n-card-footer justify-end gap-2' }, cardActions)
+                                        ? h(
+                                              'div',
+                                              { class: ['n-card-footer justify-end gap-2', options.cardFooterClass] },
+                                              cardActions
+                                          )
                                         : null
                                 ].filter(Boolean) as VNode[]
                         }
@@ -203,6 +226,7 @@ export function useDialog() {
             ],
             cardClass: 'shadowed',
             noOverlayHide: true,
+            role: 'alertdialog',
             ...(options || {})
         })
         return new Promise<void>(resolve => {
@@ -234,7 +258,8 @@ export function useDialog() {
             ],
             hideOnAction: false,
             noOverlayHide: true,
-            noEscHide: true
+            noEscHide: true,
+            role: 'alertdialog'
         })
         return new Promise<'ok' | 'cancel' | null>(resolve => {
             let result: 'ok' | 'cancel' | null = null

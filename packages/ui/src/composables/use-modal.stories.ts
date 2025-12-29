@@ -29,9 +29,9 @@ export const Default: Story = {
             }
 
             const showLoading = async () => {
-                const modal = await loading('normal', 'Loading, please wait...', {
+                const modal = await loading('loading', 'Loading, please wait...', {
                     titleClass: 'font-bold',
-                    loadingClass: 'text-5xl text-brand'
+                    loadingClass: 'text-5xl animate-spin'
                 })
                 setTimeout(modal.hide, 3000)
             }

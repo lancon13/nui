@@ -7,6 +7,7 @@
                 :class="overlayClasses"
                 :style="overlayStyles"
                 tabindex="-1"
+                aria-hidden="true"
                 @mousedown="handleOverlayClick"
             ></div>
         </transition>
@@ -17,14 +18,17 @@
                 :is="props.tag"
                 v-if="model"
                 ref="contentRef"
-                role="dialog"
+                :role="props.role"
+                :aria-modal="props.overlay ? 'true' : undefined"
                 :class="modalClasses"
                 :style="modalStyles"
                 v-bind="modalBind"
                 @mousedown="handleModalMouseDown"
                 @mouseup="handleModalMouseUp"
             >
-                <slot name="default" v-html="props.content"></slot>
+                <slot name="default">
+                    <span v-if="props.content" v-html="props.content" />
+                </slot>
             </component>
         </transition>
     </teleport>
@@ -32,11 +36,11 @@
 
 <script setup lang="ts">
     import { useEventListener } from '@vueuse/core'
-    import { computed, HTMLAttributes, nextTick, onUnmounted, useAttrs, useTemplateRef, watch } from 'vue'
+    import { computed, type HTMLAttributes, nextTick, onUnmounted, useAttrs, useTemplateRef, watch } from 'vue'
     import { useComponentStack } from '../composables/use-component-stack'
+    import { useFocusable } from '../composables/use-focusable'
     import { useTeleportContainer } from '../composables/use-teleport-container'
     import { generatePseudoRandomKey } from '../helpers/tools'
-    import { useFocusable } from '../composables/use-focusable'
 
     export type NModalDirection = 'center' | 'top' | 'bottom' | 'left' | 'right'
     export type NModalProps = Partial</* @vue-ignore */ HTMLAttributes> & {
@@ -48,6 +52,7 @@
         direction?: NModalDirection
         persist?: boolean
         focusOnShow?: boolean
+        role?: string
     }
 
     defineOptions({
@@ -63,7 +68,8 @@
         noEscHide: false,
         direction: 'center',
         persist: false,
-        focusOnShow: true
+        focusOnShow: true,
+        role: 'dialog'
     })
 
     const model = defineModel<boolean>({ default: false })
@@ -72,35 +78,40 @@
     const modalId = Symbol(`modal-id-${generatePseudoRandomKey()}`)
     const { register, unregister, getZIndex, isTop } = useComponentStack('n-modal')
     const contentRef = useTemplateRef<HTMLElement | null>('contentRef')
+
     const { pause, unpause } = useFocusable(
         model,
         contentRef,
         computed(() => props.overlay),
-        computed(() => props.focusOnShow)
+        computed(() => props.focusOnShow),
+        props.overlay
+            ? {
+                  show: 300,
+                  hide: 300
+              }
+            : undefined
     )
 
     const stackZIndex = computed(() => getZIndex(modalId))
 
-    const overlayClasses = computed(() => {
-        return ['n-modal-overlay']
-    })
-    const overlayStyles = computed(() => {
-        return {
-            zIndex: stackZIndex.value
-        }
-    })
-    const modalClasses = computed(() => {
-        return ['n-modal', `n-modal--direction-${props.direction}`]
-    })
-    const modalStyles = computed(() => {
-        return {
-            zIndex: stackZIndex.value
-        }
-    })
+    const overlayClasses = computed(() => ['n-modal-overlay'])
+    const overlayStyles = computed(() => ({ zIndex: stackZIndex.value }))
+    const modalClasses = computed(() => ['n-modal', `n-modal--direction-${props.direction}`])
+    const modalStyles = computed(() => ({ zIndex: stackZIndex.value }))
     const modalBind = computed(() => {
-        return {
-            ...attrs
-        }
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
+        const { tag, content, overlay, noOverlayHide, noEscHide, direction, persist, focusOnShow, role, ...rest } =
+            props
+
+        // Destructure standard attributes handled explicitly in template to avoid duplicates
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
+        const { 'aria-modal': am, role: r, ...remainingAttrs } = attrs
+
+        // Also exclude them from props rest if present
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars, @typescript-eslint/no-explicit-any
+        const { 'aria-modal': pAm, role: pR, ...cleanRest } = rest as any
+
+        return { ...cleanRest, ...remainingAttrs }
     })
 
     useEventListener('keydown', e => {
@@ -111,12 +122,11 @@
         }
     })
 
-    // Watcher
     watch(model, async value => {
-        await nextTick() // Need it for focus-trap to work correctly for v-if
+        await nextTick()
         if (value) {
             register(modalId)
-        } else if (!value) {
+        } else {
             unregister(modalId)
         }
     })
@@ -125,24 +135,23 @@
         unregister(modalId)
     })
 
-    // Event handlers
     function handleOverlayClick(e: MouseEvent) {
-        if (props.persist) return
-        if (props.noOverlayHide) return
+        if (props.persist || props.noOverlayHide) return
         const target = e.target as HTMLElement
         if (target.clientWidth < e.clientX || target.clientHeight < e.clientY) return
         hide()
     }
+
     function handleModalMouseDown() {
         if (props.persist) return
-        pause() // To allows text highlight
-    }
-    function handleModalMouseUp() {
-        if (props.persist) return
-        unpause() // To disable text highlight
+        pause()
     }
 
-    // Methods
+    function handleModalMouseUp() {
+        if (props.persist) return
+        unpause()
+    }
+
     const show = () => {
         model.value = true
     }
@@ -162,43 +171,27 @@
 
             &.n-modal-overlay-enter-active,
             &.n-modal-overlay-leave-active {
-                @apply transition-[opacity,translate] duration-200 ease-in-out;
+                @apply transition-[opacity] duration-200 ease-in-out;
             }
 
             &.n-modal-overlay-leave-active {
                 @apply delay-200;
-                & + .n-modal {
-                    @apply delay-0;
-                }
             }
+
             &.n-modal-overlay-enter-from,
             &.n-modal-overlay-leave-to {
                 @apply opacity-0;
-                .n-modal {
-                    @apply opacity-0;
-                    &.n-modal--direction-center {
-                        @apply translate-y-2;
-                    }
-                    &.n-modal--direction-top {
-                        @apply -translate-y-full;
-                    }
-                    &.n-modal--direction-bottom {
-                        @apply translate-y-full;
-                    }
-                    &.n-modal--direction-left {
-                        @apply -translate-x-full;
-                    }
-                    &.n-modal--direction-right {
-                        @apply translate-x-full;
-                    }
-                }
             }
         }
 
         .n-modal {
             @apply absolute z-1000 w-auto;
-            @apply transition-[opacity,translate] delay-200 duration-200 ease-in-out;
+            @apply transition-[opacity,translate] duration-200 ease-in-out;
             @apply translate-x-0 translate-y-0;
+
+            &.n-modal-enter-active {
+                @apply delay-200;
+            }
 
             &.n-modal--direction-top {
                 @apply w-full top-0 left-0;

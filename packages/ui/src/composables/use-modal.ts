@@ -29,9 +29,7 @@ export function useModal() {
 
         options = options ?? {}
 
-        const modalProps = {
-            ...options
-        }
+        const { content, ...modalProps } = options
         const eventCallbacks = new Map<string, ((...params: any[]) => void)[]>()
 
         // Helper to destroy the component
@@ -53,7 +51,7 @@ export function useModal() {
                 ...modalProps
             },
             {
-                default: () => options.content || ''
+                default: () => content || ''
             }
         )
 
@@ -105,14 +103,14 @@ export function useModal() {
         return await modalInstance.show()
     }
 
-    const loading = async (type: string, message: string, options?: NModalLoadingOptions) => {
+    const loading = async (name: string, message: string, options?: NModalLoadingOptions) => {
         const modalOptions: NModalOptions = {
             ...options,
             class: 'flex flex-col items-center gap-4 text-text-invert',
             persist: true,
             content: [
                 h('div', { class: options?.titleClass }, message),
-                h(NLoading, { type, class: options?.loadingClass })
+                h(NLoading, { name, class: options?.loadingClass })
             ] as VNode[]
         }
         return await modal(modalOptions)

@@ -22,90 +22,95 @@ export const Default: Story = {
             const { create } = useDialog()
 
             const showDefault = async () => {
-                const dialog = await create({
-                    title: 'Default dialog',
-                    content: 'This is a default dialog!',
-                    actions: [
-                        {
-                            label: 'Ok',
-                            class: 'flat'
-                        }
-                    ],
-                    closeButton: true
+                const d = await create({
+                    title: 'System Message',
+                    content: 'This is a default dialog used for general information.',
+                    actions: [{ label: 'Ok', class: ' flex-1 justify-center' }],
+                    closeButton: true,
+                    cardClass: 'w-96 shadowed',
+                    cardHeaderClass: 'justify-between'
                 })
-                await dialog.show()
+                await d.show()
             }
 
             const showLoading = async () => {
-                const dialog = await create({
-                    title: 'Loading...',
-                    content: 'This dialog will close in 3 seconds.',
-                    loading: true
+                const d = await create({
+                    title: 'Processing Data',
+                    content: 'Please wait while we synchronize your profile.',
+                    loading: true,
+                    loadingName: 'loading',
+                    loadingClass: 'text-3xl animate-spin',
+                    cardClass: 'w-96 shadowed'
                 })
-                const { hide } = await dialog.show()
+                const { hide } = await d.show()
                 setTimeout(hide, 3000)
             }
 
             const showWithActions = async () => {
-                const dialog = await create({
-                    title: 'Dialog with actions',
-                    content: 'Click a button to close this dialog.',
+                const d = await create({
+                    title: 'Unsaved Changes',
+                    content: 'You have unsaved changes. Do you want to save before leaving?',
+                    cardClass: 'w-[450px] shadowed',
                     actions: [
                         {
-                            label: 'Custom Action',
-                            class: 'outlined',
+                            label: 'Discard',
+                            class: 'error texted',
                             onClick: ({ hide }) => {
-                                console.log('Custom action clicked!')
                                 hide()
                             }
                         },
                         {
-                            label: 'Dismiss',
+                            label: 'Cancel',
+                            class: 'flat',
                             onClick: ({ hide }) => {
-                                console.log('Dismiss clicked!')
+                                hide()
+                            }
+                        },
+                        {
+                            label: 'Save & Exit',
+                            class: '',
+                            onClick: ({ hide }) => {
                                 hide()
                             }
                         }
                     ]
                 })
-                await dialog.show()
+                await d.show()
             }
 
             return { showDefault, showLoading, showWithActions }
         },
         template: `
-            <div class="flex flex-col gap-4">
-                <NButton @click="showDefault" class="justify-center">Show default dialog</NButton>
-                <NButton @click="showLoading" class="justify-center">Show loading dialog (3s)</NButton>
-                <NButton @click="showWithActions" class="justify-center">Show dialog with actions</NButton>
+            <div class="flex flex-col gap-4 w-[400px]">
+                <NButton @click="showDefault" class="justify-center ">Basic Dialog</NButton>
+                <NButton @click="showLoading" class="justify-center outlined ">Loading Dialog</NButton>
+                <NButton @click="showWithActions" class="justify-center flat ">Complex Actions</NButton>
             </div>
         `
     })
 }
 
-export const CustomLoading: Story = {
+export const CustomRole: Story = {
     render: () => ({
         components: { NButton },
         setup() {
             const { create } = useDialog()
 
-            const showCustomLoading = async () => {
-                const dialog = await create({
-                    title: 'Custom Loading...',
-                    content: 'Click a button to close this dialog.',
-                    loading: true,
-                    loadingClass: 'text-5xl text-brand'
+            const showAlertDialog = async () => {
+                const d = await create({
+                    title: 'Security Warning',
+                    content: 'Your session is about to expire.',
+                    role: 'alertdialog',
+                    actions: [{ label: 'Renew Session', class: ' w-full' }],
+                    cardClass: 'shadowed w-80'
                 })
-                const { hide } = await dialog.show()
-                setTimeout(hide, 3000)
+                await d.show()
             }
 
-            return { showCustomLoading }
+            return { showAlertDialog }
         },
         template: `
-            <div class="flex flex-col gap-4">
-                <NButton @click="showCustomLoading" class="justify-center">Show custom loading dialog (3s)</NButton>
-            </div>
+            <NButton @click="showAlertDialog" class="error">Show as alertdialog</NButton>
         `
     })
 }
