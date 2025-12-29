@@ -1,36 +1,16 @@
 <template>
-    <n-input-field :class="compClasses" v-bind="compBind">
-        <template v-for="(index, name) in otherSlots" #[name]="data">
+    <n-input-field v-model="model" :class="compClasses" v-bind="compBind">
+        <template v-for="(_, name) in otherSlots" #[name]="data">
             <slot :name="name" v-bind="data" />
         </template>
-        <template #="{ inputId, onUpdateModelValue, formattedModelValue, modifiers, onInput, onChange, format }">
+        <template #="{ inputId }">
             <input
                 :id="inputId"
+                v-model="model"
                 :name="props.name"
                 :type="props.type"
-                :class="props.inputClass"
-                :value="formattedModelValue"
-                v-bind="inputBind"
-                @input="
-                    async (e: InputEvent) => {
-                        onInput(e)
-                        if (modifiers['input']) {
-                            const input = e.target as HTMLInputElement
-                            onUpdateModelValue(input.value)
-                            input.value = formattedModelValue
-                        }
-                    }
-                "
-                @change="
-                    (e: Event) => {
-                        onChange(e)
-                        if (modifiers['change'] || !modifiers['input']) {
-                            const input = e.target as HTMLInputElement
-                            onUpdateModelValue(input.value)
-                            input.value = formattedModelValue
-                        }
-                    }
-                "
+                :class="['peer', props.inputClass]"
+                v-bind="attrsBind"
             />
         </template>
     </n-input-field>
@@ -38,8 +18,9 @@
 
 <script setup lang="ts">
     import { omit } from 'es-toolkit/object'
-    import { computed, HTMLAttributes, useAttrs, useSlots } from 'vue'
-    import NInputField, { NInputFieldProps } from './NInputField.vue'
+    import { computed, type HTMLAttributes, useAttrs, useSlots } from 'vue'
+    import { resolveClassProp } from '../helpers/dom'
+    import NInputField, { type NInputFieldProps } from './NInputField.vue'
 
     export type NInputTextProps = Partial</* @vue-ignore */ HTMLAttributes> &
         NInputFieldProps & {
@@ -57,21 +38,16 @@
         type: 'text'
     })
 
+    const model = defineModel<string | number>({ default: '' })
+
     const otherSlots = computed(() => omit(slots, ['default']))
-    const compClasses = computed(() => {
-        return ['n-input-text']
-    })
+    const compClasses = computed(() => ['n-input-text', ...resolveClassProp((attrs as any).class)])
     const compBind = computed(() => {
-        // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
-        const { type, inputClass, ...rest } = { ...attrs, ...props }
-        return {
-            ...rest
-        }
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { type, inputClass, modelValue, modelModifiers, ...rest } = props as any
+        return { ...rest, style: (attrs as any).style }
     })
-    const inputBind = computed(() => {
-        const { placeholder } = attrs
-        return { placeholder: placeholder as string | undefined }
-    })
+    const attrsBind = computed(() => omit(attrs, ['class', 'style']))
 </script>
 
 <style lang="css">

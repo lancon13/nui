@@ -90,7 +90,7 @@
         loading?: boolean
         loadingName?: string
         loadingClass?: string | string[] | object
-        format?: (value: string) => string
+        format?: (value: string | number) => string
         parse?: (value: string) => string
     }
 
@@ -107,7 +107,7 @@
         loadingName: 'loading'
     })
 
-    const [model, modifiers] = defineModel<string>({ default: '' })
+    const [model, modifiers] = defineModel<string | number>({ default: '' })
 
     const inputId = `input-id-${generatePseudoRandomKey()}`
 

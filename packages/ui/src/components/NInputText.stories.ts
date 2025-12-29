@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite'
-// import { fn } from '@storybook/test'
 import { ref } from 'vue'
-import NInputText from './NInputText.vue'
 import NButton from './NButton.vue'
+import NIcon from './NIcon.vue'
+import NInputText from './NInputText.vue'
 
 const meta = {
     title: 'UI/NInputText',
@@ -11,8 +11,12 @@ const meta = {
         layout: 'centered'
     },
     tags: ['autodocs'],
-    argTypes: {},
-    args: {}
+    argTypes: {
+        type: { control: 'select', options: ['text', 'password', 'email', 'number', 'tel', 'url'] },
+        message: { control: 'text' },
+        onInput: { action: 'input' },
+        onChange: { action: 'change' }
+    }
 } satisfies Meta
 
 export default meta
@@ -24,61 +28,206 @@ export const Default: Story = {
     render: args => ({
         components: { NInputText },
         setup() {
-            const value = ref('Test me')
+            const value = ref('')
             return { args, value }
         },
         template: `
-            <div class="flex flex-col gap-2">
-                <div>{{value}}</div>
-                <NInputText v-bind="args" v-model.input="value" label="Value" name="demo" />
+            <div class="w-96 flex flex-col gap-2">
+                <div>Value: <code>{{ value }}</code></div>
+                <NInputText v-bind="args" v-model="value" label="Username" placeholder="Enter username" />
+            </div>
+        `
+    })
+}
+
+export const Colors: Story = {
+    args: {},
+    render: args => ({
+        components: { NInputText },
+        setup() {
+            const value = ref('Text content')
+            return { args, value }
+        },
+        template: `
+            <div class="flex flex-col gap-4 w-96">
+                <NInputText v-bind="args" v-model="value" label="Default" />
+                <NInputText v-bind="args" v-model="value" class="brand" label="Brand" />
+                <NInputText v-bind="args" v-model="value" class="success" label="Success" message="Saved!" icon="mdi-check" />
+                <NInputText v-bind="args" v-model="value" class="error" label="Error" message="Input is invalid" icon="mdi-alert-circle" />
+            </div>
+        `
+    })
+}
+
+export const Password: Story = {
+    args: {
+        type: 'password',
+        label: 'Password'
+    },
+    render: args => ({
+        components: { NInputText, NButton, NIcon },
+        setup() {
+            const value = ref('secret123')
+            const showPassword = ref(false)
+            return { args, value, showPassword }
+        },
+        template: `
+            <div class="w-96">
+                <NInputText v-bind="args" v-model="value" :type="showPassword ? 'text' : 'password'" icon="mdi-lock" placeholder="••••••••">
+                    <template #append>
+                        <NIcon 
+                            :name="showPassword ? 'mdi-eye-off' : 'mdi-eye'" 
+                            class="cursor-pointer hover:text-brand"
+                            @click="showPassword = !showPassword"
+                        />
+                    </template>
+                </NInputText>
             </div>
         `
     })
 }
 
 export const Number: Story = {
+    args: {
+        type: 'number',
+        label: 'Number Input'
+    },
+    render: args => ({
+        components: { NInputText },
+        setup() {
+            const value = ref(0)
+            return { args, value }
+        },
+        template: `
+            <div class="w-96 flex flex-col gap-2">
+                <div>Value: <code>{{ value }}</code> (Type: {{ typeof value }})</div>
+                <NInputText v-bind="args" v-model="value" placeholder="Enter number" />
+            </div>
+        `
+    })
+}
+
+export const Events: Story = {
+    args: {
+        placeholder: 'Type something and then click outside...'
+    },
+    render: args => ({
+        components: { NInputText },
+        setup() {
+            const value = ref('')
+            const inputCount = ref(0)
+            const changeCount = ref(0)
+
+            function handleInput() {
+                inputCount.value++
+            }
+            function handleChange() {
+                changeCount.value++
+            }
+
+            return { args, value, inputCount, changeCount, handleInput, handleChange }
+        },
+        template: `
+            <div class="w-[500px] flex flex-col gap-6">
+                <div class="bg-brand/5 p-4 rounded-element border border-brand/20">
+                    <p class="text-sm mb-4">
+                        <strong>Input event:</strong> fires immediately on every keystroke.<br/>
+                        <strong>Change event:</strong> fires only when you blur (click away) after changing value.
+                    </p>
+                    <NInputText 
+                        v-bind="args" 
+                        v-model="value" 
+                        @input="handleInput" 
+                        @change="handleChange" 
+                    />
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4 text-center">
+                    <div class="p-4 bg-surface rounded shadowed border border-border flex flex-col gap-1">
+                        <div class="text-xs uppercase tracking-widest opacity-60 font-bold">Input Fires</div>
+                        <div class="text-4xl font-black text-brand">{{ inputCount }}</div>
+                        <div class="text-[10px] opacity-50 italic">Fires on every key</div>
+                    </div>
+                    <div class="p-4 bg-surface rounded shadowed border border-border flex flex-col gap-1">
+                        <div class="text-xs uppercase tracking-widest opacity-60 font-bold">Change Fires</div>
+                        <div class="text-4xl font-black text-success">{{ changeCount }}</div>
+                        <div class="text-[10px] opacity-50 italic">Fires on blur</div>
+                    </div>
+                </div>
+            </div>
+        `
+    })
+}
+
+export const Loading: Story = {
+    args: {
+        loading: true
+    },
+    render: args => ({
+        components: { NInputText, NButton },
+        setup() {
+            const value = ref('Loading content...')
+            const loading = ref(true)
+            return { args, value, loading }
+        },
+        template: `
+            <div class="flex flex-col items-center gap-4 w-96">
+                <NInputText v-bind="args" v-model="value" :loading="loading" loadingName="mdi-sync" loadingClass="animate-spin" label="Data Field" class="brand" />
+                <NButton @click="loading = !loading" :label="loading ? 'Stop Loading' : 'Start Loading'" />
+            </div>
+        `
+    })
+}
+
+export const Disabled: Story = {
+    args: {
+        disabled: true
+    },
+    render: args => ({
+        components: { NInputText },
+        setup() {
+            const value = ref('Disabled input')
+            return { args, value }
+        },
+        template: `
+            <div class="w-96">
+                <NInputText v-bind="args" v-model="value" label="Disabled Field" placeholder="You cannot edit this" />
+            </div>
+        `
+    })
+}
+
+export const Icons: Story = {
     args: {},
     render: args => ({
         components: { NInputText },
         setup() {
-            const value = ref(325)
-            return { args, value }
+            return { args }
         },
         template: `
-            <div class="flex flex-col gap-2">
-                <div>{{value}}</div>
-                <NInputText v-bind="args" v-model.input.number="value" label="Value" name="demo" />
+            <div class="flex flex-col gap-4 w-96">
+                <NInputText v-bind="args" prepend-icon="mdi-magnify" placeholder="Search..." />
+                <NInputText v-bind="args" append-icon="mdi-email" placeholder="Email address" class="brand" />
             </div>
         `
     })
 }
 
 export const Transform: Story = {
-    args: {},
+    args: {
+        format: (val: string) => val.toUpperCase(),
+        parse: (val: string) => val.toLowerCase()
+    },
     render: args => ({
-        components: { NInputText, NButton },
+        components: { NInputText },
         setup() {
-            const value = ref('test me')
-            const format = (value: string) => {
-                return value.toLocaleUpperCase()
-            }
-            const parse = (value: string) => {
-                return value.toLocaleLowerCase()
-            }
-            const filter = (value: string) => {
-                return value.replace(/[aeiou]/gi, '')
-            }
-            return { args, value, format, parse, filter }
+            const value = ref('lowercase')
+            return { args, value }
         },
         template: `
-            <div class="flex flex-col gap-2">
-                <div>{{value}}</div>
-                <NInputText v-bind="args" v-model.input="value" label="Value" name="demo" :format="format" :parse="parse" />
-                <NInputText v-bind="args" v-model.input="value" label="Filter" name="demo" :format="filter" :parse="filter" icon="account"  >
-                    <template #after>
-                        <NButton class="mt-6">Submit</NButton>
-                    </template>
-                </NInputText>
+            <div class="w-96 flex flex-col gap-2">
+                <div>Model (lowercase): <code>{{ value }}</code></div>
+                <NInputText v-bind="args" v-model="value" label="UPPERCASE Display" />
             </div>
         `
     })
