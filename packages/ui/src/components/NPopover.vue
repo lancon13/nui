@@ -1,70 +1,41 @@
 <template>
-    <transition v-if="props.stacked" name="n-popover">
-        <component
-            :is="props.tag"
-            v-if="model"
-            ref="contentRef"
-            role="popover"
-            :style="compStyles"
-            :class="compClasses"
-            v-bind="compBind"
-            @mouseenter="handleContentHoverFocusIn"
-            @mouseleave="handleContentHoverFocusOut"
-            @focusin="handleContentHoverFocusIn"
-            @focusout="handleContentHoverFocusOut"
-        >
-            <span v-if="props.content" v-html="props.content"></span>
-            <template v-for="(node, index) in slotDefaultNodes" v-else :key="index">
-                <component :is="node" />
-            </template>
-        </component>
-    </transition>
-
-    <!-- Overlay -->
-    <teleport v-else-if="isReady && props.overlay" to="#n-popovers-container">
-        <transition name="n-popover-overlay">
-            <div v-if="model" class="n-popover-overlay">
-                <component
-                    :is="props.tag"
-                    ref="contentRef"
-                    role="popover"
-                    :style="compStyles"
-                    :class="compClasses"
-                    v-bind="compBind"
-                    @mouseenter="handleContentHoverFocusIn"
-                    @mouseleave="handleContentHoverFocusOut"
-                    @focusin="handleContentHoverFocusIn"
-                    @focusout="handleContentHoverFocusOut"
-                >
-                    <span v-if="props.content" v-html="props.content"></span>
-                    <template v-for="(node, index) in slotDefaultNodes" v-else :key="index">
-                        <component :is="node" />
-                    </template>
-                </component>
-            </div>
-        </transition>
-    </teleport>
-
-    <!-- Without Overlay -->
-    <teleport v-else-if="isReady" to="#n-popovers-container">
+    <template v-if="props.stacked">
         <transition name="n-popover">
             <component
                 :is="props.tag"
                 v-if="model"
                 ref="contentRef"
-                role="popover"
-                :style="compStyles"
                 :class="compClasses"
+                :role="props.role"
                 v-bind="compBind"
-                @mouseenter="handleContentHoverFocusIn"
-                @mouseleave="handleContentHoverFocusOut"
-                @focusin="handleContentHoverFocusIn"
-                @focusout="handleContentHoverFocusOut"
             >
-                <span v-if="props.content" v-html="props.content"></span>
-                <template v-for="(node, index) in slotDefaultNodes" v-else :key="index">
-                    <component :is="node" />
-                </template>
+                <slot name="default">
+                    <span v-if="props.content" v-html="props.content" />
+                </slot>
+            </component>
+        </transition>
+    </template>
+
+    <teleport v-else-if="isReady" to="#n-popovers-container">
+        <transition :name="props.overlay ? 'n-popover-overlay' : 'n-popover'">
+            <div v-if="model && props.overlay" class="n-popover-overlay" aria-hidden="true">
+                <component :is="props.tag" ref="contentRef" :class="compClasses" :role="props.role" v-bind="compBind">
+                    <slot name="default">
+                        <span v-if="props.content" v-html="props.content" />
+                    </slot>
+                </component>
+            </div>
+            <component
+                :is="props.tag"
+                v-else-if="model"
+                ref="contentRef"
+                :class="compClasses"
+                :role="props.role"
+                v-bind="compBind"
+            >
+                <slot name="default">
+                    <span v-if="props.content" v-html="props.content" />
+                </slot>
             </component>
         </transition>
     </teleport>
@@ -72,11 +43,12 @@
 
 <script setup lang="ts">
     /* eslint-disable @typescript-eslint/no-explicit-any */
+    /* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
     import type { Placement } from '@floating-ui/vue'
-    import { computed, HTMLAttributes, onMounted, ref, useAttrs, useSlots, useTemplateRef } from 'vue'
-    import { useTeleportContainer } from '../composables/use-teleport-container'
-    import { getElement, getParentElement, wrapTextNode } from '../helpers/dom'
+    import { computed, type HTMLAttributes, onMounted, ref, useAttrs, useTemplateRef } from 'vue'
     import { useFloating } from '../composables/use-floating'
+    import { useTeleportContainer } from '../composables/use-teleport-container'
+    import { getElement, getParentElement } from '../helpers/dom'
 
     export type NPopoverDirection = 'top' | 'bottom' | 'left' | 'right'
     export type NPopoverPosition = 'start' | '' | 'end'
@@ -88,7 +60,12 @@
         persistent?: boolean
         hoverTriggerAnchor?: HTMLElement | string | null
         focusTriggerAnchor?: HTMLElement | string | null
+        clickTriggerAnchor?: HTMLElement | string | null
         attachParent?: HTMLElement | string | null
+        triggerByHover?: boolean
+        triggerByFocus?: boolean
+        triggerByInteraction?: boolean
+        allowClickToHide?: boolean
         direction?: NPopoverDirection
         position?: NPopoverPosition
         margin?: number
@@ -97,13 +74,13 @@
         stacked?: boolean
         overlay?: boolean
         fit?: boolean
+        role?: string
     }
 
     defineOptions({
         inheritAttrs: false
     })
 
-    const slots = useSlots()
     const attrs = useAttrs()
     const props = withDefaults(defineProps<NPopoverProps>(), {
         tag: 'span',
@@ -111,6 +88,10 @@
         showDelay: 75,
         hideDelay: 250,
         persistent: false,
+        triggerByHover: true,
+        triggerByFocus: true,
+        triggerByInteraction: true,
+        allowClickToHide: false,
         direction: 'bottom',
         position: '',
         margin: 4,
@@ -118,7 +99,8 @@
         autoReposition: true,
         stacked: false,
         overlay: false,
-        fit: false
+        fit: false,
+        role: 'presentation'
     })
 
     const model = defineModel<boolean>({ default: false })
@@ -126,13 +108,18 @@
     const { isReady } = useTeleportContainer('n-popovers-container')
 
     const parentEl = ref<HTMLElement | null>(null)
-    const attachParentEl = computed<HTMLElement | null>(() =>
-        props.attachParent ? getElement(props.attachParent) : parentEl.value
-    )
+    const attachParentEl = computed(() => (props.attachParent ? getElement(props.attachParent) : parentEl.value))
 
-    const floatingPlacement = computed<Placement>(() => {
+    const floatingPlacement = computed(() => {
         return `${props.direction}${props.position !== '' ? `-${props.position}` : ''}` as Placement
     })
+
+    const floatingProps = computed(() => ({
+        ...props,
+        hoverTriggerAnchor: props.triggerByHover ? props.hoverTriggerAnchor : null,
+        focusTriggerAnchor: props.triggerByFocus ? props.focusTriggerAnchor : null,
+        clickTriggerAnchor: props.triggerByInteraction ? props.clickTriggerAnchor : null
+    }))
 
     const {
         show,
@@ -142,10 +129,10 @@
         compStyles: floatingStyles,
         placement,
         parentWidth
-    } = useFloating(props, {
-        model: computed<boolean>({
+    } = useFloating(floatingProps, {
+        model: computed({
             get: () => model.value,
-            set: (val: boolean) => {
+            set: val => {
                 model.value = val
             }
         }),
@@ -162,20 +149,45 @@
         return styles
     })
 
-    const compClasses = computed(() => {
-        return ['n-popover', `n-popover--direction-${placement.value}`]
-    })
+    const compClasses = computed(() => ['n-popover', `n-popover--direction-${placement.value}`])
+
     const compBind = computed(() => {
+        const {
+            tag,
+            content,
+            showDelay,
+            hideDelay,
+            persistent,
+            hoverTriggerAnchor,
+            focusTriggerAnchor,
+            clickTriggerAnchor,
+            attachParent,
+            triggerByHover,
+            triggerByFocus,
+            triggerByInteraction,
+            direction,
+            position,
+            margin,
+            offset,
+            autoReposition,
+            stacked,
+            overlay,
+            fit,
+            role,
+            ...rest
+        } = props
+
         return {
+            style: compStyles.value,
+            onMouseenter: handleContentHoverFocusIn,
+            onMouseleave: handleContentHoverFocusOut,
+            onFocusin: handleContentHoverFocusIn,
+            onFocusout: handleContentHoverFocusOut,
+            ...(rest as any),
             ...attrs
         }
     })
 
-    const slotDefaultNodes = computed(() => {
-        return wrapTextNode(slots.default?.() ?? [], 'span')
-    })
-
-    // Lifecycle hooks
     onMounted(() => {
         parentEl.value = getParentElement()
     })
@@ -193,7 +205,7 @@
 
             &.n-popover-overlay-enter-active,
             &.n-popover-overlay-leave-active {
-                @apply transition-[opacity,translate] duration-200 ease-in-out;
+                @apply transition-opacity duration-200 ease-in-out;
             }
             &.n-popover-overlay-leave-active {
                 @apply delay-200;

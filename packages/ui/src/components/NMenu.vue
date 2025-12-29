@@ -1,6 +1,6 @@
 <template>
     <n-popover ref="popoverRef" :class="compClasses" v-bind="compBind">
-        <component :is="props.listTag" :class="['n-list', props.listClass]">
+        <component :is="props.listTag" :class="['n-list', props.listClass]" role="menu">
             <template v-for="(node, index) in slotDefaultNodes" :key="index">
                 <component :is="node" />
             </template>
@@ -11,18 +11,16 @@
 <script setup lang="ts">
     /* eslint-disable @typescript-eslint/no-explicit-any */
     /* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
-    import { computed, Fragment, h, HTMLAttributes, useSlots, VNode, useTemplateRef } from 'vue'
+    import { computed, Fragment, h, type HTMLAttributes, useSlots, useTemplateRef, type VNode } from 'vue'
     import { useMenuTransform } from '../composables'
     import NIcon from './NIcon.vue'
-    import NListItem, { NListItemProps } from './NListItem.vue'
+    import NListItem from './NListItem.vue'
     import NMenu from './NMenu.vue'
-    import NPopover, { NPopoverProps } from './NPopover.vue'
-
-    const popoverRef = useTemplateRef('popoverRef')
+    import NPopover, { type NPopoverProps } from './NPopover.vue'
 
     export type NMenuDirection = 'top' | 'bottom' | 'left' | 'right'
     export type NMenuPosition = 'start' | '' | 'end'
-    export type NMenuItemData = Record<string, any> & Partial<NListItemProps>
+    export type NMenuItemData = Record<string, any>
     export type NMenuProps = Partial</* @vue-ignore */ HTMLAttributes> &
         NPopoverProps & {
             listTag?: string
@@ -31,10 +29,16 @@
             valueField?: string
             childrenField?: string
             contentField?: string
+            triggerByHover?: boolean
+            triggerByFocus?: boolean
+            triggerByInteraction?: boolean
+            allowClickToHide?: boolean
+            recursiveTriggers?: boolean
         }
+
     const defaultSubmenuProps = {
-        direction: 'right',
-        position: 'start',
+        direction: 'right' as const,
+        position: 'start' as const,
         stacked: true
     }
 
@@ -45,63 +49,112 @@
         listClass: 'bg-surface shadowed',
         valueField: 'value',
         childrenField: 'items',
-        contentField: 'content'
+        contentField: 'content',
+        triggerByHover: true,
+        triggerByFocus: true,
+        triggerByInteraction: true,
+        allowClickToHide: false,
+        recursiveTriggers: false
     })
-
+    const popoverRef = useTemplateRef('popoverRef')
     const { transformedNodes } = useMenuTransform(slots, defaultSubmenuProps)
-    const compClasses = computed(() => {
-        return ['n-menu']
-    })
+
+    const compClasses = computed(() => ['n-menu'])
     const compBind = computed(() => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
-        const { items, listTag, listClass, valueField, childrenField, contentField, ...rest } = props
-        return rest
+        const {
+            items,
+            listTag,
+            listClass,
+            valueField,
+            childrenField,
+            contentField,
+            triggerByHover,
+            triggerByFocus,
+            triggerByInteraction,
+            allowClickToHide,
+            recursiveTriggers,
+            ...rest
+        } = props
+
+        return {
+            ...rest,
+            hoverTriggerAnchor: triggerByHover ? props.hoverTriggerAnchor : null,
+            focusTriggerAnchor: triggerByFocus ? props.focusTriggerAnchor : null,
+            clickTriggerAnchor: triggerByInteraction ? props.clickTriggerAnchor : null,
+            attachParent: triggerByInteraction ? props.attachParent : null,
+            allowClickToHide
+        }
     })
 
     const createNodesFromData = (items: NMenuItemData[], submenuProps = defaultSubmenuProps): VNode[] => {
         return items.map(item => {
-            const content = item[props.contentField]
-            const subItems = item[props.childrenField]
-            const rest = { ...item }
-            delete rest[props.contentField]
-            delete rest[props.childrenField]
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const { [props.contentField]: content, [props.childrenField]: subItems, ...rest } = item
+            const hasSubmenu = !!(subItems && subItems.length)
 
-            if (subItems?.length) {
-                const { hoverTriggerAnchor, focusTriggerAnchor, fit, items: _items, ...recursiveProps } = props
-                return slots['item']
-                    ? h(Fragment, null, slots['item'](item) ?? [])
-                    : h(
-                          NListItem,
-                          { ...(rest as any), 'data-has-submenu': true },
-                          slots['submenu']
-                              ? h(Fragment, null, slots['submenu'](item) ?? [])
-                              : {
-                                    default: () => [
-                                        h(
-                                            'span',
-                                            {
-                                                class: 'grow'
-                                            },
-                                            content
-                                        ),
-                                        h(NMenu, {
-                                            ...recursiveProps,
-                                            ...defaultSubmenuProps,
-                                            items: subItems,
-                                            ...submenuProps
-                                        } as any),
-                                        h(NIcon, {
-                                            name: 'chevron-right',
-                                            class: 'ml-8 -mr-2'
-                                        })
-                                    ]
-                                }
-                      )
+            const itemProps = {
+                ...rest,
+                role: 'menuitem',
+                'aria-haspopup': hasSubmenu ? 'menu' : undefined
+            }
+
+            if (hasSubmenu && !slots['item']) {
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
+                const {
+                    hoverTriggerAnchor,
+                    focusTriggerAnchor,
+                    clickTriggerAnchor,
+                    fit,
+                    items: _,
+                    triggerByHover,
+                    triggerByFocus,
+                    triggerByInteraction,
+                    allowClickToHide,
+                    recursiveTriggers,
+                    ...otherProps
+                } = props
+
+                const recursiveProps = {
+                    ...otherProps,
+                    ...(props.recursiveTriggers
+                        ? {
+                              triggerByHover,
+                              triggerByFocus,
+                              triggerByInteraction,
+                              allowClickToHide,
+                              recursiveTriggers
+                          }
+                        : {})
+                }
+
+                return h(
+                    NListItem,
+                    itemProps as any,
+                    slots['submenu']
+                        ? h(Fragment, null, slots['submenu'](item) ?? [])
+                        : {
+                              default: () => [
+                                  h('span', { class: 'grow' }, content),
+                                  h(NMenu as any, {
+                                      ...recursiveProps,
+                                      ...defaultSubmenuProps,
+                                      items: subItems,
+                                      ...submenuProps
+                                  }),
+                                  h(NIcon, {
+                                      name: 'mdi-chevron-right',
+                                      class: 'ml-8 -mr-2',
+                                      'aria-hidden': 'true'
+                                  })
+                              ]
+                          }
+                )
             }
 
             return slots['item']
                 ? h(Fragment, null, slots['item'](item) ?? [])
-                : h(NListItem, { ...(rest as any) }, () => slots['item-content']?.(item) ?? content)
+                : h(NListItem, itemProps as any, () => slots['item-content']?.(item) ?? content)
         })
     }
 
@@ -120,7 +173,7 @@
 
     @layer components {
         .n-menu {
-            /* TBA */
+            /* Basic menu styles */
         }
     }
 </style>
