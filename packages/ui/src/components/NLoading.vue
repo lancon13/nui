@@ -39,6 +39,15 @@
             @apply absolute inset-0
                 flex items-center justify-center z-10
                 bg-background-invert/50 text-text-invert;
+
+            &.n-loading-overlay-enter-active,
+            &.n-loading-overlay-leave-active {
+                @apply transition-[opacity,translate] duration-200 ease-in-out;
+            }
+            &.n-loading-overlay-enter-from,
+            &.n-loading-overlay-leave-to {
+                @apply opacity-0;
+            }
         }
     }
 </style>

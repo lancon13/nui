@@ -185,14 +185,7 @@
                 & ~ * {
                     @apply opacity-0;
                 }
-                &.n-loading-overlay-enter-active,
-                &.n-loading-overlay-leave-active {
-                    @apply transition-[opacity,translate] duration-200 ease-in-out;
-                }
-                &.n-loading-overlay-enter-from,
-                &.n-loading-overlay-leave-to {
-                    @apply opacity-0;
-                }
+                /* Transition styles handled in NLoading.vue */
             }
 
             /* Variant: Flat */

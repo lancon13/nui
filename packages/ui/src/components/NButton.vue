@@ -154,16 +154,7 @@
             }
 
             /* Loading Overlay */
-            .n-loading-overlay {
-                &.n-loading-overlay-enter-active,
-                &.n-loading-overlay-leave-active {
-                    @apply transition-[opacity,translate] duration-200 ease-in-out;
-                }
-                &.n-loading-overlay-enter-from,
-                &.n-loading-overlay-leave-to {
-                    @apply opacity-0;
-                }
-            }
+            /* Styles handled in NLoading.vue */
 
             /* Variants */
             &.flat {
