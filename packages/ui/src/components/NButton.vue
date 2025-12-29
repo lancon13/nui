@@ -132,7 +132,7 @@
             }
 
             /* Colors */
-            &.primary {
+            &.brand {
                 @apply bg-brand;
             }
             &.success {
@@ -169,7 +169,7 @@
             &.flat {
                 @apply bg-current/20 text-current;
 
-                &.primary {
+                &.brand {
                     @apply bg-brand-light text-brand;
                 }
                 &.success {
@@ -198,7 +198,7 @@
                     @apply bg-transparent;
                 }
 
-                &.primary {
+                &.brand {
                     @apply border-brand text-brand;
                 }
                 &.success {
@@ -223,7 +223,7 @@
                 @apply bg-transparent text-current
                     hover:bg-current/10;
 
-                &.primary {
+                &.brand {
                     @apply text-brand;
                 }
                 &.success {
