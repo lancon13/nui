@@ -67,7 +67,7 @@
 </template>
 
 <script setup lang="ts">
-    import { computed, type HTMLAttributes, useAttrs, useSlots, type VNode } from 'vue'
+    import { computed, getCurrentInstance, type HTMLAttributes, useAttrs, useSlots, type VNode } from 'vue'
     import { resolveClassProp, wrapTextNode } from '../helpers/dom'
     import NIcon from './NIcon.vue'
 
@@ -90,6 +90,7 @@
 
     defineOptions({ inheritAttrs: false })
 
+    const instance = getCurrentInstance()
     const slots = useSlots()
     const attrs = useAttrs()
     const props = withDefaults(defineProps<NListItemProps>(), {
@@ -98,10 +99,12 @@
     })
 
     const model = defineModel<boolean>({ default: false })
-    // eslint-disable-next-line no-unused-vars
-    const emits = defineEmits<(event: 'click', e: MouseEvent | KeyboardEvent) => void>()
+    const emits = defineEmits<{
+        // eslint-disable-next-line no-unused-vars
+        (e: 'click', event: MouseEvent | KeyboardEvent): void
+    }>()
 
-    const isClickable = computed(() => !props.heading && (props.to || props.href || !!attrs.onClick))
+    const isClickable = computed(() => !props.heading && (props.to || props.href || instance?.vnode.props?.onClick))
     const itemRole = computed(() => {
         if (props.heading) return 'presentation'
         if (props.to || props.href) return 'link'

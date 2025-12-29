@@ -1,7 +1,7 @@
 <template>
     <n-popover ref="popoverRef" :class="compClasses" v-bind="compBind">
         <component :is="props.listTag" :class="['n-list', props.listClass]" role="menu">
-            <template v-for="(node, index) in slotDefaultNodes" :key="index">
+            <template v-for="(node, index) in slotDefaultNodes" :key="node.key ?? index">
                 <component :is="node" />
             </template>
         </component>
@@ -56,6 +56,11 @@
         allowClickToHide: false,
         recursiveTriggers: false
     })
+
+    const emits = defineEmits<{
+        (e: 'select', item: NMenuItemData): void
+    }>()
+
     const popoverRef = useTemplateRef('popoverRef')
     const { transformedNodes } = useMenuTransform(slots, defaultSubmenuProps)
 
@@ -89,18 +94,28 @@
 
     const createNodesFromData = (items: NMenuItemData[], submenuProps = defaultSubmenuProps): VNode[] => {
         return items.map(item => {
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            const { [props.contentField]: content, [props.childrenField]: subItems, ...rest } = item
+            const {
+                [props.contentField]: content,
+                [props.childrenField]: subItems,
+                onClick: originalOnClick,
+                ...rest
+            } = item
             const hasSubmenu = !!(subItems && subItems.length)
 
             const itemProps = {
+                key: item.key ?? item.id ?? item[props.valueField],
                 ...rest,
                 role: 'menuitem',
-                'aria-haspopup': hasSubmenu ? 'menu' : undefined
+                'aria-haspopup': hasSubmenu ? 'menu' : undefined,
+                onClick: (e: MouseEvent) => {
+                    if (originalOnClick && typeof originalOnClick === 'function') {
+                        originalOnClick(e)
+                    }
+                    emits('select', item)
+                }
             }
 
             if (hasSubmenu && !slots['item']) {
-                // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
                 const {
                     hoverTriggerAnchor,
                     focusTriggerAnchor,
@@ -140,7 +155,8 @@
                                       ...recursiveProps,
                                       ...defaultSubmenuProps,
                                       items: subItems,
-                                      ...submenuProps
+                                      ...submenuProps,
+                                      onSelect: (subItem: NMenuItemData) => emits('select', subItem)
                                   }),
                                   h(NIcon, {
                                       name: 'mdi-chevron-right',

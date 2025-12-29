@@ -1,25 +1,13 @@
 <template>
-    <n-input-field v-bind="compBind" :class="compClasses">
+    <n-input-field v-bind="inputFieldProps" :class="compClasses">
         <template v-for="(_, name) in otherSlots" #[name]="data">
             <slot :name="name" v-bind="data" />
         </template>
 
-        <template
-            #="{
-                inputId,
-                onUpdateModelValue: _parentUpdate,
-                modifiers,
-                onInput: _parentInput,
-                onChange: _parentChange
-            }"
-        >
+        <template #default="{ inputId: fieldInputId, modifiers }">
             <div class="n-input-search-display-container" @click="handleContainerClick">
-                <div v-if="selectedOptions && selectedOptions.length" class="n-input-search-chips-container">
-                    <template
-                        v-for="(item, index) in selectedOptions"
-                        v-if="props.multiple && Array.isArray(selectedOptions)"
-                        :key="getItemValue(item)"
-                    >
+                <div v-if="hasSelectedOptions" class="n-input-search-chips-container">
+                    <template v-for="(item, index) in selectedOptions" :key="getItemValue(item)">
                         <slot name="chip" :item="item" :index="index" :remove="() => removeItem(index)">
                             <n-chip
                                 :label="getItemLabel(item)"
@@ -32,15 +20,12 @@
                     </template>
                 </div>
 
-                <span
-                    v-if="(!props.multiple && selectedOptions && !inputValue && !isFocusing) || !props.useInput"
-                    :class="valueClasses"
-                >
+                <span v-if="shouldShowValueLabel" :class="valueClasses">
                     {{ getItemLabel(selectedOptions as NListItemData) }}
                 </span>
 
                 <input
-                    :id="inputId"
+                    :id="fieldInputId"
                     ref="inputRef"
                     :name="props.name"
                     :readonly="!props.useInput"
@@ -48,9 +33,15 @@
                     :class="['n-input-search-input', props.inputClass]"
                     :value="inputValue"
                     autocomplete="off"
+                    role="combobox"
+                    aria-autocomplete="list"
+                    aria-haspopup="menu"
+                    :aria-expanded="dropdown"
+                    :aria-controls="menuId"
+                    v-bind="inputBind"
                     @input="handleInput"
-                    @focus="() => (isFocusing = true)"
-                    @blur="() => (isFocusing = false)"
+                    @focus="handleFocus"
+                    @blur="handleBlur"
                     @keydown.down.prevent="handleInputKeydown"
                     @keydown.enter.prevent="handleEnter"
                     @keydown.backspace="handleBackspace"
@@ -58,11 +49,11 @@
             </div>
 
             <n-menu
-                v-if="!props.disabled"
+                v-if="!props.disabled && !props.loading"
+                :id="menuId"
                 ref="listRef"
                 v-model="dropdown"
-                class="n-input-search-menu"
-                :popover-class="props.popoverClass"
+                :class="['n-input-search-menu', props.popoverClass]"
                 fit
                 :items="processedItems"
                 :content-field="props.labelField"
@@ -70,16 +61,14 @@
                 :value-field="props.valueField"
                 :hover-trigger-anchor="inputRef"
                 :focus-trigger-anchor="focusInputRef"
+                v-bind="props.menuProps"
+                @select="handleSelect"
             >
             </n-menu>
         </template>
 
         <template #append>
-            <n-icon
-                v-if="clearable && modelValue && (Array.isArray(modelValue) ? modelValue.length > 0 : true)"
-                name="close"
-                @click.stop="handleClearSelection"
-            />
+            <n-icon v-if="isClearable" name="mdi-close" class="cursor-pointer" @click.stop="handleClearSelection" />
             <n-icon :name="props.dropdownIcon" :class="props.dropdownIconClass" />
             <slot name="append"></slot>
         </template>
@@ -90,13 +79,13 @@
     /* eslint-disable @typescript-eslint/no-explicit-any */
     /* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
     import { omit } from 'es-toolkit/object'
-    import { computed, HTMLAttributes, nextTick, ref, useAttrs, useSlots, useTemplateRef } from 'vue'
+    import { computed, nextTick, ref, useAttrs, useSlots, useTemplateRef, watch, type HTMLAttributes } from 'vue'
     import { resolveClassProp } from '../helpers/dom'
     import { generatePseudoRandomKey } from '../helpers/tools'
     import NChip from './NChip.vue'
     import NIcon from './NIcon.vue'
-    import NInputField, { NInputFieldProps } from './NInputField.vue'
-    import { NListItemData } from './NList.vue'
+    import NInputField, { type NInputFieldProps } from './NInputField.vue'
+    import { type NListItemData } from './NList.vue'
     import NMenu from './NMenu.vue'
 
     export type NInputSearchProps = Partial</* @vue-ignore */ HTMLAttributes> &
@@ -114,7 +103,9 @@
             valueField?: string
             useInput?: boolean
             clearable?: boolean
+            fillInput?: boolean
             chipProps?: Record<string, any>
+            menuProps?: Record<string, any>
             disabled?: boolean
             valueClass?: string | string[] | object
         }
@@ -130,14 +121,16 @@
         childrenField: 'children',
         valueClass: '',
         valueField: 'value',
-        dropdownIcon: 'menu-down',
+        dropdownIcon: 'mdi-menu-down',
         dropdownIconClass: 'text-xl animate-dropdown',
         multiple: false,
         closeOnSelect: undefined,
         useInput: false,
         clearable: false,
+        fillInput: true,
         disabled: false,
-        chipProps: () => ({ class: 'text-xs' })
+        chipProps: () => ({ class: 'text-xs' }),
+        loadingName: 'loading'
     })
 
     const emits = defineEmits<{
@@ -148,12 +141,16 @@
 
     const modelValue = defineModel<string | string[] | number | number[]>()
     const dropdown = defineModel('dropdown', { default: false })
-    const inputRef = useTemplateRef('inputRef')
-    const listRef = useTemplateRef('listRef')
+
+    const inputRef = useTemplateRef<HTMLInputElement>('inputRef')
+    const listRef = useTemplateRef<InstanceType<typeof NMenu>>('listRef')
+
     const inputValue = ref('')
     const isFocusing = ref(false)
     const focusPaused = ref(false)
+    const menuId = `menu-${generatePseudoRandomKey()}`
 
+    // --- Helpers ---
     function findItemRecursive(items: any[], value: any): any {
         for (const item of items) {
             if (item[props.valueField] === value) {
@@ -167,6 +164,30 @@
         return null
     }
 
+    const getItemLabel = (item: any) => (item ? item[props.labelField] : '')
+    const getItemValue = (item: any) => (item ? item[props.valueField] : '')
+
+    // --- Sync Input Value ---
+    watch(
+        () => modelValue.value,
+        newVal => {
+            if (!props.multiple && props.fillInput) {
+                const item = findItemRecursive(props.items, newVal)
+                inputValue.value = item ? getItemLabel(item) : ''
+            }
+        },
+        { immediate: true }
+    )
+
+    function isSelected(item: NListItemData): boolean {
+        const value = item[props.valueField] as any
+        if (props.multiple && Array.isArray(modelValue.value)) {
+            return (modelValue.value as any[]).includes(value)
+        }
+        return modelValue.value === value
+    }
+
+    // --- Computed ---
     const selectedOptions = computed(() => {
         if (props.multiple) {
             if (!Array.isArray(modelValue.value)) return []
@@ -180,6 +201,10 @@
         }
         const value = modelValue.value
         return findItemRecursive(props.items, value) || null
+    })
+
+    const hasSelectedOptions = computed(() => {
+        return props.multiple && Array.isArray(selectedOptions.value) && selectedOptions.value.length > 0
     })
 
     const filteredItems = computed(() => {
@@ -197,7 +222,65 @@
         return !props.multiple
     })
 
-    // Transform items to inject event handlers and state classes
+    const isClearable = computed(() => {
+        if (!props.clearable) return false
+        if (!modelValue.value) return false
+        if (Array.isArray(modelValue.value) && modelValue.value.length === 0) return false
+        return true
+    })
+
+    const shouldShowValueLabel = computed(() => {
+        return (!props.multiple && selectedOptions.value && !inputValue.value && !isFocusing.value) || !props.useInput
+    })
+
+    const otherSlots = computed(() => omit(slots, ['default', 'item', 'item-content', 'chip', 'append', 'no-option']))
+
+    const compClasses = computed(() => ['n-input-search', ...resolveClassProp((attrs as any).class)])
+
+    const inputFieldProps = computed(() => {
+        const {
+            inputClass,
+            popoverClass,
+            listClass,
+            valueClass,
+            dropdownIcon,
+            dropdownIconClass,
+            items,
+            chipProps,
+            menuProps,
+            clearable,
+            labelField,
+            childrenField,
+            valueField,
+            multiple,
+            closeOnSelect,
+            useInput,
+            ...rest
+        } = props
+
+        return {
+            ...omit(attrs, ['class', 'modelValue']),
+            ...omit(rest as any, ['modelValue', 'modelModifiers'])
+        }
+    })
+
+    const inputBind = computed(() => {
+        return omit(attrs, ['class', 'style', 'modelValue'])
+    })
+
+    const valueClasses = computed(() => ['n-input-search-value', ...resolveClassProp(props.valueClass)])
+    const focusInputRef = computed(() => (focusPaused.value ? null : inputRef.value))
+
+    function removeItem(index: number | string) {
+        const val = modelValue.value
+        if (props.multiple && Array.isArray(val)) {
+            const newVal = [...val]
+            newVal.splice(Number(index), 1)
+            modelValue.value = newVal as any
+        }
+    }
+
+    // --- Item Processing ---
     function processItems(items: NListItemData[], parentId?: string): NListItemData[] {
         return items.map(item => {
             const isHeading = !!item.heading
@@ -218,18 +301,16 @@
                 _submenuId: submenuId,
                 class: resolveClassProp(item.class, isSel ? 'n-list-item--active' : ''),
                 tabindex: isHeading || isDisabled ? undefined : '0',
-                onClick: (e: MouseEvent) => {
+                onMousedown: (e: MouseEvent) => {
                     if (isHeading || isDisabled) return
-                    e.stopPropagation()
-                    handleSelect(item)
+                    e.preventDefault()
+                },
+                onClick: () => {
+                    // Defined to trigger NListItem clickable style/role
                 },
                 onKeydown: (e: KeyboardEvent) => {
                     if (isHeading || isDisabled) return
-                    if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault()
-                        e.stopPropagation()
-                        handleSelect(item)
-                    } else if (e.key === 'ArrowDown') {
+                    if (e.key === 'ArrowDown') {
                         e.preventDefault()
                         handleFocusNext(e)
                     } else if (e.key === 'ArrowUp') {
@@ -281,56 +362,29 @@
         return processItems(filteredItems.value)
     })
 
-    const otherSlots = computed(() => omit(slots, ['default', 'item', 'item-content', 'chip', 'append', 'no-option']))
-    const compClasses = computed(() => ['n-input-search'])
-    const compBind = computed(() => {
-        const {
-            inputClass,
-            popoverClass,
-            listClass,
-            valueClass,
-            dropdownIcon,
-            dropdownIconClass,
-            items,
-            chipProps,
-            clearable,
-            labelField,
-            childrenField,
-            valueField,
-            ...rest
-        } = {
-            ...attrs,
-            ...props
-        }
-        return omit(rest as any, ['modelValue', 'class'])
-    })
-    const valueClasses = computed(() => ['n-input-search-value', ...resolveClassProp(props.valueClass)])
-    const focusInputRef = computed(() => (focusPaused.value ? null : inputRef.value))
-
-    const getItemLabel = (item: any) => (item ? item[props.labelField] : '')
-    const getItemValue = (item: any) => (item ? item[props.valueField] : '')
-
-    function isSelected(item: NListItemData): boolean {
-        const value = item[props.valueField] as any
-        if (props.multiple && Array.isArray(modelValue.value)) {
-            return (modelValue.value as any[]).includes(value)
-        }
-        return modelValue.value === value
-    }
-
+    // --- Handlers ---
     function handleContainerClick() {
         inputRef.value?.focus()
         if (!dropdown.value) dropdown.value = true
     }
+
     function handleInput(e: Event) {
         const target = e.target as HTMLInputElement
         inputValue.value = target.value
-        dropdown.value = true
+        if (!dropdown.value) dropdown.value = true
         emits('filter', inputValue.value)
     }
 
-    function handleSelect(item: NListItemData) {
-        if (item.heading) return
+    function handleFocus() {
+        isFocusing.value = true
+    }
+
+    function handleBlur() {
+        isFocusing.value = false
+    }
+
+    function handleSelect(item: any) {
+        if (item.heading || item.disabled) return
         const val = item[props.valueField]
         if (props.multiple) {
             const current = Array.isArray(modelValue.value) ? [...modelValue.value] : []
@@ -341,17 +395,9 @@
             inputValue.value = ''
         } else {
             modelValue.value = val
-            inputValue.value = ''
+            inputValue.value = props.fillInput ? getItemLabel(item) : ''
         }
         if (isCloseOnSelect.value) handleCloseDropdown()
-    }
-
-    function removeItem(index: number) {
-        if (props.multiple && Array.isArray(modelValue.value)) {
-            const newVal = [...modelValue.value]
-            newVal.splice(index, 1)
-            modelValue.value = newVal as any
-        }
     }
 
     function handleClearSelection() {
@@ -376,6 +422,8 @@
     function handleEnter() {
         if (dropdown.value && filteredItems.value.length > 0) {
             handleSelect(filteredItems.value[0])
+        } else if (!dropdown.value) {
+            dropdown.value = true
         }
     }
 
@@ -394,6 +442,7 @@
             const items = listEl.querySelectorAll('[tabindex="0"]')
             for (const item of items as any) {
                 const el = item as HTMLElement
+                // Ensure we don't focus disabled items, though querySelectorAll catches them if they have tabindex=0
                 if (!el.classList.contains('n-list-item--heading') && !el.classList.contains('n-list-item--disabled')) {
                     el.focus()
                     return
@@ -453,7 +502,8 @@
             }
             .n-input-search-display-container {
                 @apply relative
-                    flex flex-wrap items-center grow;
+                    flex flex-wrap items-center grow
+                    cursor-text;
 
                 .n-input-search-value {
                     @apply absolute
@@ -463,6 +513,9 @@
 
                 .n-input-search-input {
                     @apply basis-full;
+                    &[readonly] {
+                        @apply cursor-default;
+                    }
                 }
             }
         }
