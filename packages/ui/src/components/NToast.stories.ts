@@ -1,5 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/vue3-vite'
-// import { fn } from '@storybook/test'
+import type { Meta, StoryObj } from '@storybook/vue3'
 import { ref } from 'vue'
 import NBanner from './NBanner.vue'
 import NButton from './NButton.vue'
@@ -13,190 +12,163 @@ const meta = {
     },
     tags: ['autodocs'],
     argTypes: {
-        // Props
-        name: { control: 'text' }
-    },
-    args: {
-        name: 'account'
+        position: {
+            control: 'select',
+            options: [
+                'top-left',
+                'top-center',
+                'top-right',
+                'center-left',
+                'center-center',
+                'center-right',
+                'bottom-left',
+                'bottom-center',
+                'bottom-right'
+            ]
+        },
+        duration: { control: 'number' },
+        overlay: { control: 'boolean' },
+        noOverlayHide: { control: 'boolean' },
+        noEscHide: { control: 'boolean' }
     }
-} satisfies Meta
+} satisfies Meta<typeof NToast>
 
 export default meta
 
 type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
-    args: {},
+    args: {
+        position: 'top-right'
+    },
     render: args => ({
         components: { NToast, NButton, NBanner },
         setup() {
-            const showToast = ref(false)
-
-            return { args, showToast }
+            const show = ref(false)
+            return { args, show }
         },
         template: `
-            <NButton @click="() => showToast = true">
-                Show pop message
-                <NToast v-bind="args" v-model="showToast" position="top-right" >
-                    <NBanner>
-                        <div>This is a toast message</div>
+            <div>
+                <NButton @click="show = true" class="brand">Show Toast</NButton>
+                <NToast v-bind="args" v-model="show">
+                    <NBanner  icon="mdi-information">
+                        Notification message
                         <template #actions>
-                            <NButton label="Close" class="outlined" @click="() => showToast = false" />
+                            <NButton label="Close" class="flat" icon="mdi-close" @click="show = false" />
                         </template>
                     </NBanner>
                 </NToast>
-            </NButton>
+            </div>
         `
     })
 }
 
-export const Directions: Story = {
-    args: {},
+export const Positions: Story = {
     render: args => ({
         components: { NToast, NButton, NBanner },
+
         setup() {
-            const showToasts = ref({
-                'top-left': false,
-                'top-center': false,
-                'top-right': false,
-                'center-left': false,
-                'center-center': false,
-                'center-right': false,
-                'bottom-left': false,
-                'bottom-center': false,
-                'bottom-right': false
-            })
-            return { args, showToasts }
+            const positions = [
+                'top-left',
+                'top-center',
+                'top-right',
+
+                'center-left',
+                'center-center',
+                'center-right',
+
+                'bottom-left',
+                'bottom-center',
+                'bottom-right'
+            ]
+
+            const activeToasts = ref<Record<string, boolean>>({})
+
+            const open = (pos: string) => {
+                activeToasts.value[pos] = true
+            }
+
+            return { args, positions, activeToasts, open }
         },
+
         template: `
-            <div class="grid grid-cols-3 gap-4">
-                <template v-for="(toggle, direction) in showToasts" :key="direction">
-                    <NButton @click="() => showToasts[direction] = true" class="justify-center">
-                        {{direction}}
-                        <NToast v-bind="args" v-model="showToasts[direction]" :position="direction" >
-                            <NBanner>
-                                <div>This is a toast message</div>
-                                <template #actions>
-                                    <NButton label="Close" class="outlined" @click="() => showToasts[direction] = false" />
-                                </template>
-                            </NBanner>
-                        </NToast>
-                    </NButton>
+
+            <div class="grid grid-cols-3 gap-4 w-[600px]">
+                <NButton v-for="pos in positions" :key="pos" @click="open(pos)" class="justify-center text-xs outlined">
+                    {{ pos }}
+                </NButton>
+
+                <template v-for="pos in positions" :key="'toast-' + pos">
+                    <NToast v-model="activeToasts[pos]" :position="pos">
+                        <NBanner class="brand" icon="mdi-map-marker">
+                            Toast at {{ pos }}
+                            <template #actions>
+                                <NButton label="OK" class="flat" @click="activeToasts[pos] = false" />
+                            </template>
+                        </NBanner>
+                    </NToast>
                 </template>
             </div>
-            
+
         `
     })
 }
 
-export const Overlay: Story = {
-    args: {},
+export const AutoHide: Story = {
+    args: {
+        position: 'bottom-center',
+        duration: 3000
+    },
     render: args => ({
         components: { NToast, NButton, NBanner },
         setup() {
-            const showToasts = ref({
-                'top-left': false,
-                'top-center': false,
-                'top-right': false,
-                'center-left': false,
-                'center-center': false,
-                'center-right': false,
-                'bottom-left': false,
-                'bottom-center': false,
-                'bottom-right': false
-            })
-            return { args, showToasts }
+            const show = ref(false)
+            return { args, show }
         },
         template: `
-            <div class="grid grid-cols-3 gap-4">
-                <template v-for="(toggle, direction) in showToasts" :key="direction">
-                    <NButton @click="() => showToasts[direction] = true" class="justify-center">
-                        {{direction}}
-                        <NToast v-bind="args" v-model="showToasts[direction]" :position="direction" overlay>
-                            <NBanner>
-                                <div>This is a toast message</div>
-                                <template #actions>
-                                    <NButton label="Close" class="outlined" @click="() => showToasts[direction] = false" />
-                                </template>
-                            </NBanner>
-                        </NToast>
-                    </NButton>
-                </template>
+            <div>
+                <NButton @click="show = true" class="brand">Show Auto-hide Toast</NButton>
+                <NToast v-bind="args" v-model="show">
+                    <NBanner class="success" icon="mdi-check-circle" :duration="args.duration" show-progress>
+                        Successfully saved! (Closes in 3s)
+                    </NBanner>
+                </NToast>
             </div>
-            
-        `
-    })
-}
-
-export const Durations: Story = {
-    args: {},
-    render: args => ({
-        components: { NToast, NButton, NBanner },
-        setup() {
-            const showToasts = ref({
-                'top-left': false,
-                'top-center': false,
-                'top-right': false,
-                'center-left': false,
-                'center-center': false,
-                'center-right': false,
-                'bottom-left': false,
-                'bottom-center': false,
-                'bottom-right': false
-            })
-
-            return { args, showToasts }
-        },
-        template: `
-            <div class="grid grid-cols-3 gap-4">
-                <template v-for="(toggle, direction) in showToasts" :key="direction">
-                    <NButton @click="() => showToasts[direction] = true" class="justify-center">
-                        {{direction}}
-                        <NToast v-bind="args" v-model="showToasts[direction]" :position="direction">
-                            <NBanner :duration="5000" show-progress @timer-end="() => showToasts[direction] = false">
-                                <div>This is a toast message</div>
-                                <template #actions>
-                                    <NButton label="Close" class="outlined" @click="() => showToasts[direction] = false" />
-                                </template>
-                            </NBanner>
-                        </NToast>
-                    </NButton>
-                </template>
-            </div>
-            
         `
     })
 }
 
 export const Status: Story = {
-    args: {},
+    args: {
+        position: 'bottom-right'
+    },
     render: args => ({
         components: { NToast, NButton, NBanner },
         setup() {
-            const showToasts = ref({
-                normal: false,
-                primary: false,
-                success: false,
-                error: false,
-                warning: false,
-                info: false
-            })
-            return { args, showToasts }
+            const statuses = ['brand', 'success', 'error', 'warning', 'info']
+            const activeToasts = ref<Record<string, boolean>>({})
+            const open = (status: string) => {
+                activeToasts.value[status] = true
+            }
+            return { args, statuses, activeToasts, open }
         },
         template: `
-            <div class="grid grid-cols-3 gap-4">
-                <template v-for="(toggle, status) in showToasts" :key="status">
-                    <NButton @click="() => showToasts[status] = true" class="justify-center">
-                        {{status}}
-                        <NToast v-bind="args" v-model="showToasts[status]" position="bottom-left">
-                            <NBanner :class="status" @timer-end="() => showToasts[status] = false">
-                                <div>This is a toast message</div>                                
-                            </NBanner>
-                        </NToast>
-                    </NButton>
+            <div class="flex flex-wrap gap-4">
+                <NButton v-for="status in statuses" :key="status" @click="open(status)" :class="status">
+                    {{ status.charAt(0).toUpperCase() + status.slice(1) }}
+                </NButton>
+
+                <template v-for="status in statuses" :key="'toast-' + status">
+                    <NToast v-model="activeToasts[status]" v-bind="args">
+                        <NBanner :class="status" icon="mdi-circle">
+                            <span class="capitalize">{{ status }}</span> notification.
+                            <template #actions>
+                                <NButton label="Dismiss" class="flat" @click="activeToasts[status] = false" />
+                            </template>
+                        </NBanner>
+                    </NToast>
                 </template>
             </div>
-            
         `
     })
 }

@@ -46,7 +46,9 @@ export function useNotify() {
             noOverlayHide: options['noOverlayHide'],
             noEscHide: options['noEscHide'],
             position: options['position'],
-            focusOnShow: options['focusOnShow']
+            focusOnShow: options['focusOnShow'],
+            duration: options['duration'],
+            role: options['role']
         }
         const bannerProps = {
             tag: options['bannerTag'],
@@ -61,6 +63,43 @@ export function useNotify() {
             actions: options['actions']
         }
         const eventCallbacks = new Map<string, ((...params: any[]) => void)[]>()
+
+        async function cleanup() {
+            // Wait for animation if needed, or rely on NToast unmount?
+            // NToast has transitions. If we destroy container immediately, transition cuts off?
+            // createVNode renders NToast. NToast has `v-if="model"`.
+            // When we set model=false, NToast transitions out.
+            // We should wait for transition to finish before destroying container?
+            // But we don't know when it finishes easily here.
+            // However, previous code called destroy() immediately after hide().
+            // Wait, previous code: hide() -> instance.hide() -> nextTick -> destroy().
+            // If instance.hide() triggers transition, destroy() removes it from DOM immediately?
+            // If we remove container, transition is gone.
+
+            // To support exit transition, we should probably NOT destroy container until after delay?
+            // OR rely on NToast "after-leave" event?
+            // NToast uses <transition>. We can listen to `onAfterLeave` on the transition?
+            // But NToast wraps content in transition. NToast itself is teleported.
+
+            // For now, I will keep previous behavior (destroy after nextTick),
+            // but effectively this might clip transitions if they are longer than one tick.
+            // Ideally NToast should emit 'closed' after animation.
+
+            executeCallbacks('hide')
+            // Delay destroy slightly or just do it?
+            // Since we use teleport, the container in body is just a placeholder anchor?
+            // No, NToast teleports to `#n-toasts-container...`.
+            // The `container` created here `document.createElement('div')` acts as the app root for `render()`.
+            // NToast inside it teleports content OUT.
+            // So destroying `container` unmounts `NToast`, which removes teleported content.
+
+            // If we want animation, we must let NToast finish.
+            // But `useNotify` is designed for "fire and forget" mostly?
+            // Let's stick to simple logic for now: if model becomes false, we consider it done.
+            // But to avoid clipping, maybe we setTimeout?
+
+            setTimeout(() => destroy(), 300) // Rough transition time?
+        }
 
         if (Array.isArray(bannerProps.actions)) {
             bannerProps.actions = bannerProps.actions.map(action => {
@@ -87,24 +126,32 @@ export function useNotify() {
             })
         }
 
-        const vnode = createVNode(NToast, toastProps, {
-            default: () =>
-                h(
-                    NBanner,
-                    {
-                        ...bannerProps,
-                        ...{
-                            onTimerEnd: () => {
-                                ;(options.onTimerEnd ?? hide)()
-                            },
-                            onTimerBegin: options.onTimerBegin,
-                            onTimerPause: options.onTimerPause,
-                            onTimerResume: options.onTimerResume
-                        }
-                    } as unknown as NBannerProps,
-                    () => options.content || ''
-                )
-        })
+        const vnode = createVNode(
+            NToast,
+            {
+                ...toastProps,
+                'onUpdate:modelValue': (val: boolean) => {
+                    if (!val) {
+                        cleanup()
+                    }
+                }
+            },
+            {
+                default: () =>
+                    h(
+                        NBanner,
+                        {
+                            ...bannerProps,
+                            ...{
+                                onTimerBegin: options.onTimerBegin,
+                                onTimerPause: options.onTimerPause,
+                                onTimerResume: options.onTimerResume
+                            }
+                        } as unknown as NBannerProps,
+                        () => options.content || ''
+                    )
+            }
+        )
         if (appContext) {
             vnode.appContext = appContext
         }
@@ -113,10 +160,10 @@ export function useNotify() {
 
         async function hide() {
             const componentInstance = vnode.component
-            componentInstance?.exposed?.hide()
-            await nextTick()
-            executeCallbacks('hide')
-            destroy()
+            if (componentInstance?.exposed?.hide) {
+                componentInstance.exposed.hide()
+            }
+            // Cleanup is handled by onUpdate:modelValue listener
         }
         async function destroy() {
             render(null, container) // Unmount VNode

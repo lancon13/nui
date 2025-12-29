@@ -7,6 +7,7 @@
                 :class="overlayClasses"
                 :style="overlayStyles"
                 tabindex="-1"
+                aria-hidden="true"
                 @mousedown="handleOverlayClick"
             />
         </transition>
@@ -17,11 +18,20 @@
                 :is="props.tag"
                 v-if="model"
                 ref="contentRef"
+                :role="props.role"
+                :aria-live="(attrs['aria-live'] as string) || 'polite'"
+                :aria-atomic="(attrs['aria-atomic'] as string) || 'true'"
                 :class="toastClasses"
                 :style="toastStyles"
                 v-bind="toastBind"
+                @mouseenter="handleMouseEnter"
+                @mouseleave="handleMouseLeave"
+                @focusin="handleMouseEnter"
+                @focusout="handleMouseLeave"
             >
-                <slot name="default" v-html="props.content"></slot>
+                <slot name="default">
+                    <span v-if="props.content" v-html="props.content" />
+                </slot>
             </component>
         </transition>
     </teleport>
@@ -29,8 +39,9 @@
 
 <script setup lang="ts">
     import { useEventListener } from '@vueuse/core'
-    import { computed, HTMLAttributes, nextTick, onUnmounted, ref, useAttrs, useTemplateRef, watch } from 'vue'
+    import { computed, type HTMLAttributes, nextTick, onUnmounted, ref, useAttrs, useTemplateRef, watch } from 'vue'
     import { useComponentStack } from '../composables/use-component-stack'
+    import { usePausableTimer } from '../composables/use-pausable-timer'
     import { useTeleportContainer } from '../composables/use-teleport-container'
     import { generatePseudoRandomKey } from '../helpers/tools'
 
@@ -42,6 +53,8 @@
         noEscHide?: boolean
         position?: string
         focusOnShow?: boolean
+        duration?: number
+        role?: string
     }
 
     defineOptions({ inheritAttrs: false })
@@ -54,7 +67,9 @@
         noOverlayHide: false,
         noEscHide: false,
         position: 'top-center',
-        focusOnShow: true
+        focusOnShow: true,
+        duration: 0,
+        role: 'status'
     })
 
     const model = defineModel<boolean>({ default: false })
@@ -63,41 +78,52 @@
     const contentRef = useTemplateRef<HTMLElement | null>('contentRef')
     const lastFocusedElement = ref<HTMLElement | null>(null)
 
-    // --- Component Stack (Z-Index) ---
     const toastId = Symbol(`toast-id-${generatePseudoRandomKey()}`)
     const { register, unregister, getZIndex, getOrderIndex, isTop } = useComponentStack(
         computed(() => `n-toast--position-${props.position}`)
     )
+
+    // Timer Logic
+    const {
+        start: startTimer,
+        stop: stopTimer,
+        pause: pauseTimer,
+        resume: resumeTimer
+    } = usePausableTimer(
+        () => hide(),
+        computed(() => props.duration),
+        { immediate: false }
+    )
+
     const stackZIndex = computed(() => getZIndex(toastId))
     const stackOrderIndex = computed(() => getOrderIndex(toastId))
 
     const overlayClasses = computed(() => ['n-toast-overlay', `n-toast-overlay--position-${props.position}`])
-    const overlayStyles = computed(() => ({
-        zIndex: stackZIndex.value,
-        order: stackOrderIndex.value
-    }))
+    const overlayStyles = computed(() => ({ zIndex: stackZIndex.value, order: stackOrderIndex.value }))
 
     const toastClasses = computed(() => ['n-toast', `n-toast--position-${props.position}`])
-    const toastStyles = computed(() => ({
-        zIndex: stackZIndex.value,
-        order: stackOrderIndex.value
-    }))
-    const toastBind = computed(() => ({
-        role: 'log',
-        'aria-live': 'polite',
-        ...attrs
-    }))
+    const toastStyles = computed(() => ({ zIndex: stackZIndex.value, order: stackOrderIndex.value }))
+    const toastBind = computed(() => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
+        const { tag, content, overlay, noOverlayHide, noEscHide, position, focusOnShow, duration, role, ...rest } =
+            props
 
-    // ==========================================
-    // BEHAVIORAL LOGIC
-    // ==========================================
+        // Destructure standard attributes handled explicitly in template to avoid duplicates
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
+        const { 'aria-live': ariaLive, 'aria-atomic': ariaAtomic, role: roleAttr, ...remainingAttrs } = attrs
+
+        // Also exclude them from props rest if present (since NToastProps extends HTMLAttributes)
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
+        const { 'aria-live': pAl, 'aria-atomic': pAa, role: pR, ...cleanRest } = rest as any
+
+        return { ...cleanRest, ...remainingAttrs }
+    })
 
     const FOCUSABLE_SELECTORS = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
 
     const focusFirstElement = () => {
         if (!contentRef.value) return
         const focusable = contentRef.value.querySelector(FOCUSABLE_SELECTORS) as HTMLElement | null
-
         if (focusable) {
             focusable.focus()
         } else {
@@ -117,9 +143,11 @@
         if (value) {
             register(toastId)
             lastFocusedElement.value = document.activeElement as HTMLElement
+            if (props.duration > 0) startTimer()
             await nextTick()
             if (props.focusOnShow) focusFirstElement()
         } else {
+            stopTimer()
             if (lastFocusedElement.value) {
                 lastFocusedElement.value.focus()
                 lastFocusedElement.value = null
@@ -132,7 +160,6 @@
         unregister(toastId)
     })
 
-    // Event handlers
     function handleOverlayClick(e: MouseEvent) {
         if (props.noOverlayHide) return
         const target = e.target as HTMLElement
@@ -140,7 +167,14 @@
         hide()
     }
 
-    // Methods
+    function handleMouseEnter() {
+        if (props.duration > 0) pauseTimer()
+    }
+
+    function handleMouseLeave() {
+        if (props.duration > 0) resumeTimer()
+    }
+
     const show = () => {
         model.value = true
     }
@@ -160,54 +194,49 @@
 
             &.n-toast-overlay-enter-active,
             &.n-toast-overlay-leave-active {
-                @apply transition-[opacity,translate] duration-200 ease-in-out;
+                @apply transition-opacity duration-200 ease-in-out;
+            }
+
+            &.n-toast-overlay-leave-active {
+                @apply delay-200;
             }
 
             &.n-toast-overlay-enter-from,
             &.n-toast-overlay-leave-to {
                 @apply opacity-0;
             }
-
-            &.n-toast-overlay-leave-active {
-                @apply delay-200;
-                & + .n-toast {
-                    @apply delay-0;
-                }
-            }
         }
 
         .n-toast {
-            @apply relative z-1000 w-auto;
-            @apply transition-[opacity,translate] duration-200 ease-in-out;
-            /* @apply delay-200 */
+            @apply relative z-1000 w-auto transition-all duration-200 ease-in-out;
 
             &.n-toast-enter-from,
             &.n-toast-leave-to {
                 @apply opacity-0;
             }
 
+            /* Transition Directions */
             &:is([class*='--position-top']) {
-                &.n-toast.n-toast-enter-from,
-                &.n-toast.n-toast-leave-to {
+                &.n-toast-enter-from,
+                &.n-toast-leave-to {
                     @apply -translate-y-4;
                 }
             }
-
             &:is([class*='--position-bottom']) {
-                &.n-toast.n-toast-enter-from,
-                &.n-toast.n-toast-leave-to {
+                &.n-toast-enter-from,
+                &.n-toast-leave-to {
                     @apply translate-y-4;
                 }
             }
             &:is([class*='--position-center-left']) {
-                &.n-toast.n-toast-enter-from,
-                &.n-toast.n-toast-leave-to {
+                &.n-toast-enter-from,
+                &.n-toast-leave-to {
                     @apply -translate-x-4;
                 }
             }
             &:is([class*='--position-center-right']) {
-                &.n-toast.n-toast-enter-from,
-                &.n-toast.n-toast-leave-to {
+                &.n-toast-enter-from,
+                &.n-toast-leave-to {
                     @apply translate-x-4;
                 }
             }
