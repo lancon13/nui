@@ -7,11 +7,19 @@
         :target="props.target"
         :type="props.type"
         :disabled="attrs.disabled || props.loading"
+        :aria-disabled="attrs.disabled || props.loading ? 'true' : undefined"
+        :aria-busy="props.loading ? 'true' : undefined"
         v-bind="compBind"
     >
         <slot name="loading">
             <transition name="n-loading-overlay">
-                <n-loading v-if="props.loading" :overlay="true" :type="props.loadingType" :class="props.loadingClass" />
+                <n-loading
+                    v-if="props.loading"
+                    :overlay="true"
+                    :name="props.loadingName"
+                    :class="props.loadingClass"
+                    aria-hidden="true"
+                />
             </transition>
         </slot>
 
@@ -19,18 +27,8 @@
         <n-icon
             v-if="props.prependIcon || props.icon"
             :name="(props.prependIcon || props.icon) as string"
-            :class="[
-                ...(props.iconClass
-                    ? ['string', 'object'].includes(typeof props.iconClass)
-                        ? [props.iconClass]
-                        : (props.iconClass as string[])
-                    : []),
-                ...(props.prependIconClass
-                    ? ['string', 'object'].includes(typeof props.prependIconClass)
-                        ? [props.prependIconClass]
-                        : (props.prependIconClass as string[])
-                    : [])
-            ]"
+            :class="iconClasses"
+            aria-hidden="true"
         />
 
         <span v-if="props.label">{{ props.label }}</span>
@@ -38,14 +36,14 @@
             <component :is="node" />
         </template>
 
-        <n-icon v-if="props.appendIcon" :name="props.appendIcon" :class="props.appendIconClass" />
+        <n-icon v-if="props.appendIcon" :name="props.appendIcon" :class="props.appendIconClass" aria-hidden="true" />
         <slot name="append"></slot>
     </component>
 </template>
 
 <script setup lang="ts">
     import { computed, useAttrs, useSlots } from 'vue'
-    import { wrapTextNode } from '../helpers/dom'
+    import { resolveClassProp, wrapTextNode } from '../helpers/dom'
     import NIcon from './NIcon.vue'
     import NLoading from './NLoading.vue'
 
@@ -68,7 +66,7 @@
             tag?: string
             type?: string
             loading?: boolean
-            loadingType?: string
+            loadingName?: string
             loadingClass?: string | string[] | object
             to?: string | object
             href?: string
@@ -76,13 +74,16 @@
         }>(),
         {
             tag: 'button',
-            type: 'button'
+            type: 'button',
+            loadingName: 'loading'
         }
     )
 
     const compClasses = computed(() => {
         return ['n-tab', props.loading ? 'n-tab--loading' : '']
     })
+    const iconClasses = computed(() => resolveClassProp(props.iconClass, props.prependIconClass))
+
     const compBind = computed(() => {
         return {
             ...attrs
@@ -99,6 +100,7 @@
 
     @layer components {
         .n-tab {
+            /* Base */
             @apply relative appearance-none
                 cursor-pointer
                 inline-flex flex-row gap-2 items-center
@@ -109,10 +111,13 @@
                 outline-0
                 px-4 py-2
                 transition-all duration-200 ease-in-out;
+
             @apply hover:opacity-80;
             @apply disabled:opacity-80 disabled:hover:opacity-80 disabled:cursor-not-allowed;
+
             &:not(.n-tab--loading) {
-                @apply disabled:grayscale disabled:contrast-50 disabled:opacity-50 disabled:hover:opacity-50;
+                @apply disabled:grayscale disabled:contrast-50 disabled:opacity-50 disabled:hover:opacity-50
+                    disabled:bg-text disabled:text-text-invert;
             }
 
             &:first-child {
@@ -122,250 +127,231 @@
                 @apply rounded-e-element;
             }
 
+            /* Active State */
             &.n-tab--active {
-                @apply border-current bg-bg text-text;
+                @apply border-current bg-background text-text;
                 &:not(.n-tab--loading) {
-                    @apply disabled:border-current disabled:bg-bg disabled:text-text;
+                    @apply disabled:border-current disabled:bg-background disabled:text-text;
                 }
             }
 
-            .primary &,
-            &.primary {
+            /* Colors (Solid) */
+            &.brand,
+            .brand & {
                 @apply bg-brand;
                 &.n-tab--active {
                     @apply bg-brand/15 text-brand;
                 }
             }
-            .success &,
-            &.success {
+            &.success,
+            .success & {
                 @apply bg-success;
                 &.n-tab--active {
                     @apply bg-success/15 text-success;
                 }
             }
-            .error &,
-            &.error {
+            &.error,
+            .error & {
                 @apply bg-error;
                 &.n-tab--active {
                     @apply bg-error/15 text-error;
                 }
             }
-            .warning &,
-            &.warning {
+            &.warning,
+            .warning & {
                 @apply bg-warning;
                 &.n-tab--active {
                     @apply bg-warning/15 text-warning;
                 }
             }
-            .info &,
-            &.info {
+            &.info,
+            .info & {
                 @apply bg-info;
                 &.n-tab--active {
                     @apply bg-info/15 text-info;
                 }
             }
-            &:not(.n-tab--loading) {
-                @apply disabled:bg-text disabled:text-text-invert;
-            }
+
+            /* Icon Variant */
             &.icon {
                 @apply aspect-square p-2;
             }
 
+            /* Loading State */
             &.n-tab--loading {
                 @apply disabled:grayscale-0 disabled:contrast-100;
             }
-
-            .n-loading-overlay ~ * {
-                @apply opacity-0;
-            }
-
             .n-loading-overlay {
+                & ~ * {
+                    @apply opacity-0;
+                }
                 &.n-loading-overlay-enter-active,
                 &.n-loading-overlay-leave-active {
                     @apply transition-[opacity,translate] duration-200 ease-in-out;
                 }
-
                 &.n-loading-overlay-enter-from,
                 &.n-loading-overlay-leave-to {
                     @apply opacity-0;
                 }
             }
 
-            .flat &,
-            &.flat {
+            /* Variant: Flat */
+            &.flat,
+            .flat & {
                 @apply bg-current/20 text-current;
                 &.n-tab--active {
-                    @apply border-text bg-text text-bg;
+                    @apply border-text bg-text text-text-invert;
                     &:not(.n-tab--loading) {
-                        @apply disabled:border-text disabled:bg-text disabled:text-bg;
+                        @apply disabled:border-text disabled:bg-text disabled:text-text-invert;
                     }
                 }
 
-                .primary &,
-                &.primary {
+                &.brand,
+                .brand & {
                     @apply bg-brand-light text-brand;
                     &.n-tab--active {
-                        @apply border-brand bg-brand text-bg;
+                        @apply border-brand bg-brand text-text-invert;
                     }
                 }
-                .success &,
-                &.success {
+                &.success,
+                .success & {
                     @apply bg-success-light text-success;
                     &.n-tab--active {
-                        @apply border-success bg-success text-bg;
+                        @apply border-success bg-success text-text-invert;
                     }
                 }
-                .error &,
-                &.error {
+                &.error,
+                .error & {
                     @apply bg-error-light text-error;
                     &.n-tab--active {
-                        @apply border-error bg-error text-bg;
+                        @apply border-error bg-error text-text-invert;
                     }
                 }
-                .warning &,
-                &.warning {
+                &.warning,
+                .warning & {
                     @apply bg-warning-light text-warning;
                     &.n-tab--active {
-                        @apply border-warning bg-warning text-bg;
+                        @apply border-warning bg-warning text-text-invert;
                     }
                 }
-                .info &,
-                &.info {
+                &.info,
+                .info & {
                     @apply bg-info-light text-info;
                     &.n-tab--active {
-                        @apply border-info bg-info text-bg;
+                        @apply border-info bg-info text-text-invert;
                     }
                 }
+
                 &:not(.n-tab--loading) {
                     @apply disabled:bg-current/20 disabled:text-current;
                 }
             }
 
-            .outlined &,
-            &.outlined {
-                @apply border-current text-current
-                    hover:bg-current/10 hover:opacity-50;
+            /* Variant: Outlined */
+            &.outlined,
+            .outlined & {
+                @apply border-current text-current hover:bg-current/10 hover:opacity-50;
                 &:not(.flat) {
                     @apply bg-transparent;
                 }
                 &.n-tab--active {
-                    @apply border-text bg-text text-bg;
+                    @apply border-text bg-text text-text-invert;
                     &:not(.n-tab--loading) {
-                        @apply disabled:border-text disabled:bg-text disabled:text-bg;
-                        @apply disabled:hover:bg-text;
+                        @apply disabled:border-text disabled:bg-text disabled:text-text-invert disabled:hover:bg-text;
                     }
                 }
 
-                .primary &,
-                &.primary {
-                    @apply border-brand text-brand 
-                        hover:bg-current/10;
+                &.brand,
+                .brand & {
+                    @apply border-brand text-brand;
                     &.n-tab--active {
-                        @apply border-brand bg-brand text-bg;
+                        @apply border-brand bg-brand text-text-invert;
+                    }
+                }
+                &.success,
+                .success & {
+                    @apply border-success text-success;
+                    &.n-tab--active {
+                        @apply border-success bg-success text-text-invert;
+                    }
+                }
+                &.error,
+                .error & {
+                    @apply border-error text-error;
+                    &.n-tab--active {
+                        @apply border-error bg-error text-text-invert;
+                    }
+                }
+                &.warning,
+                .warning & {
+                    @apply border-warning text-warning;
+                    &.n-tab--active {
+                        @apply border-warning bg-warning text-text-invert;
+                    }
+                }
+                &.info,
+                .info & {
+                    @apply border-info text-info;
+                    &.n-tab--active {
+                        @apply border-info bg-info text-text-invert;
                     }
                 }
 
-                .success &,
-                &.success {
-                    @apply border-success text-success
-                        hover:bg-current/10;
-                    &.n-tab--active {
-                        @apply border-success bg-success text-bg;
-                    }
-                }
-
-                .error &,
-                &.error {
-                    @apply border-error text-error
-                        hover:bg-current/10;
-                    &.n-tab--active {
-                        @apply border-error bg-error text-bg;
-                    }
-                }
-
-                .warning &,
-                &.warning {
-                    @apply border-warning text-warning
-                        hover:bg-current/10;
-                    &.n-tab--active {
-                        @apply border-warning bg-warning text-bg;
-                    }
-                }
-
-                .info &,
-                &.info {
-                    @apply border-info text-info
-                        hover:bg-current/10;
-                    &.n-tab--active {
-                        @apply border-info bg-info text-bg;
-                    }
-                }
                 &:not(.n-tab--loading) {
                     @apply disabled:bg-transparent disabled:border-current disabled:text-current disabled:hover:bg-transparent;
                 }
             }
 
-            .texted &,
-            &.texted {
-                @apply bg-transparent text-current
-                    hover:bg-current/10;
+            /* Variant: Texted */
+            &.texted,
+            .texted & {
+                @apply bg-transparent text-current hover:bg-current/10;
                 &.n-tab--active {
-                    @apply border-text bg-text text-bg;
+                    @apply border-text bg-text text-text-invert;
                     &:not(.n-tab--loading) {
-                        @apply disabled:border-text disabled:bg-text disabled:text-bg;
-                        @apply disabled:hover:bg-text;
+                        @apply disabled:border-text disabled:bg-text disabled:text-text-invert disabled:hover:bg-text;
                     }
                 }
 
-                .primary &,
-                &.primary {
-                    @apply text-brand
-                        hover:bg-current/10;
+                &.brand,
+                .brand & {
+                    @apply text-brand;
                     &.n-tab--active {
-                        @apply border-brand bg-brand text-bg;
+                        @apply border-brand bg-brand text-text-invert;
                     }
                 }
-
-                .success &,
-                &.success {
-                    @apply text-success
-                        hover:bg-current/10;
+                &.success,
+                .success & {
+                    @apply text-success;
                     &.n-tab--active {
-                        @apply border-success bg-success text-bg;
+                        @apply border-success bg-success text-text-invert;
                     }
                 }
-
-                .error &,
-                &.error {
-                    @apply text-error
-                        hover:bg-current/10;
+                &.error,
+                .error & {
+                    @apply text-error;
                     &.n-tab--active {
-                        @apply border-error bg-error text-bg;
+                        @apply border-error bg-error text-text-invert;
                     }
                 }
-
-                .warning &,
-                &.warning {
-                    @apply text-warning
-                        hover:bg-current/10;
+                &.warning,
+                .warning & {
+                    @apply text-warning;
                     &.n-tab--active {
-                        @apply border-warning bg-warning text-bg;
+                        @apply border-warning bg-warning text-text-invert;
                     }
                 }
-
-                .info &,
-                &.info {
-                    @apply text-info
-                        hover:bg-current/10;
+                &.info,
+                .info & {
+                    @apply text-info;
                     &.n-tab--active {
-                        @apply border-info bg-info text-bg;
+                        @apply border-info bg-info text-text-invert;
                     }
                 }
 
                 &.shadowed {
                     @apply shadow-none text-shadow-outer;
                 }
-
                 &.n-tab--loading {
                     @apply bg-current/10 hover:bg-current/10;
                 }
@@ -374,6 +360,7 @@
                 }
             }
 
+            /* Avatar Integration */
             &:has(.n-avatar) {
                 @apply p-0;
                 .n-avatar {
