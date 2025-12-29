@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite'
-// import { fn } from '@storybook/test'
-import NInputField from './NInputField.vue'
-import NCard from './NCard.vue'
 import { ref } from 'vue'
+import NButton from './NButton.vue'
+import NCard from './NCard.vue'
+import NInputField from './NInputField.vue'
 
 const meta = {
     title: 'UI/NInputField',
@@ -11,8 +11,11 @@ const meta = {
         layout: 'centered'
     },
     tags: ['autodocs'],
-    argTypes: {},
-    args: {}
+    argTypes: {
+        loadingName: { control: 'text' },
+        loadingClass: { control: 'text' },
+        message: { control: 'text' }
+    }
 } satisfies Meta
 
 export default meta
@@ -28,12 +31,14 @@ export const Default: Story = {
             return { args, value }
         },
         template: `
-            <NInputField v-bind="args" v-model="value" label="Value" name="demo" />            
+            <div class="w-96">
+                <NInputField v-bind="args" v-model="value" label="Username" name="username" placeholder="Enter username" />
+            </div>
         `
     })
 }
 
-export const Message: Story = {
+export const Colors: Story = {
     args: {},
     render: args => ({
         components: { NInputField },
@@ -41,98 +46,168 @@ export const Message: Story = {
             return { args }
         },
         template: `
-            <div class="flex flex-col gap-2">
-                <NInputField v-bind="args" label="Value" name="demo" message="Hello world!" class="primary" />
-                <NInputField v-bind="args" label="Value" name="demo" message="Hello world!" icon="check" class="success" />
-                <NInputField v-bind="args" label="Value" name="demo" message="Hello world!" icon="alert-circle"  class="error" />
-                <NInputField v-bind="args" label="Value" name="demo" message="Hello world!" append-icon="magnify" append-icon-class="text-text" class="warning" />
-                <NInputField v-bind="args" label="Value" name="demo" message="Hello world!" class="info text-text" />
+            <div class="flex flex-col gap-4 w-96">
+                <NInputField v-bind="args" label="Default" placeholder="Default state" />
+                <NInputField v-bind="args" class="brand" label="Brand" placeholder="Brand state" />
+                <NInputField v-bind="args" class="success" label="Success" placeholder="Success state" message="Saved successfully" icon="mdi-check" />
+                <NInputField v-bind="args" class="error" label="Error" placeholder="Error state" message="Field is required" icon="mdi-alert-circle" />
+                <NInputField v-bind="args" class="warning" label="Warning" placeholder="Warning state" message="Check your input" icon="mdi-alert" />
+                <NInputField v-bind="args" class="info" label="Info" placeholder="Info state" message="Information message" icon="mdi-information" />
             </div>
         `
     })
 }
 
-export const Wrapper: Story = {
+export const Icons: Story = {
     args: {},
     render: args => ({
         components: { NInputField },
         setup() {
-            const value = ref('Test me')
-            return { args, value }
+            return { args }
         },
         template: `
-            <div class="flex flex-col gap-2 w-128">
-                <NInputField v-bind="args" v-model="value" label="Value" name="demo" message="Hello world!"  >
-                    <template #before>
-                        R
-                    </template>
-                    <template #="props">
-                        <div>
-                            <pre>{{props}}</pre>
-                            <input type="text" :value="props.modelValue" @input="(event) => props.onUpdateModelValue(event.target.value)" v-bind="props" />
-                        </div>
-                    </template>
-                </NInputField>
-            </div>
-        `
-    })
-}
-
-export const Overlay: Story = {
-    args: {},
-    render: args => ({
-        components: { NInputField, NCard },
-        setup() {
-            const value = ref('Test me')
-            return { args, value }
-        },
-        template: `
-            <div class="flex flex-col gap-2">
-                <NInputField v-bind="args" v-model="value" label="Value" name="demo" class="" >
-                    <template #overlay>
-                        <NCard class="h-64 drop-shadow-2xl">
-                            Hello world
-                        </NCard>
-                    </template>
-                </NInputField>
-            </div>
-        `
-    })
-}
-
-export const Dropdown: Story = {
-    args: {},
-    render: args => ({
-        components: { NInputField, NCard },
-        setup() {
-            const value = ref('Test me')
-            return { args, value }
-        },
-        template: `
-            <div class="flex flex-col gap-2">
-                <NInputField v-bind="args" v-model="value" label="Value" name="demo" class="" >
-                    <template #dropdown>
-                        <NCard class="h-64 drop-shadow-2xl">
-                            Hello world
-                        </NCard>
-                    </template>
-                </NInputField>
+            <div class="flex flex-col gap-4 w-96">
+                <NInputField v-bind="args" icon="mdi-magnify" placeholder="Search..." />
+                <NInputField v-bind="args" prepend-icon="mdi-account" placeholder="User" />
+                <NInputField v-bind="args" append-icon="mdi-eye" placeholder="Password" />
             </div>
         `
     })
 }
 
 export const Loading: Story = {
+    args: {
+        loading: true
+    },
+    render: args => ({
+        components: { NInputField, NButton },
+        setup() {
+            const value = ref('Loading content...')
+            const loading = ref(true)
+            return { args, value, loading }
+        },
+        template: `
+            <div class="flex flex-col items-center gap-4 w-96">
+                <NInputField v-bind="args" v-model="value" :loading="loading" loadingName="mdi-sync" loadingClass="animate-spin" label="Data Field" class="brand" />
+                <NButton @click="loading = !loading" :label="loading ? 'Stop Loading' : 'Start Loading'" />
+            </div>
+        `
+    })
+}
+
+export const Disabled: Story = {
+    args: {
+        disabled: true
+    },
+    render: args => ({
+        components: { NInputField },
+        setup() {
+            const value = ref('Disabled input')
+            return { args, value }
+        },
+        template: `
+            <div class="w-96">
+                <NInputField v-bind="args" v-model="value" label="Disabled Field" placeholder="You cannot edit this" />
+            </div>
+        `
+    })
+}
+
+export const CustomContent: Story = {
     args: {},
     render: args => ({
         components: { NInputField, NCard },
         setup() {
-            const value = ref('Test me')
+            const value = ref('Custom input')
             return { args, value }
         },
         template: `
-            <div class="flex flex-col gap-2">
-                <NInputField v-bind="args" v-model="value" label="Value" name="demo" loading class="" >                    
+            <div class="flex flex-col gap-8 w-96">
+                <div class="flex flex-col gap-2">
+                    <div class="text-sm font-bold text-brand">Using Slots (#overlay)</div>
+                    <NInputField v-bind="args" v-model="value" label="Has Overlay">
+                        <template #overlay>
+                            <div class="absolute inset-0 bg-brand/5 pointer-events-none" />
+                        </template>
+                    </NInputField>
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <div class="text-sm font-bold text-brand">Using Slots (#dropdown)</div>
+                    <NInputField v-bind="args" v-model="value" label="Has Dropdown">
+                        <template #dropdown>
+                            <NCard class="mt-1 drop-shadow-xl border border-border p-4">
+                                This is a dropdown content.
+                            </NCard>
+                        </template>
+                    </NInputField>
+                </div>
+            </div>
+        `
+    })
+}
+
+export const Formatter: Story = {
+    args: {
+        format: (val: string) => val.toUpperCase(),
+        parse: (val: string) => val.toLowerCase()
+    },
+    render: args => ({
+        components: { NInputField },
+        setup() {
+            const value = ref('hello')
+            return { args, value }
+        },
+        template: `
+            <div class="w-96 flex flex-col gap-2">
+                <div>Model Value (lowercase): <code>{{ value }}</code></div>
+                <NInputField v-bind="args" v-model="value" label="UPPERCASE Formatter" />
+            </div>
+        `
+    })
+}
+
+export const Slots: Story = {
+    args: {},
+    render: args => ({
+        components: { NInputField, NButton },
+        setup() {
+            const value = ref('')
+            return { args, value }
+        },
+        template: `
+            <div class="w-[500px] flex flex-col gap-8">
+                <NInputField v-bind="args" v-model="value" label="Full Slots Example">
+                    <template #before>
+                        <NButton class="flat squared">Prefix</NButton>
+                    </template>
+                    
+                    <template #label>
+                        <div class="flex justify-between items-center w-full">
+                            <span class="font-bold text-brand italic">Custom Label Slot</span>
+                            <span class="text-xs opacity-50">Optional</span>
+                        </div>
+                    </template>
+
+                    <template #top>
+                        <div class="text-[10px] uppercase tracking-wider opacity-70 mb-1">Top Slot Content</div>
+                    </template>
+
+                    <template #prepend>
+                        <span class="pl-2 text-brand">P:</span>
+                    </template>
+
+                    <template #append>
+                        <span class="pr-2 text-brand">:S</span>
+                    </template>
+
+                    <template #bottom>
+                        <div class="text-[10px] text-right opacity-70 mt-1">Bottom Slot Content</div>
+                    </template>
+
+                    <template #after>
+                        <NButton class="primary squared">Suffix</NButton>
+                    </template>
                 </NInputField>
             </div>
         `
