@@ -28,7 +28,8 @@
                     :id="fieldInputId"
                     ref="inputRef"
                     :name="props.name"
-                    :readonly="!props.useInput"
+                    :disabled="props.disabled"
+                    :readonly="!props.useInput || props.readonly"
                     type="text"
                     :class="['n-input-search-input', props.inputClass, shouldHideInput ? 'sr-only' : '']"
                     :value="inputValue"
@@ -322,7 +323,6 @@
     const focusInputRef = computed(() => (focusPaused.value ? null : inputRef.value))
 
     // --- Watchers ---
-
     watch(
         () => props.items,
         newItems => {
@@ -361,7 +361,7 @@
         } else if (e.key === 'ArrowLeft') {
             e.preventDefault()
             // Return focus to input if at root level or close submenu
-            const itemEl = e.target as HTMLElement
+            // const itemEl = e.target as HTMLElement
             // If in a submenu, NMenu logic might differ, but generally:
             inputRef.value?.focus()
         }

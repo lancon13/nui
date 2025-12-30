@@ -9,6 +9,8 @@
                 v-model="internalModel"
                 :name="props.name"
                 :type="props.type"
+                :disabled="props.disabled"
+                :readonly="props.readonly"
                 :class="['peer', props.inputClass]"
                 v-bind="attrsBind"
                 @input="handleInput"
@@ -18,9 +20,11 @@
 </template>
 
 <script setup lang="ts">
+    /* eslint-disable @typescript-eslint/no-explicit-any */
+    /* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
     import { useDebounceFn } from '@vueuse/core'
     import { omit } from 'es-toolkit/object'
-    import { computed, ref, watch, type HTMLAttributes, useAttrs, useSlots } from 'vue'
+    import { computed, ref, useAttrs, useSlots, watch, type HTMLAttributes } from 'vue'
     import { resolveClassProp } from '../helpers/dom'
     import NInputField, { type NInputFieldProps } from './NInputField.vue'
 

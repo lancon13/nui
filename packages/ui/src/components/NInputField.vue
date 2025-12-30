@@ -38,6 +38,8 @@
                         v-model="model"
                         type="text"
                         :aria-busy="props.loading || undefined"
+                        :disabled="props.disabled"
+                        :readonly="props.readonly"
                         v-bind="inputBind"
                     />
                 </slot>
@@ -80,6 +82,8 @@
         tag?: string
         name?: string
         label?: string
+        disabled?: boolean
+        readonly?: boolean
         icon?: string
         iconClass?: string | object | string[]
         prependIcon?: string
@@ -114,7 +118,7 @@
     const formattedModelValue = computed(() => {
         return typeof props.format === 'function' ? props.format(model.value) : model.value
     })
-    const isDisabled = computed(() => attrs.disabled !== undefined && attrs.disabled !== false)
+    const isDisabled = computed(() => props.disabled === '' || (props.disabled !== undefined && props.disabled !== false))
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const compClasses = computed(() => ['n-input-field', ...resolveClassProp((attrs as any).class)])
