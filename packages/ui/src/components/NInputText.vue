@@ -1,24 +1,26 @@
 <template>
-    <n-input-field v-model="model" :class="compClasses" v-bind="compBind">
+    <n-input-field v-model="internalModel" :class="compClasses" v-bind="compBind">
         <template v-for="(_, name) in otherSlots" #[name]="data">
             <slot :name="name" v-bind="data" />
         </template>
         <template #="{ inputId }">
             <input
                 :id="inputId"
-                v-model="model"
+                v-model="internalModel"
                 :name="props.name"
                 :type="props.type"
                 :class="['peer', props.inputClass]"
                 v-bind="attrsBind"
+                @input="handleInput"
             />
         </template>
     </n-input-field>
 </template>
 
 <script setup lang="ts">
+    import { useDebounceFn } from '@vueuse/core'
     import { omit } from 'es-toolkit/object'
-    import { computed, type HTMLAttributes, useAttrs, useSlots } from 'vue'
+    import { computed, ref, watch, type HTMLAttributes, useAttrs, useSlots } from 'vue'
     import { resolveClassProp } from '../helpers/dom'
     import NInputField, { type NInputFieldProps } from './NInputField.vue'
 
@@ -26,6 +28,7 @@
         NInputFieldProps & {
             type?: string
             inputClass?: string | string[] | object
+            debounce?: number
         }
 
     defineOptions({
@@ -35,19 +38,46 @@
     const slots = useSlots()
     const attrs = useAttrs()
     const props = withDefaults(defineProps<NInputTextProps>(), {
-        type: 'text'
+        type: 'text',
+        debounce: 0
     })
 
     const model = defineModel<string | number>({ default: '' })
+
+    // Internal model for immediate UI updates
+    const internalModel = ref(model.value)
 
     const otherSlots = computed(() => omit(slots, ['default']))
     const compClasses = computed(() => ['n-input-text', ...resolveClassProp((attrs as any).class)])
     const compBind = computed(() => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { type, inputClass, modelValue, modelModifiers, ...rest } = props as any
+        const { type, inputClass, modelValue, modelModifiers, debounce, ...rest } = props as any
         return { ...rest, style: (attrs as any).style }
     })
     const attrsBind = computed(() => omit(attrs, ['class', 'style']))
+
+    // Debounced updater for the parent model
+    const debouncedUpdate = useDebounceFn((value: string | number) => {
+        model.value = value
+    }, props.debounce)
+
+    // Watch for external model changes to sync internal state
+    watch(
+        () => model.value,
+        newValue => {
+            if (newValue !== internalModel.value) {
+                internalModel.value = newValue
+            }
+        }
+    )
+
+    function handleInput() {
+        if (props.debounce > 0) {
+            debouncedUpdate(internalModel.value)
+        } else {
+            model.value = internalModel.value
+        }
+    }
 </script>
 
 <style lang="css">

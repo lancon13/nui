@@ -187,11 +187,15 @@
             &.n-list-item--disabled {
                 @apply opacity-50 cursor-not-allowed grayscale;
                 @apply hover:backdrop-brightness-100;
+                pointer-events: none;
             }
 
             /* Active State */
             &.n-list-item--active {
                 @apply bg-brand text-text-invert;
+                .n-list-item:not(.n-list-item--active) {
+                    @apply text-text;
+                }
             }
 
             /* Expandable Variant */

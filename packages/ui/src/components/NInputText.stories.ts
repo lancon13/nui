@@ -213,6 +213,27 @@ export const Icons: Story = {
     })
 }
 
+export const Debounce: Story = {
+    args: {
+        debounce: 500,
+        label: 'Debounced Input'
+    },
+    render: args => ({
+        components: { NInputText },
+        setup() {
+            const value = ref('')
+            return { args, value }
+        },
+        template: `
+            <div class="w-96 flex flex-col gap-2">
+                <div>Model Value: <code>{{ value }}</code></div>
+                <div class="text-xs text-muted mb-2">Value updates 500ms after you stop typing.</div>
+                <NInputText v-bind="args" v-model="value" placeholder="Type fast..." />
+            </div>
+        `
+    })
+}
+
 export const Transform: Story = {
     args: {
         format: (val: string) => val.toUpperCase(),
