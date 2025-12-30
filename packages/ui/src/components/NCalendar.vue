@@ -1,5 +1,5 @@
 <template>
-    <div class="n-calendar">
+    <div class="n-calendar" tabindex="-1" @keydown.esc="handleCancelPending">
         <!-- Calendar Header: Week Days -->
         <slot name="header">
             <div class="n-calendar-header">
@@ -16,7 +16,7 @@
         </slot>
 
         <!-- Calendar Grid -->
-        <div class="n-calendar-grid" role="grid">
+        <div class="n-calendar-grid" role="grid" @mouseleave="handleHover(null)">
             <div
                 v-for="day in gridDays"
                 :key="day.dateString"
@@ -26,6 +26,8 @@
                         'n-calendar-cell--outside': !day.isCurrentMonth,
                         'n-calendar-cell--today': day.isToday,
                         'n-calendar-cell--selected': day.isSelected,
+                        'n-calendar-cell--disabled': day.isDisabled,
+                        'n-calendar-cell--invalid': day.isInvalid,
                         'n-calendar-cell--range-start': day.isRangeStart,
                         'n-calendar-cell--range-end': day.isRangeEnd,
                         'n-calendar-cell--in-range': day.isInRange
@@ -33,25 +35,33 @@
                 ]"
                 role="gridcell"
                 :aria-selected="day.isSelected"
-                tabindex="0"
+                :aria-disabled="day.isDisabled"
+                :tabindex="day.isDisabled ? -1 : 0"
                 @click="handleDayClick(day, $event)"
+                @mouseenter="handleHover(day.dateObject)"
+                @focus="handleHover(day.dateObject)"
+                @contextmenu.prevent="handleCancelPending"
                 @keydown.enter.prevent="handleDayClick(day, $event)"
                 @keydown.space.prevent="handleDayClick(day, $event)"
             >
-                <span class="n-calendar-day-number">{{ day.dayOfMonth }}</span>
+                <slot name="cell" :day="day">
+                    <span class="n-calendar-day-number">{{ day.dayOfMonth }}</span>
+                </slot>
             </div>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
+    /* eslint-disable @typescript-eslint/no-explicit-any */
+    /* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
     import dayjs from 'dayjs'
     import isoWeek from 'dayjs/plugin/isoWeek'
     import localeData from 'dayjs/plugin/localeData'
     import updateLocale from 'dayjs/plugin/updateLocale'
     import weekday from 'dayjs/plugin/weekday'
     import weekOfYear from 'dayjs/plugin/weekOfYear'
-    import { computed, toRefs } from 'vue'
+    import { computed, ref, toRefs } from 'vue'
 
     // Extend dayjs plugins
     dayjs.extend(weekOfYear)
@@ -60,16 +70,26 @@
     dayjs.extend(localeData)
     dayjs.extend(updateLocale)
 
+    export type DateRange = {
+        begin?: string | Date
+        end?: string | Date
+    }
+
     export interface NCalendarProps {
-        modelValue?: (string | Date)[] // Array of ISO date strings 'YYYY-MM-DD' or Date objects
+        modelValue?: (string | Date | DateRange)[] | string | Date | DateRange | null
         viewingYear?: number
         viewingWeek?: number // 1-52/53
         firstDayOfWeek?: number // 0 (Sun) - 6 (Sat)
         rows?: number
-        activeMonth?: number // 0-11
-        onlyActiveDatesSelectable?: boolean
         weekDayNames?: string[]
         weekDayClass?: string[]
+        multiple?: boolean
+        selectable?: boolean
+        range?: boolean
+        maxRange?: number
+        minRange?: number
+        activeMonth?: number | null
+        disabled?: (string | Date | DateRange)[]
     }
 
     const props = withDefaults(defineProps<NCalendarProps>(), {
@@ -78,15 +98,21 @@
         viewingWeek: () => dayjs().week(),
         firstDayOfWeek: 1, // Default to Monday
         rows: 6,
-        activeMonth: undefined,
-        onlyActiveDatesSelectable: true,
         weekDayNames: undefined,
-        weekDayClass: () => []
+        weekDayClass: () => [],
+        multiple: false,
+        selectable: true,
+        range: false,
+        maxRange: 30,
+        minRange: 1,
+        activeMonth: undefined,
+        disabled: () => []
     })
 
     const emits = defineEmits<{
-        (e: 'update:modelValue', value: string[]): void
-        (e: 'update:activeMonth', value: number): void
+        (e: 'update:modelValue', value: (string | Date | DateRange)[] | string | Date | DateRange | null): void
+        (e: 'update:viewingWeek', value: number): void
+        (e: 'update:viewingYear', value: number): void
     }>()
 
     const {
@@ -95,161 +121,174 @@
         firstDayOfWeek,
         rows,
         modelValue,
-        activeMonth: propsActiveMonth,
-        onlyActiveDatesSelectable,
         weekDayNames: customWeekNames,
-        weekDayClass
+        weekDayClass,
+        multiple,
+        selectable,
+        range,
+        maxRange,
+        minRange,
+        activeMonth,
+        disabled
     } = toRefs(props)
 
-    // --- Date Logic ---
+    // --- State ---
+    const internalPendingRange = ref<DateRange | null>(null)
+    const hoveredDate = ref<dayjs.Dayjs | null>(null)
 
-    // Helper to get the actual weekday number (0=Sun, 1=Mon...6=Sat) for a given column index (0-6)
+    // --- Date Logic ---
 
     const getWeekdayNumber = (index: number) => {
         return (firstDayOfWeek.value + index) % 7
     }
 
-    // Generate weekday names based on firstDayOfWeek
-
     const weekDayNames = computed(() => {
         if (customWeekNames.value && customWeekNames.value.length === 7) {
             const standard = [...customWeekNames.value]
-
-            // Reorder based on firstDayOfWeek
-
-            // If firstDayOfWeek=1 (Mon), we want the array to start with index 1 (Mon).
-
-            // But wait, the previous logic assumed customWeekNames was ALWAYS Mon->Sun?
-
-            // "check to ensure it has 7 elements for the representation of 7 days of a week (starting from Monday to Sunday)"
-
-            // Yes. So index 0 is Mon, index 6 is Sun.
-
-            // My getWeekdayNumber returns standard JS day (0=Sun, 1=Mon).
-
-            // So if input is [Mon, Tue... Sun].
-
-            // Map: 0->Mon(1), 1->Tue(2)... 5->Sat(6), 6->Sun(0).
-
-            // Input Array Index = (WeekdayNum + 6) % 7 ?
-
-            // Let's rely on standard rotation logic previously established if the input is strictly Mon->Sun.
-
-            // Standard input: [Mon, Tue, Wed, Thu, Fri, Sat, Sun]
-
-            // We want to display starting at `firstDayOfWeek`.
-
-            // If firstDayOfWeek = 1 (Mon), we start at index 0.
-
-            // If firstDayOfWeek = 0 (Sun), we start at index 6.
-
             let startIndex = firstDayOfWeek.value - 1
-
             if (startIndex < 0) startIndex += 7
-
             const reordered = []
-
             for (let i = 0; i < 7; i++) {
                 reordered.push(standard[(startIndex + i) % 7])
             }
-
             return reordered
         }
-
         const names: string[] = []
-
         let d = dayjs().day(firstDayOfWeek.value)
-
         for (let i = 0; i < 7; i++) {
             names.push(d.format('ddd'))
-
             d = d.add(1, 'day')
         }
-
         return names
     })
 
-    // Resolve class for a specific column index
-
     const getWeekDayClass = (index: number) => {
         if (Array.isArray(weekDayClass.value)) {
-            // weekDayClass array is expected to map to 0=Sun, 1=Mon... 6=Sat?
-
-            // "weekDayClass[0] would be a class that apply to ... sunday"
-
-            // Yes. So we use getWeekdayNumber(index) to lookup.
-
             const dayNum = getWeekdayNumber(index)
-
             return weekDayClass.value[dayNum] || ''
         }
-
         return ''
     }
 
-    // Calculate the start date of the grid
     const gridStartDate = computed(() => {
-        // Strategy:
-        // 1. Find the Monday of the requested ISO week.
-        // We anchor to Jan 1st of the requested year to ensure we are targeting the correct ISO year context.
         const isoMonday = dayjs(`${viewingYear.value}-01-01`).isoWeek(viewingWeek.value).startOf('isoWeek')
-
-        // 2. Adjust for firstDayOfWeek.
         const targetDay = firstDayOfWeek.value
-        const currentIsoDay = 1 // Monday
-
+        const currentIsoDay = 1
         let diff = currentIsoDay - targetDay
-        if (diff < 0) {
-            diff += 7
-        }
-
+        if (diff < 0) diff += 7
         return isoMonday.subtract(diff, 'day')
     })
 
-    const calculatedActiveMonth = computed(() => {
+    const viewingMonth = computed(() => {
         return gridStartDate.value.add(3, 'day').month()
     })
 
-    const internalActiveMonth = computed({
-        get: () => propsActiveMonth.value ?? calculatedActiveMonth.value,
-        set: val => emits('update:activeMonth', val)
+    const normalizedModelValue = computed(() => {
+        if (!modelValue.value) return []
+        return Array.isArray(modelValue.value) ? modelValue.value : [modelValue.value]
     })
 
-    const selectedStrings = computed(() => {
-        return (modelValue.value || []).map(v => dayjs(v).format('YYYY-MM-DD'))
+    const checkDateInList = (date: dayjs.Dayjs, list: (string | Date | DateRange)[]) => {
+        const dateStr = date.format('YYYY-MM-DD')
+        for (const item of list) {
+            if (typeof item === 'string' || item instanceof Date) {
+                if (dayjs(item).format('YYYY-MM-DD') === dateStr) return true
+            } else if (typeof item === 'object' && item !== null) {
+                const rangeItem = item as DateRange
+                let afterBegin = true
+                let beforeEnd = true
+                if (rangeItem.begin)
+                    afterBegin =
+                        date.isAfter(dayjs(rangeItem.begin), 'day') || date.isSame(dayjs(rangeItem.begin), 'day')
+                if (rangeItem.end)
+                    beforeEnd = date.isBefore(dayjs(rangeItem.end), 'day') || date.isSame(dayjs(rangeItem.end), 'day')
+                if (afterBegin && beforeEnd && rangeItem.begin && rangeItem.end) return true
+            }
+        }
+        return false
+    }
+
+    const isDateSelected = (date: dayjs.Dayjs) => {
+        if (checkDateInList(date, normalizedModelValue.value)) return true
+        if (range.value && internalPendingRange.value?.begin) {
+            if (date.isSame(dayjs(internalPendingRange.value.begin), 'day')) return true
+        }
+        return false
+    }
+
+    const isDateDisabled = (date: dayjs.Dayjs) => checkDateInList(date, disabled.value)
+
+    const isPendingRangeInvalid = computed(() => {
+        if (!range.value || !internalPendingRange.value?.begin || !hoveredDate.value) return false
+
+        const start = dayjs(internalPendingRange.value.begin)
+        const end = hoveredDate.value
+        const rangeStart = start.isBefore(end) ? start : end
+        const rangeEnd = start.isBefore(end) ? end : start
+
+        const diff = rangeEnd.diff(rangeStart, 'day') + 1
+        if (diff < minRange.value || diff > maxRange.value) return true
+
+        // Check if any disabled date exists in range
+        let d = rangeStart
+        while (d.isBefore(rangeEnd) || d.isSame(rangeEnd, 'day')) {
+            if (isDateDisabled(d)) return true
+            d = d.add(1, 'day')
+        }
+        return false
     })
 
     const gridDays = computed(() => {
         const days = []
         const totalDays = rows.value * 7
         let current = gridStartDate.value
-
-        const selectedSet = new Set(selectedStrings.value)
+        const currentActiveMonth = activeMonth.value
+        const pendingInvalid = isPendingRangeInvalid.value
 
         for (let i = 0; i < totalDays; i++) {
-            const dateStr = current.format('YYYY-MM-DD')
-            const isSelected = selectedSet.has(dateStr)
+            const isSelected = isDateSelected(current)
+            const isDisabled = isDateDisabled(current)
 
-            const prevDate = current.subtract(1, 'day').format('YYYY-MM-DD')
-            const nextDate = current.add(1, 'day').format('YYYY-MM-DD')
+            let isPendingInRange = false
+            if (range.value && internalPendingRange.value?.begin && hoveredDate.value) {
+                const start = dayjs(internalPendingRange.value.begin)
+                const end = hoveredDate.value
+                const rangeStart = start.isBefore(end) ? start : end
+                const rangeEnd = start.isBefore(end) ? end : start
+                if (
+                    (current.isAfter(rangeStart, 'day') || current.isSame(rangeStart, 'day')) &&
+                    (current.isBefore(rangeEnd, 'day') || current.isSame(rangeEnd, 'day'))
+                ) {
+                    isPendingInRange = true
+                }
+            }
 
-            const isPrevSelected = selectedSet.has(prevDate)
-            const isNextSelected = selectedSet.has(nextDate)
+            const prevDate = current.subtract(1, 'day')
+            const nextDate = current.add(1, 'day')
+            const isPrevSelected = isDateSelected(prevDate)
+            const isNextSelected = isDateSelected(nextDate)
 
-            const isRangeStart = isSelected && !isPrevSelected && isNextSelected
-            const isRangeEnd = isSelected && !isNextSelected && isPrevSelected
-            const isInRange = isSelected && isPrevSelected && isNextSelected
+            let isCurrentMonth = true
+            if (currentActiveMonth !== undefined) {
+                if (currentActiveMonth === null) isCurrentMonth = false
+                else isCurrentMonth = current.month() === currentActiveMonth
+            }
 
             days.push({
                 dateObject: current,
-                dateString: dateStr,
+                dateString: current.format('YYYY-MM-DD'),
                 dayOfMonth: current.date(),
-                isCurrentMonth: current.month() === internalActiveMonth.value,
+                isCurrentMonth,
                 isToday: current.isSame(dayjs(), 'day'),
-                isSelected,
-                isRangeStart,
-                isRangeEnd,
-                isInRange: isInRange || (isSelected && (isPrevSelected || isNextSelected)) // Connected
+                isSelected: isSelected || isPendingInRange,
+                isDisabled,
+                isInvalid: isPendingInRange && pendingInvalid,
+                isRangeStart: isSelected && !isPrevSelected && isNextSelected,
+                isRangeEnd: isSelected && !isNextSelected && isPrevSelected,
+                isInRange:
+                    isPendingInRange ||
+                    (isSelected && isPrevSelected && isNextSelected) ||
+                    (isSelected && (isPrevSelected || isNextSelected))
             })
             current = current.add(1, 'day')
         }
@@ -258,66 +297,86 @@
 
     // --- Interaction ---
 
+    function handleHover(date: dayjs.Dayjs | null) {
+        hoveredDate.value = date
+    }
+
+    function handleCancelPending() {
+        internalPendingRange.value = null
+        hoveredDate.value = null
+    }
+
     function handleDayClick(day: any, event: MouseEvent | KeyboardEvent) {
-        if (onlyActiveDatesSelectable.value && !day.isCurrentMonth) {
+        if (!selectable.value) return
+        if (day.isDisabled) return
+
+        const dateStr = day.dateString
+        let currentList = [...normalizedModelValue.value] as (DateRange | string | Date)[]
+
+        if (range.value) {
+            if (internalPendingRange.value && internalPendingRange.value.begin) {
+                const start = dayjs(internalPendingRange.value.begin)
+                const end = day.dateObject
+                let finalBegin = start
+                let finalEnd = end
+                if (end.isBefore(start)) {
+                    finalBegin = end
+                    finalEnd = start
+                }
+                if (!multiple.value && currentList.length > 0) {
+                    const r = currentList[0] as DateRange
+                    if (typeof r === 'object' && r.begin === dateStr && r.end === dateStr && start.isSame(end, 'day')) {
+                        emits('update:modelValue', null)
+                        handleCancelPending()
+                        return
+                    }
+                }
+                const diff = finalEnd.diff(finalBegin, 'day') + 1
+                let rangeValid = diff >= minRange.value && diff <= maxRange.value
+                if (rangeValid) {
+                    let d = finalBegin
+                    while (d.isBefore(finalEnd) || d.isSame(finalEnd, 'day')) {
+                        if (isDateDisabled(d)) {
+                            rangeValid = false
+                            break
+                        }
+                        d = d.add(1, 'day')
+                    }
+                }
+                if (rangeValid) {
+                    const finalizedRange = {
+                        begin: finalBegin.format('YYYY-MM-DD'),
+                        end: finalEnd.format('YYYY-MM-DD')
+                    }
+                    if (multiple.value) currentList.push(finalizedRange)
+                    else currentList = [finalizedRange]
+                    emits('update:modelValue', multiple.value ? currentList : finalizedRange)
+                    handleCancelPending()
+                } else {
+                    // Invalid: cancel the range selection process
+                    handleCancelPending()
+                }
+            } else {
+                internalPendingRange.value = { begin: dateStr }
+            }
             return
         }
 
-        const dateStr = day.dateString
-        // Start with current selection as strings
-        let newSelection = [...selectedStrings.value]
-
-        const isShift = (event as any).shiftKey
-        const isCtrl = (event as any).ctrlKey || (event as any).metaKey
-
-        if (isShift && newSelection.length > 0) {
-            // Range Selection
-            const lastSelected = newSelection[newSelection.length - 1]
-            const start = dayjs(lastSelected)
-            const end = day.dateObject
-
-            const rangeStart = start.isBefore(end) ? start : end
-            const rangeEnd = start.isBefore(end) ? end : start
-
-            let curr = rangeStart
-            const daysToAdd = []
-            while (curr.isBefore(rangeEnd) || curr.isSame(rangeEnd, 'day')) {
-                // Check restriction for range members too?
-                // Usually range select implies contiguous block. If block crosses month and selectOnlyActiveDate is true,
-                // should we exclude non-active days?
-                // Logic: "only allow user to select the date on active month only".
-                // We should probably filter.
-
-                if (!onlyActiveDatesSelectable.value || curr.month() === internalActiveMonth.value) {
-                    daysToAdd.push(curr.format('YYYY-MM-DD'))
-                }
-                curr = curr.add(1, 'day')
-            }
-
-            for (const d of daysToAdd) {
-                if (!newSelection.includes(d)) {
-                    newSelection.push(d)
-                }
-            }
-        } else if (isCtrl) {
-            // Toggle
-            if (newSelection.includes(dateStr)) {
-                newSelection = newSelection.filter(d => d !== dateStr)
-            } else {
-                newSelection.push(dateStr)
-            }
+        if (multiple.value) {
+            const idx = currentList.findIndex(item => {
+                const itemStr =
+                    typeof item === 'string' || item instanceof Date ? dayjs(item).format('YYYY-MM-DD') : null
+                return itemStr === dateStr
+            })
+            if (idx > -1) currentList.splice(idx, 1)
+            else currentList.push(dateStr)
+            emits('update:modelValue', currentList)
         } else {
-            // Single Select (Replace)
-            newSelection = [dateStr]
+            const currentStr = currentList.length > 0 ? dayjs(currentList[0] as any).format('YYYY-MM-DD') : null
+            if (currentStr === dateStr) emits('update:modelValue', null)
+            else emits('update:modelValue', dateStr)
         }
-
-        emits('update:modelValue', newSelection)
     }
-
-    // Watch for external activeMonth changes to update week if needed
-    // This allows "jumping" to a month.
-    // Removed per user request to handle this logic in the parent (Story)
-    // watch(propsActiveMonth, (newMonth) => { ... }) removed.
 </script>
 
 <style lang="css">
@@ -326,41 +385,29 @@
 
     @layer components {
         .n-calendar {
-            @apply flex flex-col w-full select-none;
+            @apply flex flex-col w-full select-none outline-none;
             .n-calendar-header {
                 @apply grid grid-cols-7 mb-2;
             }
-
             .n-calendar-weekday {
                 @apply text-center text-xs font-semibold text-text-light uppercase py-1;
             }
-
             .n-calendar-grid {
                 @apply grid grid-cols-7 gap-1;
             }
-
             .n-calendar-cell {
-                @apply relative
-                h-10 w-full
-                flex items-center justify-center
-                text-sm cursor-pointer
-                rounded-element
-                transition-colors duration-100;
-
-                /* Default hover */
+                @apply relative h-10 w-full flex items-center justify-center text-sm cursor-pointer rounded-element transition-colors duration-100;
                 @apply hover:bg-surface-indent;
-
-                /* Numbers */
                 .n-calendar-day-number {
                     @apply z-10;
                 }
             }
-
-            /* States */
             .n-calendar-cell--outside {
                 @apply text-text-light opacity-50;
             }
-
+            .n-calendar-cell--disabled {
+                @apply text-text-light opacity-30 cursor-not-allowed pointer-events-none bg-transparent;
+            }
             .n-calendar-cell--today {
                 @apply font-bold text-brand;
                 &::after {
@@ -368,12 +415,12 @@
                     @apply absolute bottom-1 w-1 h-1 bg-brand rounded-full;
                 }
             }
-
             .n-calendar-cell--selected {
                 @apply bg-brand text-text-invert;
             }
-
-            /* Range Styling - Connectors */
+            .n-calendar-cell--invalid {
+                @apply bg-error text-text-invert opacity-80;
+            }
             .n-calendar-cell--range-start {
                 @apply rounded-r-none;
             }
@@ -387,13 +434,5 @@
                 }
             }
         }
-
-        /* Refined Selected + Range Logic */
-        /* If simply selected (array of dates), we use the solid brand color.
-           If we want to show 'range' visual connection, we'd need the 'in-range' classes to be smarter 
-           or the grid to have no gap. 
-           Let's stick to discrete selection for MVP unless 'no gap' is preferred. 
-           With gap-1, rounded corners look distinct.
-        */
     }
 </style>
