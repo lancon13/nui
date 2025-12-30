@@ -5,8 +5,8 @@
         </template>
 
         <template #default="{ inputId: fieldInputId }">
-            <div class="n-input-search-display-container" @click="handleContainerClick">
-                <div v-if="hasSelectedOptions" class="n-input-search-chips-container">
+            <div class="n-input-combo-display-container" @click="handleContainerClick">
+                <div v-if="hasSelectedOptions" class="n-input-combo-chips-container">
                     <template v-for="(item, index) in selectedOptions" :key="getItemValue(item)">
                         <slot name="chip" :item="item" :index="index" :remove="() => removeItem(index)">
                             <n-chip
@@ -31,7 +31,7 @@
                     :disabled="props.disabled"
                     :readonly="!props.useInput || props.readonly"
                     type="text"
-                    :class="['n-input-search-input', props.inputClass, shouldHideInput ? 'sr-only' : '']"
+                    :class="['n-input-combo-input', props.inputClass, shouldHideInput ? 'sr-only' : '']"
                     :value="inputValue"
                     autocomplete="off"
                     role="combobox"
@@ -56,7 +56,7 @@
                 :id="menuId"
                 ref="menuRef"
                 v-model="dropdown"
-                :class="['n-input-search-menu', props.popoverClass]"
+                :class="['n-input-combo-menu', props.popoverClass]"
                 fit
                 :items="processedItems"
                 :content-field="props.labelField"
@@ -105,7 +105,7 @@
 
     // --- Types ---
 
-    export type NInputSearchProps = Partial</* @vue-ignore */ HTMLAttributes> &
+    export type NInputComboProps = Partial</* @vue-ignore */ HTMLAttributes> &
         NInputFieldProps & {
             multiple?: boolean
             closeDropdownOnSelected?: boolean
@@ -133,7 +133,7 @@
 
     // --- Props & Emits ---
 
-    const props = withDefaults(defineProps<NInputSearchProps>(), {
+    const props = withDefaults(defineProps<NInputComboProps>(), {
         items: () => [],
         listClass: 'bg-surface shadowed overflow-auto',
         labelField: 'label',
@@ -280,7 +280,7 @@
         omit(slots, ['default', 'item', 'item-content', 'chip', 'append', 'no-option'])
     )
 
-    const compClasses = computed(() => ['n-input-search', ...resolveClassProp((attrs as any).class)])
+    const compClasses = computed(() => ['n-input-combo', ...resolveClassProp((attrs as any).class)])
 
     const inputFieldProps = computed(() => {
         const {
@@ -318,7 +318,7 @@
         return getItemLabel(selectedOptions.value) ? '' : attrs['placeholder'] || ''
     })
 
-    const valueClasses = computed(() => ['n-input-search-value', ...resolveClassProp(props.valueClass)])
+    const valueClasses = computed(() => ['n-input-combo-value', ...resolveClassProp(props.valueClass)])
 
     const focusInputRef = computed(() => (focusPaused.value ? null : inputRef.value))
 
@@ -542,24 +542,24 @@
     @reference '../styles/index.css';
 
     @layer components {
-        .n-input-search {
-            .n-input-search-chips-container {
+        .n-input-combo {
+            .n-input-combo-chips-container {
                 @apply relative
                     flex flex-wrap items-center gap-2
                     px-2 py-1;
             }
-            .n-input-search-display-container {
+            .n-input-combo-display-container {
                 @apply relative
                     flex flex-wrap items-center grow
                     cursor-text;
 
-                .n-input-search-value {
+                .n-input-combo-value {
                     @apply absolute
                        pointer-events-none truncate w-full
                        px-2 py-1;
                 }
 
-                .n-input-search-input {
+                .n-input-combo-input {
                     @apply basis-full;
                     &[readonly] {
                         @apply cursor-default;

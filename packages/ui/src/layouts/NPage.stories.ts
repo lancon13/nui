@@ -14,7 +14,7 @@ import NListItem from '../components/NListItem.vue'
 import NForm from '../components/NForm.vue'
 
 import NInputText from '../components/NInputText.vue'
-import NInputSearch from '../components/NInputSearch.vue'
+import NInputCombo from '../components/NInputCombo.vue'
 import { ref } from 'vue'
 
 const meta = {
@@ -51,7 +51,7 @@ export const Default: Story = {
             NListItem,
             NMenu,
             NInputText,
-            NInputSearch
+            NInputCombo
         },
         setup() {
             const showDrawer = ref(false)
@@ -91,7 +91,7 @@ export const Default: Story = {
                         <NCard>
                             <NForm class="w-1/2">
                                 <NInputText label="Your name" />
-                                <NInputSearch label="Find a value"/>
+                                <NInputCombo label="Find a value"/>
                                 <div class="content-row justify-end">
                                     <NButton label="Cancel" class="texted" />
                                     <NButton label="Submit" >

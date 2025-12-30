@@ -4,11 +4,11 @@ import NAvatar from './NAvatar.vue'
 import NButton from './NButton.vue'
 import NChip from './NChip.vue'
 import NIcon from './NIcon.vue'
-import NInputSearch from './NInputSearch.vue'
+import NInputCombo from './NInputCombo.vue'
 
 const meta = {
-    title: 'UI/NInputSearch',
-    component: NInputSearch,
+    title: 'UI/NInputCombo',
+    component: NInputCombo,
     parameters: {
         layout: 'centered'
     },
@@ -18,7 +18,7 @@ const meta = {
         clearable: { control: 'boolean' },
         useInput: { control: 'boolean' },
         fillInput: { control: 'boolean' },
-        closeOnSelect: { control: 'boolean' },
+        closeDropdownOnSelected: { control: 'boolean' },
         disabled: { control: 'boolean' },
         loading: { control: 'boolean' }
     }
@@ -39,7 +39,7 @@ export const SingleSearchable: Story = {
         placeholder: 'Search for an option...'
     },
     render: args => ({
-        components: { NInputSearch },
+        components: { NInputCombo },
         setup() {
             const value = ref('')
             const items = [
@@ -52,7 +52,7 @@ export const SingleSearchable: Story = {
         template: `
             <div class="w-96 flex flex-col gap-2">
                 <div>Selected: <code>{{ value || 'None' }}</code></div>
-                <NInputSearch v-bind="args" v-model="value" :items="items" />
+                <NInputCombo v-bind="args" v-model="value" :items="items" />
             </div>
         `
     })
@@ -67,7 +67,7 @@ export const SingleSelectLike: Story = {
         placeholder: 'Select an option...'
     },
     render: args => ({
-        components: { NInputSearch },
+        components: { NInputCombo },
         setup() {
             const value = ref('')
             const items = [
@@ -80,7 +80,7 @@ export const SingleSelectLike: Story = {
         template: `
             <div class="w-96 flex flex-col gap-2">
                 <div>Selected: <code>{{ value || 'None' }}</code></div>
-                <NInputSearch v-bind="args" v-model="value" :items="items" />
+                <NInputCombo v-bind="args" v-model="value" :items="items" />
             </div>
         `
     })
@@ -95,7 +95,7 @@ export const MultipleSearchable: Story = {
         placeholder: 'Add tags...'
     },
     render: args => ({
-        components: { NInputSearch },
+        components: { NInputCombo },
         setup() {
             const value = ref(['1'])
             const items = [
@@ -109,7 +109,7 @@ export const MultipleSearchable: Story = {
         template: `
             <div class="w-96 flex flex-col gap-2">
                 <div>Selected: <code>{{ value }}</code></div>
-                <NInputSearch v-bind="args" v-model="value" :items="items" />
+                <NInputCombo v-bind="args" v-model="value" :items="items" />
             </div>
         `
     })
@@ -124,7 +124,7 @@ export const MultipleSelectLike: Story = {
         placeholder: 'Choose options...'
     },
     render: args => ({
-        components: { NInputSearch },
+        components: { NInputCombo },
         setup() {
             const value = ref(['1'])
             const items = [
@@ -142,7 +142,7 @@ export const MultipleSelectLike: Story = {
                     When at least one option is selected and <b>useInput</b> is false, the text input is hidden (sr-only).
                     It reappears if you clear the selection.
                 </p>
-                <NInputSearch v-bind="args" v-model="value" :items="items" />
+                <NInputCombo v-bind="args" v-model="value" :items="items" />
             </div>
         `
     })
@@ -158,7 +158,7 @@ export const FillInputDisabled: Story = {
         placeholder: 'Input clears on focus...'
     },
     render: args => ({
-        components: { NInputSearch },
+        components: { NInputCombo },
         setup() {
             const value = ref('1')
             const items = [
@@ -172,7 +172,7 @@ export const FillInputDisabled: Story = {
             <div class="w-96 flex flex-col gap-2">
                 <div>Selected: <code>{{ value }}</code></div>
                 <p class="text-xs text-gray-500">When fillInput is false, focusing the input will show the placeholder instead of the selected value.</p>
-                <NInputSearch v-bind="args" v-model="value" :items="items" />
+                <NInputCombo v-bind="args" v-model="value" :items="items" />
             </div>
         `
     })
@@ -184,7 +184,7 @@ export const Colors: Story = {
         placeholder: 'Select color...'
     },
     render: args => ({
-        components: { NInputSearch },
+        components: { NInputCombo },
         setup() {
             const items = [
                 { label: 'Red', value: 'red' },
@@ -197,10 +197,10 @@ export const Colors: Story = {
         },
         template: `
             <div class="flex flex-col gap-4 w-96">
-                <NInputSearch v-bind="args" v-model="value" :items="items" label="Default" />
-                <NInputSearch v-bind="args" v-model="value" :items="items" class="brand" label="Brand" />
-                <NInputSearch v-bind="args" v-model="value" :items="items" class="success" label="Success" message="Selection saved" />
-                <NInputSearch v-bind="args" v-model="value" :items="items" class="error" label="Error" message="Invalid selection" />
+                <NInputCombo v-bind="args" v-model="value" :items="items" label="Default" />
+                <NInputCombo v-bind="args" v-model="value" :items="items" class="brand" label="Brand" />
+                <NInputCombo v-bind="args" v-model="value" :items="items" class="success" label="Success" message="Selection saved" />
+                <NInputCombo v-bind="args" v-model="value" :items="items" class="error" label="Error" message="Invalid selection" />
             </div>
         `
     })
@@ -213,7 +213,7 @@ export const NestedAndGroups: Story = {
         placeholder: 'Search categories...'
     },
     render: args => ({
-        components: { NInputSearch },
+        components: { NInputCombo },
         setup() {
             const value = ref('')
             const items = [
@@ -240,7 +240,7 @@ export const NestedAndGroups: Story = {
         },
         template: `
             <div class="w-96">
-                <NInputSearch v-bind="args" v-model="value" :items="items" />
+                <NInputCombo v-bind="args" v-model="value" :items="items" />
             </div>
         `
     })
@@ -248,15 +248,15 @@ export const NestedAndGroups: Story = {
 
 export const LoadingAndDisabled: Story = {
     render: args => ({
-        components: { NInputSearch },
+        components: { NInputCombo },
         setup() {
             const value = ref('')
             return { args, value }
         },
         template: `
             <div class="flex flex-col gap-4 w-96">
-                 <NInputSearch v-bind="args" v-model="value" label="Loading..." loading class="brand" placeholder="Loading items..." />
-                 <NInputSearch v-bind="args" v-model="value" label="Disabled" disabled placeholder="Component disabled" />
+                 <NInputCombo v-bind="args" v-model="value" label="Loading..." loading class="brand" placeholder="Loading items..." />
+                 <NInputCombo v-bind="args" v-model="value" label="Disabled" disabled placeholder="Component disabled" />
             </div>
         `
     })
@@ -269,7 +269,7 @@ export const AsyncSearchBasic: Story = {
         label: 'User Search'
     },
     render: args => ({
-        components: { NInputSearch, NIcon },
+        components: { NInputCombo, NIcon },
         setup() {
             const value = ref('')
             const loading = ref(false)
@@ -296,7 +296,7 @@ export const AsyncSearchBasic: Story = {
         },
         template: `
             <div class="w-96">
-                <NInputSearch
+                <NInputCombo
                     v-bind="args"
                     v-model="value"
                     :items="items"
@@ -306,7 +306,7 @@ export const AsyncSearchBasic: Story = {
                     <template #append>
                         <NIcon name="mdi-cloud-search" class="text-muted" />
                     </template>
-                </NInputSearch>
+                </NInputCombo>
                 <div class="mt-2 text-xs text-muted">
                     Results will appear after 800ms.
                 </div>
@@ -322,7 +322,7 @@ export const AsyncSearchWithError: Story = {
         label: 'Flaky Search'
     },
     render: args => ({
-        components: { NInputSearch, NIcon },
+        components: { NInputCombo, NIcon },
         setup() {
             const value = ref('')
             const loading = ref(false)
@@ -348,7 +348,7 @@ export const AsyncSearchWithError: Story = {
         },
         template: `
             <div class="w-96">
-                <NInputSearch
+                <NInputCombo
                     v-bind="args"
                     v-model="value"
                     :items="items"
@@ -370,7 +370,7 @@ export const AsyncSearchWithDebounceProp: Story = {
         label: 'Debounced Prop Search'
     },
     render: args => ({
-        components: { NInputSearch, NIcon },
+        components: { NInputCombo, NIcon },
         setup() {
             const value = ref('')
             const loading = ref(false)
@@ -397,7 +397,7 @@ export const AsyncSearchWithDebounceProp: Story = {
         },
         template: `
             <div class="w-96">
-                <NInputSearch
+                <NInputCombo
                     v-bind="args"
                     v-model="value"
                     :items="items"
@@ -427,7 +427,7 @@ export const AsyncSearchWithDebounceAndSelection: Story = {
     },
 
     render: args => ({
-        components: { NInputSearch },
+        components: { NInputCombo },
 
         setup() {
             const value = ref(['us', 'fr'])
@@ -467,7 +467,7 @@ export const AsyncSearchWithDebounceAndSelection: Story = {
 
         template: `
             <div class="w-96">
-                <NInputSearch
+                <NInputCombo
                     v-bind="args"
                     v-model="value"
                     :items="items"
@@ -491,7 +491,7 @@ export const CustomItemContent: Story = {
         placeholder: 'Search users...'
     },
     render: args => ({
-        components: { NInputSearch, NIcon, NAvatar },
+        components: { NInputCombo, NIcon, NAvatar },
         setup() {
             const value = ref('user-1')
             const items = [
@@ -503,7 +503,7 @@ export const CustomItemContent: Story = {
         },
         template: `
             <div class="w-96">
-                <NInputSearch v-bind="args" v-model="value" :items="items">
+                <NInputCombo v-bind="args" v-model="value" :items="items">
                     <template #item-content="{ label, avatar, status }">
                         <div class="flex items-center gap-3 py-1">
                             <NAvatar :src="avatar" size="sm" />
@@ -513,7 +513,7 @@ export const CustomItemContent: Story = {
                             </div>
                         </div>
                     </template>
-                </NInputSearch>
+                </NInputCombo>
             </div>
         `
     })
@@ -526,7 +526,7 @@ export const CustomChipSlot: Story = {
         placeholder: 'Add tags...'
     },
     render: args => ({
-        components: { NInputSearch, NChip, NIcon },
+        components: { NInputCombo, NChip, NIcon },
         setup() {
             const value = ref(['1', '2'])
             const items = [
@@ -538,7 +538,7 @@ export const CustomChipSlot: Story = {
         },
         template: `
             <div class="w-96">
-                <NInputSearch v-bind="args" v-model="value" :items="items">
+                <NInputCombo v-bind="args" v-model="value" :items="items">
                     <template #chip="{ item, remove }">
                         <NChip
                             class="brand"
@@ -552,7 +552,7 @@ export const CustomChipSlot: Story = {
                             {{ item.label }}
                         </NChip>
                     </template>
-                </NInputSearch>
+                </NInputCombo>
             </div>
         `
     })
@@ -564,7 +564,7 @@ export const AppendAndPrependSlots: Story = {
         placeholder: 'Enter values...'
     },
     render: args => ({
-        components: { NInputSearch, NButton, NIcon },
+        components: { NInputCombo, NButton, NIcon },
         setup() {
             const value = ref('')
             const items = [
@@ -575,7 +575,7 @@ export const AppendAndPrependSlots: Story = {
         },
         template: `
             <div class="w-96 flex flex-col gap-4">
-                <NInputSearch v-bind="args" v-model="value" :items="items">
+                <NInputCombo v-bind="args" v-model="value" :items="items">
                     <template #prepend>
                         <div class="pl-2 flex items-center">
                             <NIcon name="mdi-magnify" class="text-muted" />
@@ -584,7 +584,7 @@ export const AppendAndPrependSlots: Story = {
                     <template #append>
                         <NButton size="xs" variant="flat" class="mr-1 brand">Action</NButton>
                     </template>
-                </NInputSearch>
+                </NInputCombo>
             </div>
         `
     })
@@ -596,7 +596,7 @@ export const CustomEmptySlot: Story = {
         placeholder: 'Type something to search...'
     },
     render: args => ({
-        components: { NInputSearch, NIcon },
+        components: { NInputCombo, NIcon },
         setup() {
             const value = ref('')
             const items = ref([])
@@ -607,14 +607,14 @@ export const CustomEmptySlot: Story = {
         template: `
             <div class="w-96">
                 <p class="text-xs text-gray-500 mb-2">This demo shows an empty items list with a custom slot.</p>
-                <NInputSearch v-bind="args" v-model="value" :items="items">
+                <NInputCombo v-bind="args" v-model="value" :items="items">
                     <template #empty>
                         <div class="flex flex-col items-center gap-2 p-4 text-muted w-full">
                             <NIcon name="mdi-database-off" size="xl" />
                             <span>Nothing found here!</span>
                         </div>
                     </template>
-                </NInputSearch>
+                </NInputCombo>
             </div>
         `
     })
