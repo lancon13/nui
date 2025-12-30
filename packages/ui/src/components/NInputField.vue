@@ -111,14 +111,14 @@
         loadingName: 'loading'
     })
 
-    const [model, modifiers] = defineModel<string | number>({ default: '' })
+    const [model, modifiers] = defineModel<never>({ default: undefined })
 
     const inputId = `input-id-${generatePseudoRandomKey()}`
 
     const formattedModelValue = computed(() => {
         return typeof props.format === 'function' ? props.format(model.value) : model.value
     })
-    const isDisabled = computed(() => props.disabled === '' || (props.disabled !== undefined && props.disabled !== false))
+    const isDisabled = computed(() => !!props.disabled)
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const compClasses = computed(() => ['n-input-field', ...resolveClassProp((attrs as any).class)])

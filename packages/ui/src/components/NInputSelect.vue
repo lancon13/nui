@@ -6,14 +6,13 @@
         <template #="{ inputId }">
             <select
                 :id="inputId"
+                v-model="selectValue"
                 :name="props.name"
-                :value="selectValue"
                 :multiple="props.multiple"
                 :disabled="props.disabled"
                 :size="1"
                 :class="['peer', props.inputClass]"
                 v-bind="attrsBind"
-                @change="handleChange"
             >
                 <template v-for="(node, index) in slotDefaultNodes" :key="index">
                     <component :is="node" />
@@ -21,7 +20,11 @@
             </select>
         </template>
         <template #append>
-            <n-icon :name="props.dropdownIcon" :class="props.dropdownIconClass" aria-hidden="true" />
+            <n-icon
+                :name="props.dropdownIcon"
+                :class="[props.dropdownIconClass, 'n-input-select-dropdown-icon']"
+                aria-hidden="true"
+            />
             <slot name="append"></slot>
         </template>
     </n-input-field>
@@ -71,30 +74,25 @@
 
     const model = defineModel<string | string[]>()
 
-    const selectValue = computed(() => {
-        if (props.multiple) {
-            if (!model.value) return []
-            if (Array.isArray(model.value)) return model.value
-            try {
-                // Handle potential stringified arrays if passed improperly
-                const parsed = JSON.parse(model.value as string)
-                return Array.isArray(parsed) ? parsed : []
-            } catch {
-                return []
+    const selectValue = computed({
+        get: () => {
+            if (props.multiple) {
+                if (!model.value) return []
+                if (Array.isArray(model.value)) return model.value
+                try {
+                    // Handle potential stringified arrays if passed improperly
+                    const parsed = JSON.parse(model.value as string)
+                    return Array.isArray(parsed) ? parsed : []
+                } catch {
+                    return []
+                }
             }
+            return model.value
+        },
+        set: val => {
+            model.value = val
         }
-        return model.value
     })
-
-    function handleChange(e: Event) {
-        const target = e.target as HTMLSelectElement
-        if (props.multiple) {
-            const values = Array.from(target.selectedOptions).map(o => o.value)
-            model.value = values
-        } else {
-            model.value = target.value
-        }
-    }
 
     const otherSlots = computed(() => omit(slots, ['default', 'append']))
     const compClasses = computed(() => [
@@ -130,37 +128,42 @@
         return options.map(option => {
             if ('options' in option) {
                 const group = option as NInputSelectOptionGroup
+                const { label, options: groupOptions, ...rest } = group
                 const children =
-                    group.options?.map(child => {
+                    groupOptions?.map(child => {
+                        const { label: childLabel, value: childValue, ...childRest } = child
                         return h(
                             'option',
                             {
-                                value: child.value,
+                                value: childValue,
                                 label:
                                     typeof props.formatOption === 'function'
-                                        ? props.formatOption(child.label)
-                                        : child.label
+                                        ? props.formatOption(childLabel)
+                                        : childLabel,
+                                ...childRest
                             },
-                            child.label
+                            childLabel
                         )
                     }) ?? []
                 return h(
                     'optgroup',
                     {
-                        label:
-                            typeof props.formatOptGroup === 'function' ? props.formatOptGroup(group.label) : group.label
+                        label: typeof props.formatOptGroup === 'function' ? props.formatOptGroup(label) : label,
+                        ...rest
                     },
                     children
                 )
             } else {
                 const opt = option as NInputSelectOption
+                const { label, value, ...rest } = opt
                 return h(
                     'option',
                     {
-                        value: opt.value,
-                        label: typeof props.formatOption === 'function' ? props.formatOption(opt.label) : opt.label
+                        value: value,
+                        label: typeof props.formatOption === 'function' ? props.formatOption(label) : label,
+                        ...rest
                     },
-                    opt.label
+                    label
                 )
             }
         })
@@ -182,6 +185,17 @@
             select {
                 @apply appearance-none;
                 @apply cursor-pointer pr-8;
+            }
+            select[multiple] option::checkmark {
+                @apply h-auto px-2;
+            }
+
+            .n-input-select-dropdown-icon {
+                @apply transition-transform duration-200 ease-in-out pointer-events-none;
+            }
+
+            &:focus-within .n-input-select-dropdown-icon {
+                @apply rotate-180;
             }
         }
     }
