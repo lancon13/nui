@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite'
-// import { fn } from '@storybook/test'
 import { ref } from 'vue'
 import NInputSelect from './NInputSelect.vue'
 
@@ -10,8 +9,10 @@ const meta = {
         layout: 'centered'
     },
     tags: ['autodocs'],
-    argTypes: {},
-    args: {}
+    argTypes: {
+        multiple: { control: 'boolean' },
+        message: { control: 'text' }
+    }
 } satisfies Meta
 
 export default meta
@@ -23,80 +24,76 @@ export const Default: Story = {
     render: args => ({
         components: { NInputSelect },
         setup() {
-            const value = ref('Test me')
-            const options1 = [
-                { label: 'Test 1', value: 'test1' },
-                { label: 'Test 2', value: 'test2' },
-                { label: 'Test 3', value: 'test3' }
+            const value = ref('test1')
+            const options = [
+                { label: 'Option 1', value: 'test1' },
+                { label: 'Option 2', value: 'test2' },
+                { label: 'Option 3', value: 'test3' }
             ]
-            const options2 = [
-                {
-                    label: 'Options Group 1',
-                    options: [
-                        { label: 'Test 1', value: 'test1' },
-                        { label: 'Test 2', value: 'test2' },
-                        { label: 'Test 3', value: 'test3' }
-                    ]
-                },
-                {
-                    label: 'Options Group 2',
-                    options: [
-                        { label: 'Test 4', value: 'test4' },
-                        { label: 'Test 5', value: 'test5' },
-                        { label: 'Test 6', value: 'test6' }
-                    ]
-                }
-            ]
-            return { args, value, options1, options2 }
+            return { args, value, options }
         },
         template: `
-            <div class="flex flex-col gap-2 w-64">
-                <div>{{value}}</div>                
-                <NInputSelect v-bind="args" v-model="value" :options="options1" label="Value" name="demo" />
-                <NInputSelect v-bind="args" v-model="value" :options="options2" label="Value" name="demo" />
+            <div class="w-96 flex flex-col gap-2">
+                <div>Selected: {{ value }}</div>
+                <NInputSelect v-bind="args" v-model="value" :options="options" label="Select Option" name="demo" />
             </div>
         `
     })
 }
 
-export const SlotForOptions: Story = {
+export const Colors: Story = {
     args: {},
     render: args => ({
         components: { NInputSelect },
         setup() {
-            const value = ref('option1')
-            return { args, value }
+            const options = [{ label: 'Option selected', value: 'v' }]
+            const value = ref('v')
+            return { args, value, options }
         },
         template: `
-            <div class="flex flex-col gap-2 w-64">
-                <div>{{value}}</div>
-                <NInputSelect v-bind="args" v-model="value" label="Value" name="demo" class="w-full" >
-                    <option value="option1">Option 1</option>
-                    <option value="option2">Option 2</option>
-                    <option value="option3">Option 3</option>                    
-                </NInputSelect>
-
-                <NInputSelect v-bind="args" v-model="value" label="Value" name="demo" class="w-full" >
-                    <optgroup label="Options">
-                        <option value="option1">Option 1</option>
-                        <option value="option2">Option 2</option>
-                        <option value="option3">Option 3</option>
-                    </optgroup>
-                    <optgroup label="Swedish Cars">
-                        <option value="volvo">Volvo</option>
-                        <option value="saab">Saab</option>
-                    </optgroup>
-                    <optgroup label="German Cars">
-                        <option value="mercedes">Mercedes</option>
-                        <option value="audi">Audi</option>
-                    </optgroup>
-                </NInputSelect>
+            <div class="flex flex-col gap-4 w-96">
+                <NInputSelect v-bind="args" v-model="value" :options="options" label="Default" />
+                <NInputSelect v-bind="args" v-model="value" :options="options" class="brand" label="Brand" />
+                <NInputSelect v-bind="args" v-model="value" :options="options" class="success" label="Success" message="Selection saved" />
+                <NInputSelect v-bind="args" v-model="value" :options="options" class="error" label="Error" message="Invalid selection" />
             </div>
         `
     })
 }
 
-export const MultipleSelect: Story = {
+export const Grouped: Story = {
+    args: {},
+    render: args => ({
+        components: { NInputSelect },
+        setup() {
+            const value = ref('mercedes')
+            const options = [
+                {
+                    label: 'Swedish Cars',
+                    options: [
+                        { label: 'Volvo', value: 'volvo' },
+                        { label: 'Saab', value: 'saab' }
+                    ]
+                },
+                {
+                    label: 'German Cars',
+                    options: [
+                        { label: 'Mercedes', value: 'mercedes' },
+                        { label: 'Audi', value: 'audi' }
+                    ]
+                }
+            ]
+            return { args, value, options }
+        },
+        template: `
+            <div class="w-96">
+                <NInputSelect v-bind="args" v-model="value" :options="options" label="Car Manufacturers" />
+            </div>
+        `
+    })
+}
+
+export const Multiple: Story = {
     args: {
         multiple: true
     },
@@ -104,18 +101,40 @@ export const MultipleSelect: Story = {
         components: { NInputSelect },
         setup() {
             const value = ref(['test1', 'test3'])
-            const options1 = [
-                { label: 'Test 1', value: 'test1' },
-                { label: 'Test 2', value: 'test2' },
-                { label: 'Test 3', value: 'test3' },
-                { label: 'Test 4', value: 'test4' }
+            const options = [
+                { label: 'Option 1', value: 'test1' },
+                { label: 'Option 2', value: 'test2' },
+                { label: 'Option 3', value: 'test3' },
+                { label: 'Option 4', value: 'test4' }
             ]
-            return { args, value, options1 }
+            return { args, value, options }
         },
         template: `
-            <div class="flex flex-col gap-2 w-64">
-                <p>Selected: {{ value }}</p>
-                <NInputSelect v-bind="args" v-model="value" :options="options1" label="Multiple Select" name="demo-multiple" />
+            <div class="w-96 flex flex-col gap-2">
+                <p>Selected: <code>{{ value }}</code></p>
+                <NInputSelect v-bind="args" v-model="value" :options="options" label="Multiple Select" />
+            </div>
+        `
+    })
+}
+
+export const CustomSlots: Story = {
+    args: {},
+    render: args => ({
+        components: { NInputSelect },
+        setup() {
+            const value = ref('opt1')
+            return { args, value }
+        },
+        template: `
+            <div class="w-96">
+                <NInputSelect v-bind="args" v-model="value" label="Using Default Slot">
+                    <option value="opt1">Hardcoded 1</option>
+                    <option value="opt2">Hardcoded 2</option>
+                    <optgroup label="Grouped">
+                        <option value="opt3">Hardcoded 3</option>
+                    </optgroup>
+                </NInputSelect>
             </div>
         `
     })

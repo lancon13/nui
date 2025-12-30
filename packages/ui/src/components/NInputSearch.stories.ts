@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite'
 import { ref } from 'vue'
 import NAvatar from './NAvatar.vue'
+import NButton from './NButton.vue'
+import NChip from './NChip.vue'
 import NIcon from './NIcon.vue'
 import NInputSearch from './NInputSearch.vue'
 
@@ -32,7 +34,7 @@ export const SingleSearchable: Story = {
     args: {
         useInput: true,
         clearable: true,
-        fillInput: true,
+        fillInput: false,
         label: 'Single Searchable',
         placeholder: 'Search for an option...'
     },
@@ -136,6 +138,10 @@ export const MultipleSelectLike: Story = {
         template: `
             <div class="w-96 flex flex-col gap-2">
                 <div>Selected: <code>{{ value }}</code></div>
+                <p class="text-xs text-gray-500 mb-2">
+                    When at least one option is selected and <b>useInput</b> is false, the text input is hidden (sr-only).
+                    It reappears if you clear the selection.
+                </p>
                 <NInputSearch v-bind="args" v-model="value" :items="items" />
             </div>
         `
@@ -180,8 +186,13 @@ export const Colors: Story = {
     render: args => ({
         components: { NInputSearch },
         setup() {
-            const items = [{ label: 'Selected Item', value: 'v' }]
-            const value = ref('v')
+            const items = [
+                { label: 'Red', value: 'red' },
+                { label: 'Blue', value: 'blue' },
+                { label: 'Green', value: 'green' },
+                { label: 'Yellow', value: 'yellow' }
+            ]
+            const value = ref('blue')
             return { args, value, items }
         },
         template: `
@@ -251,14 +262,14 @@ export const LoadingAndDisabled: Story = {
     })
 }
 
-export const AsyncFilter: Story = {
+export const AsyncSearchBasic: Story = {
     args: {
         useInput: true,
-        loadingName: 'searching',
-        placeholder: 'Start typing to search async...'
+        placeholder: 'Type to search users (simulated API)...',
+        label: 'User Search'
     },
     render: args => ({
-        components: { NInputSearch },
+        components: { NInputSearch, NIcon },
         setup() {
             const value = ref('')
             const loading = ref(false)
@@ -266,18 +277,19 @@ export const AsyncFilter: Story = {
 
             const handleFilter = (query: string) => {
                 loading.value = true
+                // Simulate API call
                 setTimeout(() => {
                     if (!query) {
                         items.value = []
                     } else {
-                        items.value = [
-                            { label: query + ' 1', value: query + '-1' },
-                            { label: query + ' 2', value: query + '-2' },
-                            { label: query + ' 3', value: query + '-3' }
-                        ]
+                        // Mock data generation
+                        items.value = Array.from({ length: 5 }, (_, i) => ({
+                            label: `${query} Result ${i + 1}`,
+                            value: `${query.toLowerCase().replace(/\s+/g, '-')}-${i + 1}`
+                        }))
                     }
                     loading.value = false
-                }, 1000)
+                }, 800)
             }
 
             return { args, value, items, loading, handleFilter }
@@ -289,7 +301,60 @@ export const AsyncFilter: Story = {
                     v-model="value"
                     :items="items"
                     :loading="loading"
-                    label="Async Search"
+                    @filter="handleFilter"
+                >
+                    <template #append>
+                        <NIcon name="mdi-cloud-search" class="text-muted" />
+                    </template>
+                </NInputSearch>
+                <div class="mt-2 text-xs text-muted">
+                    Results will appear after 800ms.
+                </div>
+            </div>
+        `
+    })
+}
+
+export const AsyncSearchWithError: Story = {
+    args: {
+        useInput: true,
+        placeholder: 'Search will fail...',
+        label: 'Flaky Search'
+    },
+    render: args => ({
+        components: { NInputSearch, NIcon },
+        setup() {
+            const value = ref('')
+            const loading = ref(false)
+            const items = ref<{ label: string; value: string }[]>([])
+            const errorMessage = ref('')
+
+            const handleFilter = (query: string) => {
+                loading.value = true
+                errorMessage.value = ''
+                items.value = []
+
+                setTimeout(() => {
+                    loading.value = false
+                    if (query.length > 2) {
+                        errorMessage.value = 'Failed to fetch results. Please try again.'
+                    } else if (query) {
+                        items.value = [{ label: 'Keep typing...', value: 'hint', disabled: true }]
+                    }
+                }, 600)
+            }
+
+            return { args, value, items, loading, handleFilter, errorMessage }
+        },
+        template: `
+            <div class="w-96">
+                <NInputSearch
+                    v-bind="args"
+                    v-model="value"
+                    :items="items"
+                    :loading="loading"
+                    :class="{ 'error': !!errorMessage }"
+                    :message="errorMessage"
                     @filter="handleFilter"
                 />
             </div>
@@ -297,30 +362,200 @@ export const AsyncFilter: Story = {
     })
 }
 
-export const CustomSlots: Story = {
+export const AsyncSearchWithDebounceAndSelection: Story = {
     args: {
+        useInput: true,
         multiple: true,
-        label: 'User Select',
+        placeholder: 'Search countries...',
+        label: 'Country Selector'
+    },
+    render: args => ({
+        components: { NInputSearch },
+        setup() {
+            const value = ref(['us', 'fr'])
+            const loading = ref(false)
+            // Pre-populated items for initial selection
+            const items = ref([
+                { label: 'United States', value: 'us' },
+                { label: 'France', value: 'fr' }
+            ])
+
+            let debounceTimer: any = null
+
+            const allCountries = [
+                { label: 'United States', value: 'us' },
+                { label: 'United Kingdom', value: 'uk' },
+                { label: 'France', value: 'fr' },
+                { label: 'Germany', value: 'de' },
+                { label: 'Canada', value: 'ca' },
+                { label: 'Australia', value: 'au' },
+                { label: 'Japan', value: 'jp' },
+                { label: 'China', value: 'cn' }
+            ]
+
+            const handleFilter = (query: string) => {
+                if (debounceTimer) clearTimeout(debounceTimer)
+
+                loading.value = true
+
+                debounceTimer = setTimeout(() => {
+                    if (!query) {
+                        // Keep selected items visible even when query is empty
+                        items.value = allCountries.filter(c => value.value.includes(c.value))
+                    } else {
+                        const lowerQuery = query.toLowerCase()
+                        items.value = allCountries.filter(c => c.label.toLowerCase().includes(lowerQuery))
+                    }
+                    loading.value = false
+                }, 500)
+            }
+
+            return { args, value, items, loading, handleFilter }
+        },
+        template: `
+            <div class="w-96">
+                <NInputSearch
+                    v-bind="args"
+                    v-model="value"
+                    :items="items"
+                    :loading="loading"
+                    @filter="handleFilter"
+                />
+            </div>
+        `
+    })
+}
+
+// --- Slot Stories ---
+
+export const CustomItemContent: Story = {
+    args: {
+        multiple: false,
+        label: 'Custom Item Content',
         placeholder: 'Search users...'
     },
     render: args => ({
         components: { NInputSearch, NIcon, NAvatar },
         setup() {
-            const value = ref(['user-1'])
+            const value = ref('user-1')
             const items = [
-                { label: 'Alice', value: 'user-1', avatar: 'https://i.pravatar.cc/150?u=1' },
-                { label: 'Bob', value: 'user-2', avatar: 'https://i.pravatar.cc/150?u=2' },
-                { label: 'Charlie', value: 'user-3', avatar: 'https://i.pravatar.cc/150?u=3' }
+                { label: 'Alice', value: 'user-1', avatar: 'https://i.pravatar.cc/150?u=1', status: 'Online' },
+                { label: 'Bob', value: 'user-2', avatar: 'https://i.pravatar.cc/150?u=2', status: 'Away' },
+                { label: 'Charlie', value: 'user-3', avatar: 'https://i.pravatar.cc/150?u=3', status: 'Offline' }
             ]
             return { args, value, items }
         },
         template: `
             <div class="w-96">
                 <NInputSearch v-bind="args" v-model="value" :items="items">
-                    <template #item-content="{ label, avatar }">
-                        <div class="flex items-center gap-2">
-                            <NAvatar :src="avatar" size="xs" />
-                            <span>{{ label }}</span>
+                    <template #item-content="{ label, avatar, status }">
+                        <div class="flex items-center gap-3 py-1">
+                            <NAvatar :src="avatar" size="sm" />
+                            <div class="flex flex-col">
+                                <span class="font-bold">{{ label }}</span>
+                                <span class="text-xs text-muted">{{ status }}</span>
+                            </div>
+                        </div>
+                    </template>
+                </NInputSearch>
+            </div>
+        `
+    })
+}
+
+export const CustomChipSlot: Story = {
+    args: {
+        multiple: true,
+        label: 'Custom Chip Slot',
+        placeholder: 'Add tags...'
+    },
+    render: args => ({
+        components: { NInputSearch, NChip, NIcon },
+        setup() {
+            const value = ref(['1', '2'])
+            const items = [
+                { label: 'Design', value: '1', icon: 'mdi-palette' },
+                { label: 'Development', value: '2', icon: 'mdi-code-tags' },
+                { label: 'Marketing', value: '3', icon: 'mdi-bullhorn' }
+            ]
+            return { args, value, items }
+        },
+        template: `
+            <div class="w-96">
+                <NInputSearch v-bind="args" v-model="value" :items="items">
+                    <template #chip="{ item, remove }">
+                        <NChip
+                            class="brand"
+                            variant="flat"
+                            removable
+                            @remove="remove"
+                        >
+                            <template #prepend>
+                                <NIcon :name="item.icon" size="xs" class="mr-1" />
+                            </template>
+                            {{ item.label }}
+                        </NChip>
+                    </template>
+                </NInputSearch>
+            </div>
+        `
+    })
+}
+
+export const AppendAndPrependSlots: Story = {
+    args: {
+        label: 'Append & Prepend',
+        placeholder: 'Enter values...'
+    },
+    render: args => ({
+        components: { NInputSearch, NButton, NIcon },
+        setup() {
+            const value = ref('')
+            const items = [
+                { label: 'Item 1', value: '1' },
+                { label: 'Item 2', value: '2' }
+            ]
+            return { args, value, items }
+        },
+        template: `
+            <div class="w-96 flex flex-col gap-4">
+                <NInputSearch v-bind="args" v-model="value" :items="items">
+                    <template #prepend>
+                        <div class="pl-2 flex items-center">
+                            <NIcon name="mdi-magnify" class="text-muted" />
+                        </div>
+                    </template>
+                    <template #append>
+                        <NButton size="xs" variant="flat" class="mr-1 brand">Action</NButton>
+                    </template>
+                </NInputSearch>
+            </div>
+        `
+    })
+}
+
+export const CustomEmptySlot: Story = {
+    args: {
+        label: 'Custom Empty State',
+        placeholder: 'Type something to search...'
+    },
+    render: args => ({
+        components: { NInputSearch, NIcon },
+        setup() {
+            const value = ref('')
+            const items = ref([])
+
+            return { args, value, items }
+        },
+
+        template: `
+            <div class="w-96">
+                <p class="text-xs text-gray-500 mb-2">This demo shows an empty items list with a custom slot.</p>
+                <NInputSearch v-bind="args" v-model="value" :items="items">
+                    <template #empty>
+                        <div class="flex flex-col items-center gap-2 p-4 text-muted w-full">
+                            <NIcon name="mdi-database-off" size="xl" />
+                            <span>Nothing found here!</span>
                         </div>
                     </template>
                 </NInputSearch>
