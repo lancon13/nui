@@ -91,6 +91,7 @@
 <script setup lang="ts">
     /* eslint-disable @typescript-eslint/no-explicit-any */
     /* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
+    import { useDebounceFn } from '@vueuse/core'
     import { omit } from 'es-toolkit/object'
     import { computed, nextTick, ref, useAttrs, useSlots, useTemplateRef, watch, type HTMLAttributes } from 'vue'
     import { resolveClassProp } from '../helpers/dom'
@@ -124,6 +125,7 @@
             menuProps?: Record<string, any>
             disabled?: boolean
             valueClass?: string | string[] | object
+            debounce?: number
         }
 
     defineOptions({ inheritAttrs: false })
@@ -147,7 +149,8 @@
         fillInput: false,
         disabled: false,
         chipProps: () => ({ class: 'text-xs' }),
-        loadingName: 'loading'
+        loadingName: 'loading',
+        debounce: 0
     })
 
     const emits = defineEmits<{
@@ -171,9 +174,25 @@
     const focusPaused = ref(false)
     const menuId = `menu-${generatePseudoRandomKey()}`
 
+    // Internal cache to resolve labels for selected items that might be filtered out
+    const itemRegistry = ref(new Map<any, any>())
+
     // --- Helpers ---
 
+    function updateRegistry(items: any[]) {
+        for (const item of items) {
+            const val = item[props.valueField]
+            if (val !== undefined && val !== null) {
+                itemRegistry.value.set(val, item)
+            }
+            if (item[props.childrenField] && Array.isArray(item[props.childrenField])) {
+                updateRegistry(item[props.childrenField])
+            }
+        }
+    }
+
     const findItemRecursive = (items: any[], value: any): any => {
+        // 1. Try to find in current props.items (most up-to-date)
         for (const item of items) {
             if (item[props.valueField] === value) {
                 return item
@@ -183,7 +202,8 @@
                 if (found) return found
             }
         }
-        return null
+        // 2. Fallback to registry
+        return itemRegistry.value.get(value) || null
     }
 
     const getItemLabel = (item: any) => (item ? item[props.labelField] : '')
@@ -304,6 +324,14 @@
     // --- Watchers ---
 
     watch(
+        () => props.items,
+        newItems => {
+            updateRegistry(newItems)
+        },
+        { immediate: true, deep: true }
+    )
+
+    watch(
         () => modelValue.value,
         newVal => {
             if (!props.multiple && props.fillInput) {
@@ -315,6 +343,10 @@
     )
 
     // --- Methods: Navigation & Interaction ---
+
+    const debouncedFilter = useDebounceFn((value: string) => {
+        emits('filter', value)
+    }, props.debounce)
 
     function handleItemKeydown(e: KeyboardEvent) {
         if (e.key === 'ArrowDown') {
@@ -412,7 +444,12 @@
         const target = e.target as HTMLInputElement
         inputValue.value = target.value
         if (!dropdown.value) dropdown.value = true
-        emits('filter', inputValue.value)
+
+        if (props.debounce > 0) {
+            debouncedFilter(inputValue.value)
+        } else {
+            emits('filter', inputValue.value)
+        }
     }
 
     function handleFocus() {
@@ -432,7 +469,7 @@
             const idx = current.indexOf(val)
             if (idx > -1) current.splice(idx, 1)
             else current.push(val)
-            modelValue.value = current
+            modelValue.value = current as any
             inputValue.value = ''
         } else {
             modelValue.value = val
@@ -463,7 +500,7 @@
         ) {
             const newVal = [...modelValue.value]
             newVal.pop()
-            modelValue.value = newVal
+            modelValue.value = newVal as any
         }
     }
 

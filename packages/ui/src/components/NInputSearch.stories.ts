@@ -326,7 +326,7 @@ export const AsyncSearchWithError: Story = {
         setup() {
             const value = ref('')
             const loading = ref(false)
-            const items = ref<{ label: string; value: string }[]>([])
+            const items = ref<{ label: string; value: string; disabled?: boolean }[]>([])
             const errorMessage = ref('')
 
             const handleFilter = (query: string) => {
@@ -362,26 +362,80 @@ export const AsyncSearchWithError: Story = {
     })
 }
 
+export const AsyncSearchWithDebounceProp: Story = {
+    args: {
+        useInput: true,
+        debounce: 1000,
+        placeholder: 'Built-in 1000ms debounce...',
+        label: 'Debounced Prop Search'
+    },
+    render: args => ({
+        components: { NInputSearch, NIcon },
+        setup() {
+            const value = ref('')
+            const loading = ref(false)
+            const items = ref<{ label: string; value: string }[]>([])
+            const lastQuery = ref('')
+
+            const handleFilter = (query: string) => {
+                lastQuery.value = query
+                if (!query) {
+                    items.value = []
+                    return
+                }
+                loading.value = true
+                setTimeout(() => {
+                    items.value = [
+                        { label: `Result for "${query}" 1`, value: '1' },
+                        { label: `Result for "${query}" 2`, value: '2' }
+                    ]
+                    loading.value = false
+                }, 500)
+            }
+
+            return { args, value, items, loading, handleFilter, lastQuery }
+        },
+        template: `
+            <div class="w-96">
+                <NInputSearch
+                    v-bind="args"
+                    v-model="value"
+                    :items="items"
+                    :loading="loading"
+                    @filter="handleFilter"
+                />
+                <div class="mt-2 text-xs text-muted flex flex-col gap-1">
+                    <span>Last event emitted for: <code class="text-brand">{{ lastQuery || 'none' }}</code></span>
+                    <span>The @filter event is delayed by {{ args.debounce }}ms while typing.</span>
+                </div>
+            </div>
+        `
+    })
+}
+
 export const AsyncSearchWithDebounceAndSelection: Story = {
     args: {
         useInput: true,
+
         multiple: true,
+
+        debounce: 500,
+
         placeholder: 'Search countries...',
+
         label: 'Country Selector'
     },
+
     render: args => ({
         components: { NInputSearch },
+
         setup() {
             const value = ref(['us', 'fr'])
             const loading = ref(false)
-            // Pre-populated items for initial selection
             const items = ref([
                 { label: 'United States', value: 'us' },
                 { label: 'France', value: 'fr' }
             ])
-
-            let debounceTimer: any = null
-
             const allCountries = [
                 { label: 'United States', value: 'us' },
                 { label: 'United Kingdom', value: 'uk' },
@@ -394,13 +448,11 @@ export const AsyncSearchWithDebounceAndSelection: Story = {
             ]
 
             const handleFilter = (query: string) => {
-                if (debounceTimer) clearTimeout(debounceTimer)
-
                 loading.value = true
 
-                debounceTimer = setTimeout(() => {
+                // Simulate API call delay
+                setTimeout(() => {
                     if (!query) {
-                        // Keep selected items visible even when query is empty
                         items.value = allCountries.filter(c => value.value.includes(c.value))
                     } else {
                         const lowerQuery = query.toLowerCase()
@@ -412,6 +464,7 @@ export const AsyncSearchWithDebounceAndSelection: Story = {
 
             return { args, value, items, loading, handleFilter }
         },
+
         template: `
             <div class="w-96">
                 <NInputSearch
@@ -421,6 +474,9 @@ export const AsyncSearchWithDebounceAndSelection: Story = {
                     :loading="loading"
                     @filter="handleFilter"
                 />
+                <div class="mt-2 text-xs text-muted">
+                    Built-in {{ args.debounce }}ms debounce + simulated 300ms API latency.
+                </div>
             </div>
         `
     })
