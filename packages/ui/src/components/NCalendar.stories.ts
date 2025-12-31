@@ -367,51 +367,42 @@ export const DualCalendar: Story = {
         components: { NCalendar },
         setup() {
             const range = ref<any>(null)
+            
+            // Source of truth for navigation
+            const currentYear = ref(2025)
+            const currentMonth = ref(0) // 0 = Jan
+
+            // Derived props for NCalendar
             const viewingYear = ref(2025)
             const viewingWeek = ref(1)
 
+            // Sync calendar props whenever navigation state changes
+            watch([currentYear, currentMonth], ([y, m]) => {
+                const { year, week } = getYearWeekFromMonth(y, m)
+                viewingYear.value = year
+                viewingWeek.value = week
+            }, { immediate: true })
+
             const prevMonth = () => {
-                const { year, month } = getMonthFromYearWeek(viewingYear.value, viewingWeek.value)
-                let targetM = month - 1
-                let targetY = year
-                if (targetM < 0) {
-                    targetM = 11
-                    targetY--
+                let m = currentMonth.value - 1
+                let y = currentYear.value
+                if (m < 0) {
+                    m = 11
+                    y--
                 }
-
-                let { year: newY, week: newW } = getYearWeekFromMonth(targetY, targetM)
-
-                // If the new view is identical (rare edge case), offset by -1 week
-                if (newY === viewingYear.value && newW === viewingWeek.value) {
-                    const retry = getYearWeekFromMonth(targetY, targetM, -1)
-                    newY = retry.year
-                    newW = retry.week
-                }
-
-                viewingYear.value = newY
-                viewingWeek.value = newW
+                currentMonth.value = m
+                currentYear.value = y
             }
 
             const nextMonth = () => {
-                const { year, month } = getMonthFromYearWeek(viewingYear.value, viewingWeek.value)
-                let targetM = month + 1
-                let targetY = year
-                if (targetM > 11) {
-                    targetM = 0
-                    targetY++
+                let m = currentMonth.value + 1
+                let y = currentYear.value
+                if (m > 11) {
+                    m = 0
+                    y++
                 }
-
-                let { year: newY, week: newW } = getYearWeekFromMonth(targetY, targetM)
-
-                // If the new view is identical, offset by +1 week
-                if (newY === viewingYear.value && newW === viewingWeek.value) {
-                    const retry = getYearWeekFromMonth(targetY, targetM, 1)
-                    newY = retry.year
-                    newW = retry.week
-                }
-
-                viewingYear.value = newY
-                viewingWeek.value = newW
+                currentMonth.value = m
+                currentYear.value = y
             }
 
             return { dayjs, range, viewingYear, viewingWeek, prevMonth, nextMonth }
@@ -430,8 +421,8 @@ export const DualCalendar: Story = {
                     v-model="range"
                     range
                     :numCalendars="2"
-                    v-model:viewingYear="viewingYear"
-                    v-model:viewingWeek="viewingWeek"
+                    :viewingYear="viewingYear"
+                    :viewingWeek="viewingWeek"
                     :rows="6"
                 >
                     <template #calendar-header="{ startDate }">

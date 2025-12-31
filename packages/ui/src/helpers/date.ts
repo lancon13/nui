@@ -1,4 +1,11 @@
-import dayjs from 'dayjs'
+import dayjs, { UnitType } from 'dayjs'
+import isoWeek from 'dayjs/plugin/isoWeek'
+import weekOfYear from 'dayjs/plugin/weekOfYear'
+import advancedFormat from 'dayjs/plugin/advancedFormat'
+
+dayjs.extend(isoWeek)
+dayjs.extend(weekOfYear)
+dayjs.extend(advancedFormat)
 
 export type DateRange = {
     begin?: string | Date
@@ -153,10 +160,10 @@ export function checkDateInList(date: dayjs.Dayjs, list: CalendarValue[]): boole
  * Useful for initializing calendar views.
  * @param year Calendar year
  * @param month Month index (0-11)
- * @param weekOffset Optional offset to add to the result week (can be negative)
  */
 export function getYearWeekFromMonth(year: number, month: number, weekOffset: number = 0): { year: number; week: number } {
-    let date = dayjs().year(year).month(month).startOf('month')
+    // Construct date explicitly to avoid "current time" side effects
+    let date = dayjs(`${year}-${String(month + 1).padStart(2, '0')}-01`)
     if (weekOffset !== 0) {
         date = date.add(weekOffset, 'week')
     }
@@ -168,12 +175,21 @@ export function getYearWeekFromMonth(year: number, month: number, weekOffset: nu
 
 /**
  * Returns the approximate Month index (0-11) and Year for a given ISO week.
- * Uses the start of the week + 3 days (middle of week) to determine the month.
  * @param year ISO Week Year
  * @param week ISO Week number
  */
 export function getMonthFromYearWeek(year: number, week: number): { year: number; month: number } {
-    const date = dayjs().year(year).isoWeek(week).startOf('isoWeek').add(3, 'day')
+    // Initialize dayjs with the first day of the ISO week year to ensure we start in the correct year context
+    // This avoids issues when "today" is far from the target year.
+    // However, finding the "first day of ISO week year" is circular if we rely on isoWeekYear.
+    // Safer: Start with Jan 4th of the target year (which is always in ISO Week 1 or 52/53 of prev year, but conceptually in the year).
+    // Actually, dayjs(year + '-01-04') is safest anchor for ISO weeks.
+    
+    const date = dayjs(`${year}-01-04`)
+        .isoWeek(week)
+        .startOf('isoWeek')
+        .add(3, 'day') // Look at Thursday (middle of week) to determine the month ownership
+
     return {
         year: date.year(),
         month: date.month()

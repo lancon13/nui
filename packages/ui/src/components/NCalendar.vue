@@ -226,7 +226,7 @@
     }
 
     const gridStartDate = computed(() => {
-        const isoMonday = dayjs(`${viewingYear.value}-01-01`).isoWeek(viewingWeek.value).startOf('isoWeek')
+        const isoMonday = dayjs().year(viewingYear.value).isoWeek(viewingWeek.value).startOf('isoWeek')
         let diff = 1 - firstDayOfWeek.value
         if (diff < 0) diff += 7
         return isoMonday.subtract(diff, 'day')
