@@ -1,0 +1,70 @@
+import { mount } from '@vue/test-utils'
+import { describe, it, expect, vi } from 'vitest'
+import NCalendar from '../components/NCalendar.vue'
+import dayjs from 'dayjs'
+import weekOfYear from 'dayjs/plugin/weekOfYear'
+import isoWeek from 'dayjs/plugin/isoWeek'
+import weekday from 'dayjs/plugin/weekday'
+import localeData from 'dayjs/plugin/localeData'
+import updateLocale from 'dayjs/plugin/updateLocale'
+
+dayjs.extend(weekOfYear)
+dayjs.extend(isoWeek)
+dayjs.extend(weekday)
+dayjs.extend(localeData)
+dayjs.extend(updateLocale)
+
+describe('NCalendar', () => {
+    it('renders correctly', () => {
+        const wrapper = mount(NCalendar)
+        expect(wrapper.exists()).toBe(true)
+        expect(wrapper.find('.n-calendar-view-header').exists()).toBe(true)
+        expect(wrapper.find('.n-calendar-view-grid').exists()).toBe(true)
+    })
+
+    it('emits update:modelValue on day click', async () => {
+        const wrapper = mount(NCalendar)
+        const day = wrapper.find('.n-calendar-view-cell:not(.n-calendar-view-cell--disabled)')
+        await day.trigger('click')
+        expect(wrapper.emitted('update:modelValue')).toBeTruthy()
+    })
+
+    it('handles multiple selection', async () => {
+        const wrapper = mount(NCalendar, {
+            props: { multiple: true, modelValue: [] }
+        })
+        const days = wrapper.findAll('.n-calendar-view-cell:not(.n-calendar-view-cell--disabled)')
+        
+        await days[0].trigger('click')
+        const firstEmit = wrapper.emitted('update:modelValue')![0][0] as string[]
+        await wrapper.setProps({ modelValue: firstEmit })
+        
+        await days[5].trigger('click')
+        
+        const secondEmit = wrapper.emitted('update:modelValue')![1][0] as string[]
+        expect(secondEmit).toHaveLength(2)
+    })
+
+    it('handles range selection', async () => {
+        const wrapper = mount(NCalendar, {
+            props: { range: true }
+        })
+        // Find today to ensure it's valid
+        const today = wrapper.find('.n-calendar-view-cell--today')
+        if (today.exists()) {
+             // ... logic remains same, just finding elements ...
+             const days = wrapper.findAll('.n-calendar-view-cell:not(.n-calendar-view-cell--disabled)')
+             const start = days[10]
+             const end = days[12]
+             
+             await start.trigger('click')
+             await end.trigger('click')
+             
+             expect(wrapper.emitted('update:modelValue')).toBeTruthy()
+             const emits = wrapper.emitted('update:modelValue')
+             expect(emits).toHaveLength(1)
+             expect(emits![0][0]).toHaveProperty('begin')
+             expect(emits![0][0]).toHaveProperty('end')
+        }
+    })
+})

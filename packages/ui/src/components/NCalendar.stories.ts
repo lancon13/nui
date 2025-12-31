@@ -5,6 +5,7 @@ import isoWeek from 'dayjs/plugin/isoWeek'
 import isoWeeksInYear from 'dayjs/plugin/isoWeeksInYear'
 import weekOfYear from 'dayjs/plugin/weekOfYear'
 import { ref, watch } from 'vue'
+import { getMonthFromYearWeek, getYearWeekFromMonth } from '../helpers'
 import NCalendar from './NCalendar.vue'
 import NIcon from './NIcon.vue'
 
@@ -23,8 +24,8 @@ const meta = {
     argTypes: {
         viewingYear: { control: 'number' },
         viewingWeek: { control: 'number' },
-        firstDayOfWeek: { 
-            control: 'select', 
+        firstDayOfWeek: {
+            control: 'select',
             options: [0, 1, 2, 3, 4, 5, 6],
             labels: {
                 0: 'Sunday',
@@ -50,7 +51,7 @@ export const Default: Story = {
         rows: 6,
         firstDayOfWeek: 1
     },
-    render: (args) => ({
+    render: args => ({
         components: { NCalendar },
         setup() {
             const model = ref([])
@@ -59,10 +60,18 @@ export const Default: Story = {
             const activeMonth = ref<number | null | undefined>(0)
 
             const months = [
-                { label: 'Jan', value: 0 }, { label: 'Feb', value: 1 }, { label: 'Mar', value: 2 },
-                { label: 'Apr', value: 3 }, { label: 'May', value: 4 }, { label: 'Jun', value: 5 },
-                { label: 'Jul', value: 6 }, { label: 'Aug', value: 7 }, { label: 'Sep', value: 8 },
-                { label: 'Oct', value: 9 }, { label: 'Nov', value: 10 }, { label: 'Dec', value: 11 },
+                { label: 'Jan', value: 0 },
+                { label: 'Feb', value: 1 },
+                { label: 'Mar', value: 2 },
+                { label: 'Apr', value: 3 },
+                { label: 'May', value: 4 },
+                { label: 'Jun', value: 5 },
+                { label: 'Jul', value: 6 },
+                { label: 'Aug', value: 7 },
+                { label: 'Sep', value: 8 },
+                { label: 'Oct', value: 9 },
+                { label: 'Nov', value: 10 },
+                { label: 'Dec', value: 11 },
                 { label: 'All Active (undefined)', value: undefined },
                 { label: 'None Active (null)', value: null }
             ]
@@ -142,8 +151,15 @@ export const SelectionModes: Story = {
                 { begin: '2025-01-15', end: '2025-01-18' },
                 { begin: '2025-01-22', end: '2025-01-25' }
             ])
-            
-            return { args, single, multiple, rangeModel, multiRange }
+
+            // Shared view state for demo purposes, or individual if needed.
+            // Let's use individual state to avoid them syncing weirdly if user interacts with one.
+            const v1 = ref({ y: 2025, w: 1 })
+            const v2 = ref({ y: 2025, w: 1 })
+            const v3 = ref({ y: 2025, w: 1 })
+            const v4 = ref({ y: 2025, w: 1 })
+
+            return { args, single, multiple, rangeModel, multiRange, v1, v2, v3, v4 }
         },
         template: `
             <div class="flex flex-wrap gap-8 p-4 justify-center bg-surface-indent rounded">
@@ -151,7 +167,7 @@ export const SelectionModes: Story = {
                     <span class="text-sm font-bold">1. Single Toggle/Replace</span>
                     <p class="text-[10px] text-text-light">Click to select, click same to unselect, click other to replace.</p>
                     <div class="p-2 bg-background rounded border border-border shadow-outer">
-                        <NCalendar v-model="single" :viewingYear="2025" :viewingWeek="1" />
+                        <NCalendar v-model="single" v-model:viewingYear="v1.y" v-model:viewingWeek="v1.w" />
                     </div>
                     <code class="text-[10px] break-all">Value: {{ single || 'null' }}</code>
                 </div>
@@ -160,7 +176,7 @@ export const SelectionModes: Story = {
                     <span class="text-sm font-bold">2. Multiple Dates</span>
                     <p class="text-[10px] text-text-light">Click to add/remove multiple individual dates.</p>
                     <div class="p-2 bg-background rounded border border-border shadow-outer">
-                        <NCalendar v-model="multiple" multiple :viewingYear="2025" :viewingWeek="1" />
+                        <NCalendar v-model="multiple" multiple v-model:viewingYear="v2.y" v-model:viewingWeek="v2.w" />
                     </div>
                     <code class="text-[10px] break-all">Value: {{ multiple }}</code>
                 </div>
@@ -169,7 +185,7 @@ export const SelectionModes: Story = {
                     <span class="text-sm font-bold">3. Single Range (2-Click)</span>
                     <p class="text-[10px] text-text-light">Click 1: Start, Click 2: End. Double-click same to unselect.</p>
                     <div class="p-2 bg-background rounded border border-border shadow-outer">
-                        <NCalendar v-model="rangeModel" range :viewingYear="2025" :viewingWeek="1" />
+                        <NCalendar v-model="rangeModel" range v-model:viewingYear="v3.y" v-model:viewingWeek="v3.w" />
                     </div>
                     <code class="text-[10px] break-all">Value: {{ rangeModel || 'null' }}</code>
                 </div>
@@ -178,7 +194,7 @@ export const SelectionModes: Story = {
                     <span class="text-sm font-bold">4. Multiple Ranges</span>
                     <p class="text-[10px] text-text-light">Build multiple ranges by repeating the 2-click process.</p>
                     <div class="p-2 bg-background rounded border border-border shadow-outer">
-                        <NCalendar v-model="multiRange" multiple range :viewingYear="2025" :viewingWeek="1" />
+                        <NCalendar v-model="multiRange" multiple range v-model:viewingYear="v4.y" v-model:viewingWeek="v4.w" />
                     </div>
                     <code class="text-[10px] break-all">Value: {{ multiRange }}</code>
                 </div>
@@ -195,15 +211,12 @@ export const DisabledDates: Story = {
             const viewingYear = ref(2025)
             const viewingWeek = ref(1)
             const activeMonth = ref(0)
-            
-            const months = [
-                'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-            ]
+
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
             const years = [2024, 2025, 2026]
 
             const disabledList = [
-                '2025-01-02', 
+                '2025-01-02',
                 '2025-01-05',
                 { begin: '2025-01-10', end: '2025-01-15' },
                 { end: '2024-12-31' }
@@ -213,7 +226,7 @@ export const DisabledDates: Story = {
                 const targetDate = dayjs(`${newYear}-01-01`).month(newMonth).startOf('month')
                 viewingWeek.value = targetDate.isoWeek()
             })
-            
+
             return { args, model, disabledList, viewingYear, viewingWeek, activeMonth, months, years }
         },
         template: `
@@ -250,11 +263,8 @@ export const RangeWithDisabled: Story = {
             const viewingYear = ref(2025)
             const viewingWeek = ref(1)
             const activeMonth = ref(0)
-            
-            const months = [
-                'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-            ]
+
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
             const years = [2024, 2025, 2026]
 
             const disabledList = [
@@ -266,7 +276,7 @@ export const RangeWithDisabled: Story = {
                 const targetDate = dayjs(`${newYear}-01-01`).month(newMonth).startOf('month')
                 viewingWeek.value = targetDate.isoWeek()
             })
-            
+
             return { args, model, disabledList, viewingYear, viewingWeek, activeMonth, months, years }
         },
         template: `
@@ -328,8 +338,8 @@ export const CustomSlots: Story = {
                     v-model="model"
                     :weekDayClass="weekDayClass"
                 >
-                    <!-- Custom individual header -->
-                    <template #header-1="{ day }">
+                    <!-- Custom individual weekday -->
+                    <template #weekday-1="{ day }">
                         <div class="flex flex-col items-center">
                             <span class="text-[10px] opacity-50">START</span>
                             <span>{{ day }}</span>
@@ -347,6 +357,227 @@ export const CustomSlots: Story = {
                         </div>
                     </template>
                 </NCalendar>
+            </div>
+        `
+    })
+}
+
+export const DualCalendar: Story = {
+    render: args => ({
+        components: { NCalendar },
+        setup() {
+            const range = ref<any>(null)
+            const viewingYear = ref(2025)
+            const viewingWeek = ref(1)
+
+            const prevMonth = () => {
+                const { year, month } = getMonthFromYearWeek(viewingYear.value, viewingWeek.value)
+                let targetM = month - 1
+                let targetY = year
+                if (targetM < 0) {
+                    targetM = 11
+                    targetY--
+                }
+
+                let { year: newY, week: newW } = getYearWeekFromMonth(targetY, targetM)
+
+                // If the new view is identical (rare edge case), offset by -1 week
+                if (newY === viewingYear.value && newW === viewingWeek.value) {
+                    const retry = getYearWeekFromMonth(targetY, targetM, -1)
+                    newY = retry.year
+                    newW = retry.week
+                }
+
+                viewingYear.value = newY
+                viewingWeek.value = newW
+            }
+
+            const nextMonth = () => {
+                const { year, month } = getMonthFromYearWeek(viewingYear.value, viewingWeek.value)
+                let targetM = month + 1
+                let targetY = year
+                if (targetM > 11) {
+                    targetM = 0
+                    targetY++
+                }
+
+                let { year: newY, week: newW } = getYearWeekFromMonth(targetY, targetM)
+
+                // If the new view is identical, offset by +1 week
+                if (newY === viewingYear.value && newW === viewingWeek.value) {
+                    const retry = getYearWeekFromMonth(targetY, targetM, 1)
+                    newY = retry.year
+                    newW = retry.week
+                }
+
+                viewingYear.value = newY
+                viewingWeek.value = newW
+            }
+
+            return { dayjs, range, viewingYear, viewingWeek, prevMonth, nextMonth }
+        },
+        template: `
+            <div class="flex flex-col gap-4 p-4 border border-border rounded bg-background shadow-outer max-w-[800px]">
+                <div class="flex justify-between items-center mb-2">
+                    <button @click="prevMonth" class="px-2 py-1 border rounded hover:bg-surface-indent">&lt; Prev Month</button>
+                    <span class="font-bold text-sm">
+                        Dual Month View
+                    </span>
+                    <button @click="nextMonth" class="px-2 py-1 border rounded hover:bg-surface-indent">Next Month &gt;</button>
+                </div>
+                
+                <NCalendar 
+                    v-model="range"
+                    range
+                    :numCalendars="2"
+                    v-model:viewingYear="viewingYear"
+                    v-model:viewingWeek="viewingWeek"
+                    :rows="6"
+                >
+                    <template #calendar-header="{ startDate }">
+                        <div class="text-center font-bold text-sm py-2">
+                            {{ dayjs(startDate).add(14, 'day').format('MMMM YYYY') }}
+                        </div>
+                    </template>
+                </NCalendar>
+                
+                <div class="text-xs break-all p-2 bg-surface-indent rounded">
+                    Selected Range: {{ range }}
+                </div>
+            </div>
+        `
+    })
+}
+
+export const MixedSelection: Story = {
+    render: args => ({
+        components: { NCalendar },
+        setup() {
+            // Mixed selection is effectively multiple ranges.
+            // Single dates are just ranges where begin == end (or normalized to string).
+            // Our component normalizes mixed input (strings + objects) into a standard format.
+            const mixedModel = ref<any[]>(['2025-01-05', { begin: '2025-01-10', end: '2025-01-15' }, '2025-01-20'])
+            const view = ref({ y: 2025, w: 1 })
+
+            return { mixedModel, view }
+        },
+        template: `
+            <div class="w-[400px] border border-border p-4 rounded bg-background shadow-outer">
+                <h3 class="font-bold mb-2">Mixed Selection (Multiple + Range)</h3>
+                <p class="text-xs text-text-light mb-4">
+                    You can select single dates (click) AND ranges (click start, click end) in the same calendar.
+                    <br>
+                    Try clicking separate dates, then try creating a range between empty spots.
+                </p>
+                <NCalendar 
+                    v-model="mixedModel" 
+                    multiple 
+                    range
+                    v-model:viewingYear="view.y" 
+                    v-model:viewingWeek="view.w"
+                />
+                <div class="mt-4 text-[10px] p-2 bg-surface-indent rounded break-all">
+                    Model: {{ mixedModel }}
+                </div>
+            </div>
+        `
+    })
+}
+
+export const FeatureToggles: Story = {
+    render: args => ({
+        components: { NCalendar },
+        setup() {
+            const model = ref([])
+            const isRange = ref(false)
+            const isSelectable = ref(true)
+            const isUnselectable = ref(true)
+            const isMultiple = ref(false)
+            const view = ref({ y: 2025, w: 1 })
+
+            return { model, isRange, isSelectable, isUnselectable, isMultiple, view }
+        },
+        template: `
+            <div class="w-[400px] border border-border p-4 rounded bg-background shadow-outer">
+                <h3 class="font-bold mb-4">Feature Toggles</h3>
+                
+                <div class="flex flex-wrap gap-4 mb-4 p-2 bg-surface-indent rounded border border-border">
+                    <label class="flex items-center gap-2 text-xs cursor-pointer">
+                        <input type="checkbox" v-model="isSelectable"> Selectable
+                    </label>
+                    <label class="flex items-center gap-2 text-xs cursor-pointer">
+                        <input type="checkbox" v-model="isUnselectable"> Unselectable
+                    </label>
+                    <label class="flex items-center gap-2 text-xs cursor-pointer">
+                        <input type="checkbox" v-model="isMultiple"> Multiple
+                    </label>
+                    <label class="flex items-center gap-2 text-xs cursor-pointer">
+                        <input type="checkbox" v-model="isRange"> Range Mode
+                    </label>
+                </div>
+
+                <NCalendar 
+                    v-model="model"
+                    :range="isRange"
+                    :selectable="isSelectable"
+                    :unselectable="isUnselectable"
+                    :multiple="isMultiple"
+                    v-model:viewingYear="view.y"
+                    v-model:viewingWeek="view.w"
+                />
+
+                <div class="mt-4 text-[10px] break-all p-2 bg-surface-indent rounded">
+                    <strong>Value:</strong> {{ model }}
+                </div>
+            </div>
+        `
+    })
+}
+
+export const MultipleActiveMonths: Story = {
+    render: args => ({
+        components: { NCalendar },
+        setup() {
+            const activeMonths = ref([0, 2, 4]) // Jan, Mar, May
+            const viewingYear = ref(2025)
+            const viewingWeek = ref(1)
+
+            const toggleMonth = (m: number) => {
+                const idx = activeMonths.value.indexOf(m)
+                if (idx > -1) activeMonths.value.splice(idx, 1)
+                else activeMonths.value.push(m)
+            }
+
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+            return { activeMonths, viewingYear, viewingWeek, toggleMonth, months }
+        },
+        template: `
+            <div class="w-[400px] border border-border p-4 rounded bg-background shadow-outer">
+                <h3 class="font-bold mb-2">Multiple Active Months</h3>
+                <p class="text-xs text-text-light mb-4">
+                    Toggle months to see them highlighted as "current" (active). 
+                    Dates outside active months appear faded.
+                </p>
+                
+                <div class="flex flex-wrap gap-2 mb-4 p-2 bg-surface-indent rounded border border-border">
+                    <button 
+                        v-for="(m, i) in months" 
+                        :key="i"
+                        @click="toggleMonth(i)"
+                        class="px-2 py-1 text-[10px] rounded border"
+                        :class="activeMonths.includes(i) ? 'bg-brand text-text-invert border-brand' : 'bg-background border-border'"
+                    >
+                        {{ m }}
+                    </button>
+                </div>
+
+                <NCalendar 
+                    :activeMonth="activeMonths"
+                    v-model:viewingYear="viewingYear"
+                    v-model:viewingWeek="viewingWeek"
+                    :rows="6"
+                />
             </div>
         `
     })

@@ -12,6 +12,14 @@ export default defineConfig({
     test: {
         projects: [
             {
+                name: 'unit',
+                extends: true,
+                test: {
+                    include: ['src/**/*.spec.ts', 'src/**/*.test.ts'],
+                    environment: 'happy-dom'
+                }
+            },
+            {
                 extends: true,
                 plugins: [
                     // The plugin will run tests for the stories defined in your Storybook config
