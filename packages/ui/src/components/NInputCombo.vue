@@ -120,7 +120,7 @@
             valueField?: string
             useInput?: boolean
             clearable?: boolean
-            fillInput?: boolean
+            fillInput?: boolean | 'label' | 'value'
             blurOnSelected?: boolean
             chipProps?: Record<string, any>
             menuProps?: Record<string, any>
@@ -165,12 +165,11 @@
     // --- State ---
 
     const modelValue = defineModel<string | string[] | number | number[]>()
+    const inputValue = defineModel<string>('inputValue', { default: '' })
     const dropdown = defineModel('dropdown', { default: false })
 
     const inputRef = useTemplateRef<HTMLInputElement>('inputRef')
     const menuRef = useTemplateRef<InstanceType<typeof NMenu>>('menuRef')
-
-    const inputValue = ref('')
     const isFocusing = ref(false)
     const focusPaused = ref(false)
     const menuId = `menu-${generatePseudoRandomKey()}`
@@ -304,8 +303,11 @@
             ...rest
         } = props
 
+        // Filter out event listeners to prevent duplication on wrapper
+        const safeAttrs = Object.fromEntries(Object.entries(attrs).filter(([key]) => !key.startsWith('on')))
+
         return {
-            ...omit(attrs, ['class', 'modelValue']),
+            ...omit(safeAttrs, ['class', 'modelValue']),
             ...omit(rest as any, ['modelValue', 'modelModifiers'])
         }
     })
@@ -336,7 +338,11 @@
         newVal => {
             if (!props.multiple && props.fillInput) {
                 const item = findItemRecursive(props.items, newVal)
-                inputValue.value = item ? getItemLabel(item) : ''
+                if (item) {
+                    inputValue.value = props.fillInput === 'value' ? getItemValue(item) : getItemLabel(item)
+                } else {
+                    inputValue.value = ''
+                }
             }
         },
         { immediate: true }
@@ -473,7 +479,13 @@
             inputValue.value = ''
         } else {
             modelValue.value = val
-            inputValue.value = props.fillInput ? getItemLabel(item) : ''
+            inputValue.value = props.fillInput === 'value' ? getItemValue(item) : getItemLabel(item)
+
+            if (props.fillInput) {
+                nextTick(() => {
+                    inputRef.value?.dispatchEvent(new Event('change', { bubbles: true }))
+                })
+            }
         }
 
         if (isCloseDropdownOnSelected.value) {

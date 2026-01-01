@@ -482,6 +482,55 @@ export const AsyncSearchWithDebounceAndSelection: Story = {
     })
 }
 
+export const VModelInputValue: Story = {
+    args: {
+        useInput: true,
+        fillInput: 'value',
+        label: "v-model:input-value (fillInput: 'value')",
+        placeholder: 'Try typing...'
+    },
+    render: args => ({
+        components: { NInputCombo },
+        setup() {
+            const value = ref('')
+            const myInputValue = ref('')
+            const items = [
+                { label: 'Apple', value: 'apple' },
+                { label: 'Banana', value: 'banana' },
+                { label: 'Cherry', value: 'cherry' }
+            ]
+            const log = ref<string[]>([])
+            const handleInputChange = (e: Event) => {
+                const target = e.target as HTMLInputElement
+                log.value.unshift(`Change event fired: "${target.value}" (v-model is "${myInputValue.value}")`)
+            }
+            return { args, value, myInputValue, items, log, handleInputChange }
+        },
+        template: `
+            <div class="w-96 flex flex-col gap-4">
+                <div class="flex flex-col gap-1 text-sm bg-surface-variant p-3 rounded border border-outline-variant">
+                    <div><b>Selected (v-model):</b> <code>{{ value || 'None' }}</code></div>
+                    <div><b>Input Value (v-model:input-value):</b> <code>{{ myInputValue || 'Empty' }}</code></div>
+                </div>
+                <NInputCombo 
+                    v-bind="args" 
+                    v-model="value" 
+                    v-model:input-value="myInputValue"
+                    :items="items"
+                    @change="handleInputChange"
+                />
+                <div>
+                    <div class="text-xs font-bold uppercase text-muted mb-1">Event Log (Change event):</div>
+                    <div class="bg-surface p-2 rounded h-32 overflow-auto text-xs font-mono border border-outline-variant">
+                        <div v-for="(msg, i) in log" :key="i" class="mb-1 border-b border-outline-variant last:border-0 pb-1">{{ msg }}</div>
+                        <div v-if="log.length === 0" class="text-muted italic text-center py-4">Change event triggers on blur or enter</div>
+                    </div>
+                </div>
+            </div>
+        `
+    })
+}
+
 // --- Slot Stories ---
 
 export const CustomItemContent: Story = {
