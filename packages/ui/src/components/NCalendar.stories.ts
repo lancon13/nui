@@ -58,6 +58,7 @@ export const Default: Story = {
     render: args => ({
         components: { NCalendar, NButton, NInputSelect, NCard },
         setup() {
+            const calendarRef = ref<any>(null)
             const model = ref([])
             const viewingYear = ref(2025)
             const viewingWeek = ref(1)
@@ -116,33 +117,25 @@ export const Default: Story = {
             }
 
             const navigateMonth = (delta: number) => {
-                // Determine current visual month/year
-                const currentRef = dayjs(`${viewingYear.value}-01-01`)
+                const current = dayjs(`${viewingYear.value}-01-01`)
                     .isoWeek(viewingWeek.value)
                     .startOf('isoWeek')
                     .add(14, 'day')
-
-                // Calculate target date by adding months
-                const target = currentRef.add(delta, 'month')
-
-                // Use getYearWeekFromMonth to find the correct iso week for the start of that month
-                const { year, week } = getYearWeekFromMonth(target.year(), target.month())
-                viewingYear.value = year
-                viewingWeek.value = week
+                const target = current.add(delta, 'month')
+                calendarRef.value?.setMonth(target.month(), target.year())
             }
 
             // Sync navigation when activeMonth changes (if it's a specific month)
             watch(activeMonth, newVal => {
                 if (typeof newVal === 'number') {
-                    const { year, week } = getYearWeekFromMonth(viewingYear.value, newVal)
-                    viewingYear.value = year
-                    viewingWeek.value = week
+                    calendarRef.value?.setMonth(newVal)
                 }
             })
 
             return {
                 args,
                 dayjs,
+                calendarRef,
                 model,
                 viewingYear,
                 viewingWeek,
@@ -175,6 +168,7 @@ export const Default: Story = {
                     </div>
 
                     <NCalendar 
+                        ref="calendarRef"
                         v-bind="args" 
                         v-model="model" 
                         v-model:viewingWeek="viewingWeek"
@@ -301,6 +295,7 @@ export const DisabledDates: Story = {
     render: args => ({
         components: { NCalendar, NInputSelect, NCard },
         setup() {
+            const calendarRef = ref<any>(null)
             const model = ref([])
             const viewingYear = ref(2025)
             const viewingWeek = ref(1)
@@ -330,13 +325,13 @@ export const DisabledDates: Story = {
             ]
 
             watch([viewingYear, activeMonth], ([newYear, newMonth]) => {
-                const targetDate = dayjs(`${newYear}-01-01`).month(newMonth).startOf('month')
-                viewingWeek.value = targetDate.isoWeek()
+                calendarRef.value?.setMonth(newMonth, newYear)
             })
 
             return {
                 args,
                 dayjs,
+                calendarRef,
                 model,
                 disabledList,
                 viewingYear,
@@ -356,6 +351,7 @@ export const DisabledDates: Story = {
                         <NInputSelect v-model="viewingYearStr" :options="yearOptions" class="w-24" />
                     </div>
                     <NCalendar 
+                        ref="calendarRef"
                         v-model="model" 
                         :disabled="disabledList"
                         v-model:viewingWeek="viewingWeek"
@@ -382,6 +378,7 @@ export const RangeWithDisabled: Story = {
     render: args => ({
         components: { NCalendar, NInputSelect, NCard },
         setup() {
+            const calendarRef = ref<any>(null)
             const model = ref(null)
             const viewingYear = ref(2025)
             const viewingWeek = ref(1)
@@ -409,13 +406,13 @@ export const RangeWithDisabled: Story = {
             ]
 
             watch([viewingYear, activeMonth], ([newYear, newMonth]) => {
-                const targetDate = dayjs(`${newYear}-01-01`).month(newMonth).startOf('month')
-                viewingWeek.value = targetDate.isoWeek()
+                calendarRef.value?.setMonth(newMonth, newYear)
             })
 
             return {
                 args,
                 dayjs,
+                calendarRef,
                 model,
                 disabledList,
                 viewingYear,
@@ -440,12 +437,107 @@ export const RangeWithDisabled: Story = {
                         <NInputSelect v-model="viewingYearStr" :options="yearOptions" class="w-24" />
                     </div>
                     <NCalendar 
+                        ref="calendarRef"
                         v-model="model" 
                         :disabled="disabledList"
                         v-model:viewingWeek="viewingWeek"
                         :viewingYear="viewingYear"
                         :activeMonth="activeMonth"
                         range
+                    >
+                        <template #calendar-header="{ startDate }">
+                            <div class="font-bold mb-2">
+                                {{ dayjs(startDate).add(14, 'day').format('MMMM YYYY') }}
+                            </div>
+                        </template>
+                    </NCalendar>
+                    <div class="mt-4 text-[10px] break-all">
+                        Selected: {{ model || 'null' }}
+                    </div>
+                </div>
+            </NCard>
+        `
+    })
+}
+
+export const HiddenDates: Story = {
+    render: args => ({
+        components: { NCalendar, NCard },
+        setup() {
+            const model = ref([])
+            const viewingYear = ref(2025)
+            const viewingWeek = ref(1)
+
+            const visibleList = [
+                { begin: '2025-01-01', end: '2025-01-15' },
+                { begin: '2025-01-21', end: '2025-01-31' },
+                // Add some Feb dates too so navigation works nicely
+                { begin: '2025-02-01', end: '2025-02-28' }
+            ]
+
+            return { args, dayjs, model, visibleList, viewingYear, viewingWeek }
+        },
+        template: `
+            <NCard class="w-[350px]">
+                <div class="n-card-body">
+                    <h3 class="font-bold mb-2">Hidden Dates (Visibility)</h3>
+                    <p class="text-xs text-text-light mb-4">
+                        Only dates defined in the <code>visible</code> prop are rendered.
+                        <br>
+                        Here, Jan 16-20 are hidden (invisible).
+                    </p>
+                    <NCalendar 
+                        v-model="model" 
+                        :visible="visibleList"
+                        v-model:viewingYear="viewingYear"
+                        v-model:viewingWeek="viewingWeek"
+                    >
+                        <template #calendar-header="{ startDate }">
+                            <div class="font-bold mb-2">
+                                {{ dayjs(startDate).add(14, 'day').format('MMMM YYYY') }}
+                            </div>
+                        </template>
+                    </NCalendar>
+                    <div class="mt-4 text-[10px] break-all">
+                        Selected: {{ model }}
+                    </div>
+                </div>
+            </NCard>
+        `
+    })
+}
+
+export const HiddenDatesRangeSelection: Story = {
+    render: args => ({
+        components: { NCalendar, NCard },
+        setup() {
+            const model = ref(null)
+            const viewingYear = ref(2025)
+            const viewingWeek = ref(1)
+
+            // Visible ranges: 1-15, 21-31 (Gap: 16-20)
+            const visibleList = [
+                { begin: '2025-01-01', end: '2025-01-15' },
+                { begin: '2025-01-21', end: '2025-01-31' }
+            ]
+
+            return { args, dayjs, model, visibleList, viewingYear, viewingWeek }
+        },
+        template: `
+            <NCard class="w-[350px]">
+                <div class="n-card-body">
+                    <h3 class="font-bold mb-2">Hidden Dates + Range</h3>
+                    <p class="text-xs text-text-light mb-4">
+                        Try to select a range bridging the gap (Jan 16-20).
+                        <br>
+                        <b>Rule:</b> Range selection fails if it crosses any hidden (invisible) dates.
+                    </p>
+                    <NCalendar 
+                        v-model="model" 
+                        range
+                        :visible="visibleList"
+                        v-model:viewingYear="viewingYear"
+                        v-model:viewingWeek="viewingWeek"
                     >
                         <template #calendar-header="{ startDate }">
                             <div class="font-bold mb-2">
@@ -472,7 +564,7 @@ export const CustomSlots: Story = {
         components: { NCalendar, NIcon, NCard },
         setup() {
             const model = ref([])
-            const weekDayClass = [
+            const weekLabelClass = [
                 'text-error', // Sun
                 'text-brand', // Mon
                 '',
@@ -481,7 +573,7 @@ export const CustomSlots: Story = {
                 '',
                 'text-warning' // Sat
             ]
-            return { args, dayjs, model, weekDayClass }
+            return { args, dayjs, model, weekLabelClass }
         },
         template: `
             <NCard class="w-[400px]">
@@ -489,7 +581,7 @@ export const CustomSlots: Story = {
                     <NCalendar 
                         v-bind="args" 
                         v-model="model"
-                        :weekDayClass="weekDayClass"
+                        :weekLabelClass="weekLabelClass"
                     >
                         <template #calendar-header="{ startDate }">
                             <div class="font-bold mb-2">
@@ -497,8 +589,8 @@ export const CustomSlots: Story = {
                             </div>
                         </template>
 
-                        <!-- Custom individual weekday -->
-                        <template #weekday-1="{ day }">
+                        <!-- Custom individual week label -->
+                        <template #week-label-1="{ day }">
                             <div class="flex flex-col items-center">
                                 <span class="text-[10px] opacity-50">START</span>
                                 <span>{{ day }}</span>
@@ -585,7 +677,7 @@ export const DualCalendar: Story = {
                     <NCalendar 
                         v-model="range"
                         range
-                        :numCalendars="2"
+                        :numViews="2"
                         :viewingYear="viewingYear"
                         :viewingWeek="viewingWeek"
                         :rows="5"
@@ -596,7 +688,7 @@ export const DualCalendar: Story = {
                             </div>
                         </template>
                         <template #cell="{day}">
-                            <div class="flex flex-col items-center">
+                            <div class="flex flex-col items-center justify-end">
                                 <div v-if="day.dayOfMonth === 1" class="text-text-light text-xs">{{day.date.format('MMM')}}</div>
                                 <div>{{day.dayOfMonth}}</div>
                             </div>
@@ -706,6 +798,7 @@ export const MultipleActiveMonths: Story = {
     render: args => ({
         components: { NCalendar, NCard, NButton, NInputSelect },
         setup() {
+            const calendarRef = ref<any>(null)
             const activeMonths = ref([0, 2, 4]) // Jan, Mar, May
             const viewingYear = ref(2025)
             const viewingWeek = ref(1)
@@ -732,13 +825,12 @@ export const MultipleActiveMonths: Story = {
                     .startOf('isoWeek')
                     .add(14, 'day')
                 const target = current.add(delta, 'month')
-                const { year, week } = getYearWeekFromMonth(target.year(), target.month())
-                viewingYear.value = year
-                viewingWeek.value = week
+                calendarRef.value?.setMonth(target.month(), target.year())
             }
 
             return {
                 dayjs,
+                calendarRef,
                 activeMonths,
                 viewingYear,
                 viewingWeek,
@@ -769,6 +861,7 @@ export const MultipleActiveMonths: Story = {
                     </div>
 
                     <NCalendar 
+                        ref="calendarRef"
                         :activeMonth="activeMonths"
                         v-model:viewingYear="viewingYear"
                         v-model:viewingWeek="viewingWeek"
@@ -782,6 +875,200 @@ export const MultipleActiveMonths: Story = {
                     </NCalendar>
                 </div>
             </NCard>
+        `
+    })
+}
+
+export const IndependentDualViews: Story = {
+    render: args => ({
+        components: { NCalendar, NButton, NCard },
+        setup() {
+            const range = ref<any>(null)
+            
+            // Base year/month for the dual view
+            const currentYear = ref(2025)
+            const currentMonth = ref(0) // 0 = Jan
+
+            // Helper to generate a visible list for a specific month only
+            const getMonthVisible = (year: number, month: number) => {
+                const start = dayjs(`${year}-${String(month + 1).padStart(2, '0')}-01`)
+                return [{
+                    begin: start.format('YYYY-MM-DD'),
+                    end: start.endOf('month').format('YYYY-MM-DD')
+                }]
+            }
+
+            // Create view configurations
+            const views = computed(() => {
+                const month1 = currentMonth.value
+                const year1 = currentYear.value
+                
+                // Calculate next month
+                let month2 = month1 + 1
+                let year2 = year1
+                if (month2 > 11) {
+                    month2 = 0
+                    year2++
+                }
+
+                const { year: y1, week: w1 } = getYearWeekFromMonth(year1, month1)
+                const { year: y2, week: w2 } = getYearWeekFromMonth(year2, month2)
+
+                return [
+                    {
+                        viewingYear: y1,
+                        viewingWeek: w1,
+                        visible: getMonthVisible(year1, month1)
+                    },
+                    {
+                        viewingYear: y2,
+                        viewingWeek: w2,
+                        visible: getMonthVisible(year2, month2)
+                    }
+                ]
+            })
+
+            const prevMonth = () => {
+                let m = currentMonth.value - 1
+                let y = currentYear.value
+                if (m < 0) {
+                    m = 11
+                    y--
+                }
+                currentMonth.value = m
+                currentYear.value = y
+            }
+
+            const nextMonth = () => {
+                let m = currentMonth.value + 1
+                let y = currentYear.value
+                if (m > 11) {
+                    m = 0
+                    y++
+                }
+                currentMonth.value = m
+                currentYear.value = y
+            }
+
+            return { dayjs, range, views, prevMonth, nextMonth }
+        },
+        template: `
+            <NCard class="w-[45rem]">
+                <div class="n-card-body">
+                    <div class="flex justify-between items-center mb-2">
+                        <NButton @click="prevMonth" class="outlined px-2" label="< Prev Month" size="sm" />
+                        <span class="font-bold text-sm">
+                            Independent Dual Views (No Spillovers)
+                        </span>
+                        <NButton @click="nextMonth" class="outlined px-2" label="Next Month >" size="sm" />
+                    </div>
+                    
+                    <NCalendar 
+                        v-model="range"
+                        range
+                        :views="views"
+                        :rows="6"
+                    >
+                        <template #calendar-header="{ startDate }">
+                            <div class="text-center font-bold text-sm py-2">
+                                {{ dayjs(startDate).add(14, 'day').format('MMMM YYYY') }}
+                            </div>
+                        </template>
+                    </NCalendar>
+                    
+                    <div class="text-xs break-all p-2 bg-surface-indent rounded mt-4">
+                        Selected Range: {{ range }}
+                    </div>
+                </div>
+            </NCard>
+        `
+    })
+}
+
+export const TripleViewComparison: Story = {
+    render: args => ({
+        components: { NCalendar, NCard },
+        setup() {
+            const range1 = ref(null)
+            const range2 = ref(null)
+            
+            // Standard viewing props
+            const viewingYear = ref(2025)
+            const viewingWeek = ref(1)
+
+            // --- Independent Views Logic ---
+            const views = computed(() => {
+                const months = [0, 1, 2] // Jan, Feb, Mar
+                return months.map(m => {
+                    const y = viewingYear.value
+                    const { year, week } = getYearWeekFromMonth(y, m)
+                    
+                    // Generate visibility for this month only
+                    const start = dayjs(`${y}-${String(m + 1).padStart(2, '0')}-01`)
+                    const visible = [{
+                        begin: start.format('YYYY-MM-DD'),
+                        end: start.endOf('month').format('YYYY-MM-DD')
+                    }]
+
+                    return {
+                        viewingYear: year,
+                        viewingWeek: week,
+                        visible,
+                        // Style middle view differently for demo
+                        viewClass: m === 1 ? 'bg-surface-indent rounded' : ''
+                    }
+                })
+            })
+
+            return { dayjs, range1, range2, viewingYear, viewingWeek, views }
+        },
+        template: `
+            <div class="flex flex-col gap-8 w-[60rem]">
+                <NCard>
+                    <div class="n-card-body">
+                        <h3 class="font-bold mb-2">1. Standard Continuous (numViews=3)</h3>
+                        <p class="text-xs text-text-light mb-4">
+                            Shows 3 consecutive chunks of weeks. Note how Feb/Mar start dates depend on when Jan ended.
+                        </p>
+                        <NCalendar 
+                            v-model="range1"
+                            range
+                            :numViews="3"
+                            :viewingYear="viewingYear"
+                            :viewingWeek="viewingWeek"
+                            :rows="6"
+                        >
+                            <template #calendar-header="{ startDate }">
+                                <div class="text-center text-xs font-bold py-2">
+                                    {{ dayjs(startDate).add(14, 'day').format('MMM YYYY') }}
+                                </div>
+                            </template>
+                        </NCalendar>
+                    </div>
+                </NCard>
+
+                <NCard>
+                    <div class="n-card-body">
+                        <h3 class="font-bold mb-2">2. Independent Views (views=[...])</h3>
+                        <p class="text-xs text-text-light mb-4">
+                            3 views configured explicitly for Jan, Feb, Mar. 
+                            Each view starts fresh. Outside dates hidden. Middle view styled.
+                        </p>
+                        <NCalendar 
+                            v-model="range2"
+                            range
+                            :views="views"
+                            :rows="6"
+                        >
+                            <template #calendar-header="{ startDate }">
+                                <div class="text-center text-xs font-bold py-2">
+                                    {{ dayjs(startDate).add(14, 'day').format('MMM YYYY') }}
+                                </div>
+                            </template>
+                        </NCalendar>
+                    </div>
+                </NCard>
+            </div>
         `
     })
 }

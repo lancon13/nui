@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { getMonthFromYearWeek, getYearWeekFromMonth, normalizeDateRanges } from './date'
+import { getMonthFromYearWeek, getVisibleSegments, getYearWeekFromMonth, normalizeDateRanges, generateCalendarDays, type CalendarGenerationConfig } from './date'
+import dayjs from 'dayjs'
 
 describe('normalizeDateRanges', () => {
     it('should return empty array for empty input', () => {
@@ -101,5 +102,129 @@ describe('getMonthFromYearWeek', () => {
         const { year, month } = getMonthFromYearWeek(2025, 6)
         expect(year).toBe(2025)
         expect(month).toBe(1)
+    })
+})
+
+describe('getVisibleSegments', () => {
+    const start = dayjs('2025-01-01') // Wed
+    const end = dayjs('2025-01-10')   // Following Fri
+
+    it('should return full range if no visibility list is provided', () => {
+        const segments = getVisibleSegments(start, end, null)
+        expect(segments).toEqual([{ begin: '2025-01-01', end: '2025-01-10' }])
+    })
+
+    it('should return empty array if no dates are visible', () => {
+        // Visible range is in Feb
+        const visible = [{ begin: '2025-02-01', end: '2025-02-28' }]
+        const segments = getVisibleSegments(start, end, normalizeDateRanges(visible))
+        expect(segments).toEqual([])
+    })
+
+    it('should return segments matching visible list', () => {
+        // Visible: 1-3, 8-10. Hidden: 4-7
+        const visible = [
+            { begin: '2025-01-01', end: '2025-01-03' },
+            { begin: '2025-01-08', end: '2025-01-10' }
+        ]
+        const segments = getVisibleSegments(start, end, normalizeDateRanges(visible))
+        expect(segments).toEqual([
+            { begin: '2025-01-01', end: '2025-01-03' },
+            { begin: '2025-01-08', end: '2025-01-10' }
+        ])
+    })
+
+    it('should clip range to selection bounds', () => {
+        // Visible: 1-31 (Full month). Requested: 1-10.
+        const visible = [{ begin: '2025-01-01', end: '2025-01-31' }]
+        const segments = getVisibleSegments(start, end, normalizeDateRanges(visible))
+        expect(segments).toEqual([{ begin: '2025-01-01', end: '2025-01-10' }])
+    })
+
+    it('should handle multiple gaps', () => {
+        // 1-10 requested.
+        // Visible: 1, 3, 5, 7, 9
+        const visible = ['2025-01-01', '2025-01-03', '2025-01-05', '2025-01-07', '2025-01-09']
+        const segments = getVisibleSegments(start, end, normalizeDateRanges(visible))
+        expect(segments).toEqual([
+            { begin: '2025-01-01', end: '2025-01-01' },
+            { begin: '2025-01-03', end: '2025-01-03' },
+            { begin: '2025-01-05', end: '2025-01-05' },
+            { begin: '2025-01-07', end: '2025-01-07' },
+            { begin: '2025-01-09', end: '2025-01-09' }
+        ])
+    })
+})
+
+describe('generateCalendarDays', () => {
+    const config: CalendarGenerationConfig = {
+        start: dayjs('2025-01-01'), // Wed
+        daysCount: 7,
+        selected: [],
+        disabled: [],
+        visible: null,
+        isRange: false
+    }
+
+    it('should generate requested number of days', () => {
+        const days = generateCalendarDays(config)
+        expect(days.length).toBe(7)
+        expect(days[0].dateString).toBe('2025-01-01')
+        expect(days[6].dateString).toBe('2025-01-07')
+    })
+
+    it('should mark today', () => {
+        // Mock today? Hard to test without mocking system time or passing "today" override to helper.
+        // The helper uses `const today = dayjs()`.
+        // Let's assume dayjs is accurate.
+        // If we want to test isToday, we should construct a config around "today".
+        const today = dayjs()
+        const days = generateCalendarDays({ ...config, start: today })
+        expect(days[0].isToday).toBe(true)
+        expect(days[1].isToday).toBe(false)
+    })
+
+    it('should mark selected dates', () => {
+        const days = generateCalendarDays({
+            ...config,
+            selected: ['2025-01-02']
+        })
+        expect(days[0].isSelected).toBe(false)
+        expect(days[1].isSelected).toBe(true) // Jan 2
+    })
+
+    it('should mark disabled dates', () => {
+        const days = generateCalendarDays({
+            ...config,
+            disabled: ['2025-01-03']
+        })
+        expect(days[2].isDisabled).toBe(true) // Jan 3
+    })
+
+    it('should handle activeMonth logic', () => {
+        // Jan 2025. activeMonth = 0 (Jan).
+        // Jan 1 is in Jan.
+        const days = generateCalendarDays({
+            ...config,
+            activeMonth: 0
+        })
+        expect(days[0].isCurrentMonth).toBe(true)
+
+        // activeMonth = 1 (Feb). Jan 1 is NOT in Feb.
+        const days2 = generateCalendarDays({
+            ...config,
+            activeMonth: 1
+        })
+        expect(days2[0].isCurrentMonth).toBe(false)
+    })
+
+    it('should handle visibility', () => {
+        // Visible only Jan 1
+        const days = generateCalendarDays({
+            ...config,
+            visible: ['2025-01-01']
+        })
+        expect(days[0].isVisible).toBe(true)
+        expect(days[1].isVisible).toBe(false)
     })
 })

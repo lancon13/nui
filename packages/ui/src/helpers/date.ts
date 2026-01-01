@@ -2,10 +2,14 @@ import dayjs, { UnitType } from 'dayjs'
 import isoWeek from 'dayjs/plugin/isoWeek'
 import weekOfYear from 'dayjs/plugin/weekOfYear'
 import advancedFormat from 'dayjs/plugin/advancedFormat'
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter'
+import isSameOrBefore from 'dayjs/plugin/isSameOrBefore'
 
 dayjs.extend(isoWeek)
 dayjs.extend(weekOfYear)
 dayjs.extend(advancedFormat)
+dayjs.extend(isSameOrAfter)
+dayjs.extend(isSameOrBefore)
 
 export type DateRange = {
     begin?: string | Date
@@ -128,14 +132,6 @@ export function checkDateInList(date: dayjs.Dayjs, list: CalendarValue[]): boole
             const r = item as DateRange
             if (!r.begin && !r.end) continue
 
-            // If we have explicit range boundaries, check containment
-            // Using dayjs comparison. Plugins might be needed if strictly used, but we can use basic comparisons.
-            // Component ensures isSameOrAfter/Before plugins are loaded.
-
-            // Assume we can use standard comparison or rely on the caller environment having plugins.
-            // To be safe and dependency-free here, we can use simple comparisons if plugins aren't guaranteed in helper.
-            // But since this is inside the project, we can assume dayjs is set up or use basic logic.
-
             const d = date
             let afterBegin = true
             let beforeEnd = true
@@ -179,12 +175,6 @@ export function getYearWeekFromMonth(year: number, month: number, weekOffset: nu
  * @param week ISO Week number
  */
 export function getMonthFromYearWeek(year: number, week: number): { year: number; month: number } {
-    // Initialize dayjs with the first day of the ISO week year to ensure we start in the correct year context
-    // This avoids issues when "today" is far from the target year.
-    // However, finding the "first day of ISO week year" is circular if we rely on isoWeekYear.
-    // Safer: Start with Jan 4th of the target year (which is always in ISO Week 1 or 52/53 of prev year, but conceptually in the year).
-    // Actually, dayjs(year + '-01-04') is safest anchor for ISO weeks.
-    
     const date = dayjs(`${year}-01-04`)
         .isoWeek(week)
         .startOf('isoWeek')
@@ -194,4 +184,164 @@ export function getMonthFromYearWeek(year: number, week: number): { year: number
         year: date.year(),
         month: date.month()
     }
+}
+
+/**
+ * Splits a requested date range into multiple visible segments based on a visibility list.
+ * If visibleList is null or empty, the entire range is considered visible and returned as a single segment.
+ */
+export function getVisibleSegments(
+    start: dayjs.Dayjs,
+    end: dayjs.Dayjs,
+    visibleList: CalendarValue[] | null
+): DateRange[] {
+    if (!visibleList || visibleList.length === 0) {
+        return [
+            {
+                begin: start.format('YYYY-MM-DD'),
+                end: end.format('YYYY-MM-DD')
+            }
+        ]
+    }
+
+    const segments: DateRange[] = []
+    let segmentStart: dayjs.Dayjs | null = null
+
+    // Ensure start is before end
+    let d = start.clone()
+    const limit = end.clone()
+
+    if (d.isAfter(limit)) {
+        return [] // Invalid range
+    }
+
+    while (d.isSameOrBefore(limit, 'day')) {
+        const isVisible = checkDateInList(d, visibleList)
+        
+        if (isVisible) {
+            if (!segmentStart) segmentStart = d.clone()
+        } else {
+            if (segmentStart) {
+                segments.push({
+                    begin: segmentStart.format('YYYY-MM-DD'),
+                    end: d.subtract(1, 'day').format('YYYY-MM-DD')
+                })
+                segmentStart = null
+            }
+        }
+        d = d.add(1, 'day')
+    }
+
+    if (segmentStart) {
+        segments.push({
+            begin: segmentStart.format('YYYY-MM-DD'),
+            end: limit.format('YYYY-MM-DD')
+        })
+    }
+
+    return segments
+}
+
+export interface CalendarDay {
+    date: dayjs.Dayjs
+    dateString: string
+    dayOfMonth: number
+    ariaLabel: string
+    isCurrentMonth: boolean
+    isToday: boolean
+    isSelected: boolean
+    isDisabled: boolean
+    isVisible: boolean
+    isInvalid: boolean
+    isSelecting: boolean
+    isRangeStart: boolean
+    isRangeEnd: boolean
+    isInRange: boolean
+}
+
+export interface CalendarGenerationConfig {
+    start: dayjs.Dayjs
+    daysCount: number
+    activeMonth?: number | number[] | null
+    selected: CalendarValue[]
+    disabled: CalendarValue[]
+    visible: CalendarValue[] | null
+    isRange: boolean
+    pendingStart?: dayjs.Dayjs | null
+    pendingEnd?: dayjs.Dayjs | null
+    pendingInvalid?: boolean
+    hoveredDate?: dayjs.Dayjs | null
+    minRange?: number
+    maxRange?: number
+}
+
+export function generateCalendarDays(config: CalendarGenerationConfig): CalendarDay[] {
+    const { 
+        start, daysCount, activeMonth, selected, disabled, visible, 
+        isRange, pendingStart, pendingEnd, pendingInvalid 
+    } = config
+
+    const days: CalendarDay[] = []
+    let current = start.clone()
+    const today = dayjs()
+
+    const isDateDisabled = (d: dayjs.Dayjs) => checkDateInList(d, disabled)
+    const isDateVisible = (d: dayjs.Dayjs) => !visible || checkDateInList(d, visible)
+    
+    const isPending = (d: dayjs.Dayjs) => {
+        if (!pendingStart || !pendingEnd) return false
+        return d.isSameOrAfter(pendingStart, 'day') && d.isSameOrBefore(pendingEnd, 'day')
+    }
+
+    const isDateSelected = (d: dayjs.Dayjs) => {
+        if (checkDateInList(d, selected)) return true
+        // If range mode, check if it matches the exact pending start (anchor)
+        // This is mainly for UI feedback before range is closed
+        if (isRange && pendingStart && !pendingEnd) {
+             return d.isSame(pendingStart, 'day')
+        }
+        return false
+    }
+
+    const isEffectiveSelected = (d: dayjs.Dayjs) => isDateSelected(d) || isPending(d)
+
+    for (let i = 0; i < daysCount; i++) {
+        const isDisabled = isDateDisabled(current)
+        const isVisible = isDateVisible(current)
+        const isPendingInRange = isPending(current)
+
+        const prevDate = current.subtract(1, 'day')
+        const nextDate = current.add(1, 'day')
+        
+        const isSelfSelected = isEffectiveSelected(current)
+        const isPrevSelected = isEffectiveSelected(prevDate)
+        const isNextSelected = isEffectiveSelected(nextDate)
+
+        let isCurrentMonth = true
+        if (activeMonth !== undefined) {
+            if (activeMonth === null) isCurrentMonth = false
+            else if (Array.isArray(activeMonth)) isCurrentMonth = activeMonth.includes(current.month())
+            else isCurrentMonth = current.month() === activeMonth
+        }
+
+        days.push({
+            date: current,
+            dateString: current.format('YYYY-MM-DD'),
+            dayOfMonth: current.date(),
+            ariaLabel: current.format('dddd, MMMM D, YYYY'),
+            isCurrentMonth,
+            isToday: current.isSame(today, 'day'),
+            isSelected: isSelfSelected,
+            isDisabled,
+            isVisible,
+            isInvalid: isPendingInRange && !!pendingInvalid,
+            isSelecting: isPendingInRange,
+            isRangeStart: isSelfSelected && !isPrevSelected && isNextSelected,
+            isRangeEnd: isSelfSelected && !isNextSelected && isPrevSelected,
+            isInRange: isSelfSelected && (isPrevSelected || isNextSelected)
+        })
+        current = current.add(1, 'day')
+    }
+
+    return days
 }

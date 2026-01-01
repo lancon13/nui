@@ -1,34 +1,34 @@
 <template>
     <div class="n-calendar" tabindex="-1" @keydown="handleRootKey">
-        <div class="n-calendar-container flex flex-row gap-4">
-            <div v-for="(gridDays, calIndex) in calendarsGrid" :key="calIndex" class="n-calendar-view flex flex-col">
+        <div :class="containerClasses">
+            <div v-for="(view, calIndex) in calendarsGrid" :key="calIndex" :class="view.viewClasses">
                 <!-- Custom Header Slot -->
                 <slot
                     :name="`calendar-header-${calIndex}`"
                     :index="calIndex"
-                    :start-date="gridDays[0]?.date"
-                    :end-date="gridDays[gridDays.length - 1]?.date"
+                    :start-date="view.days[0]?.date"
+                    :end-date="view.days[view.days.length - 1]?.date"
                 >
                     <slot
                         name="calendar-header"
                         :index="calIndex"
-                        :start-date="gridDays[0]?.date"
-                        :end-date="gridDays[gridDays.length - 1]?.date"
+                        :start-date="view.days[0]?.date"
+                        :end-date="view.days[view.days.length - 1]?.date"
                     />
                 </slot>
 
                 <!-- Weekday Header -->
-                <slot name="weekday" :calendar-index="calIndex">
-                    <div class="n-calendar-view-header" role="row">
+                <slot name="week-label-container" :calendar-index="calIndex">
+                    <div :class="view.weekLabelContainerClasses" role="row">
                         <div
-                            v-for="(dayName, index) in weekDayNames"
+                            v-for="(dayName, index) in view.weekLabelNames"
                             :key="dayName"
-                            :class="['n-calendar-view-weekday', getWeekDayClass(index)]"
+                            :class="['n-calendar-view-week-label', view.weekLabelClasses[index]]"
                             role="columnheader"
                             :aria-label="dayName"
                         >
                             <slot
-                                :name="`weekday-${getWeekdayNumber(index)}`"
+                                :name="`week-label-${getWeekdayNumber(index, view.firstDayOfWeek)}`"
                                 :day="dayName"
                                 :index="index"
                                 :calendar-index="calIndex"
@@ -40,42 +40,39 @@
                 </slot>
 
                 <!-- Calendar Grid -->
-                <div
-                    class="n-calendar-view-grid"
-                    role="grid"
-                    :aria-multiselectable="multiple"
-                    @mouseleave="handleHover(null)"
-                >
+                <div :class="view.gridClasses" role="grid" :aria-multiselectable="multiple" @mouseleave="handleHover(null)">
                     <div
-                        v-for="day in gridDays"
+                        v-for="day in view.days"
                         :key="day.dateString"
                         :ref="el => setCellRef(el, day.dateString)"
                         :class="[
-                            'n-calendar-view-cell',
+                            'n-calendar-view-grid-cell',
+                            ...view.extraGridCellClasses,
                             {
-                                'n-calendar-view-cell--outside': !day.isCurrentMonth,
-                                'n-calendar-view-cell--today': day.isToday,
-                                'n-calendar-view-cell--selected': day.isSelected,
-                                'n-calendar-view-cell--disabled': day.isDisabled,
-                                'n-calendar-view-cell--invalid': day.isInvalid,
-                                'n-calendar-view-cell--selecting': day.isSelecting,
-                                'n-calendar-view-cell--range-start': day.isRangeStart,
-                                'n-calendar-view-cell--range-end': day.isRangeEnd,
-                                'n-calendar-view-cell--in-range': day.isInRange
+                                'n-calendar-view-grid-cell--outside': !day.isCurrentMonth,
+                                'n-calendar-view-grid-cell--today': day.isToday,
+                                'n-calendar-view-grid-cell--selected': day.isSelected,
+                                'n-calendar-view-grid-cell--disabled': day.isDisabled,
+                                'n-calendar-view-grid-cell--invalid': day.isInvalid,
+                                'n-calendar-view-grid-cell--selecting': day.isSelecting,
+                                'n-calendar-view-grid-cell--range-start': day.isRangeStart,
+                                'n-calendar-view-grid-cell--range-end': day.isRangeEnd,
+                                'n-calendar-view-grid-cell--in-range': day.isInRange,
+                                'invisible pointer-events-none': !day.isVisible
                             }
                         ]"
                         role="gridcell"
                         :aria-label="day.ariaLabel"
                         :aria-selected="day.isSelected"
                         :aria-disabled="day.isDisabled"
-                        :tabindex="day.dateString === currentFocusDate ? 0 : -1"
+                        :tabindex="day.dateString === currentFocusDate && day.isVisible ? 0 : -1"
                         @click="handleDayClick(day, $event)"
                         @mouseenter="handleHover(day.date)"
                         @focus="handleFocus(day)"
                         @contextmenu="handleContextMenu"
                         @keydown="handleKeyDown($event, day)"
                     >
-                        <slot name="cell" :day="day" :calendar-index="calIndex">
+                        <slot v-if="day.isVisible" name="cell" :day="day" :calendar-index="calIndex">
                             <span class="n-calendar-view-day-number">{{ day.dayOfMonth }}</span>
                         </slot>
                     </div>
@@ -85,8 +82,8 @@
                 <slot
                     name="calendar-footer"
                     :index="calIndex"
-                    :start-date="gridDays[0]?.date"
-                    :end-date="gridDays[gridDays.length - 1]?.date"
+                    :start-date="view.days[0]?.date"
+                    :end-date="view.days[view.days.length - 1]?.date"
                 />
             </div>
         </div>
@@ -105,7 +102,16 @@
     import weekday from 'dayjs/plugin/weekday'
     import weekOfYear from 'dayjs/plugin/weekOfYear'
     import { computed, nextTick, ref, toRefs, watch } from 'vue'
-    import { checkDateInList, normalizeDateRanges, type CalendarValue, type DateRange } from '../helpers'
+    import {
+        checkDateInList,
+        normalizeDateRanges,
+        type CalendarValue,
+        type DateRange,
+        getVisibleSegments,
+        getYearWeekFromMonth,
+        generateCalendarDays
+    } from '../helpers'
+    import { resolveClassProp } from '../helpers/dom'
 
     // --- Plugins ---
     dayjs.extend(weekOfYear)
@@ -117,23 +123,33 @@
     dayjs.extend(isSameOrBefore)
 
     // --- Props & Types ---
-    export interface NCalendarProps {
-        modelValue?: CalendarValue[] | CalendarValue | null
+    export interface CalendarViewProps {
         viewingYear?: number
         viewingWeek?: number
         firstDayOfWeek?: number
         rows?: number
-        weekDayNames?: string[]
-        weekDayClass?: string[]
+        weekLabelNames?: string[]
+        weekLabelClass?: string[]
+        activeMonth?: number | number[] | null
+        disabled?: CalendarValue[]
+        visible?: CalendarValue[]
+        viewClass?: string | string[] | object
+        weekLabelContainerClass?: string | string[] | object
+        gridClass?: string | string[] | object
+        gridCellClass?: string | string[] | object
+    }
+
+    export interface NCalendarProps extends CalendarViewProps {
+        modelValue?: CalendarValue[] | CalendarValue | null
         multiple?: boolean
         selectable?: boolean
         unselectable?: boolean
         range?: boolean
-        numCalendars?: number
+        numViews?: number
         maxRange?: number
         minRange?: number
-        activeMonth?: number | number[] | null
-        disabled?: CalendarValue[]
+        views?: CalendarViewProps[]
+        containerClass?: string | string[] | object
     }
 
     const props = withDefaults(defineProps<NCalendarProps>(), {
@@ -142,17 +158,24 @@
         viewingWeek: () => dayjs().week(),
         firstDayOfWeek: 1,
         rows: 6,
-        weekDayNames: undefined,
-        weekDayClass: () => [],
+        weekLabelNames: undefined,
+        weekLabelClass: () => [],
         multiple: false,
         selectable: true,
         unselectable: true,
         range: false,
-        numCalendars: 1,
+        numViews: 1,
         maxRange: 30,
         minRange: 1,
         activeMonth: undefined,
-        disabled: () => []
+        disabled: () => [],
+        visible: undefined,
+        viewClass: undefined,
+        containerClass: undefined,
+        weekLabelContainerClass: undefined,
+        gridClass: undefined,
+        gridCellClass: undefined,
+        views: undefined
     })
 
     const emits = defineEmits<{
@@ -162,22 +185,29 @@
     }>()
 
     const {
+        modelValue,
         viewingYear,
         viewingWeek,
         firstDayOfWeek,
         rows,
-        modelValue,
-        weekDayNames: customWeekNames,
-        weekDayClass,
+        weekLabelNames: customWeekNames,
+        weekLabelClass,
         multiple,
         selectable,
         unselectable,
         range,
-        numCalendars,
+        numViews,
         maxRange,
         minRange,
         activeMonth,
-        disabled
+        disabled,
+        visible,
+        viewClass,
+        containerClass,
+        weekLabelContainerClass,
+        gridClass,
+        gridCellClass,
+        views
     } = toRefs(props)
 
     // --- State ---
@@ -185,6 +215,9 @@
     const hoveredDate = ref<dayjs.Dayjs | null>(null)
     const currentFocusDate = ref<string>(dayjs().format('YYYY-MM-DD'))
     const cellRefs = new Map<string, HTMLElement>()
+
+    // --- Class Resolution ---
+    const containerClasses = computed(() => resolveClassProp('n-calendar-container', containerClass.value))
 
     // --- Focus Management ---
     const setCellRef = (el: any, date: string) => {
@@ -201,36 +234,7 @@
     watch(currentFocusDate, focusCurrentDate)
 
     // --- Computed Helpers ---
-    const getWeekdayNumber = (index: number) => (firstDayOfWeek.value + index) % 7
-
-    const weekDayNames = computed(() => {
-        if (customWeekNames.value?.length === 7) {
-            const standard = [...customWeekNames.value]
-            let startIndex = firstDayOfWeek.value - 1
-            if (startIndex < 0) startIndex += 7
-            return Array.from({ length: 7 }, (_, i) => standard[(startIndex + i) % 7])
-        }
-        let d = dayjs().day(firstDayOfWeek.value)
-        return Array.from({ length: 7 }, () => {
-            const name = d.format('ddd')
-            d = d.add(1, 'day')
-            return name
-        })
-    })
-
-    const getWeekDayClass = (index: number) => {
-        if (Array.isArray(weekDayClass.value)) {
-            return weekDayClass.value[getWeekdayNumber(index)] || ''
-        }
-        return ''
-    }
-
-    const gridStartDate = computed(() => {
-        const isoMonday = dayjs().year(viewingYear.value).isoWeek(viewingWeek.value).startOf('isoWeek')
-        let diff = 1 - firstDayOfWeek.value
-        if (diff < 0) diff += 7
-        return isoMonday.subtract(diff, 'day')
-    })
+    const getWeekdayNumber = (index: number, firstDay: number) => (firstDay + index) % 7
 
     const normalizedModelValue = computed(() => {
         if (!modelValue.value) return []
@@ -239,17 +243,7 @@
     })
 
     const normalizedDisabled = computed(() => normalizeDateRanges(disabled.value))
-
-    // --- Selection Logic ---
-    const isDateSelected = (date: dayjs.Dayjs) => {
-        if (checkDateInList(date, normalizedModelValue.value)) return true
-        if (range.value && internalPendingRange.value?.begin) {
-            return date.isSame(dayjs(internalPendingRange.value.begin), 'day')
-        }
-        return false
-    }
-
-    const isDateDisabled = (date: dayjs.Dayjs) => checkDateInList(date, normalizedDisabled.value)
+    const normalizedVisible = computed(() => (visible.value ? normalizeDateRanges(visible.value) : null))
 
     const isPendingRangeInvalid = computed(() => {
         if (!range.value || !internalPendingRange.value?.begin || !hoveredDate.value) return false
@@ -263,7 +257,7 @@
 
         let d = rangeStart.clone()
         while (d.isSameOrBefore(rangeEnd, 'day')) {
-            if (isDateDisabled(d)) return true
+            if (checkDateInList(d, normalizedDisabled.value)) return true
             d = d.add(1, 'day')
         }
         return false
@@ -272,14 +266,23 @@
     // --- Grid Generation ---
     const calendarsGrid = computed(() => {
         const grids = []
-        const count = Math.max(1, numCalendars.value)
-        const daysPerCalendar = rows.value * 7
-        let globalStart = gridStartDate.value
+        // Determine how many views to render
+        const count = views.value && views.value.length > 0 ? views.value.length : Math.max(1, numViews.value)
 
-        const currentActive = activeMonth.value
+        let globalStart: dayjs.Dayjs | null = null
+        // Calculate global start only if not using per-view overrides logic for continuity fallback
+        if (!views.value || views.value.length === 0) {
+            const y = viewingYear.value ?? dayjs().year()
+            const w = viewingWeek.value ?? dayjs().week()
+            const fd = firstDayOfWeek.value ?? 1
+            const isoMonday = dayjs().year(y).isoWeek(w).startOf('isoWeek')
+            let diff = 1 - fd
+            if (diff < 0) diff += 7
+            globalStart = isoMonday.subtract(diff, 'day')
+        }
+
         const pendingInvalid = isPendingRangeInvalid.value
 
-        // Pre-calculate pending bounds
         let pendingStart: dayjs.Dayjs | null = null
         let pendingEnd: dayjs.Dayjs | null = null
         if (range.value && internalPendingRange.value?.begin && hoveredDate.value) {
@@ -289,59 +292,122 @@
             pendingEnd = start.isBefore(end) ? end : start
         }
 
-        const isPending = (d: dayjs.Dayjs) => {
-            if (!pendingStart || !pendingEnd) return false
-            return d.isSameOrAfter(pendingStart, 'day') && d.isSameOrBefore(pendingEnd, 'day')
-        }
-
-        const isEffectiveSelected = (d: dayjs.Dayjs) => isDateSelected(d) || isPending(d)
-
         for (let c = 0; c < count; c++) {
-            const days = []
-            let current = globalStart.add(c * daysPerCalendar, 'day')
+            // Merge global props with view-specific props
+            const viewConfig = views.value?.[c] || {}
 
-            for (let i = 0; i < daysPerCalendar; i++) {
-                const isDisabled = isDateDisabled(current)
-                const isPendingInRange = isPending(current)
+            // Resolve props with fallback to global
+            const currentYear = viewConfig.viewingYear ?? viewingYear.value ?? dayjs().year()
+            const currentWeek = viewConfig.viewingWeek ?? viewingWeek.value ?? dayjs().week()
+            const currentFirstDay = viewConfig.firstDayOfWeek ?? firstDayOfWeek.value ?? 1
+            const currentRows = viewConfig.rows ?? rows.value ?? 6
+            const currentActive = viewConfig.activeMonth !== undefined ? viewConfig.activeMonth : activeMonth.value
 
-                // Check selection of current and neighbors for styling
-                const prevDate = current.subtract(1, 'day')
-                const nextDate = current.add(1, 'day')
-                const isSelfSelected = isEffectiveSelected(current)
-                const isPrevSelected = isEffectiveSelected(prevDate)
-                const isNextSelected = isEffectiveSelected(nextDate)
+            const currentDisabledRaw = viewConfig.disabled ?? disabled.value ?? []
+            const currentDisabled = normalizeDateRanges(currentDisabledRaw)
 
-                // Active month check
-                let isCurrentMonth = true
-                if (currentActive !== undefined) {
-                    if (currentActive === null) isCurrentMonth = false
-                    else if (Array.isArray(currentActive)) isCurrentMonth = currentActive.includes(current.month())
-                    else isCurrentMonth = current.month() === currentActive
-                }
+            const currentVisibleRaw = viewConfig.visible ?? visible.value
+            const currentVisible = currentVisibleRaw ? normalizeDateRanges(currentVisibleRaw) : null
 
-                days.push({
-                    date: current,
-                    dateString: current.format('YYYY-MM-DD'),
-                    dayOfMonth: current.date(),
-                    ariaLabel: current.format('dddd, MMMM D, YYYY'),
-                    isCurrentMonth,
-                    isToday: current.isSame(dayjs(), 'day'),
-                    isSelected: isSelfSelected,
-                    isDisabled,
-                    isInvalid: isPendingInRange && pendingInvalid,
-                    isSelecting: isPendingInRange,
-                    isRangeStart: isSelfSelected && !isPrevSelected && isNextSelected,
-                    isRangeEnd: isSelfSelected && !isNextSelected && isPrevSelected,
-                    isInRange: isSelfSelected && (isPrevSelected || isNextSelected)
+            // Classes
+            const currentViewClasses = resolveClassProp('n-calendar-view', viewConfig.viewClass ?? viewClass.value)
+            const currentContainerClasses = resolveClassProp(
+                'n-calendar-view-week-label-container',
+                viewConfig.weekLabelContainerClass ?? weekLabelContainerClass.value
+            )
+            const currentGridClasses = resolveClassProp('n-calendar-view-grid', viewConfig.gridClass ?? gridClass.value)
+            const currentExtraGridCellClasses = resolveClassProp(viewConfig.gridCellClass ?? gridCellClass.value)
+
+            // Labels
+            const currentWeekNamesRaw = viewConfig.weekLabelNames ?? customWeekNames.value
+            let currentWeekNames: string[]
+            if (currentWeekNamesRaw?.length === 7) {
+                const standard = [...currentWeekNamesRaw]
+                let startIndex = currentFirstDay - 1
+                if (startIndex < 0) startIndex += 7
+                currentWeekNames = Array.from({ length: 7 }, (_, i) => standard[(startIndex + i) % 7])
+            } else {
+                let d = dayjs().day(currentFirstDay)
+                currentWeekNames = Array.from({ length: 7 }, () => {
+                    const name = d.format('ddd')
+                    d = d.add(1, 'day')
+                    return name
                 })
-                current = current.add(1, 'day')
             }
-            grids.push(days)
+
+            const currentWeekClassesRaw = viewConfig.weekLabelClass ?? weekLabelClass.value ?? []
+            const currentWeekLabelClasses = Array.from({ length: 7 }, (_, i) => {
+                const idx = (currentFirstDay + i) % 7
+                return Array.isArray(currentWeekClassesRaw) ? currentWeekClassesRaw[idx] || '' : ''
+            })
+
+            // Calculate start date for this specific view
+            let currentStart: dayjs.Dayjs
+            if (views.value && (viewConfig.viewingYear !== undefined || viewConfig.viewingWeek !== undefined)) {
+                // Independent start logic
+                const isoMonday = dayjs().year(currentYear).isoWeek(currentWeek).startOf('isoWeek')
+                let diff = 1 - currentFirstDay
+                if (diff < 0) diff += 7
+                currentStart = isoMonday.subtract(diff, 'day')
+            } else {
+                // Continuous logic
+                if (!globalStart) {
+                    // Should not happen if logic is correct, but safe fallback
+                    const isoMonday = dayjs().year(currentYear).isoWeek(currentWeek).startOf('isoWeek')
+                    let diff = 1 - currentFirstDay
+                    if (diff < 0) diff += 7
+                    globalStart = isoMonday.subtract(diff, 'day')
+                }
+                const daysPerCalendar = (rows.value ?? 6) * 7 // Use global rows for stride in legacy mode
+                currentStart = globalStart.add(c * daysPerCalendar, 'day')
+            }
+
+            // Use the helper to generate day objects
+            const days = generateCalendarDays({
+                start: currentStart,
+                daysCount: currentRows * 7,
+                activeMonth: currentActive,
+                selected: normalizedModelValue.value,
+                disabled: currentDisabled,
+                visible: currentVisible,
+                isRange: range.value,
+                pendingStart,
+                pendingEnd,
+                pendingInvalid,
+                minRange: minRange.value,
+                maxRange: maxRange.value,
+                hoveredDate: hoveredDate.value
+            })
+
+            grids.push({
+                days,
+                viewClasses: currentViewClasses,
+                weekLabelContainerClasses: currentContainerClasses,
+                gridClasses: currentGridClasses,
+                extraGridCellClasses: currentExtraGridCellClasses,
+                weekLabelNames: currentWeekNames,
+                weekLabelClasses: currentWeekLabelClasses,
+                firstDayOfWeek: currentFirstDay,
+                disabledList: currentDisabled,
+                visibleList: currentVisible
+            })
         }
         return grids
     })
 
     watch(() => calendarsGrid.value, focusCurrentDate)
+
+    // --- Exposed Methods ---
+    function setMonth(month: number, year?: number | string) {
+        const targetYear = year !== undefined ? Number(year) : viewingYear.value
+        const { year: y, week: w } = getYearWeekFromMonth(targetYear, month)
+        emits('update:viewingYear', y)
+        emits('update:viewingWeek', w)
+    }
+
+    defineExpose({
+        setMonth
+    })
 
     // --- Interaction ---
     function handleHover(date: dayjs.Dayjs | null) {
@@ -349,6 +415,7 @@
     }
 
     function handleFocus(day: any) {
+        if (!day.isVisible) return
         handleHover(day.date)
         currentFocusDate.value = day.dateString
     }
@@ -370,6 +437,7 @@
     }
 
     function handleKeyDown(event: KeyboardEvent, day: any) {
+        if (!day.isVisible) return
         const key = event.key
         if (key === 'Enter' || key === ' ') {
             event.preventDefault()
@@ -390,9 +458,9 @@
 
         currentFocusDate.value = target.format('YYYY-MM-DD')
 
-        const start = gridStartDate.value
-        const totalDaysVisible = Math.max(1, numCalendars.value) * rows.value * 7
-        const end = start.add(totalDaysVisible, 'day')
+        const start = calendarsGrid.value[0].days[0].date
+        const lastView = calendarsGrid.value[calendarsGrid.value.length - 1]
+        const end = lastView.days[lastView.days.length - 1].date
 
         if (target.isBefore(start) || target.isSame(start) || target.isAfter(end) || target.isSame(end)) {
             let newRefDate = dayjs(`${viewingYear.value}-01-01`).isoWeek(viewingWeek.value)
@@ -405,7 +473,7 @@
     }
 
     function handleDayClick(day: any, _event?: MouseEvent | KeyboardEvent) {
-        if (!selectable.value || day.isDisabled) return
+        if (!selectable.value || day.isDisabled || !day.isVisible) return
 
         const dateStr = day.dateString
         let currentList = [...normalizedModelValue.value] as CalendarValue[]
@@ -427,11 +495,30 @@
 
             if (unselectable.value && tryDeselectRange(currentList, finalizedRange)) return
 
-            if (validateRange(finalBegin, finalEnd)) {
-                if (multiple.value) currentList.push(finalizedRange)
-                else currentList = [finalizedRange]
+            const isVisibleGlobal = (d: dayjs.Dayjs) => {
+                if (visible.value) return checkDateInList(d, normalizedVisible.value!)
+                return true
+            }
 
-                emits('update:modelValue', multiple.value ? normalizeDateRanges(currentList) : finalizedRange)
+            const isDisabledGlobal = (d: dayjs.Dayjs) => checkDateInList(d, normalizedDisabled.value)
+
+            if (validateRange(finalBegin, finalEnd, isDisabledGlobal)) {
+                const segments = getVisibleSegments(finalBegin, finalEnd, normalizedVisible.value)
+
+                if (segments.length > 0) {
+                    if (multiple.value) {
+                        currentList.push(...segments)
+                    } else {
+                        currentList = segments
+                    }
+                    
+                    const normalized = normalizeDateRanges(currentList)
+                    if (!multiple.value && normalized.length === 1) {
+                         emits('update:modelValue', normalized[0])
+                    } else {
+                         emits('update:modelValue', normalized)
+                    }
+                }
                 handleCancelPending()
             } else {
                 handleCancelPending()
@@ -466,7 +553,6 @@
     }
 
     function tryDeselectRange(currentList: CalendarValue[], finalizedRange: DateRange): boolean {
-        // Find if this specific range already exists in the list
         const idx = currentList.findIndex(item => {
             if (typeof item === 'object' && item !== null && 'begin' in item) {
                 return (
@@ -490,21 +576,22 @@
         return false
     }
 
-    function validateRange(start: dayjs.Dayjs, end: dayjs.Dayjs): boolean {
+    function validateRange(
+        start: dayjs.Dayjs,
+        end: dayjs.Dayjs,
+        isDisabledFn?: (d: dayjs.Dayjs) => boolean,
+        isVisibleFn?: (d: dayjs.Dayjs) => boolean
+    ): boolean {
         const diff = end.diff(start, 'day') + 1
         if (diff < minRange.value || diff > maxRange.value) return false
 
-        // Check if any date in range is disabled
-        // Optimization: checkDateInList might iterate full disabled list.
-        // If disabled list is sorted, we can optimize, but simple loop is robust.
-        // We can use the helper checkDateInList for the range itself?
-        // No, checkDateInList checks if ONE date is in LIST.
-        // We need to check if ANY date in RANGE is in DISABLED list.
-
-        // Let's iterate the range days.
         let d = start.clone()
+        const checkDisabled = isDisabledFn || (d => checkDateInList(d, normalizedDisabled.value))
+        const checkVisible =
+            isVisibleFn || (d => !normalizedVisible.value || checkDateInList(d, normalizedVisible.value))
+
         while (d.isSameOrBefore(end, 'day')) {
-            if (checkDateInList(d, normalizedDisabled.value)) return false
+            if (checkDisabled(d)) return false
             d = d.add(1, 'day')
         }
         return true
@@ -520,15 +607,15 @@
             @apply w-full select-none outline-none;
 
             .n-calendar-container {
-                @apply flex flex-col grow;
+                @apply flex flex-row gap-4 grow;
             }
             .n-calendar-view {
-                @apply grow;
-                .n-calendar-view-header {
+                @apply flex flex-col grow;
+                .n-calendar-view-week-label-container {
                     @apply grid grid-cols-7 mb-2;
                 }
 
-                .n-calendar-view-weekday {
+                .n-calendar-view-week-label {
                     @apply text-center text-xs font-semibold 
                     text-text-light uppercase 
                     py-1;
@@ -538,7 +625,7 @@
                     @apply grid grid-cols-7 gap-y-2;
                 }
 
-                .n-calendar-view-cell {
+                .n-calendar-view-grid-cell {
                     @apply relative 
                     flex items-center justify-center 
                     aspect-square
@@ -552,18 +639,18 @@
                         @apply z-10;
                     }
 
-                    &.n-calendar-view-cell--outside {
+                    &.n-calendar-view-grid-cell--outside {
                         @apply text-text-light;
                     }
 
-                    &.n-calendar-view-cell--disabled {
+                    &.n-calendar-view-grid-cell--disabled {
                         @apply cursor-not-allowed 
                         bg-neutral-light text-text-light
                         rounded-none;
                         @apply hover:opacity-100 hover:border-transparent hover:rounded-none;
                     }
 
-                    &.n-calendar-view-cell--today {
+                    &.n-calendar-view-grid-cell--today {
                         @apply font-bold text-brand;
                         &::after {
                             content: '';
@@ -571,32 +658,32 @@
                         }
                     }
 
-                    &.n-calendar-view-cell--selected {
+                    &.n-calendar-view-grid-cell--selected {
                         @apply bg-brand text-text-invert rounded-element;
                     }
 
-                    &.n-calendar-view-cell--selecting {
+                    &.n-calendar-view-grid-cell--selecting {
                         @apply bg-brand-light text-brand rounded-element;
                     }
 
-                    &.n-calendar-view-cell--invalid {
+                    &.n-calendar-view-grid-cell--invalid {
                         @apply bg-error-light text-error cursor-not-allowed;
                     }
 
-                    &.n-calendar-view-cell--in-range {
-                        &:not(.n-calendar-view-cell--selected) {
+                    &.n-calendar-view-grid-cell--in-range {
+                        &:not(.n-calendar-view-grid-cell--selected) {
                             @apply bg-brand-light text-text;
                         }
-                        &:not(.n-calendar-view-cell--range-start):not(.n-calendar-view-cell--range-end) {
+                        &:not(.n-calendar-view-grid-cell--range-start):not(.n-calendar-view-grid-cell--range-end) {
                             @apply rounded-none;
                         }
                     }
 
-                    &.n-calendar-view-cell--range-start {
+                    &.n-calendar-view-grid-cell--range-start {
                         @apply rounded-r-none;
                     }
 
-                    &.n-calendar-view-cell--range-end {
+                    &.n-calendar-view-grid-cell--range-end {
                         @apply rounded-l-none;
                     }
                 }
