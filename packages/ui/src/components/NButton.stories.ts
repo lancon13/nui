@@ -45,7 +45,7 @@ export const Colors: Story = {
         template: `
             <div class="flex flex-row items-center gap-4">
                 <NButton v-bind="args" label="Default" />
-                <NButton v-bind="args" class="primary" label="Primary" />
+                <NButton v-bind="args" class="brand" label="Brand" />
                 <NButton v-bind="args" class="success" label="Success" />
                 <NButton v-bind="args" class="error" label="Error" />
                 <NButton v-bind="args" class="warning" label="Warning" />
@@ -65,7 +65,7 @@ export const Flat: Story = {
         template: `
             <div class="flex flex-row items-center gap-4">
                 <NButton v-bind="args" class="flat" label="Default" />
-                <NButton v-bind="args" class="flat primary" label="Primary" />
+                <NButton v-bind="args" class="flat brand" label="Brand" />
                 <NButton v-bind="args" class="flat success" label="Success" />
                 <NButton v-bind="args" class="flat error" label="Error" />
                 <NButton v-bind="args" class="flat warning" label="Warning" />
@@ -85,7 +85,7 @@ export const Outline: Story = {
         template: `
             <div class="flex flex-row items-center gap-4">
                 <NButton v-bind="args" class="outlined" label="Default" />
-                <NButton v-bind="args" class="outlined primary" label="Primary" />
+                <NButton v-bind="args" class="outlined brand" label="Brand" />
                 <NButton v-bind="args" class="outlined success" label="Success" />
                 <NButton v-bind="args" class="outlined error" label="Error" />
                 <NButton v-bind="args" class="outlined warning" label="Warning" />
@@ -105,7 +105,7 @@ export const Texted: Story = {
         template: `
             <div class="flex flex-row items-center gap-4">
                 <NButton v-bind="args" class="texted" label="Default" />
-                <NButton v-bind="args" class="texted primary" label="Primary" />
+                <NButton v-bind="args" class="texted brand" label="Brand" />
                 <NButton v-bind="args" class="texted success" label="Success" />
                 <NButton v-bind="args" class="texted error" label="Error" />
                 <NButton v-bind="args" class="texted warning" label="Warning" />
@@ -155,12 +155,12 @@ export const Shapes: Story = {
             <div class="flex flex-col gap-4">
                 <div class="flex flex-row items-center gap-4">
                     <NButton v-bind="args" class="pilled" label="Pilled" />
-                    <NButton v-bind="args" class="pilled primary" label="Primary" />
+                    <NButton v-bind="args" class="pilled brand" label="Brand" />
                     <NButton v-bind="args" class="flat success pilled" label="Flat Success" />
                 </div>
                 <div class="flex flex-row items-center gap-4">
                     <NButton v-bind="args" class="squared" label="Squared" />
-                    <NButton v-bind="args" class="squared primary" label="Primary" />
+                    <NButton v-bind="args" class="squared brand" label="Brand" />
                     <NButton v-bind="args" class="outlined error squared" label="Outlined Error" />
                 </div>
             </div>
@@ -178,7 +178,7 @@ export const Shadowed: Story = {
         template: `
             <div class="flex flex-row items-center gap-4">
                 <NButton v-bind="args" class="shadowed" label="Default" />
-                <NButton v-bind="args" class="shadowed primary" label="Primary" />
+                <NButton v-bind="args" class="shadowed brand" label="Brand" />
                 <NButton v-bind="args" class="shadowed flat success" label="Flat Success" />
             </div>
         `
@@ -197,11 +197,11 @@ export const Icons: Story = {
                 <div class="flex flex-row items-center gap-4">
                     <NButton v-bind="args" prependIcon="mdi-arrow-left" class="flat" label="Prev" />
                     <NButton v-bind="args" appendIcon="mdi-arrow-right" class="flat" label="Next" />
-                    <NButton v-bind="args" icon="mdi-send" class="primary" label="Send" />
+                    <NButton v-bind="args" icon="mdi-send" class="brand" label="Send" />
                 </div>
                 <div class="flex flex-row items-center gap-4">
                     <NButton v-bind="args" icon="mdi-magnify" class="icon" />
-                    <NButton v-bind="args" icon="mdi-magnify" class="icon primary" />
+                    <NButton v-bind="args" icon="mdi-magnify" class="icon brand" />
                     <NButton v-bind="args" icon="mdi-magnify" class="icon flat pilled" />
                     <NButton v-bind="args" icon="mdi-magnify" class="icon outlined squared" />
                 </div>
@@ -226,7 +226,7 @@ export const Loading: Story = {
                 <div class="flex flex-row items-center gap-4">
                     <NButton v-bind="args" :loading="loading" label="Default" />
                     <NButton v-bind="args" class="flat" :loading="loading" loadingClass="text-xl animate-spin" label="Custom Class" />
-                    <NButton v-bind="args" class="primary" :loading="loading" loadingName="mdi-sync" loadingClass="animate-spin" label="Custom Icon" />
+                    <NButton v-bind="args" class="brand" :loading="loading" loadingName="mdi-sync" loadingClass="animate-spin" label="Custom Icon" />
                 </div>
                 <NButton label="Toggle Loading" @click="toggleLoading" />
             </div>
@@ -244,7 +244,7 @@ export const Links: Story = {
         template: `
             <div class="flex flex-row items-center gap-4">
                 <NButton v-bind="args" tag="a" href="https://google.com" target="_blank" label="External Link" />
-                <NButton v-bind="args" class="primary" tag="a" href="#" label="Anchor Link" />
+                <NButton v-bind="args" class="brand" tag="a" href="#" label="Anchor Link" />
             </div>
         `
     })
@@ -263,7 +263,7 @@ export const WithAvatar: Story = {
                     <NAvatar icon="mdi-account" size="2rem" />
                     <span class="mr-2">John Doe</span>
                 </NButton>
-                <NButton v-bind="args" class="flat pilled primary">
+                <NButton v-bind="args" class="flat pilled brand">
                     <NAvatar icon="mdi-account-circle" size="2rem" />
                     <span class="mr-2">Jane Smith</span>
                 </NButton>
@@ -288,7 +288,7 @@ export const Disabled: Story = {
             <div class="flex flex-col gap-4">
                 <div class="flex flex-row items-center gap-4">
                     <NButton v-bind="args" label="Solid" />
-                    <NButton v-bind="args" class="primary" label="Primary" />
+                    <NButton v-bind="args" class="brand" label="Brand" />
                 </div>
                 <div class="flex flex-row items-center gap-4">
                     <NButton v-bind="args" class="flat" label="Flat" />

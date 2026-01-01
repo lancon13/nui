@@ -6,14 +6,14 @@
                 <slot
                     :name="`calendar-header-${calIndex}`"
                     :index="calIndex"
-                    :start-date="gridDays[0]?.dateObject"
-                    :end-date="gridDays[gridDays.length - 1]?.dateObject"
+                    :start-date="gridDays[0]?.date"
+                    :end-date="gridDays[gridDays.length - 1]?.date"
                 >
                     <slot
                         name="calendar-header"
                         :index="calIndex"
-                        :start-date="gridDays[0]?.dateObject"
-                        :end-date="gridDays[gridDays.length - 1]?.dateObject"
+                        :start-date="gridDays[0]?.date"
+                        :end-date="gridDays[gridDays.length - 1]?.date"
                     />
                 </slot>
 
@@ -70,7 +70,7 @@
                         :aria-disabled="day.isDisabled"
                         :tabindex="day.dateString === currentFocusDate ? 0 : -1"
                         @click="handleDayClick(day, $event)"
-                        @mouseenter="handleHover(day.dateObject)"
+                        @mouseenter="handleHover(day.date)"
                         @focus="handleFocus(day)"
                         @contextmenu="handleContextMenu"
                         @keydown="handleKeyDown($event, day)"
@@ -85,8 +85,8 @@
                 <slot
                     name="calendar-footer"
                     :index="calIndex"
-                    :start-date="gridDays[0]?.dateObject"
-                    :end-date="gridDays[gridDays.length - 1]?.dateObject"
+                    :start-date="gridDays[0]?.date"
+                    :end-date="gridDays[gridDays.length - 1]?.date"
                 />
             </div>
         </div>
@@ -320,7 +320,7 @@
                 }
 
                 days.push({
-                    dateObject: current,
+                    date: current,
                     dateString: current.format('YYYY-MM-DD'),
                     dayOfMonth: current.date(),
                     ariaLabel: current.format('dddd, MMMM D, YYYY'),
@@ -349,7 +349,7 @@
     }
 
     function handleFocus(day: any) {
-        handleHover(day.dateObject)
+        handleHover(day.date)
         currentFocusDate.value = day.dateString
     }
 
@@ -380,7 +380,7 @@
         if (!['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(key)) return
         event.preventDefault()
 
-        const current = dayjs(day.dateObject)
+        const current = dayjs(day.date)
         let target = current.clone()
 
         if (key === 'ArrowUp') target = target.subtract(7, 'day')
@@ -417,7 +417,7 @@
     function handleRangeSelection(day: any, currentList: CalendarValue[], dateStr: string) {
         if (internalPendingRange.value?.begin) {
             const start = dayjs(internalPendingRange.value.begin)
-            const end = day.dateObject
+            const end = day.date
             const [finalBegin, finalEnd] = end.isBefore(start) ? [end, start] : [start, end]
 
             const finalizedRange = {

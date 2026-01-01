@@ -4,10 +4,14 @@ import isLeapYear from 'dayjs/plugin/isLeapYear'
 import isoWeek from 'dayjs/plugin/isoWeek'
 import isoWeeksInYear from 'dayjs/plugin/isoWeeksInYear'
 import weekOfYear from 'dayjs/plugin/weekOfYear'
-import { ref, watch } from 'vue'
-import { getMonthFromYearWeek, getYearWeekFromMonth } from '../helpers'
+import { computed, ref, watch } from 'vue'
+import { getYearWeekFromMonth } from '../helpers'
+import NButton from './NButton.vue'
 import NCalendar from './NCalendar.vue'
+import NCard from './NCard.vue'
+import NCheckbox from './NCheckbox.vue'
 import NIcon from './NIcon.vue'
+import NInputSelect from './NInputSelect.vue'
 
 dayjs.extend(weekOfYear)
 dayjs.extend(isoWeek)
@@ -52,7 +56,7 @@ export const Default: Story = {
         firstDayOfWeek: 1
     },
     render: args => ({
-        components: { NCalendar },
+        components: { NCalendar, NButton, NInputSelect, NCard },
         setup() {
             const model = ref([])
             const viewingYear = ref(2025)
@@ -60,22 +64,37 @@ export const Default: Story = {
             const activeMonth = ref<number | null | undefined>(0)
 
             const months = [
-                { label: 'Jan', value: 0 },
-                { label: 'Feb', value: 1 },
-                { label: 'Mar', value: 2 },
-                { label: 'Apr', value: 3 },
-                { label: 'May', value: 4 },
-                { label: 'Jun', value: 5 },
-                { label: 'Jul', value: 6 },
-                { label: 'Aug', value: 7 },
-                { label: 'Sep', value: 8 },
-                { label: 'Oct', value: 9 },
-                { label: 'Nov', value: 10 },
-                { label: 'Dec', value: 11 },
-                { label: 'All Active (undefined)', value: undefined },
-                { label: 'None Active (null)', value: null }
+                { label: 'Jan', value: '0' },
+                { label: 'Feb', value: '1' },
+                { label: 'Mar', value: '2' },
+                { label: 'Apr', value: '3' },
+                { label: 'May', value: '4' },
+                { label: 'Jun', value: '5' },
+                { label: 'Jul', value: '6' },
+                { label: 'Aug', value: '7' },
+                { label: 'Sep', value: '8' },
+                { label: 'Oct', value: '9' },
+                { label: 'Nov', value: '10' },
+                { label: 'Dec', value: '11' },
+                { label: 'All Active (undefined)', value: 'undefined' },
+                { label: 'None Active (null)', value: 'null' }
             ]
             const years = [2023, 2024, 2025, 2026]
+            const yearOptions = computed(() => years.map(y => ({ label: String(y), value: String(y) })))
+
+            const viewingYearStr = computed({
+                get: () => String(viewingYear.value),
+                set: val => (viewingYear.value = Number(val))
+            })
+
+            const activeMonthStr = computed({
+                get: () => String(activeMonth.value),
+                set: val => {
+                    if (val === 'undefined') activeMonth.value = undefined
+                    else if (val === 'null') activeMonth.value = null
+                    else activeMonth.value = Number(val)
+                }
+            })
 
             const nextWeek = () => {
                 const weeksInYear = dayjs(`${viewingYear.value}-01-01`).isoWeeksInYear()
@@ -96,53 +115,98 @@ export const Default: Story = {
                 }
             }
 
-            return { args, model, viewingYear, viewingWeek, activeMonth, months, years, nextWeek, prevWeek }
+            const navigateMonth = (delta: number) => {
+                // Determine current visual month/year
+                const currentRef = dayjs(`${viewingYear.value}-01-01`)
+                    .isoWeek(viewingWeek.value)
+                    .startOf('isoWeek')
+                    .add(14, 'day')
+
+                // Calculate target date by adding months
+                const target = currentRef.add(delta, 'month')
+
+                // Use getYearWeekFromMonth to find the correct iso week for the start of that month
+                const { year, week } = getYearWeekFromMonth(target.year(), target.month())
+                viewingYear.value = year
+                viewingWeek.value = week
+            }
+
+            // Sync navigation when activeMonth changes (if it's a specific month)
+            watch(activeMonth, newVal => {
+                if (typeof newVal === 'number') {
+                    const { year, week } = getYearWeekFromMonth(viewingYear.value, newVal)
+                    viewingYear.value = year
+                    viewingWeek.value = week
+                }
+            })
+
+            return {
+                args,
+                dayjs,
+                model,
+                viewingYear,
+                viewingWeek,
+                activeMonth,
+                months,
+                yearOptions,
+                viewingYearStr,
+                activeMonthStr,
+                nextWeek,
+                prevWeek,
+                navigateMonth
+            }
         },
         template: `
-            <div class="w-[350px] border border-border p-4 rounded bg-background shadow-outer">
-                <div class="flex flex-col gap-4 mb-4">
-                    <div class="flex items-center justify-between gap-2">
-                        <select v-model="activeMonth" class="text-xs p-1 border rounded bg-background grow">
-                            <option v-for="m in months" :key="String(m.value)" :value="m.value">{{ m.label }}</option>
-                        </select>
-                        <select v-model="viewingYear" class="text-xs p-1 border rounded bg-background">
-                            <option v-for="y in years" :key="y" :value="y">{{ y }}</option>
-                        </select>
-                        
-                        <div class="flex gap-1 shrink-0">
-                            <button @click="prevWeek" class="text-xs px-2 py-1 border border-border rounded hover:bg-surface-indent">W-</button>
-                            <span class="text-xs self-center px-1 font-mono">W{{ viewingWeek }}</span>
-                            <button @click="nextWeek" class="text-xs px-2 py-1 border border-border rounded hover:bg-surface-indent">W+</button>
+            <NCard class="w-[450px]">
+                <div class="n-card-body">
+                    <div class="flex flex-col gap-4 mb-4">
+                        <div class="flex items-center justify-between gap-2">
+                            <NInputSelect v-model="activeMonthStr" :options="months" class="grow" />
+                            <NInputSelect v-model="viewingYearStr" :options="yearOptions" class="w-24" />
+                            
+                            <div class="flex gap-1 shrink-0 items-center">
+                                <NButton @click="navigateMonth(-1)" class="outlined px-2" size="sm" label="M-" />
+                                <NButton @click="prevWeek" class="outlined px-2" size="sm" label="W-" />
+                                <span class="text-xs self-center px-1 font-mono">W{{ viewingWeek }}</span>
+                                <NButton @click="nextWeek" class="outlined px-2" size="sm" label="W+" />
+                                <NButton @click="navigateMonth(1)" class="outlined px-2" size="sm" label="M+" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <NCalendar 
+                        v-bind="args" 
+                        v-model="model" 
+                        v-model:viewingWeek="viewingWeek"
+                        v-model:viewingYear="viewingYear"
+                        :activeMonth="activeMonth"
+                    >
+                        <template #calendar-header="{ startDate }">
+                            <div class="font-bold mb-2">
+                                {{ dayjs(startDate).add(14, 'day').format('MMMM YYYY') }}
+                            </div>
+                        </template>
+                    </NCalendar>
+                    
+                    <div class="mt-4 flex flex-col gap-1 text-xs text-text-light border-t border-border pt-2">
+                        <div class="flex justify-between">
+                            <span>Active Month:</span>
+                            <span class="font-bold">{{ activeMonth === null ? 'None' : (activeMonth === undefined ? 'All' : activeMonth) }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Selected Items:</span>
+                            <span class="font-bold">{{ Array.isArray(model) ? model.length : (model ? 1 : 0) }}</span>
                         </div>
                     </div>
                 </div>
-
-                <NCalendar 
-                    v-bind="args" 
-                    v-model="model" 
-                    v-model:viewingWeek="viewingWeek"
-                    v-model:viewingYear="viewingYear"
-                    :activeMonth="activeMonth"
-                />
-                
-                <div class="mt-4 flex flex-col gap-1 text-xs text-text-light border-t border-border pt-2">
-                    <div class="flex justify-between">
-                        <span>Active Month:</span>
-                        <span class="font-bold">{{ activeMonth === null ? 'None' : (activeMonth === undefined ? 'All' : activeMonth) }}</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span>Selected Items:</span>
-                        <span class="font-bold">{{ Array.isArray(model) ? model.length : (model ? 1 : 0) }}</span>
-                    </div>
-                </div>
-            </div>
+            </NCard>
         `
     })
 }
 
 export const SelectionModes: Story = {
     render: args => ({
-        components: { NCalendar },
+        components: { NCalendar, NCard },
         setup() {
             const single = ref('2025-01-01')
             const multiple = ref(['2025-01-01', '2025-01-03'])
@@ -152,50 +216,80 @@ export const SelectionModes: Story = {
                 { begin: '2025-01-22', end: '2025-01-25' }
             ])
 
-            // Shared view state for demo purposes, or individual if needed.
-            // Let's use individual state to avoid them syncing weirdly if user interacts with one.
             const v1 = ref({ y: 2025, w: 1 })
             const v2 = ref({ y: 2025, w: 1 })
             const v3 = ref({ y: 2025, w: 1 })
             const v4 = ref({ y: 2025, w: 1 })
 
-            return { args, single, multiple, rangeModel, multiRange, v1, v2, v3, v4 }
+            return { args, dayjs, single, multiple, rangeModel, multiRange, v1, v2, v3, v4 }
         },
         template: `
             <div class="flex flex-wrap gap-8 p-4 justify-center bg-surface-indent rounded">
                 <div class="w-80 flex flex-col gap-2">
                     <span class="text-sm font-bold">1. Single Toggle/Replace</span>
                     <p class="text-[10px] text-text-light">Click to select, click same to unselect, click other to replace.</p>
-                    <div class="p-2 bg-background rounded border border-border shadow-outer">
-                        <NCalendar v-model="single" v-model:viewingYear="v1.y" v-model:viewingWeek="v1.w" />
-                    </div>
+                    <NCard>
+                        <div class="n-card-body">
+                            <NCalendar v-model="single" v-model:viewingYear="v1.y" v-model:viewingWeek="v1.w">
+                                <template #calendar-header="{ startDate }">
+                                    <div class="font-bold mb-2 text-xs">
+                                        {{ dayjs(startDate).add(14, 'day').format('MMMM YYYY') }}
+                                    </div>
+                                </template>
+                            </NCalendar>
+                        </div>
+                    </NCard>
                     <code class="text-[10px] break-all">Value: {{ single || 'null' }}</code>
                 </div>
 
                 <div class="w-80 flex flex-col gap-2">
                     <span class="text-sm font-bold">2. Multiple Dates</span>
                     <p class="text-[10px] text-text-light">Click to add/remove multiple individual dates.</p>
-                    <div class="p-2 bg-background rounded border border-border shadow-outer">
-                        <NCalendar v-model="multiple" multiple v-model:viewingYear="v2.y" v-model:viewingWeek="v2.w" />
-                    </div>
+                    <NCard>
+                        <div class="n-card-body">
+                            <NCalendar v-model="multiple" multiple v-model:viewingYear="v2.y" v-model:viewingWeek="v2.w">
+                                <template #calendar-header="{ startDate }">
+                                    <div class="font-bold mb-2 text-xs">
+                                        {{ dayjs(startDate).add(14, 'day').format('MMMM YYYY') }}
+                                    </div>
+                                </template>
+                            </NCalendar>
+                        </div>
+                    </NCard>
                     <code class="text-[10px] break-all">Value: {{ multiple }}</code>
                 </div>
 
                 <div class="w-80 flex flex-col gap-2">
                     <span class="text-sm font-bold">3. Single Range (2-Click)</span>
                     <p class="text-[10px] text-text-light">Click 1: Start, Click 2: End. Double-click same to unselect.</p>
-                    <div class="p-2 bg-background rounded border border-border shadow-outer">
-                        <NCalendar v-model="rangeModel" range v-model:viewingYear="v3.y" v-model:viewingWeek="v3.w" />
-                    </div>
+                    <NCard>
+                        <div class="n-card-body">
+                            <NCalendar v-model="rangeModel" range v-model:viewingYear="v3.y" v-model:viewingWeek="v3.w">
+                                <template #calendar-header="{ startDate }">
+                                    <div class="font-bold mb-2 text-xs">
+                                        {{ dayjs(startDate).add(14, 'day').format('MMMM YYYY') }}
+                                    </div>
+                                </template>
+                            </NCalendar>
+                        </div>
+                    </NCard>
                     <code class="text-[10px] break-all">Value: {{ rangeModel || 'null' }}</code>
                 </div>
 
                 <div class="w-80 flex flex-col gap-2">
                     <span class="text-sm font-bold">4. Multiple Ranges</span>
                     <p class="text-[10px] text-text-light">Build multiple ranges by repeating the 2-click process.</p>
-                    <div class="p-2 bg-background rounded border border-border shadow-outer">
-                        <NCalendar v-model="multiRange" multiple range v-model:viewingYear="v4.y" v-model:viewingWeek="v4.w" />
-                    </div>
+                    <NCard>
+                        <div class="n-card-body">
+                            <NCalendar v-model="multiRange" multiple range v-model:viewingYear="v4.y" v-model:viewingWeek="v4.w">
+                                <template #calendar-header="{ startDate }">
+                                    <div class="font-bold mb-2 text-xs">
+                                        {{ dayjs(startDate).add(14, 'day').format('MMMM YYYY') }}
+                                    </div>
+                                </template>
+                            </NCalendar>
+                        </div>
+                    </NCard>
                     <code class="text-[10px] break-all">Value: {{ multiRange }}</code>
                 </div>
             </div>
@@ -205,7 +299,7 @@ export const SelectionModes: Story = {
 
 export const DisabledDates: Story = {
     render: args => ({
-        components: { NCalendar },
+        components: { NCalendar, NInputSelect, NCard },
         setup() {
             const model = ref([])
             const viewingYear = ref(2025)
@@ -213,7 +307,20 @@ export const DisabledDates: Story = {
             const activeMonth = ref(0)
 
             const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+            const monthOptions = computed(() => months.map((m, i) => ({ label: m, value: String(i) })))
+
             const years = [2024, 2025, 2026]
+            const yearOptions = computed(() => years.map(y => ({ label: String(y), value: String(y) })))
+
+            const viewingYearStr = computed({
+                get: () => String(viewingYear.value),
+                set: val => (viewingYear.value = Number(val))
+            })
+
+            const activeMonthStr = computed({
+                get: () => String(activeMonth.value),
+                set: val => (activeMonth.value = Number(val))
+            })
 
             const disabledList = [
                 '2025-01-02',
@@ -227,37 +334,53 @@ export const DisabledDates: Story = {
                 viewingWeek.value = targetDate.isoWeek()
             })
 
-            return { args, model, disabledList, viewingYear, viewingWeek, activeMonth, months, years }
+            return {
+                args,
+                dayjs,
+                model,
+                disabledList,
+                viewingYear,
+                viewingWeek,
+                activeMonth,
+                monthOptions,
+                yearOptions,
+                viewingYearStr,
+                activeMonthStr
+            }
         },
         template: `
-            <div class="w-[350px] border border-border p-4 rounded bg-background shadow-outer">
-                <div class="flex gap-2 mb-4">
-                    <select v-model="activeMonth" class="text-xs p-1 border rounded bg-background grow">
-                        <option v-for="(m, i) in months" :key="i" :value="i">{{ m }}</option>
-                    </select>
-                    <select v-model="viewingYear" class="text-xs p-1 border rounded bg-background">
-                        <option v-for="y in years" :key="y" :value="y">{{ y }}</option>
-                    </select>
+            <NCard class="w-[350px]">
+                <div class="n-card-body">
+                    <div class="flex gap-2 mb-4">
+                        <NInputSelect v-model="activeMonthStr" :options="monthOptions" class="grow" />
+                        <NInputSelect v-model="viewingYearStr" :options="yearOptions" class="w-24" />
+                    </div>
+                    <NCalendar 
+                        v-model="model" 
+                        :disabled="disabledList"
+                        v-model:viewingWeek="viewingWeek"
+                        :viewingYear="viewingYear"
+                        :activeMonth="activeMonth"
+                        multiple
+                    >
+                        <template #calendar-header="{ startDate }">
+                            <div class="font-bold mb-2">
+                                {{ dayjs(startDate).add(14, 'day').format('MMMM YYYY') }}
+                            </div>
+                        </template>
+                    </NCalendar>
+                    <div class="mt-4 text-[10px] break-all">
+                        Selected: {{ model }}
+                    </div>
                 </div>
-                <NCalendar 
-                    v-model="model" 
-                    :disabled="disabledList"
-                    v-model:viewingWeek="viewingWeek"
-                    :viewingYear="viewingYear"
-                    :activeMonth="activeMonth"
-                    multiple
-                />
-                <div class="mt-4 text-[10px] break-all">
-                    Selected: {{ model }}
-                </div>
-            </div>
+            </NCard>
         `
     })
 }
 
 export const RangeWithDisabled: Story = {
     render: args => ({
-        components: { NCalendar },
+        components: { NCalendar, NInputSelect, NCard },
         setup() {
             const model = ref(null)
             const viewingYear = ref(2025)
@@ -265,7 +388,20 @@ export const RangeWithDisabled: Story = {
             const activeMonth = ref(0)
 
             const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+            const monthOptions = computed(() => months.map((m, i) => ({ label: m, value: String(i) })))
+
             const years = [2024, 2025, 2026]
+            const yearOptions = computed(() => years.map(y => ({ label: String(y), value: String(y) })))
+
+            const viewingYearStr = computed({
+                get: () => String(viewingYear.value),
+                set: val => (viewingYear.value = Number(val))
+            })
+
+            const activeMonthStr = computed({
+                get: () => String(activeMonth.value),
+                set: val => (activeMonth.value = Number(val))
+            })
 
             const disabledList = [
                 { begin: '2025-01-10', end: '2025-01-15' }, // Blocked range
@@ -277,35 +413,51 @@ export const RangeWithDisabled: Story = {
                 viewingWeek.value = targetDate.isoWeek()
             })
 
-            return { args, model, disabledList, viewingYear, viewingWeek, activeMonth, months, years }
+            return {
+                args,
+                dayjs,
+                model,
+                disabledList,
+                viewingYear,
+                viewingWeek,
+                activeMonth,
+                monthOptions,
+                yearOptions,
+                viewingYearStr,
+                activeMonthStr
+            }
         },
         template: `
-            <div class="w-[350px] border border-border p-4 rounded bg-background shadow-outer">
-                <h3 class="mb-2 font-bold text-sm">Range + Disabled</h3>
-                <p class="text-[10px] text-text-light mb-4">
-                    Disabled: Jan 10-15 and Jan 20.<br/>
-                    <b>Rule:</b> You cannot complete a range if it contains any disabled dates.
-                </p>
-                <div class="flex gap-2 mb-4">
-                    <select v-model="activeMonth" class="text-xs p-1 border rounded bg-background grow">
-                        <option v-for="(m, i) in months" :key="i" :value="i">{{ m }}</option>
-                    </select>
-                    <select v-model="viewingYear" class="text-xs p-1 border rounded bg-background">
-                        <option v-for="y in years" :key="y" :value="y">{{ y }}</option>
-                    </select>
+            <NCard class="w-[350px]">
+                <div class="n-card-body">
+                    <h3 class="mb-2 font-bold text-sm">Range + Disabled</h3>
+                    <p class="text-[10px] text-text-light mb-4">
+                        Disabled: Jan 10-15 and Jan 20.<br/>
+                        <b>Rule:</b> You cannot complete a range if it contains any disabled dates.
+                    </p>
+                    <div class="flex gap-2 mb-4">
+                        <NInputSelect v-model="activeMonthStr" :options="monthOptions" class="grow" />
+                        <NInputSelect v-model="viewingYearStr" :options="yearOptions" class="w-24" />
+                    </div>
+                    <NCalendar 
+                        v-model="model" 
+                        :disabled="disabledList"
+                        v-model:viewingWeek="viewingWeek"
+                        :viewingYear="viewingYear"
+                        :activeMonth="activeMonth"
+                        range
+                    >
+                        <template #calendar-header="{ startDate }">
+                            <div class="font-bold mb-2">
+                                {{ dayjs(startDate).add(14, 'day').format('MMMM YYYY') }}
+                            </div>
+                        </template>
+                    </NCalendar>
+                    <div class="mt-4 text-[10px] break-all">
+                        Selected: {{ model || 'null' }}
+                    </div>
                 </div>
-                <NCalendar 
-                    v-model="model" 
-                    :disabled="disabledList"
-                    v-model:viewingWeek="viewingWeek"
-                    :viewingYear="viewingYear"
-                    :activeMonth="activeMonth"
-                    range
-                />
-                <div class="mt-4 text-[10px] break-all">
-                    Selected: {{ model || 'null' }}
-                </div>
-            </div>
+            </NCard>
         `
     })
 }
@@ -317,7 +469,7 @@ export const CustomSlots: Story = {
         firstDayOfWeek: 1
     },
     render: args => ({
-        components: { NCalendar, NIcon },
+        components: { NCalendar, NIcon, NCard },
         setup() {
             const model = ref([])
             const weekDayClass = [
@@ -329,45 +481,53 @@ export const CustomSlots: Story = {
                 '',
                 'text-warning' // Sat
             ]
-            return { args, model, weekDayClass }
+            return { args, dayjs, model, weekDayClass }
         },
         template: `
-            <div class="w-[400px] border border-border p-4 rounded bg-background shadow-outer">
-                <NCalendar 
-                    v-bind="args" 
-                    v-model="model"
-                    :weekDayClass="weekDayClass"
-                >
-                    <!-- Custom individual weekday -->
-                    <template #weekday-1="{ day }">
-                        <div class="flex flex-col items-center">
-                            <span class="text-[10px] opacity-50">START</span>
-                            <span>{{ day }}</span>
-                        </div>
-                    </template>
-
-                    <!-- Custom cell content -->
-                    <template #cell="{ day }">
-                        <div class="flex flex-col items-center justify-center w-full h-full relative">
-                            <span :class="{ 'font-black underline': day.isToday }">{{ day.dayOfMonth }}</span>
-                            <div v-if="day.dayOfMonth === 15" class="absolute top-0 right-0">
-                                <NIcon name="mdi-star" class="text-warning text-[10px]" />
+            <NCard class="w-[400px]">
+                <div class="n-card-body">
+                    <NCalendar 
+                        v-bind="args" 
+                        v-model="model"
+                        :weekDayClass="weekDayClass"
+                    >
+                        <template #calendar-header="{ startDate }">
+                            <div class="font-bold mb-2">
+                                {{ dayjs(startDate).add(14, 'day').format('MMMM YYYY') }}
                             </div>
-                            <div v-if="day.isSelected" class="absolute bottom-0 text-[8px] leading-none">SEL</div>
-                        </div>
-                    </template>
-                </NCalendar>
-            </div>
+                        </template>
+
+                        <!-- Custom individual weekday -->
+                        <template #weekday-1="{ day }">
+                            <div class="flex flex-col items-center">
+                                <span class="text-[10px] opacity-50">START</span>
+                                <span>{{ day }}</span>
+                            </div>
+                        </template>
+
+                        <!-- Custom cell content -->
+                        <template #cell="{ day }">
+                            <div class="flex flex-col items-center justify-center w-full h-full relative">
+                                <span :class="{ 'font-black underline': day.isToday }">{{ day.dayOfMonth }}</span>
+                                <div v-if="day.dayOfMonth === 15" class="absolute top-0 right-0">
+                                    <NIcon name="mdi-star" class="text-warning text-[10px]" />
+                                </div>
+                                <div v-if="day.isSelected" class="absolute bottom-0 text-[8px] leading-none">SEL</div>
+                            </div>
+                        </template>
+                    </NCalendar>
+                </div>
+            </NCard>
         `
     })
 }
 
 export const DualCalendar: Story = {
     render: args => ({
-        components: { NCalendar },
+        components: { NCalendar, NButton, NCard },
         setup() {
             const range = ref<any>(null)
-            
+
             // Source of truth for navigation
             const currentYear = ref(2025)
             const currentMonth = ref(0) // 0 = Jan
@@ -377,11 +537,15 @@ export const DualCalendar: Story = {
             const viewingWeek = ref(1)
 
             // Sync calendar props whenever navigation state changes
-            watch([currentYear, currentMonth], ([y, m]) => {
-                const { year, week } = getYearWeekFromMonth(y, m)
-                viewingYear.value = year
-                viewingWeek.value = week
-            }, { immediate: true })
+            watch(
+                [currentYear, currentMonth],
+                ([y, m]) => {
+                    const { year, week } = getYearWeekFromMonth(y, m)
+                    viewingYear.value = year
+                    viewingWeek.value = week
+                },
+                { immediate: true }
+            )
 
             const prevMonth = () => {
                 let m = currentMonth.value - 1
@@ -408,76 +572,89 @@ export const DualCalendar: Story = {
             return { dayjs, range, viewingYear, viewingWeek, prevMonth, nextMonth }
         },
         template: `
-            <div class="flex flex-col gap-4 p-4 border border-border rounded bg-background shadow-outer max-w-[800px]">
-                <div class="flex justify-between items-center mb-2">
-                    <button @click="prevMonth" class="px-2 py-1 border rounded hover:bg-surface-indent">&lt; Prev Month</button>
-                    <span class="font-bold text-sm">
-                        Dual Month View
-                    </span>
-                    <button @click="nextMonth" class="px-2 py-1 border rounded hover:bg-surface-indent">Next Month &gt;</button>
+            <NCard class="w-[45rem]">
+                <div class="n-card-body">
+                    <div class="flex justify-between items-center mb-2">
+                        <NButton @click="prevMonth" class="outlined px-2" label="< Prev Month" size="sm" />
+                        <span class="font-bold text-sm">
+                            Dual Month View
+                        </span>
+                        <NButton @click="nextMonth" class="outlined px-2" label="Next Month >" size="sm" />
+                    </div>
+                    
+                    <NCalendar 
+                        v-model="range"
+                        range
+                        :numCalendars="2"
+                        :viewingYear="viewingYear"
+                        :viewingWeek="viewingWeek"
+                        :rows="5"
+                    >
+                        <template #calendar-header="{ startDate }">
+                            <div class="text-center font-bold text-sm py-2">
+                                {{ dayjs(startDate).add(14, 'day').format('MMMM YYYY') }}
+                            </div>
+                        </template>
+                        <template #cell="{day}">
+                            <div class="flex flex-col items-center">
+                                <div v-if="day.dayOfMonth === 1" class="text-text-light text-xs">{{day.date.format('MMM')}}</div>
+                                <div>{{day.dayOfMonth}}</div>
+                            </div>
+                        </template>
+                    </NCalendar>
+                    
+                    <div class="text-xs break-all p-2 bg-surface-indent rounded mt-4">
+                        Selected Range: {{ range }}
+                    </div>
                 </div>
-                
-                <NCalendar 
-                    v-model="range"
-                    range
-                    :numCalendars="2"
-                    :viewingYear="viewingYear"
-                    :viewingWeek="viewingWeek"
-                    :rows="6"
-                >
-                    <template #calendar-header="{ startDate }">
-                        <div class="text-center font-bold text-sm py-2">
-                            {{ dayjs(startDate).add(14, 'day').format('MMMM YYYY') }}
-                        </div>
-                    </template>
-                </NCalendar>
-                
-                <div class="text-xs break-all p-2 bg-surface-indent rounded">
-                    Selected Range: {{ range }}
-                </div>
-            </div>
+            </NCard>
         `
     })
 }
 
 export const MixedSelection: Story = {
     render: args => ({
-        components: { NCalendar },
+        components: { NCalendar, NCard },
         setup() {
-            // Mixed selection is effectively multiple ranges.
-            // Single dates are just ranges where begin == end (or normalized to string).
-            // Our component normalizes mixed input (strings + objects) into a standard format.
             const mixedModel = ref<any[]>(['2025-01-05', { begin: '2025-01-10', end: '2025-01-15' }, '2025-01-20'])
             const view = ref({ y: 2025, w: 1 })
 
-            return { mixedModel, view }
+            return { dayjs, mixedModel, view }
         },
         template: `
-            <div class="w-[400px] border border-border p-4 rounded bg-background shadow-outer">
-                <h3 class="font-bold mb-2">Mixed Selection (Multiple + Range)</h3>
-                <p class="text-xs text-text-light mb-4">
-                    You can select single dates (click) AND ranges (click start, click end) in the same calendar.
-                    <br>
-                    Try clicking separate dates, then try creating a range between empty spots.
-                </p>
-                <NCalendar 
-                    v-model="mixedModel" 
-                    multiple 
-                    range
-                    v-model:viewingYear="view.y" 
-                    v-model:viewingWeek="view.w"
-                />
-                <div class="mt-4 text-[10px] p-2 bg-surface-indent rounded break-all">
-                    Model: {{ mixedModel }}
+            <NCard class="w-[400px]">
+                <div class="n-card-body">
+                    <h3 class="font-bold mb-2">Mixed Selection (Multiple + Range)</h3>
+                    <p class="text-xs text-text-light mb-4">
+                        You can select single dates (click) AND ranges (click start, click end) in the same calendar.
+                        <br>
+                        Try clicking separate dates, then try creating a range between empty spots.
+                    </p>
+                    <NCalendar 
+                        v-model="mixedModel" 
+                        multiple 
+                        range
+                        v-model:viewingYear="view.y" 
+                        v-model:viewingWeek="view.w"
+                    >
+                        <template #calendar-header="{ startDate }">
+                            <div class="font-bold mb-2">
+                                {{ dayjs(startDate).add(14, 'day').format('MMMM YYYY') }}
+                            </div>
+                        </template>
+                    </NCalendar>
+                    <div class="mt-4 text-[10px] p-2 bg-surface-indent rounded break-all">
+                        Model: {{ mixedModel }}
+                    </div>
                 </div>
-            </div>
+            </NCard>
         `
     })
 }
 
 export const FeatureToggles: Story = {
     render: args => ({
-        components: { NCalendar },
+        components: { NCalendar, NCard, NCheckbox },
         setup() {
             const model = ref([])
             const isRange = ref(false)
@@ -486,90 +663,125 @@ export const FeatureToggles: Story = {
             const isMultiple = ref(false)
             const view = ref({ y: 2025, w: 1 })
 
-            return { model, isRange, isSelectable, isUnselectable, isMultiple, view }
+            return { dayjs, model, isRange, isSelectable, isUnselectable, isMultiple, view }
         },
         template: `
-            <div class="w-[400px] border border-border p-4 rounded bg-background shadow-outer">
-                <h3 class="font-bold mb-4">Feature Toggles</h3>
-                
-                <div class="flex flex-wrap gap-4 mb-4 p-2 bg-surface-indent rounded border border-border">
-                    <label class="flex items-center gap-2 text-xs cursor-pointer">
-                        <input type="checkbox" v-model="isSelectable"> Selectable
-                    </label>
-                    <label class="flex items-center gap-2 text-xs cursor-pointer">
-                        <input type="checkbox" v-model="isUnselectable"> Unselectable
-                    </label>
-                    <label class="flex items-center gap-2 text-xs cursor-pointer">
-                        <input type="checkbox" v-model="isMultiple"> Multiple
-                    </label>
-                    <label class="flex items-center gap-2 text-xs cursor-pointer">
-                        <input type="checkbox" v-model="isRange"> Range Mode
-                    </label>
-                </div>
+            <NCard class="w-[400px]">
+                <div class="n-card-body">
+                    <h3 class="font-bold mb-4">Feature Toggles</h3>
+                    
+                    <div class="flex flex-wrap gap-4 mb-4 p-2 bg-surface-indent rounded border border-border">
+                        <NCheckbox v-model="isSelectable" label="Selectable" />
+                        <NCheckbox v-model="isUnselectable" label="Unselectable" />
+                        <NCheckbox v-model="isMultiple" label="Multiple" />
+                        <NCheckbox v-model="isRange" label="Range Mode" />
+                    </div>
 
-                <NCalendar 
-                    v-model="model"
-                    :range="isRange"
-                    :selectable="isSelectable"
-                    :unselectable="isUnselectable"
-                    :multiple="isMultiple"
-                    v-model:viewingYear="view.y"
-                    v-model:viewingWeek="view.w"
-                />
+                    <NCalendar 
+                        v-model="model"
+                        :range="isRange"
+                        :selectable="isSelectable"
+                        :unselectable="isUnselectable"
+                        :multiple="isMultiple"
+                        v-model:viewingYear="view.y"
+                        v-model:viewingWeek="view.w"
+                    >
+                        <template #calendar-header="{ startDate }">
+                            <div class="font-bold mb-2">
+                                {{ dayjs(startDate).add(14, 'day').format('MMMM YYYY') }}
+                            </div>
+                        </template>
+                    </NCalendar>
 
-                <div class="mt-4 text-[10px] break-all p-2 bg-surface-indent rounded">
-                    <strong>Value:</strong> {{ model }}
+                    <div class="mt-4 text-[10px] break-all p-2 bg-surface-indent rounded">
+                        <strong>Value:</strong> {{ model }}
+                    </div>
                 </div>
-            </div>
+            </NCard>
         `
     })
 }
 
 export const MultipleActiveMonths: Story = {
     render: args => ({
-        components: { NCalendar },
+        components: { NCalendar, NCard, NButton, NInputSelect },
         setup() {
             const activeMonths = ref([0, 2, 4]) // Jan, Mar, May
             const viewingYear = ref(2025)
             const viewingWeek = ref(1)
 
-            const toggleMonth = (m: number) => {
-                const idx = activeMonths.value.indexOf(m)
-                if (idx > -1) activeMonths.value.splice(idx, 1)
-                else activeMonths.value.push(m)
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+            const monthOptions = computed(() => months.map((m, i) => ({ label: m, value: String(i) })))
+
+            const years = [2024, 2025, 2026]
+            const yearOptions = computed(() => years.map(y => ({ label: String(y), value: String(y) })))
+
+            const viewingYearStr = computed({
+                get: () => String(viewingYear.value),
+                set: val => (viewingYear.value = Number(val))
+            })
+
+            const activeMonthsStr = computed({
+                get: () => activeMonths.value.map(String),
+                set: vals => (activeMonths.value = vals.map(Number))
+            })
+
+            const navigateMonth = (delta: number) => {
+                const current = dayjs(`${viewingYear.value}-01-01`)
+                    .isoWeek(viewingWeek.value)
+                    .startOf('isoWeek')
+                    .add(14, 'day')
+                const target = current.add(delta, 'month')
+                const { year, week } = getYearWeekFromMonth(target.year(), target.month())
+                viewingYear.value = year
+                viewingWeek.value = week
             }
 
-            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-
-            return { activeMonths, viewingYear, viewingWeek, toggleMonth, months }
+            return {
+                dayjs,
+                activeMonths,
+                viewingYear,
+                viewingWeek,
+                monthOptions,
+                yearOptions,
+                viewingYearStr,
+                activeMonthsStr,
+                navigateMonth
+            }
         },
         template: `
-            <div class="w-[400px] border border-border p-4 rounded bg-background shadow-outer">
-                <h3 class="font-bold mb-2">Multiple Active Months</h3>
-                <p class="text-xs text-text-light mb-4">
-                    Toggle months to see them highlighted as "current" (active). 
-                    Dates outside active months appear faded.
-                </p>
-                
-                <div class="flex flex-wrap gap-2 mb-4 p-2 bg-surface-indent rounded border border-border">
-                    <button 
-                        v-for="(m, i) in months" 
-                        :key="i"
-                        @click="toggleMonth(i)"
-                        class="px-2 py-1 text-[10px] rounded border"
-                        :class="activeMonths.includes(i) ? 'bg-brand text-text-invert border-brand' : 'bg-background border-border'"
-                    >
-                        {{ m }}
-                    </button>
-                </div>
+            <NCard class="w-[450px]">
+                <div class="n-card-body">
+                    <h3 class="font-bold mb-2">Multiple Active Months</h3>
+                    <p class="text-xs text-text-light mb-4">
+                        Select multiple active months and change the viewing year.
+                        Dates outside active months appear faded.
+                    </p>
+                    
+                    <div class="flex gap-2 mb-4 items-end">
+                        <NInputSelect v-model="activeMonthsStr" :options="monthOptions" multiple label="Active Months" class="grow" />
+                        <NInputSelect v-model="viewingYearStr" :options="yearOptions" label="Year" class="w-24" />
+                        
+                        <div class="flex gap-1 shrink-0 items-center mb-1">
+                            <NButton @click="navigateMonth(-1)" class="outlined px-2" size="sm" label="M-" />
+                            <NButton @click="navigateMonth(1)" class="outlined px-2" size="sm" label="M+" />
+                        </div>
+                    </div>
 
-                <NCalendar 
-                    :activeMonth="activeMonths"
-                    v-model:viewingYear="viewingYear"
-                    v-model:viewingWeek="viewingWeek"
-                    :rows="6"
-                />
-            </div>
+                    <NCalendar 
+                        :activeMonth="activeMonths"
+                        v-model:viewingYear="viewingYear"
+                        v-model:viewingWeek="viewingWeek"
+                        :rows="6"
+                    >
+                        <template #calendar-header="{ startDate }">
+                            <div class="font-bold mb-2">
+                                {{ dayjs(startDate).add(14, 'day').format('MMMM YYYY') }}
+                            </div>
+                        </template>
+                    </NCalendar>
+                </div>
+            </NCard>
         `
     })
 }
