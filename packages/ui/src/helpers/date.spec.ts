@@ -1,6 +1,71 @@
 import { describe, expect, it } from 'vitest'
-import { getMonthFromYearWeek, getVisibleSegments, getYearWeekFromMonth, normalizeDateRanges, generateCalendarDays, type CalendarGenerationConfig } from './date'
+import { getMonthFromYearWeek, getVisibleSegments, getYearWeekFromMonth, normalizeDateRanges, generateCalendarDays, removeMatchingRange, validateRange, type CalendarGenerationConfig } from './date'
 import dayjs from 'dayjs'
+
+describe('validateRange', () => {
+    const start = dayjs('2025-01-01')
+    const end = dayjs('2025-01-05') // 5 days
+
+    it('should return true for valid range', () => {
+        expect(validateRange(start, end, {})).toBe(true)
+    })
+
+    it('should respect minRange', () => {
+        expect(validateRange(start, end, { minRange: 6 })).toBe(false)
+        expect(validateRange(start, end, { minRange: 5 })).toBe(true)
+    })
+
+    it('should respect maxRange', () => {
+        expect(validateRange(start, end, { maxRange: 4 })).toBe(false)
+        expect(validateRange(start, end, { maxRange: 5 })).toBe(true)
+    })
+
+    it('should fail if contains disabled date', () => {
+        expect(validateRange(start, end, { disabled: ['2025-01-03'] })).toBe(false)
+    })
+
+    it('should pass even if contains invisible date (logic moved to splitting)', () => {
+        // Validation no longer cares about visibility gaps.
+        // It's up to getVisibleSegments to filter them out.
+        expect(validateRange(start, end, {})).toBe(true)
+    })
+})
+
+describe('removeMatchingRange', () => {
+    it('should return original list if empty', () => {
+        expect(removeMatchingRange([], { begin: '2025-01-01', end: '2025-01-02' })).toEqual([])
+    })
+
+    it('should return original list if range not found', () => {
+        const list = [{ begin: '2025-01-01', end: '2025-01-05' }]
+        const target = { begin: '2025-01-02', end: '2025-01-06' }
+        expect(removeMatchingRange(list, target)).toBe(list) // Should be same reference if not found check implies optimization, or at least equal
+        expect(removeMatchingRange(list, target)).toEqual(list)
+    })
+
+    it('should remove matching range', () => {
+        const list = [
+            { begin: '2025-01-01', end: '2025-01-05' },
+            { begin: '2025-01-10', end: '2025-01-15' }
+        ]
+        const target = { begin: '2025-01-01', end: '2025-01-05' }
+        const result = removeMatchingRange(list, target)
+        
+        expect(result).toHaveLength(1)
+        expect(result[0]).toEqual({ begin: '2025-01-10', end: '2025-01-15' })
+        // Ensure immutability
+        expect(list).toHaveLength(2)
+    })
+
+    it('should ignore non-range items', () => {
+        const list = ['2025-01-01', { begin: '2025-01-05', end: '2025-01-10' }]
+        // Trying to remove something that looks like the string but passed as range? 
+        // The function only compares objects with 'begin'.
+        const target = { begin: '2025-01-01', end: '2025-01-01' }
+        const result = removeMatchingRange(list, target)
+        expect(result).toEqual(list)
+    })
+})
 
 describe('normalizeDateRanges', () => {
     it('should return empty array for empty input', () => {

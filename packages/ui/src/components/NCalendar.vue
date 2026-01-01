@@ -40,7 +40,12 @@
                 </slot>
 
                 <!-- Calendar Grid -->
-                <div :class="view.gridClasses" role="grid" :aria-multiselectable="multiple" @mouseleave="handleHover(null)">
+                <div
+                    :class="view.gridClasses"
+                    role="grid"
+                    :aria-multiselectable="multiple"
+                    @mouseleave="handleHover(null)"
+                >
                     <div
                         v-for="day in view.days"
                         :key="day.dateString"
@@ -104,12 +109,14 @@
     import { computed, nextTick, ref, toRefs, watch } from 'vue'
     import {
         checkDateInList,
-        normalizeDateRanges,
-        type CalendarValue,
-        type DateRange,
+        generateCalendarDays,
         getVisibleSegments,
         getYearWeekFromMonth,
-        generateCalendarDays
+        normalizeDateRanges,
+        removeMatchingRange,
+        validateRange,
+        type CalendarValue,
+        type DateRange
     } from '../helpers'
     import { resolveClassProp } from '../helpers/dom'
 
@@ -248,19 +255,11 @@
     const isPendingRangeInvalid = computed(() => {
         if (!range.value || !internalPendingRange.value?.begin || !hoveredDate.value) return false
 
-        const start = dayjs(internalPendingRange.value.begin)
-        const end = hoveredDate.value
-        const [rangeStart, rangeEnd] = start.isBefore(end) ? [start, end] : [end, start]
-
-        const diff = rangeEnd.diff(rangeStart, 'day') + 1
-        if (diff < minRange.value || diff > maxRange.value) return true
-
-        let d = rangeStart.clone()
-        while (d.isSameOrBefore(rangeEnd, 'day')) {
-            if (checkDateInList(d, normalizedDisabled.value)) return true
-            d = d.add(1, 'day')
-        }
-        return false
+        return !validateRange(dayjs(internalPendingRange.value.begin), hoveredDate.value, {
+            minRange: minRange.value,
+            maxRange: maxRange.value,
+            disabled: normalizedDisabled.value
+        })
     })
 
     // --- Grid Generation ---
@@ -269,17 +268,16 @@
         // Determine how many views to render
         const count = views.value && views.value.length > 0 ? views.value.length : Math.max(1, numViews.value)
 
-        let globalStart: dayjs.Dayjs | null = null
-        // Calculate global start only if not using per-view overrides logic for continuity fallback
-        if (!views.value || views.value.length === 0) {
+        // Calculate global start unconditionally to act as the anchor for continuous views
+        const globalStart = (() => {
             const y = viewingYear.value ?? dayjs().year()
             const w = viewingWeek.value ?? dayjs().week()
             const fd = firstDayOfWeek.value ?? 1
             const isoMonday = dayjs().year(y).isoWeek(w).startOf('isoWeek')
             let diff = 1 - fd
             if (diff < 0) diff += 7
-            globalStart = isoMonday.subtract(diff, 'day')
-        }
+            return isoMonday.subtract(diff, 'day')
+        })()
 
         const pendingInvalid = isPendingRangeInvalid.value
 
@@ -351,13 +349,6 @@
                 currentStart = isoMonday.subtract(diff, 'day')
             } else {
                 // Continuous logic
-                if (!globalStart) {
-                    // Should not happen if logic is correct, but safe fallback
-                    const isoMonday = dayjs().year(currentYear).isoWeek(currentWeek).startOf('isoWeek')
-                    let diff = 1 - currentFirstDay
-                    if (diff < 0) diff += 7
-                    globalStart = isoMonday.subtract(diff, 'day')
-                }
                 const daysPerCalendar = (rows.value ?? 6) * 7 // Use global rows for stride in legacy mode
                 currentStart = globalStart.add(c * daysPerCalendar, 'day')
             }
@@ -476,7 +467,7 @@
         if (!selectable.value || day.isDisabled || !day.isVisible) return
 
         const dateStr = day.dateString
-        let currentList = [...normalizedModelValue.value] as CalendarValue[]
+        const currentList = [...normalizedModelValue.value] as CalendarValue[]
 
         if (range.value) handleRangeSelection(day, currentList, dateStr)
         else handleSimpleSelection(currentList, dateStr)
@@ -493,16 +484,27 @@
                 end: finalEnd.format('YYYY-MM-DD')
             }
 
-            if (unselectable.value && tryDeselectRange(currentList, finalizedRange)) return
-
-            const isVisibleGlobal = (d: dayjs.Dayjs) => {
-                if (visible.value) return checkDateInList(d, normalizedVisible.value!)
-                return true
+            if (unselectable.value) {
+                const reducedList = removeMatchingRange(currentList, finalizedRange)
+                if (reducedList.length < currentList.length) {
+                    // Item was removed
+                    if (multiple.value) {
+                        emits('update:modelValue', normalizeDateRanges(reducedList))
+                    } else {
+                        emits('update:modelValue', null)
+                    }
+                    handleCancelPending()
+                    return
+                }
             }
 
-            const isDisabledGlobal = (d: dayjs.Dayjs) => checkDateInList(d, normalizedDisabled.value)
-
-            if (validateRange(finalBegin, finalEnd, isDisabledGlobal)) {
+            if (
+                validateRange(finalBegin, finalEnd, {
+                    minRange: minRange.value,
+                    maxRange: maxRange.value,
+                    disabled: normalizedDisabled.value
+                })
+            ) {
                 const segments = getVisibleSegments(finalBegin, finalEnd, normalizedVisible.value)
 
                 if (segments.length > 0) {
@@ -511,12 +513,12 @@
                     } else {
                         currentList = segments
                     }
-                    
+
                     const normalized = normalizeDateRanges(currentList)
                     if (!multiple.value && normalized.length === 1) {
-                         emits('update:modelValue', normalized[0])
+                        emits('update:modelValue', normalized[0])
                     } else {
-                         emits('update:modelValue', normalized)
+                        emits('update:modelValue', normalized)
                     }
                 }
                 handleCancelPending()
@@ -550,51 +552,6 @@
                 emits('update:modelValue', dateStr)
             }
         }
-    }
-
-    function tryDeselectRange(currentList: CalendarValue[], finalizedRange: DateRange): boolean {
-        const idx = currentList.findIndex(item => {
-            if (typeof item === 'object' && item !== null && 'begin' in item) {
-                return (
-                    dayjs(item.begin).isSame(finalizedRange.begin, 'day') &&
-                    dayjs(item.end).isSame(finalizedRange.end, 'day')
-                )
-            }
-            return false
-        })
-
-        if (idx > -1) {
-            if (multiple.value) {
-                currentList.splice(idx, 1)
-                emits('update:modelValue', normalizeDateRanges(currentList))
-            } else {
-                emits('update:modelValue', null)
-            }
-            handleCancelPending()
-            return true
-        }
-        return false
-    }
-
-    function validateRange(
-        start: dayjs.Dayjs,
-        end: dayjs.Dayjs,
-        isDisabledFn?: (d: dayjs.Dayjs) => boolean,
-        isVisibleFn?: (d: dayjs.Dayjs) => boolean
-    ): boolean {
-        const diff = end.diff(start, 'day') + 1
-        if (diff < minRange.value || diff > maxRange.value) return false
-
-        let d = start.clone()
-        const checkDisabled = isDisabledFn || (d => checkDateInList(d, normalizedDisabled.value))
-        const checkVisible =
-            isVisibleFn || (d => !normalizedVisible.value || checkDateInList(d, normalizedVisible.value))
-
-        while (d.isSameOrBefore(end, 'day')) {
-            if (checkDisabled(d)) return false
-            d = d.add(1, 'day')
-        }
-        return true
     }
 </script>
 
