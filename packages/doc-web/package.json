@@ -1,0 +1,19 @@
+{
+  "name": "@packages/doc-web",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "docs:dev": "vitepress dev --host",
+    "docs:build": "vitepress build",
+    "docs:preview": "vitepress preview"
+  },
+  "devDependencies": {
+    "vitepress": "^1.5.0",
+    "vue": "^3.5.13",
+    "tailwindcss": "^4.0.0",
+    "@tailwindcss/vite": "^4.0.0",
+    "postcss": "^8.4.49",
+    "autoprefixer": "^10.4.20",
+    "@nui/ui": "workspace:*"
+  }
+}

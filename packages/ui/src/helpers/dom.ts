@@ -7,9 +7,11 @@ interface ComponentTypeWithName {
     __name?: string
 }
 
-export const getElement = (selector: HTMLElement | string | null, parent = document): HTMLElement | null => {
+export const getElement = (selector: HTMLElement | string | null, parent?: Document | HTMLElement): HTMLElement | null => {
+    if (typeof document === 'undefined') return null
+    const root = parent || document
     if (typeof selector === 'string') {
-        return parent.querySelector(selector)
+        return root.querySelector(selector)
     }
     return selector
 }

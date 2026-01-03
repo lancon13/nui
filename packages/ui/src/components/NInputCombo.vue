@@ -67,11 +67,11 @@
                 v-bind="props.menuProps"
                 @select="handleSelect"
             >
-                <template v-if="$slots['item']" #item="itemProps">
-                    <slot name="item" v-bind="itemProps" />
+                <template v-if="$slots['item']" #item="itemData">
+                    <slot name="item" :item="itemData" />
                 </template>
-                <template v-if="$slots['item-content']" #item-content="itemContentProps">
-                    <slot name="item-content" v-bind="itemContentProps" />
+                <template v-if="$slots['item-content']" #item-content="itemData">
+                    <slot name="item-content" :item="itemData" />
                 </template>
             </n-menu>
         </template>

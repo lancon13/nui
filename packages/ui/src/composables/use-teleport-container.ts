@@ -10,6 +10,7 @@ export function useTeleportContainer(
     watch<[string, string | string[] | object], true>(
         () => [toValue(targetElementId), toValue(elementClass)],
         async (newValue, oldValue) => {
+            if (typeof document === 'undefined') return
             isReady.value = false
             if (Array.isArray(oldValue)) {
                 const container = document.getElementById(oldValue[0])

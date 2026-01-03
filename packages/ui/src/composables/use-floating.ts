@@ -44,10 +44,10 @@ export function useFloating(
         }
     })
 
-    useEventListener(document, 'mouseup', () => {
+    useEventListener(() => (typeof document !== 'undefined' ? document : null), 'mouseup', () => {
         isInteractionPending.value = false
     })
-    useEventListener(document, 'keyup', () => {
+    useEventListener(() => (typeof document !== 'undefined' ? document : null), 'keyup', () => {
         isInteractionPending.value = false
     })
 

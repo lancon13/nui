@@ -1,0 +1,11 @@
+@import 'tailwindcss';
+@import '@nui/ui/styles/index.css';
+
+:root {
+    --vp-c-brand-1: #006699;
+}
+
+.vp-raw,
+.vp-raw * {
+    all: revert-layer;
+}
