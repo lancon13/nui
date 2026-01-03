@@ -55,7 +55,8 @@
 
         <div
             v-if="props.expandable"
-            :class="['n-list-item-content', model ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0']"
+            class="n-list-item-content"
+            :class="[model ? 'n-list-item-content--expanded' : '']"
         >
             <div class="overflow-hidden">
                 <div class="px-4 pb-2">
@@ -207,7 +208,11 @@
                 }
 
                 .n-list-item-content {
-                    @apply grid transition-all duration-300 ease-in-out;
+                    @apply grid transition-all duration-300 ease-in-out opacity-0 grid-rows-[0fr];
+
+                    &.n-list-item-content--expanded {
+                        @apply opacity-100 grid-rows-[1fr];
+                    }
                 }
             }
 

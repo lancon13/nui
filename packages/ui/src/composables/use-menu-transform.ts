@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // composables/useMenuTransform.ts
 import { merge } from 'es-toolkit/object'
-import { Comment, computed, h, isVNode, Text, Fragment, type Slots, type VNode, type VNodeChild } from 'vue' // <--- Import Text, Comment
+import { Comment, computed, h, isVNode, Text, Fragment, type Slots, type VNode, type VNodeChild } from 'vue'
 import NIcon from '../components/NIcon.vue'
 import NListItem from '../components/NListItem.vue'
 import NMenu from '../components/NMenu.vue'
+import { isVNodeNameContain } from '../helpers/dom'
 
 // --- Configuration ---
 const defaultSubmenuProps = {
@@ -30,30 +31,35 @@ function transformNodes(nodes: VNodeChild[], submenuProps = defaultSubmenuProps)
     return nodes.map(node => {
         if (!isVNode(node)) return node
 
-        // FIX: Skip Text and Comment nodes immediately.
-        // We do not want to wrap text nodes in new h() calls with slots.
         if (node.type === Text || node.type === Comment) {
             return node
         }
 
+        // Base props to preserve including ref and key
+        const baseProps = {
+            ...node.props,
+            ref: node.ref,
+            key: node.key
+        }
+
         // 1. Recursive NMenu
-        if (node.type === NMenu) {
-            return h(NMenu, merge(defaultSubmenuProps, { ...node.props, ...submenuProps }) as any, {
+        if (node.type === NMenu || isVNodeNameContain(node, 'NMenu')) {
+            return h(NMenu, merge(defaultSubmenuProps, { ...baseProps, ...submenuProps }) as any, {
                 default: () => transformNodes(getChildren(node), submenuProps)
             })
         }
 
         // Handle Fragments (e.g. v-for loops)
         if (node.type === Fragment) {
-            return h(Fragment, node.props, transformNodes(getChildren(node), submenuProps))
+            return h(Fragment, baseProps, transformNodes(getChildren(node), submenuProps))
         }
 
         // 2. List Items (NListItem or li)
-        if (node.type === NListItem || node.type === 'li') {
+        if (node.type === NListItem || isVNodeNameContain(node, 'NListItem') || node.type === 'li') {
             const children = getChildren(node)
 
             // Check for submenu
-            const subMenuIndex = children.findIndex(c => isVNode(c) && (c.type === 'ul' || c.type === NMenu))
+            const subMenuIndex = children.findIndex(c => isVNode(c) && (c.type === 'ul' || isVNodeNameContain(c as VNode, ['NMenu', 'NList'])))
             const hasSubMenu = subMenuIndex !== -1
 
             // Separate content from submenu
@@ -70,11 +76,11 @@ function transformNodes(nodes: VNodeChild[], submenuProps = defaultSubmenuProps)
 
             if (hasSubMenu) {
                 const subMenuNode = children[subMenuIndex] as VNode
-                return h(NListItem, node.props, {
+                return h(NListItem, baseProps, {
                     ...existingSlots,
                     default: () => [
                         ...processedContent,
-                        h(NMenu, merge(defaultSubmenuProps, { ...node.props, ...submenuProps }) as any, {
+                        h(NMenu, merge(defaultSubmenuProps, { ...subMenuNode.props, ...submenuProps }) as any, {
                             default: () => transformNodes(getChildren(subMenuNode), submenuProps)
                         }),
                         h(NIcon, { name: 'chevron-right', class: 'ml-8 -mr-2' })
@@ -82,15 +88,14 @@ function transformNodes(nodes: VNodeChild[], submenuProps = defaultSubmenuProps)
                 })
             }
 
-            return h(NListItem, node.props, { ...existingSlots, default: () => processedContent })
+            return h(NListItem, baseProps, { ...existingSlots, default: () => processedContent })
         }
 
         // 3. Generic wrappers (div, etc) -> Recurse deeper
         if (node.children) {
             const children = getChildren(node)
-            // Ensure we don't try to recurse into something that shouldn't have slots
             if (children.length) {
-                return h(node.type as any, node.props, {
+                return h(node.type as any, baseProps, {
                     default: () => transformNodes(children, submenuProps)
                 })
             }

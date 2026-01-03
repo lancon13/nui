@@ -104,7 +104,6 @@
     @layer components {
         .n-list {
             @apply relative appearance-none
-                rounded-element
                 flex flex-col flex-nowrap;
 
             .n-list {

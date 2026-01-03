@@ -1,7 +1,11 @@
 <template>
     <div
         ref="containerRef"
-        :class="['n-image', props.containerClass]"
+        :class="[
+            'n-image',
+            props.containerClass,
+            { 'n-image--block': props.width === '100%' || props.height === '100%' }
+        ]"
         :style="containerStyles"
         role="img"
         :aria-label="props.alt"
@@ -137,17 +141,9 @@
         return styles
     })
 
-    const fitClasses: Record<string, string> = {
-        cover: 'object-cover',
-        contain: 'object-contain',
-        fill: 'object-fill',
-        none: 'object-none',
-        'scale-down': 'object-scale-down'
-    }
-
     const imageClasses = computed(() => [
         'n-image-img',
-        fitClasses[props.fit] || 'object-cover',
+        `n-image-img--fit-${props.fit}`,
         props.aspectRatio || (props.width && props.height)
             ? 'absolute inset-0 w-full h-full'
             : 'block max-w-full h-auto',
@@ -166,6 +162,10 @@
             @apply relative overflow-hidden bg-surface;
             @apply inline-block align-middle;
 
+            &.n-image--block {
+                @apply block;
+            }
+
             .n-image-placeholder,
             .n-image-error {
                 @apply absolute inset-0 z-10 w-full h-full;
@@ -175,6 +175,22 @@
 
             .n-image-img {
                 @apply transition-opacity duration-300 ease-in-out;
+
+                &.n-image-img--fit-cover {
+                    object-fit: cover;
+                }
+                &.n-image-img--fit-contain {
+                    object-fit: contain;
+                }
+                &.n-image-img--fit-fill {
+                    object-fit: fill;
+                }
+                &.n-image-img--fit-none {
+                    object-fit: none;
+                }
+                &.n-image-img--fit-scale-down {
+                    object-fit: scale-down;
+                }
             }
         }
 

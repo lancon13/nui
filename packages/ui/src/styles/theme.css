@@ -38,13 +38,13 @@
             @apply focus:outline-0 focus:ring-2 focus:ring-focus;
         }
 
-        .pilled {
+        &.pilled {
             @apply rounded-full;
         }
-        .squared {
+        &.squared {
             @apply rounded-none;
         }
-        .shadowed {
+        &.shadowed {
             @apply shadow-outer;
         }
     }
