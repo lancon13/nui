@@ -1,64 +1,101 @@
 # Select
 
-Native selection control for picking items from a list.
+Native browser selection control, ideal for simple choice lists and highly accessible mobile interfaces.
 
 <script setup>
 import { ref } from 'vue'
-const selected = ref('opt1')
+const selectedValue = ref('apple')
 const options = [
-    { label: 'Option 1', value: 'opt1' },
-    { label: 'Option 2', value: 'opt2' },
-    { label: 'Option 3', value: 'opt3' }
+    { label: 'Apple', value: 'apple' },
+    { label: 'Banana', value: 'banana' },
+    { label: 'Cherry', value: 'cherry' }
+]
+const groupedOptions = [
+    { label: 'Fruits', options: [{ label: 'Apple', value: 'a' }, { label: 'Pear', value: 'p' }] },
+    { label: 'Vegetables', options: [{ label: 'Carrot', value: 'c' }] }
 ]
 </script>
 
 ## Basic Usage
 
-Uses the browser's native select element. Best for simple lists and mobile-friendly interfaces.
+The component renders a native `<select>` element styled to match the NUI system.
 
 <div class="w-96 my-4 flex flex-col gap-4 vp-raw">
-    <NInputSelect v-model="selected" :options="options" label="Pick an option" />
-    <div class="text-sm">Value: <code>{{ selected }}</code></div>
+    <NInputSelect v-model="selectedValue" :options="options" label="Select Fruit" />
+    <div class="caption-text opacity-60">Selected: <code>{{ selectedValue }}</code></div>
 </div>
 
 ```vue
-<NInputSelect v-model="selected" :options="options" label="Select" />
+<script setup>
+const options = [
+  { label: 'Option 1', value: '1' },
+  { label: 'Option 2', value: '2' }
+]
+</script>
+
+<template>
+  <NInputSelect v-model="val" :options="options" label="Choose" />
+</template>
 ```
 
 ## Grouped Options
 
-<div class="w-96 my-4 flex flex-col gap-4 vp-raw">
-    <NInputSelect 
-        label="Cars" 
-        :options="[
-            { label: 'German', options: [{ label: 'BMW', value: 'bmw' }, { label: 'Audi', value: 'audi' }] },
-            { label: 'Swedish', options: [{ label: 'Volvo', value: 'volvo' }] }
-        ]" 
-    />
+Native `optgroup` support via the `options` prop structure.
+
+<div class="w-96 my-4 vp-raw">
+    <NInputSelect :options="groupedOptions" label="Categorized List" />
 </div>
 
-## Multiple Select
+```vue
+<script setup>
+const grouped = [
+  { label: 'Group A', options: [{ label: 'A1', value: '1' }] }
+]
+</script>
 
-<div class="w-96 my-4 flex flex-col gap-4 vp-raw">
-    <NInputSelect multiple label="Native Multiple" :options="options" />
+<NInputSelect :options="grouped" />
+```
+
+## Multiple Selection
+
+Enables native multi-select behavior. Note that on many desktop browsers, this requires holding Ctrl/Cmd.
+
+<div class="w-96 my-4 vp-raw">
+    <NInputSelect v-model="selectedValue" :options="options" multiple label="Select Multiple" />
 </div>
+
+```vue
+<NInputSelect multiple :options="options" />
+```
 
 ## Props
 
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
-| `options` | `Array` | `[]` | List of options `{ label, value }` or groups. |
+| `options` | `Array` | `[]` | List of items `{ label, value }` or groups. |
+| `v-model` | `string \| Array` | - | The selected value(s). |
 | `multiple` | `boolean` | `false` | Enable native multiple selection. |
-| `label` | `string` | - | Input label. |
+| `label` | `string` | - | Field label. |
 | `message` | `string` | - | Helper or error message. |
-| `disabled` | `boolean` | `false` | Disable input. |
-| `loading` | `boolean` | `false` | Show loading state. |
-| `formatOption` | `Function` | - | Function to format option labels. |
-| `dropdownIcon` | `string` | `'mdi-menu-down'` | Custom dropdown icon. |
+| `dropdownIcon` | `string` | `'mdi-menu-down'` | Custom icon for the arrow. |
+| `loading` | `boolean` | `false` | Shows loading indicator. |
+| `disabled` | `boolean` | `false` | Disables the select. |
 
 ## Slots
 
 | Slot | Description |
 | --- | --- |
-| `default` | Custom options content (if not using `options` prop). |
-| `append` | Content after the select element (e.g. icon). |
+| `default` | Manually provide `<option>` tags (if not using `options` prop). |
+| `label` | Custom label content. |
+| `append` | Content after the select element (e.g. custom icon). |
+
+## Recipes & FAQ
+
+### Custom formatting
+Use the `formatOption` prop to transform labels dynamically before they are rendered in the options.
+```vue
+<NInputSelect :formatOption="(l) => `★ ${l}`" />
+```
+
+### Why use this over a Combobox?
+Use **Select** for small, static lists (under 10 items) where mobile native pickers are desired. Use **Combobox** for long lists, searching, or multi-select with visible chips.

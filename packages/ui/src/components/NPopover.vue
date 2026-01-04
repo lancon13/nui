@@ -18,7 +18,7 @@
 
     <teleport v-else-if="isReady" to="#n-popovers-container">
         <transition :name="props.overlay ? 'n-popover-overlay' : 'n-popover'">
-            <div v-if="model && props.overlay" class="n-popover-overlay" aria-hidden="true">
+            <div v-if="model && props.overlay" class="n-popover-overlay">
                 <component :is="props.tag" ref="contentRef" :class="compClasses" :role="props.role" v-bind="compBind">
                     <slot name="default">
                         <span v-if="props.content" v-html="props.content" />
@@ -45,7 +45,7 @@
     /* eslint-disable @typescript-eslint/no-explicit-any */
     /* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
     import type { Placement } from '@floating-ui/vue'
-    import { computed, type HTMLAttributes, onMounted, ref, useAttrs, useTemplateRef } from 'vue'
+    import { computed, type HTMLAttributes, onMounted, ref, useAttrs, useTemplateRef, watch } from 'vue'
     import { useFloating } from '../composables/use-floating'
     import { useTeleportContainer } from '../composables/use-teleport-container'
     import { getElement, getParentElement } from '../helpers/dom'
@@ -108,7 +108,16 @@
     const { isReady } = useTeleportContainer('n-popovers-container')
 
     const parentEl = ref<HTMLElement | null>(null)
-    const attachParentEl = computed(() => (props.attachParent ? getElement(props.attachParent) : parentEl.value))
+    const resolvedAttachParent = ref<HTMLElement | null>(null)
+    const attachParentEl = computed(() => resolvedAttachParent.value || parentEl.value)
+
+    const updateAttachParent = () => {
+        if (props.attachParent) {
+            resolvedAttachParent.value = getElement(props.attachParent)
+        } else {
+            resolvedAttachParent.value = null
+        }
+    }
 
     const floatingPlacement = computed(() => {
         return `${props.direction}${props.position !== '' ? `-${props.position}` : ''}` as Placement
@@ -190,7 +199,10 @@
 
     onMounted(() => {
         parentEl.value = getParentElement()
+        updateAttachParent()
     })
+
+    watch(() => props.attachParent, updateAttachParent)
 
     defineExpose({ show, hide, contentRef })
 </script>

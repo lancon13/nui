@@ -51,7 +51,7 @@ export const Default: Story = {
             <div>
                 <NButton @click="show = true" class="brand">Show Toast</NButton>
                 <NToast v-bind="args" v-model="show">
-                    <NBanner  icon="mdi-information">
+                    <NBanner icon="mdi-information">
                         Notification message
                         <template #actions>
                             <NButton label="Close" class="flat" icon="mdi-close" @click="show = false" />
@@ -102,9 +102,6 @@ export const Positions: Story = {
                     <NToast v-model="activeToasts[pos]" :position="pos">
                         <NBanner class="brand" icon="mdi-map-marker">
                             Toast at {{ pos }}
-                            <template #actions>
-                                <NButton label="OK" class="flat" @click="activeToasts[pos] = false" />
-                            </template>
                         </NBanner>
                     </NToast>
                 </template>

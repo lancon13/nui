@@ -5,17 +5,33 @@
     --vp-c-brand-1: #006699;
 }
 
+/*
+  Apply revert-layer to .vp-raw and all NUI teleport containers
+  to protect them from VitePress global styles.
+*/
 .vp-raw,
-.vp-raw * {
+.vp-raw *,
+#n-modals-container *,
+#n-popovers-container *,
+#n-tooltips-container *,
+[id^='n-toasts-container'] * {
     all: revert-layer;
+}
 
-    .vp-doc & {
-        ul {
-            @apply m-0 p-0;
-        }
-        li {
-            @apply mt-0;
-        }
+/*
+  Re-apply essential resets that might be lost or needed
+  to override browser defaults after revert-layer.
+*/
+.vp-raw,
+#n-modals-container,
+#n-popovers-container,
+#n-tooltips-container,
+[id^='n-toasts-container'] {
+    ul {
+        @apply m-0 p-0;
+    }
+    li {
+        @apply mt-0;
     }
 
     h1,
@@ -24,7 +40,6 @@
     h4,
     h5,
     h6 {
-        @apply m-0 p-0;
-        @apply font-semibold;
+        @apply m-0 p-0 font-semibold;
     }
 }

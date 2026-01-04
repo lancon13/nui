@@ -4,7 +4,6 @@
         <div
             v-if="props.overlay && model"
             :class="overlayClasses"
-            tabindex="-1"
             aria-hidden="true"
             @mousedown.self="handleOverlayClick"
         ></div>

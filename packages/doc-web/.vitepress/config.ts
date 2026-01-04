@@ -62,6 +62,7 @@ export default defineConfig({
             {
                 text: 'Feedback',
                 items: [
+                    { text: 'Banner', link: '/components/banner' },
                     { text: 'Toast', link: '/components/toast' },
                     { text: 'Tooltip', link: '/components/tooltip' }
                 ]

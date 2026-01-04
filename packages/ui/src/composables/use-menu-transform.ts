@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // composables/useMenuTransform.ts
 import { merge } from 'es-toolkit/object'
-import { Comment, computed, h, isVNode, Text, Fragment, type Slots, type VNode, type VNodeChild } from 'vue'
+import { Comment, computed, Fragment, h, isVNode, Text, type Slots, type VNode, type VNodeChild } from 'vue'
 import NIcon from '../components/NIcon.vue'
 import NListItem from '../components/NListItem.vue'
 import NMenu from '../components/NMenu.vue'
@@ -59,7 +59,9 @@ function transformNodes(nodes: VNodeChild[], submenuProps = defaultSubmenuProps)
             const children = getChildren(node)
 
             // Check for submenu
-            const subMenuIndex = children.findIndex(c => isVNode(c) && (c.type === 'ul' || isVNodeNameContain(c as VNode, ['NMenu', 'NList'])))
+            const subMenuIndex = children.findIndex(
+                c => isVNode(c) && (c.type === 'ul' || isVNodeNameContain(c as VNode, ['NMenu', 'NList']))
+            )
             const hasSubMenu = subMenuIndex !== -1
 
             // Separate content from submenu

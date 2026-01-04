@@ -1,21 +1,23 @@
 # Input Text
 
-Standard text input fields for user interaction.
+Standard text input fields for user interaction, supporting various types, validation states, and debouncing.
 
 <script setup>
 import { ref } from 'vue'
-const text = ref('Hello')
-const password = ref('secret')
-const email = ref('user@example.com')
+const text = ref('Hello NUI')
+const password = ref('')
+const numberValue = ref(42)
 const debouncedValue = ref('')
 const showPass = ref(false)
 </script>
 
 ## Basic Usage
 
+A simple text input with a label and placeholder.
+
 <div class="w-96 my-4 flex flex-col gap-4 vp-raw">
     <NInputText v-model="text" label="Username" placeholder="Enter your username" />
-    <div class="text-sm">Value: <code>{{ text }}</code></div>
+    <div class="caption-text opacity-60">Value: <code>{{ text }}</code></div>
 </div>
 
 ```vue
@@ -24,8 +26,9 @@ const showPass = ref(false)
 
 ## Input Types
 
+`NInputText` supports all standard HTML input types like `password`, `number`, `email`, etc.
+
 <div class="w-96 my-4 flex flex-col gap-4 vp-raw">
-    <NInputText v-model="email" type="email" label="Email" icon="mdi-email" />
     <NInputText v-model="password" :type="showPass ? 'text' : 'password'" label="Password" icon="mdi-lock">
         <template #append>
             <NIcon 
@@ -35,33 +38,41 @@ const showPass = ref(false)
             />
         </template>
     </NInputText>
+    <NInputText v-model="numberValue" type="number" label="Age" icon="mdi-numeric" />
 </div>
 
 ```vue
 <NInputText type="password" label="Password" icon="mdi-lock" />
+<NInputText type="number" label="Age" />
 ```
 
 ## States & Validation
 
+Use semantic color classes and the `message` prop to provide feedback.
+
 <div class="w-96 my-4 flex flex-col gap-4 vp-raw">
-    <NInputText label="Success" class="success" message="Username is available" icon="mdi-check" />
-    <NInputText label="Error" class="error" message="This field is required" icon="mdi-alert-circle" />
-    <NInputText label="Disabled" disabled modelValue="I am disabled" />
-    <NInputText label="Loading" loading loadingName="mdi-sync" loadingClass="animate-spin" modelValue="Fetching..." />
+    <NInputText label="Success State" class="success" message="Username is available" icon="mdi-check" />
+    <NInputText label="Error State" class="error" message="This field is required" icon="mdi-alert-circle" />
+    <NInputText label="Disabled" disabled modelValue="Read-only content" />
+    <NInputText label="Loading" loading modelValue="Fetching data..." />
 </div>
 
 ```vue
+<NInputText class="success" message="Success message" />
 <NInputText class="error" message="Error message" />
 ```
 
 ## Debounce
 
+The `debounce` prop delays updating the `v-model` until the user has stopped typing for the specified duration (in milliseconds).
+
 <div class="w-96 my-4 flex flex-col gap-4 vp-raw">
-    <NInputText v-model="debouncedValue" :debounce="500" label="Debounced (500ms)" placeholder="Type fast..." />
-    <div class="text-sm">Model Value: <code>{{ debouncedValue }}</code></div>
+    <NInputText v-model="debouncedValue" :debounce="500" label="Debounced Input (500ms)" placeholder="Type quickly..." />
+    <div class="caption-text opacity-60">Model Value: <code>{{ debouncedValue }}</code></div>
 </div>
 
 ```vue
+<!-- v-model updates 500ms after last keystroke -->
 <NInputText v-model="value" :debounce="500" />
 ```
 
@@ -69,35 +80,49 @@ const showPass = ref(false)
 
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
-| `v-model` | `string \| number` | - | Input value. |
-| `label` | `string` | - | Input label. |
-| `type` | `string` | `'text'` | Native input type (text, password, etc). |
-| `message` | `string` | - | Helper or error message. |
-| `icon` | `string` | - | Icon name (inside input). |
-| `prependIcon` | `string` | - | Icon at the start (outside input). |
-| `appendIcon` | `string` | - | Icon at the end (outside input). |
-| `debounce` | `number` | `0` | Debounce time in ms for v-model updates. |
-| `disabled` | `boolean` | `false` | Whether input is disabled. |
-| `readonly` | `boolean` | `false` | Whether input is readonly. |
-| `loading` | `boolean` | `false` | Shows a loading indicator. |
-| `loadingName` | `string` | - | Loading icon name. |
-| `loadingClass` | `string` | - | Loading icon class. |
-| `inputClass` | `string \| object` | - | Classes applied directly to the `input` element. |
+| `v-model` | `string \| number` | - | The input value. |
+| `label` | `string` | - | Field label. |
+| `type` | `string` | `'text'` | HTML input type (text, password, number, email, etc). |
+| `placeholder` | `string` | - | Native placeholder text. |
+| `message` | `string` | - | Helper or error message shown below the input. |
+| `icon` | `string` | - | Leading icon name (inside the input). |
+| `prependIcon` | `string` | - | Alias for `icon`. |
+| `appendIcon` | `string` | - | Trailing icon name. |
+| `debounce` | `number` | `0` | Debounce delay in milliseconds for `v-model` updates. |
+| `disabled` | `boolean` | `false` | Disables the input. |
+| `readonly` | `boolean` | `false` | Makes the input read-only. |
+| `loading` | `boolean` | `false` | Shows a loading spinner and disables interaction. |
+| `loadingName` | `string` | `'loading'` | Icon name for the loading spinner. |
+| `inputClass` | `string \| object` | - | CSS classes applied directly to the `input` element. |
 
 ## Slots
 
 | Slot | Description |
 | --- | --- |
-| `prepend` | Content before the input wrapper. |
-| `append` | Content after the input wrapper. |
-| `top` | Content above the input (below label). |
-| `bottom` | Content below the input. |
 | `label` | Custom label content. |
+| `prepend` | Content inside the input wrapper, before the text. |
+| `append` | Content inside the input wrapper, after the text. |
+| `top` | Content between the label and the input wrapper. |
+| `bottom` | Content below the input wrapper (above the message). |
 
 ## Events
 
 | Event | Description |
 | --- | --- |
-| `update:modelValue` | Emitted when input value changes (respects debounce). |
-| `input` | Native input event (emitted immediately). |
-| `change` | Native change event (emitted on blur). |
+| `update:modelValue` | Emitted when the value changes (respects debounce). |
+| `input` | Emitted immediately on every keystroke. |
+| `change` | Emitted when the input loses focus (blur). |
+
+## Recipes & FAQ
+
+### How do I use arbitrary Tailwind classes on the input?
+Use the `inputClass` prop to target the native `input` element directly, while the `class` attribute targets the wrapper.
+```vue
+<NInputText inputClass="text-right font-mono" />
+```
+
+### Can I use this for multi-line text?
+`NInputText` is designed for single-line inputs. For multi-line text, you should use a `textarea` element wrapped in an `NInputField`.
+
+### Why does my number input return a string?
+HTML number inputs often return values as strings in JavaScript. NUI preserves this native behavior. If you need a strict number, you may need to `parseFloat()` the result.

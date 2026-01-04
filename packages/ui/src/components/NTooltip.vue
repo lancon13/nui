@@ -45,7 +45,7 @@
     /* eslint-disable @typescript-eslint/no-explicit-any */
     /* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
     import type { Placement } from '@floating-ui/vue'
-    import { computed, type HTMLAttributes, onMounted, ref, useAttrs, useTemplateRef } from 'vue'
+    import { computed, type HTMLAttributes, onMounted, ref, useAttrs, useTemplateRef, watch } from 'vue'
     import { useFloating } from '../composables/use-floating'
     import { useTeleportContainer } from '../composables/use-teleport-container'
     import { getElement, getParentElement } from '../helpers/dom'
@@ -108,7 +108,16 @@
     const { isReady } = useTeleportContainer('n-tooltips-container')
 
     const parentEl = ref<HTMLElement | null>(null)
-    const attachParentEl = computed(() => (props.attachParent ? getElement(props.attachParent) : parentEl.value))
+    const resolvedAttachParent = ref<HTMLElement | null>(null)
+    const attachParentEl = computed(() => resolvedAttachParent.value || parentEl.value)
+
+    const updateAttachParent = () => {
+        if (props.attachParent) {
+            resolvedAttachParent.value = getElement(props.attachParent)
+        } else {
+            resolvedAttachParent.value = null
+        }
+    }
 
     const floatingPlacement = computed(() => {
         return `${props.direction}${props.position !== '' ? `-${props.position}` : ''}` as Placement
@@ -191,7 +200,11 @@
 
     onMounted(() => {
         parentEl.value = getParentElement()
+        updateAttachParent()
     })
+    
+    // Watch for prop changes to update the resolved element
+    watch(() => props.attachParent, updateAttachParent)
 
     defineExpose({ show, hide, contentRef })
 </script>

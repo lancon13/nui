@@ -6,7 +6,6 @@
                 v-if="props.overlay && model"
                 :class="overlayClasses"
                 :style="overlayStyles"
-                tabindex="-1"
                 aria-hidden="true"
                 @mousedown="handleOverlayClick"
             ></div>

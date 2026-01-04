@@ -1,23 +1,32 @@
 # Radio
 
-Radio buttons allow the user to select one option from a set.
-
-## Basic Usage
+Radio buttons allow users to select exactly one option from a set.
 
 <script setup>
 import { ref } from 'vue'
-const picked = ref('A')
+const selected = ref('A')
 </script>
 
+## Basic Usage
+
+Radios should be used when only one choice is allowed. Bind them to the same `v-model`.
+
 <div class="flex flex-col gap-4 my-4 vp-raw">
-    <NRadio v-model="picked" value="A" label="Option A" inlineLabel />
-    <NRadio v-model="picked" value="B" label="Option B" inlineLabel />
-    <div class="text-sm">Value: <code>{{ picked }}</code></div>
+    <NRadio v-model="selected" value="A" label="Option A" inlineLabel />
+    <NRadio v-model="selected" value="B" label="Option B" inlineLabel />
+    <NRadio v-model="selected" value="C" label="Option C" inlineLabel />
+    <div class="caption-text opacity-60">Selected Value: <code>{{ selected }}</code></div>
 </div>
 
 ```vue
-<NRadio v-model="picked" value="A" label="Option A" inlineLabel />
-<NRadio v-model="picked" value="B" label="Option B" inlineLabel />
+<script setup>
+const choice = ref('A')
+</script>
+
+<template>
+  <NRadio v-model="choice" value="A" label="Option A" inlineLabel />
+  <NRadio v-model="choice" value="B" label="Option B" inlineLabel />
+</template>
 ```
 
 ## Colors
@@ -29,19 +38,29 @@ const picked = ref('A')
 </div>
 
 ```vue
-<NRadio class="brand" label="Brand Color" inlineLabel />
+<NRadio class="brand" label="Default" />
 ```
 
-## With Slot Content
+## Custom Layout
+
+Radio buttons can contain rich content in their default slot.
 
 <div class="flex flex-col gap-4 my-4 vp-raw">
-    <NRadio v-model="picked" value="C">
-        Option C with <span class="text-brand font-bold">Custom Styling</span>
+    <NRadio v-model="selected" value="D">
+        <div class="flex flex-col">
+            <span class="label-text">Advanced Option</span>
+            <span class="caption-text opacity-60">Extra details about this choice...</span>
+        </div>
     </NRadio>
 </div>
 
 ```vue
-<NRadio value="custom">Custom Content</NRadio>
+<NRadio value="advanced">
+  <div class="flex flex-col">
+    <span class="label-text">Title</span>
+    <span class="caption-text">Description</span>
+  </div>
+</NRadio>
 ```
 
 ## Props
@@ -49,15 +68,13 @@ const picked = ref('A')
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
 | `v-model` | `any` | - | The currently selected value. |
-| `value` | `any` | - | The value represented by this radio button. |
-| `label` | `string` | - | Radio label. |
-| `inlineLabel` | `boolean` | `false` | Whether to show the label next to the radio. |
-| `checkedIcon` | `string` | `'mdi-circle'` | Icon when checked. |
-| `uncheckedIcon` | `string` | `'undefined'` | Icon when unchecked. |
-| `disabled` | `boolean` | `false` | Whether the radio is disabled. |
-| `message` | `string` | - | Helper or error message. |
-| `name` | `string` | - | Input name attribute. |
-| `tag` | `string` | `'label'` | Wrapper tag. |
+| `value` | `any` | - | **Required.** The unique value this radio button represents. |
+| `label` | `string` | - | The label text. |
+| `inlineLabel` | `boolean` | `false` | Whether to display the label immediately to the right of the radio. |
+| `checkedIcon` | `string` | `'mdi-circle'` | Icon name to show inside the radio when selected. |
+| `disabled` | `boolean` | `false` | Disables the radio button. |
+| `message` | `string` | - | Helper or error message shown below. |
+| `name` | `string` | - | Native input `name` attribute. |
 
 ## Slots
 
@@ -68,9 +85,13 @@ const picked = ref('A')
 | `inlineLabel` | Custom inline label content. |
 | `message` | Custom message content. |
 
-## Events
+## Recipes & FAQ
 
-| Event | Description |
-| --- | --- |
-| `update:modelValue` | Emitted when the selected value changes. |
+### How do I clear a radio selection?
+Radio buttons are not designed to be "un-selected" individually. To clear a selection, you must set the `v-model` variable to a value that doesn't match any radio button (like `null` or `''`).
 
+### Can I change the circular indicator?
+Yes, use the `checkedIcon` prop to use a different icon (e.g., `mdi-check`) instead of the default dot.
+```vue
+<NRadio checkedIcon="mdi-check" />
+```

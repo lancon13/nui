@@ -51,7 +51,12 @@ export function useModal() {
                 ...modalProps
             },
             {
-                default: () => content || ''
+                default: () => {
+                    if (typeof content === 'string') {
+                        return h('span', { innerHTML: content })
+                    }
+                    return content || ''
+                }
             }
         )
 

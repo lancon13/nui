@@ -17,6 +17,7 @@
             <slot name="icon">
                 <n-icon v-if="props.icon" :name="props.icon" :class="props.iconClass" aria-hidden="true" />
             </slot>
+            <span v-if="props.label" v-html="props.label"></span>
             <template v-for="(node, index) in slotDefaultNodes" :key="index">
                 <component :is="node" />
             </template>
@@ -55,6 +56,7 @@
 
     export type NBannerProps = Partial</* @vue-ignore */ HTMLAttributes> & {
         tag?: string
+        label?: string
         icon?: string
         iconClass?: string | object | string[]
         labelClass?: string | object | string[]
@@ -79,8 +81,7 @@
         tag: 'div',
         inlineActions: true,
         duration: 0,
-        showProgress: false,
-        actions: () => [] as NButtonProps[]
+        showProgress: false
     })
 
     const model = defineModel<boolean>({ default: true })
