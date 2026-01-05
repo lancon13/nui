@@ -26,6 +26,7 @@ export default defineConfig({
                 text: 'Guide',
                 items: [
                     { text: 'Getting Started', link: '/guide/getting-started' },
+                    { text: 'Page Layout', link: '/guide/page-layout' },
                     { text: 'Theming', link: '/guide/theming' },
                     { text: 'Typography', link: '/guide/typography' },
                     { text: 'Utilities', link: '/guide/utilities' }
@@ -44,6 +45,13 @@ export default defineConfig({
                     { text: 'Tabs', link: '/components/tabs' },
                     { text: 'Image', link: '/components/image' },
                     { text: 'Loading', link: '/components/loading' }
+                ]
+            },
+            {
+                text: 'Layout',
+                items: [
+                    { text: 'Header', link: '/components/header' },
+                    { text: 'Footer', link: '/components/footer' }
                 ]
             },
             {

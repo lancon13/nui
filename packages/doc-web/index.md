@@ -20,4 +20,6 @@ features:
     details: Uses Tailwind CSS v4 for styling and easy customization.
   - title: Type Safe
     details: Full TypeScript support for a better developer experience.
+  - title: Layout Ready
+    details: Use Header, Footer, and Drawer to build complete application shells quickly.
 ---

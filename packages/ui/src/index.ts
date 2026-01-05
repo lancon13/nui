@@ -1,6 +1,9 @@
 // Components
 export * from './components'
 
+// Layouts
+export * from './layouts'
+
 // Composables
 export * from './composables'
 
