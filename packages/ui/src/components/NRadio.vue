@@ -66,7 +66,9 @@
             <slot name="dropdown"></slot>
             <slot name="bottom"></slot>
 
-            <div v-if="props.message" class="n-radio-message">{{ props.message }}</div>
+            <div v-if="props.message || props.helperText" class="n-radio-message">
+                {{ props.message || props.helperText }}
+            </div>
         </div>
 
         <template v-for="(node, index) in slotAfterNodes" :key="index">
@@ -96,10 +98,13 @@
         appendIconClass?: string | object | string[]
         inputClass?: string | string[] | object
         message?: string
+        helperText?: string
         uncheckedIcon?: string
         uncheckedIconClass?: string | object | string[]
         checkedIcon?: string
         checkedIconClass?: string | object | string[]
+        color?: string
+        size?: 'small' | 'medium' | 'large'
     }
 
     defineOptions({
@@ -114,7 +119,8 @@
         label: '',
         inlineLabel: false,
         uncheckedIcon: 'undefined',
-        checkedIcon: 'mdi-circle'
+        checkedIcon: 'mdi-circle',
+        size: 'medium'
     })
 
     const model = defineModel<any>({ default: null })
@@ -122,7 +128,10 @@
 
     const compClasses = computed(() => ['n-radio'])
     const containerClasses = computed(() => ['n-radio-container'])
-    const wrapperClasses = computed(() => ['n-radio-wrapper'])
+    const wrapperClasses = computed(() => [
+        'n-radio-wrapper',
+        props.size ? `n-radio--${props.size}` : ''
+    ])
     const labelClasses = computed(() => ['n-radio-label'])
     const iconClasses = computed(() => resolveClassProp(props.iconClass, props.prependIconClass))
 
@@ -225,6 +234,7 @@
 
             .n-radio-label {
                 @apply text-sm font-semibold;
+                @apply mb-1;
             }
             .n-radio-message {
                 @apply text-sm;
@@ -248,6 +258,25 @@
             }
             &:has(.n-radio.info) {
                 @apply text-info;
+            }
+
+            /* Sizes */
+            &.n-radio--small {
+                .n-radio-display {
+                    @apply size-4;
+                }
+                .n-radio-label {
+                    @apply text-xs;
+                }
+            }
+
+            &.n-radio--large {
+                .n-radio-display {
+                    @apply size-6;
+                }
+                .n-radio-label {
+                    @apply text-base;
+                }
             }
         }
     }

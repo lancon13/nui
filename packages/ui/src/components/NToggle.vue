@@ -73,7 +73,9 @@
             <slot name="dropdown"></slot>
             <slot name="bottom"></slot>
 
-            <div v-if="props.message" class="n-toggle-message">{{ props.message }}</div>
+            <div v-if="props.message || props.helperText" class="n-toggle-message">
+                {{ props.message || props.helperText }}
+            </div>
         </div>
 
         <template v-for="(node, index) in slotAfterNodes" :key="index">
@@ -102,12 +104,14 @@
         appendIconClass?: string | object | string[]
         inputClass?: string | string[] | object
         message?: string
+        helperText?: string
         uncheckedIcon?: string
         uncheckedIconClass?: string | object | string[]
         checkedIcon?: string
         checkedIconClass?: string | object | string[]
         indeterminateIcon?: string
         indeterminateIconClass?: string | object | string[]
+        size?: 'small' | 'medium' | 'large'
     }
 
     defineOptions({
@@ -123,7 +127,8 @@
         inlineLabel: false,
         uncheckedIcon: 'mdi-close',
         checkedIcon: 'mdi-check',
-        indeterminateIcon: 'mdi-minus'
+        indeterminateIcon: 'mdi-minus',
+        size: 'medium'
     })
 
     const [model, modifiers] = defineModel<boolean | null>({ default: null })
@@ -134,7 +139,10 @@
 
     const compClasses = computed(() => ['n-toggle'])
     const containerClasses = computed(() => ['n-toggle-container'])
-    const wrapperClasses = computed(() => ['n-toggle-wrapper'])
+    const wrapperClasses = computed(() => [
+        'n-toggle-wrapper',
+        props.size ? `n-toggle--${props.size}` : ''
+    ])
     const labelClasses = computed(() => ['n-toggle-label'])
 
     // Split attributes: class/style go to wrapper, others to input
@@ -278,6 +286,7 @@
 
             .n-toggle-label {
                 @apply text-sm font-semibold;
+                @apply mb-1;
             }
             .n-toggle-message {
                 @apply text-sm;
@@ -301,6 +310,31 @@
             }
             &:has(.n-toggle.info) {
                 @apply text-info;
+            }
+
+            /* Sizes */
+            &.n-toggle--small {
+                .n-toggle-track {
+                    @apply w-6 h-3;
+                }
+                .n-toggle-thumb .n-icon {
+                    @apply text-[0.6rem];
+                }
+                .n-toggle-label {
+                    @apply text-xs;
+                }
+            }
+
+            &.n-toggle--large {
+                .n-toggle-track {
+                    @apply w-12 h-6;
+                }
+                .n-toggle-thumb .n-icon {
+                    @apply text-base;
+                }
+                .n-toggle-label {
+                    @apply text-base;
+                }
             }
         }
     }

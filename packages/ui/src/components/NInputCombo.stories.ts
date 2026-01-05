@@ -199,8 +199,48 @@ export const Colors: Story = {
             <div class="flex flex-col gap-4 w-96">
                 <NInputCombo v-bind="args" v-model="value" :items="items" label="Default" />
                 <NInputCombo v-bind="args" v-model="value" :items="items" class="brand" label="Brand" />
-                <NInputCombo v-bind="args" v-model="value" :items="items" class="success" label="Success" message="Selection saved" />
-                <NInputCombo v-bind="args" v-model="value" :items="items" class="error" label="Error" message="Invalid selection" />
+                <NInputCombo v-bind="args" v-model="value" :items="items" class="success" label="Success" helperText="Selection saved" />
+                <NInputCombo v-bind="args" v-model="value" :items="items" class="error" label="Error" helperText="Invalid selection" />
+            </div>
+        `
+    })
+}
+
+export const Sizes: Story = {
+    args: {
+        placeholder: 'Select size...'
+    },
+    render: args => ({
+        components: { NInputCombo },
+        setup() {
+            const items = [{ label: 'Option', value: '1' }]
+            const value = ref('1')
+            return { args, value, items }
+        },
+        template: `
+            <div class="flex flex-col gap-4 w-96">
+                <NInputCombo v-bind="args" v-model="value" :items="items" size="small" label="Small" />
+                <NInputCombo v-bind="args" v-model="value" :items="items" size="medium" label="Medium" />
+                <NInputCombo v-bind="args" v-model="value" :items="items" size="large" label="Large" />
+            </div>
+        `
+    })
+}
+
+export const Shapes: Story = {
+    args: {
+        placeholder: 'Rounded edges...'
+    },
+    render: args => ({
+        components: { NInputCombo },
+        setup() {
+            const items = [{ label: 'Option', value: '1' }]
+            const value = ref('1')
+            return { args, value, items }
+        },
+        template: `
+            <div class="w-96">
+                <NInputCombo v-bind="args" v-model="value" :items="items" class="pilled" label="Pilled" />
             </div>
         `
     })

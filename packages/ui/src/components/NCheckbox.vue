@@ -72,7 +72,9 @@
             <slot name="dropdown"></slot>
             <slot name="bottom"></slot>
 
-            <div v-if="props.message" class="n-checkbox-message">{{ props.message }}</div>
+            <div v-if="props.message || props.helperText" class="n-checkbox-message">
+                {{ props.message || props.helperText }}
+            </div>
         </div>
 
         <template v-for="(node, index) in slotAfterNodes" :key="index">
@@ -101,12 +103,14 @@
         appendIconClass?: string | object | string[]
         inputClass?: string | string[] | object
         message?: string
+        helperText?: string
         uncheckedIcon?: string
         uncheckedIconClass?: string | object | string[]
         checkedIcon?: string
         checkedIconClass?: string | object | string[]
         indeterminateIcon?: string
         indeterminateIconClass?: string | object | string[]
+        size?: 'small' | 'medium' | 'large'
     }
 
     defineOptions({
@@ -122,7 +126,8 @@
         inlineLabel: false,
         uncheckedIcon: '',
         checkedIcon: 'mdi-check-bold',
-        indeterminateIcon: 'mdi-minus'
+        indeterminateIcon: 'mdi-minus',
+        size: 'medium'
     })
 
     const [model, modifiers] = defineModel<boolean | null>({ default: null })
@@ -130,7 +135,10 @@
 
     const compClasses = computed(() => ['n-checkbox'])
     const containerClasses = computed(() => ['n-checkbox-container'])
-    const wrapperClasses = computed(() => ['n-checkbox-wrapper'])
+    const wrapperClasses = computed(() => [
+        'n-checkbox-wrapper',
+        props.size ? `n-checkbox--${props.size}` : ''
+    ])
     const labelClasses = computed(() => ['n-checkbox-label'])
     const iconClasses = computed(() => resolveClassProp(props.iconClass, props.prependIconClass))
 
@@ -236,6 +244,7 @@
 
             .n-checkbox-label {
                 @apply text-sm font-semibold;
+                @apply mb-1;
             }
             .n-checkbox-message {
                 @apply text-sm;
@@ -263,6 +272,25 @@
 
             .n-loading-overlay {
                 @apply -m-0.5;
+            }
+
+            /* Sizes */
+            &.n-checkbox--small {
+                .n-checkbox-display {
+                    @apply size-4;
+                }
+                .n-checkbox-label {
+                    @apply text-xs;
+                }
+            }
+
+            &.n-checkbox--large {
+                .n-checkbox-display {
+                    @apply size-6;
+                }
+                .n-checkbox-label {
+                    @apply text-base;
+                }
             }
         }
     }

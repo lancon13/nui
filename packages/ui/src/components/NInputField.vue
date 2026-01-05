@@ -60,7 +60,9 @@
             <slot name="dropdown"></slot>
             <slot name="bottom"></slot>
 
-            <div v-if="props.message" class="n-input-field-message">{{ props.message }}</div>
+            <div v-if="props.message || props.helperText" class="n-input-field-message">
+                {{ props.message || props.helperText }}
+            </div>
         </div>
 
         <template v-for="(node, index) in slotAfterNodes" :key="index">
@@ -91,6 +93,8 @@
         appendIcon?: string
         appendIconClass?: string | object | string[]
         message?: string
+        helperText?: string
+        size?: 'small' | 'medium' | 'large'
         loading?: boolean
         loadingName?: string
         loadingClass?: string | string[] | object
@@ -108,7 +112,8 @@
         tag: 'div',
         name: '',
         label: '',
-        loadingName: 'loading'
+        loadingName: 'loading',
+        size: 'medium'
     })
 
     const [model, modifiers] = defineModel<never>({ default: undefined })
@@ -126,7 +131,8 @@
     const wrapperClasses = computed(() => [
         'n-input-field-wrapper',
         props.loading ? 'n-input-field--loading' : '',
-        isDisabled.value ? 'n-input-field--disabled' : ''
+        isDisabled.value ? 'n-input-field--disabled' : '',
+        `n-input-field--size-${props.size}`
     ])
     const labelClasses = computed(() => ['n-input-field-label'])
     const iconClasses = computed(() => resolveClassProp(props.iconClass, props.prependIconClass))
@@ -246,6 +252,35 @@
 
             .n-loading-overlay {
                 @apply -m-0.5;
+            }
+
+            /* Sizes */
+            &.n-input-field--size-small {
+                .n-input-field {
+                    @apply text-xs;
+                    input,
+                    select,
+                    textarea {
+                        @apply py-0.5 px-1.5;
+                    }
+                }
+                .n-input-field-label {
+                    @apply text-xs;
+                }
+            }
+
+            &.n-input-field--size-large {
+                .n-input-field {
+                    @apply text-lg;
+                    input,
+                    select,
+                    textarea {
+                        @apply py-2 px-3;
+                    }
+                }
+                .n-input-field-label {
+                    @apply text-base;
+                }
             }
         }
     }

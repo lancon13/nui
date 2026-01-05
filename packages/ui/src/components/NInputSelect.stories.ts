@@ -64,8 +64,44 @@ export const Colors: Story = {
             <div class="flex flex-col gap-4 w-96">
                 <NInputSelect v-bind="args" v-model="value" :options="options" label="Default" />
                 <NInputSelect v-bind="args" v-model="value" :options="options" class="brand" label="Brand" />
-                <NInputSelect v-bind="args" v-model="value" :options="options" class="success" label="Success" message="Selection saved" />
-                <NInputSelect v-bind="args" v-model="value" :options="options" class="error" label="Error" message="Invalid selection" />
+                <NInputSelect v-bind="args" v-model="value" :options="options" class="success" label="Success" helperText="Selection saved" />
+                <NInputSelect v-bind="args" v-model="value" :options="options" class="error" label="Error" helperText="Invalid selection" />
+            </div>
+        `
+    })
+}
+
+export const Sizes: Story = {
+    args: {},
+    render: args => ({
+        components: { NInputSelect },
+        setup() {
+            const value = ref('medium')
+            const options = [{ label: 'Option', value: 'medium' }]
+            return { args, value, options }
+        },
+        template: `
+            <div class="flex flex-col gap-4 w-96">
+                <NInputSelect v-bind="args" v-model="value" :options="options" size="small" label="Small" />
+                <NInputSelect v-bind="args" v-model="value" :options="options" size="medium" label="Medium" />
+                <NInputSelect v-bind="args" v-model="value" :options="options" size="large" label="Large" />
+            </div>
+        `
+    })
+}
+
+export const Shapes: Story = {
+    args: {},
+    render: args => ({
+        components: { NInputSelect },
+        setup() {
+            const value = ref('')
+            const options = [{ label: 'Pilled', value: 'pilled' }]
+            return { args, value, options }
+        },
+        template: `
+            <div class="w-96">
+                <NInputSelect v-bind="args" v-model="value" :options="options" class="pilled" label="Pilled" />
             </div>
         `
     })

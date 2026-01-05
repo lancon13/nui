@@ -49,10 +49,42 @@ export const Colors: Story = {
             <div class="flex flex-col gap-4 w-96">
                 <NInputField v-bind="args" label="Default" placeholder="Default state" />
                 <NInputField v-bind="args" class="brand" label="Brand" placeholder="Brand state" />
-                <NInputField v-bind="args" class="success" label="Success" placeholder="Success state" message="Saved successfully" icon="mdi-check" />
-                <NInputField v-bind="args" class="error" label="Error" placeholder="Error state" message="Field is required" icon="mdi-alert-circle" />
-                <NInputField v-bind="args" class="warning" label="Warning" placeholder="Warning state" message="Check your input" icon="mdi-alert" />
-                <NInputField v-bind="args" class="info" label="Info" placeholder="Info state" message="Information message" icon="mdi-information" />
+                <NInputField v-bind="args" class="success" label="Success" placeholder="Success state" helperText="Saved successfully" icon="mdi-check" />
+                <NInputField v-bind="args" class="error" label="Error" placeholder="Error state" helperText="Field is required" icon="mdi-alert-circle" />
+                <NInputField v-bind="args" class="warning" label="Warning" placeholder="Warning state" helperText="Check your input" icon="mdi-alert" />
+                <NInputField v-bind="args" class="info" label="Info" placeholder="Info state" helperText="Information message" icon="mdi-information" />
+            </div>
+        `
+    })
+}
+
+export const Sizes: Story = {
+    args: {},
+    render: args => ({
+        components: { NInputField },
+        setup() {
+            return { args }
+        },
+        template: `
+            <div class="flex flex-col gap-4 w-96">
+                <NInputField v-bind="args" size="small" label="Small" placeholder="Small size" />
+                <NInputField v-bind="args" size="medium" label="Medium" placeholder="Medium size" />
+                <NInputField v-bind="args" size="large" label="Large" placeholder="Large size" />
+            </div>
+        `
+    })
+}
+
+export const Shapes: Story = {
+    args: {},
+    render: args => ({
+        components: { NInputField },
+        setup() {
+            return { args }
+        },
+        template: `
+            <div class="flex flex-col gap-4 w-96">
+                <NInputField v-bind="args" class="pilled" label="Pilled" placeholder="Pilled shape" />
             </div>
         `
     })

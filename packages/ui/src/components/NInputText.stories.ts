@@ -52,8 +52,42 @@ export const Colors: Story = {
             <div class="flex flex-col gap-4 w-96">
                 <NInputText v-bind="args" v-model="value" label="Default" />
                 <NInputText v-bind="args" v-model="value" class="brand" label="Brand" />
-                <NInputText v-bind="args" v-model="value" class="success" label="Success" message="Saved!" icon="mdi-check" />
-                <NInputText v-bind="args" v-model="value" class="error" label="Error" message="Input is invalid" icon="mdi-alert-circle" />
+                <NInputText v-bind="args" v-model="value" class="success" label="Success" helperText="Saved!" icon="mdi-check" />
+                <NInputText v-bind="args" v-model="value" class="error" label="Error" helperText="Input is invalid" icon="mdi-alert-circle" />
+            </div>
+        `
+    })
+}
+
+export const Sizes: Story = {
+    args: {},
+    render: args => ({
+        components: { NInputText },
+        setup() {
+            const value = ref('Sizing')
+            return { args, value }
+        },
+        template: `
+            <div class="flex flex-col gap-4 w-96">
+                <NInputText v-bind="args" v-model="value" size="small" label="Small" />
+                <NInputText v-bind="args" v-model="value" size="medium" label="Medium" />
+                <NInputText v-bind="args" v-model="value" size="large" label="Large" />
+            </div>
+        `
+    })
+}
+
+export const Pilled: Story = {
+    args: {},
+    render: args => ({
+        components: { NInputText },
+        setup() {
+            const value = ref('Rounded')
+            return { args, value }
+        },
+        template: `
+            <div class="w-96">
+                <NInputText v-bind="args" v-model="value" class="rounded-full" label="Pilled Shape" />
             </div>
         `
     })

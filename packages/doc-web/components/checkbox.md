@@ -5,8 +5,9 @@ Checkboxes allow users to select one or more items from a set, or toggle a singl
 <script setup>
 import { ref } from 'vue'
 const checked = ref(true)
+const unchecked = ref(false)
 const indeterminate = ref(null)
-const fruitTags = ref(['apple'])
+const inlineValue = ref(true)
 </script>
 
 ## Basic Usage
@@ -14,30 +15,48 @@ const fruitTags = ref(['apple'])
 A standard binary checkbox with a label.
 
 <div class="flex flex-col gap-4 my-4 vp-raw">
-    <NCheckbox v-model="checked" label="I agree to the terms" inlineLabel />
+    <NCheckbox v-model="checked" label="I agree to the terms" />
     <div class="caption-text opacity-60">Value: <code>{{ checked }}</code></div>
 </div>
 
 ```vue
-<NCheckbox v-model="checked" label="Accept Terms" inlineLabel />
+<script setup>
+import { ref } from 'vue'
+const checked = ref(true)
+</script>
+
+<template>
+  <NCheckbox v-model="checked" label="Accept Terms" />
+</template>
 ```
 
-## Indeterminate State
+## Inline Label
 
-Checkboxes support a three-state mode (Checked, Unchecked, Indeterminate) by setting the model to `null`.
+Use the `inlineLabel` prop to display the label text immediately next to the checkbox, rather than above it.
 
 <div class="flex flex-col gap-4 my-4 vp-raw">
-    <NCheckbox v-model="indeterminate" label="Select All (Mixed)" inlineLabel />
-    <div class="flex gap-2">
-        <NButton size="xs" label="Set Null" @click="indeterminate = null" />
-        <NButton size="xs" label="Set True" @click="indeterminate = true" />
-        <NButton size="xs" label="Set False" @click="indeterminate = false" />
-    </div>
+    <NCheckbox v-model="inlineValue" label="Inline Checkbox" inlineLabel />
 </div>
 
 ```vue
-<!-- modelValue === null triggers indeterminate icon -->
-<NCheckbox v-model="mixedState" label="Parent Task" inlineLabel />
+<NCheckbox v-model="value" label="Inline Checkbox" inlineLabel />
+```
+
+## States
+
+Checkboxes support `true`, `false`, and `null` (indeterminate) states.
+
+<div class="flex flex-col gap-4 my-4 vp-raw">
+    <NCheckbox v-model="checked" label="Checked" />
+    <NCheckbox v-model="unchecked" label="Unchecked" />
+    <NCheckbox v-model="indeterminate" label="Indeterminate" />
+    <NCheckbox v-model="checked" label="Disabled Checked" disabled />
+</div>
+
+```vue
+<NCheckbox v-model="checked" label="Checked" />
+<NCheckbox v-model="indeterminate" label="Indeterminate" />
+<NCheckbox v-model="checked" label="Disabled" disabled />
 ```
 
 ## Colors
@@ -53,7 +72,23 @@ Apply semantic color classes to change the checkbox appearance.
 </div>
 
 ```vue
-<NCheckbox class="success" label="Correct" inlineLabel />
+<NCheckbox class="brand" label="Brand" />
+<NCheckbox class="success" label="Success" />
+```
+
+## Sizes
+
+Available sizes: `small`, `medium` (default), `large`.
+
+<div class="flex flex-col gap-4 my-4 vp-raw">
+    <NCheckbox size="small" label="Small" :modelValue="true" inlineLabel />
+    <NCheckbox size="medium" label="Medium" :modelValue="true" inlineLabel />
+    <NCheckbox size="large" label="Large" :modelValue="true" inlineLabel />
+</div>
+
+```vue
+<NCheckbox size="small" label="Small" />
+<NCheckbox size="large" label="Large" />
 ```
 
 ## Custom Content
@@ -62,7 +97,7 @@ You can use the default slot to include rich HTML or links in your checkbox labe
 
 <div class="flex flex-col gap-4 my-4 vp-raw">
     <NCheckbox :modelValue="false">
-        <span class="body-text">I have read the <a href="#" class="link-text text-brand underline">privacy policy</a>.</span>
+        <span class="body-text">I have read the <a href="#" class="link-text text-brand underline" @click.prevent>privacy policy</a>.</span>
     </NCheckbox>
 </div>
 
@@ -72,18 +107,36 @@ You can use the default slot to include rich HTML or links in your checkbox labe
 </NCheckbox>
 ```
 
+## Messages & Validation
+
+Use the `message` prop to display helper text or validation errors.
+
+<div class="flex flex-col gap-4 my-4 vp-raw">
+    <NCheckbox label="Subscribe" message="We will send you weekly updates." />
+    <NCheckbox class="error" :modelValue="false" label="Terms" message="You must accept the terms." />
+</div>
+
+```vue
+<NCheckbox label="Subscribe" message="Helper text" />
+<NCheckbox class="error" label="Terms" message="Error message" />
+```
+
 ## Props
 
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
 | `v-model` | `boolean \| null` | `null` | The checked state. `null` represents the indeterminate state. |
 | `label` | `string` | - | The label text. |
-| `inlineLabel` | `boolean` | `false` | Whether to display the label immediately to the right of the checkbox. |
+| `name` | `string` | - | Native input name attribute. |
+| `inlineLabel` | `boolean` | `false` | Whether to display the label inline next to the checkbox. |
 | `checkedIcon` | `string` | `'mdi-check-bold'` | Icon to show when checked. |
 | `uncheckedIcon` | `string` | - | Icon to show when unchecked. |
 | `indeterminateIcon` | `string` | `'mdi-minus'` | Icon to show when indeterminate (`null`). |
+| `size` | `string` | `'medium'` | `small`, `medium`, `large`. |
 | `message` | `string` | - | Helper or error message shown below. |
+| `helperText` | `string` | - | Alias for `message`. |
 | `disabled` | `boolean` | `false` | Disables the checkbox. |
+| `inputClass` | `string \| object` | - | CSS classes for the native input element. |
 | `tag` | `string` | `'label'` | The root HTML tag. |
 
 ## Slots
@@ -94,6 +147,10 @@ You can use the default slot to include rich HTML or links in your checkbox labe
 | `label` | Custom label content (if `inlineLabel` is false). |
 | `inlineLabel` | Custom inline label content. |
 | `message` | Custom message content. |
+| `top` | Content above the checkbox input. |
+| `bottom` | Content below the checkbox input. |
+| `prepend` | Content before the checkbox icon. |
+| `append` | Content after the checkbox icon. |
 
 ## Recipes & FAQ
 
@@ -102,15 +159,16 @@ You can manage an array of values in your parent component and bind each checkbo
 
 ```vue
 <template>
-  <NCheckbox 
-    v-for="fruit in ['Apple', 'Banana']" 
-    :label="fruit"
-    :modelValue="selectedFruits.includes(fruit)"
-    @update:modelValue="toggle(fruit)"
-    inlineLabel
-  />
+  <div v-for="fruit in ['Apple', 'Banana']" :key="fruit">
+    <NCheckbox 
+      :label="fruit"
+      :modelValue="selectedFruits.includes(fruit)"
+      @update:modelValue="toggle(fruit)"
+      inlineLabel
+    />
+  </div>
 </template>
 ```
 
 ### Can I change the checkbox size?
-The checkbox box size is fixed at `size-5` (20px) by default to match standard form scales. You can override this in your theme or via custom CSS on the `.n-checkbox-display` class.
+Yes, use the `size` prop to switch between `small`, `medium` (default), and `large`. You can also override the `.n-checkbox-display` class in your theme for custom pixel-perfect sizing if needed.

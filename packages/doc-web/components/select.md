@@ -4,11 +4,11 @@ Native browser selection control, ideal for simple choice lists and highly acces
 
 <script setup>
 import { ref } from 'vue'
-const selectedValue = ref('apple')
+const selectedValue = ref('1')
 const options = [
-    { label: 'Apple', value: 'apple' },
-    { label: 'Banana', value: 'banana' },
-    { label: 'Cherry', value: 'cherry' }
+    { label: 'Option 1', value: '1' },
+    { label: 'Option 2', value: '2' },
+    { label: 'Option 3', value: '3' }
 ]
 const groupedOptions = [
     { label: 'Fruits', options: [{ label: 'Apple', value: 'a' }, { label: 'Pear', value: 'p' }] },
@@ -21,12 +21,14 @@ const groupedOptions = [
 The component renders a native `<select>` element styled to match the NUI system.
 
 <div class="w-96 my-4 flex flex-col gap-4 vp-raw">
-    <NInputSelect v-model="selectedValue" :options="options" label="Select Fruit" />
+    <NInputSelect v-model="selectedValue" :options="options" label="Select Option" />
     <div class="caption-text opacity-60">Selected: <code>{{ selectedValue }}</code></div>
 </div>
 
 ```vue
 <script setup>
+import { ref } from 'vue'
+const value = ref('1')
 const options = [
   { label: 'Option 1', value: '1' },
   { label: 'Option 2', value: '2' }
@@ -34,38 +36,108 @@ const options = [
 </script>
 
 <template>
-  <NInputSelect v-model="val" :options="options" label="Choose" />
+  <NInputSelect v-model="value" :options="options" label="Choose" />
 </template>
 ```
 
-## Grouped Options
+## Colors
 
-Native `optgroup` support via the `options` prop structure.
+Apply semantic color classes using standard utility classes.
 
-<div class="w-96 my-4 vp-raw">
-    <NInputSelect :options="groupedOptions" label="Categorized List" />
+<div class="w-96 my-4 flex flex-col gap-4 vp-raw">
+    <NInputSelect v-model="selectedValue" :options="options" class="brand" label="Brand" />
+    <NInputSelect v-model="selectedValue" :options="options" class="success" label="Success" />
+    <NInputSelect v-model="selectedValue" :options="options" class="error" label="Error" />
 </div>
 
 ```vue
-<script setup>
-const grouped = [
-  { label: 'Group A', options: [{ label: 'A1', value: '1' }] }
-]
-</script>
+<NInputSelect class="brand" label="Primary" />
+<NInputSelect class="success" label="Success" />
+<NInputSelect class="error" label="Error" />
+```
 
-<NInputSelect :options="grouped" />
+## Sizes & Shapes
+
+Available sizes: `small`, `medium` (default), `large`.
+Available shapes: `squared`, `normal` (default), `pilled`.
+
+<div class="w-96 my-4 flex flex-col gap-4 vp-raw">
+    <div class="flex flex-col gap-2">
+        <span class="text-xs font-bold text-muted">Sizes</span>
+        <NInputSelect v-model="selectedValue" :options="options" size="small" label="Small" />
+        <NInputSelect v-model="selectedValue" :options="options" size="medium" label="Medium" />
+        <NInputSelect v-model="selectedValue" :options="options" size="large" label="Large" />
+    </div>
+    <div class="flex flex-col gap-2">
+        <span class="text-xs font-bold text-muted">Shapes</span>
+        <NInputSelect v-model="selectedValue" :options="options" class="squared" label="Squared" />
+        <NInputSelect v-model="selectedValue" :options="options" label="Normal" />
+        <NInputSelect v-model="selectedValue" :options="options" class="pilled" label="Pilled" />
+    </div>
+</div>
+
+```vue
+<!-- Sizes -->
+<NInputSelect size="small" label="Small" />
+<NInputSelect size="medium" label="Medium" />
+<NInputSelect size="large" label="Large" />
+
+<!-- Shapes -->
+<NInputSelect class="squared" label="Squared" />
+<NInputSelect label="Normal" />
+<NInputSelect class="pilled" label="Pilled" />
 ```
 
 ## Multiple Selection
 
-Enables native multi-select behavior. Note that on many desktop browsers, this requires holding Ctrl/Cmd.
+Enables native multi-select behavior.
 
 <div class="w-96 my-4 vp-raw">
-    <NInputSelect v-model="selectedValue" :options="options" multiple label="Select Multiple" />
+    <NInputSelect :options="options" multiple label="Select Multiple" />
 </div>
 
 ```vue
 <NInputSelect multiple :options="options" />
+```
+
+## Custom Slots
+
+Customize the input with `prepend` and `append` slots.
+
+<div class="w-96 my-4 vp-raw">
+    <NInputSelect v-model="selectedValue" :options="options" label="With Icons">
+        <template #prepend>
+            <span>👤</span>
+        </template>
+        <template #append>
+            <span class="text-xs text-muted pr-6">Optional</span>
+        </template>
+    </NInputSelect>
+</div>
+
+```vue
+<NInputSelect>
+  <template #prepend>
+    <NIcon name="user" />
+  </template>
+</NInputSelect>
+```
+
+## Formatting
+
+Use `formatOption` to transform label text dynamically.
+
+<div class="w-96 my-4 vp-raw">
+    <NInputSelect 
+        v-model="selectedValue" 
+        :options="options" 
+        label="Formatted Options" 
+        :formatOption="(val) => `✦ ${val}`"
+    />
+</div>
+
+```vue
+<NInputSelect :formatOption="(l) => `✦ ${l}`" />
 ```
 
 ## Props
@@ -74,12 +146,21 @@ Enables native multi-select behavior. Note that on many desktop browsers, this r
 | --- | --- | --- | --- |
 | `options` | `Array` | `[]` | List of items `{ label, value }` or groups. |
 | `v-model` | `string \| Array` | - | The selected value(s). |
-| `multiple` | `boolean` | `false` | Enable native multiple selection. |
 | `label` | `string` | - | Field label. |
-| `message` | `string` | - | Helper or error message. |
-| `dropdownIcon` | `string` | `'mdi-menu-down'` | Custom icon for the arrow. |
+| `placeholder` | `string` | `'Select an option'` | Placeholder text (disabled first option). |
+| `helperText` | `string` | - | Helper text below the input. |
+| `message` | `string` | - | Error message/helper alias. |
+| `size` | `string` | `'medium'` | `small`, `medium`, `large`. |
 | `loading` | `boolean` | `false` | Shows loading indicator. |
 | `disabled` | `boolean` | `false` | Disables the select. |
+| `multiple` | `boolean` | `false` | Enable native multiple selection. |
+| `name` | `string` | - | Native input name attribute. |
+| `dropdownIcon` | `string` | `'mdi-menu-down'` | Icon for the dropdown arrow. |
+| `dropdownIconClass` | `string \| object` | `'text-xl'` | Classes for the dropdown icon. |
+| `showCheckmark` | `boolean` | `true` | Whether to show checkmark style logic (styling only). |
+| `formatOption` | `(val: string) => string` | - | Function to format option labels. |
+| `formatOptGroup` | `(val: string) => string` | - | Function to format optgroup labels. |
+| `inputClass` | `string \| object` | - | Classes applied to the native select element. |
 
 ## Slots
 
@@ -87,15 +168,29 @@ Enables native multi-select behavior. Note that on many desktop browsers, this r
 | --- | --- |
 | `default` | Manually provide `<option>` tags (if not using `options` prop). |
 | `label` | Custom label content. |
-| `append` | Content after the select element (e.g. custom icon). |
+| `helper` | Custom helper text content. |
+| `before` | Content before the input wrapper. |
+| `after` | Content after the input wrapper. |
+| `prepend` | Content inside the input (left). |
+| `append` | Content inside the input (right). |
+| `top` | Content between label and input. |
+| `bottom` | Content below input. |
+| `loading` | Custom loading indicator. |
+| `overlay` | Absolute overlay on top of the input area. |
 
 ## Recipes & FAQ
 
-### Custom formatting
-Use the `formatOption` prop to transform labels dynamically before they are rendered in the options.
-```vue
-<NInputSelect :formatOption="(l) => `★ ${l}`" />
+### How do I group options?
+Pass a nested structure to the `options` prop. Each group object should have a `label` and an `options` array.
+
+```js
+const grouped = [
+  { 
+    label: 'Fruits', 
+    options: [{ label: 'Apple', value: 'a' }] 
+  }
+]
 ```
 
-### Why use this over a Combobox?
-Use **Select** for small, static lists (under 10 items) where mobile native pickers are desired. Use **Combobox** for long lists, searching, or multi-select with visible chips.
+### Can I clear the selection?
+If `multiple` is false, `NInputSelect` behaves like a native select. To allow clearing, include an option with a `null` or empty string value, or control the `v-model` externally.

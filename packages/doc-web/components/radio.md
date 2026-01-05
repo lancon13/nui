@@ -4,7 +4,10 @@ Radio buttons allow users to select exactly one option from a set.
 
 <script setup>
 import { ref } from 'vue'
-const selected = ref('A')
+const selected = ref('one')
+const colorSelected = ref('brand')
+const sizeSelected = ref('medium')
+const disabledSelected = ref('one')
 </script>
 
 ## Basic Usage
@@ -12,55 +15,87 @@ const selected = ref('A')
 Radios should be used when only one choice is allowed. Bind them to the same `v-model`.
 
 <div class="flex flex-col gap-4 my-4 vp-raw">
-    <NRadio v-model="selected" value="A" label="Option A" inlineLabel />
-    <NRadio v-model="selected" value="B" label="Option B" inlineLabel />
-    <NRadio v-model="selected" value="C" label="Option C" inlineLabel />
-    <div class="caption-text opacity-60">Selected Value: <code>{{ selected }}</code></div>
+    <NRadio v-model="selected" name="basic-demo" value="one" label="Option One" />
+    <NRadio v-model="selected" name="basic-demo" value="two" label="Option Two" />
+    <div class="caption-text opacity-60">Selected: <code>{{ selected }}</code></div>
 </div>
 
 ```vue
 <script setup>
-const choice = ref('A')
+import { ref } from 'vue'
+const selected = ref('one')
 </script>
 
 <template>
-  <NRadio v-model="choice" value="A" label="Option A" inlineLabel />
-  <NRadio v-model="choice" value="B" label="Option B" inlineLabel />
+  <NRadio v-model="selected" value="one" label="Option One" />
+  <NRadio v-model="selected" value="two" label="Option Two" />
 </template>
 ```
 
 ## Colors
 
-<div class="flex flex-col gap-4 my-4 vp-raw">
-    <NRadio class="brand" :modelValue="'brand'" value="brand" label="Brand" inlineLabel />
-    <NRadio class="success" :modelValue="'success'" value="success" label="Success" inlineLabel />
-    <NRadio class="error" :modelValue="'error'" value="error" label="Error" inlineLabel />
+Apply semantic color classes to change the radio appearance.
+
+<div class="grid grid-cols-3 gap-4 my-4 vp-raw">
+    <NRadio v-model="colorSelected" name="color-demo" value="brand" label="Brand" class="brand" />
+    <NRadio v-model="colorSelected" name="color-demo" value="success" label="Success" class="success" />
+    <NRadio v-model="colorSelected" name="color-demo" value="error" label="Error" class="error" />
+    <NRadio v-model="colorSelected" name="color-demo" value="warning" label="Warning" class="warning" />
+    <NRadio v-model="colorSelected" name="color-demo" value="info" label="Info" class="info" />
 </div>
 
 ```vue
-<NRadio class="brand" label="Default" />
+<NRadio class="brand" label="Brand" />
+<NRadio class="success" label="Success" />
+<NRadio class="error" label="Error" />
 ```
 
-## Custom Layout
+## Sizes
 
-Radio buttons can contain rich content in their default slot.
+Available sizes: `small`, `medium` (default), `large`.
 
 <div class="flex flex-col gap-4 my-4 vp-raw">
-    <NRadio v-model="selected" value="D">
-        <div class="flex flex-col">
-            <span class="label-text">Advanced Option</span>
-            <span class="caption-text opacity-60">Extra details about this choice...</span>
-        </div>
-    </NRadio>
+    <NRadio v-model="sizeSelected" name="size-demo" value="small" label="Small" size="small" />
+    <NRadio v-model="sizeSelected" name="size-demo" value="medium" label="Medium" size="medium" />
+    <NRadio v-model="sizeSelected" name="size-demo" value="large" label="Large" size="large" />
 </div>
 
 ```vue
-<NRadio value="advanced">
-  <div class="flex flex-col">
-    <span class="label-text">Title</span>
-    <span class="caption-text">Description</span>
-  </div>
-</NRadio>
+<NRadio size="small" label="Small" />
+<NRadio size="large" label="Large" />
+```
+
+## Descriptions & Helpers
+
+Add `description` for clickable sub-text associated with the radio, and `helperText` for guidance below.
+
+<div class="flex flex-col gap-4 my-4 vp-raw">
+    <NRadio 
+        v-model="selected" 
+        value="desc" 
+        label="With Description" 
+        description="This text is also clickable." 
+        helperText="Useful for providing extra context."
+    />
+</div>
+
+```vue
+<NRadio 
+  label="Plan Pro" 
+  description="$20/month, billed annually" 
+  helperText="Best value for small teams"
+/>
+```
+
+## Disabled State
+
+<div class="flex flex-col gap-4 my-4 vp-raw">
+    <NRadio v-model="disabledSelected" value="one" label="Disabled Selected" disabled />
+    <NRadio v-model="disabledSelected" value="two" label="Disabled Unselected" disabled />
+</div>
+
+```vue
+<NRadio disabled label="Disabled" />
 ```
 
 ## Props
@@ -70,28 +105,25 @@ Radio buttons can contain rich content in their default slot.
 | `v-model` | `any` | - | The currently selected value. |
 | `value` | `any` | - | **Required.** The unique value this radio button represents. |
 | `label` | `string` | - | The label text. |
-| `inlineLabel` | `boolean` | `false` | Whether to display the label immediately to the right of the radio. |
-| `checkedIcon` | `string` | `'mdi-circle'` | Icon name to show inside the radio when selected. |
+| `name` | `string` | `'nui-radio'` | Native input name attribute. |
+| `description` | `string` | - | Secondary text next to the label (clickable). |
+| `helperText` | `string` | - | Helper text displayed below the radio (alias for `message`). |
+| `message` | `string` | - | Helper text displayed below the radio. |
 | `disabled` | `boolean` | `false` | Disables the radio button. |
-| `message` | `string` | - | Helper or error message shown below. |
-| `name` | `string` | - | Native input `name` attribute. |
+| `size` | `string` | `'medium'` | `small`, `medium`, `large`. |
 
 ## Slots
 
 | Slot | Description |
 | --- | --- |
-| `default` | Content displayed next to the radio (replaces/augments label). |
-| `label` | Custom label content (if `inlineLabel` is false). |
-| `inlineLabel` | Custom inline label content. |
-| `message` | Custom message content. |
+| `default` | Custom content for description (overrides `description` prop). |
+| `label` | Custom label content. |
+| `helper` | Custom helper text content. |
 
 ## Recipes & FAQ
 
 ### How do I clear a radio selection?
-Radio buttons are not designed to be "un-selected" individually. To clear a selection, you must set the `v-model` variable to a value that doesn't match any radio button (like `null` or `''`).
+Radio buttons are not designed to be "un-selected" individually by clicking them again. To clear a selection, you must set the `v-model` variable to a value that doesn't match any radio button (like `null` or `''`) programmatically.
 
-### Can I change the circular indicator?
-Yes, use the `checkedIcon` prop to use a different icon (e.g., `mdi-check`) instead of the default dot.
-```vue
-<NRadio checkedIcon="mdi-check" />
-```
+### Can I stack them vertically?
+Yes, `NRadio` is a block-level element wrapper. Placing them inside a standard `div` will stack them vertically. Use `flex-row` or grid for horizontal layouts.

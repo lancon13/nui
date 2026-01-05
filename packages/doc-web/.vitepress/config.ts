@@ -40,6 +40,7 @@ export default defineConfig({
                     { text: 'Chip', link: '/components/chip' },
                     { text: 'Card', link: '/components/card' },
                     { text: 'List', link: '/components/list' },
+                    { text: 'Menu', link: '/components/menu' },
                     { text: 'Tabs', link: '/components/tabs' },
                     { text: 'Image', link: '/components/image' },
                     { text: 'Loading', link: '/components/loading' }

@@ -33,6 +33,8 @@
             type?: string
             inputClass?: string | string[] | object
             debounce?: number
+            size?: 'small' | 'medium' | 'large'
+            helperText?: string
         }
 
     defineOptions({
@@ -43,7 +45,8 @@
     const attrs = useAttrs()
     const props = withDefaults(defineProps<NInputTextProps>(), {
         type: 'text',
-        debounce: 0
+        debounce: 0,
+        size: 'medium'
     })
 
     const model = defineModel<string | number>({ default: '' })

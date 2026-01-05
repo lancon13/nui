@@ -52,10 +52,28 @@ export const Colors: Story = {
         template: `
             <div class="flex flex-col gap-4 w-96">
                 <NToggle v-bind="args" class="brand" label="Brand" v-model="value" />
-                <NToggle v-bind="args" class="success" label="Success" v-model="value" />
-                <NToggle v-bind="args" class="error" label="Error" v-model="value" />
+                <NToggle v-bind="args" class="success" label="Success" v-model="value" helperText="Enabled" />
+                <NToggle v-bind="args" class="error" label="Error" v-model="value" helperText="Blocked" />
                 <NToggle v-bind="args" class="warning" label="Warning" v-model="value" />
                 <NToggle v-bind="args" class="info" label="Info" v-model="value" />
+            </div>
+        `
+    })
+}
+
+export const Sizes: Story = {
+    args: {},
+    render: args => ({
+        components: { NToggle },
+        setup() {
+            const value = ref(true)
+            return { args, value }
+        },
+        template: `
+            <div class="flex flex-col gap-4 w-96">
+                <NToggle v-bind="args" size="small" label="Small" v-model="value" />
+                <NToggle v-bind="args" size="medium" label="Medium" v-model="value" />
+                <NToggle v-bind="args" size="large" label="Large" v-model="value" />
             </div>
         `
     })
@@ -104,7 +122,7 @@ export const InlineLabel: Story = {
 
 export const Messages: Story = {
     args: {
-        message: 'Toggle to activate'
+        helperText: 'Toggle to activate'
     },
     render: args => ({
         components: { NToggle },
@@ -115,7 +133,7 @@ export const Messages: Story = {
         template: `
             <div class="flex flex-col gap-4 w-96">
                 <NToggle v-bind="args" label="Helper Text" v-model="value" />
-                <NToggle v-bind="args" class="error" label="Error State" v-model="value" message="System failure" />
+                <NToggle v-bind="args" class="error" label="Error State" v-model="value" helperText="System failure" />
             </div>
         `
     })

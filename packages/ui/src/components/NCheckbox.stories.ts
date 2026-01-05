@@ -51,10 +51,28 @@ export const Colors: Story = {
         template: `
             <div class="flex flex-col gap-4 w-96">
                 <NCheckbox v-bind="args" class="brand" label="Brand" v-model="value" />
-                <NCheckbox v-bind="args" class="success" label="Success" v-model="value" />
-                <NCheckbox v-bind="args" class="error" label="Error" v-model="value" />
+                <NCheckbox v-bind="args" class="success" label="Success" v-model="value" helperText="Correct" />
+                <NCheckbox v-bind="args" class="error" label="Error" v-model="value" helperText="Wrong" />
                 <NCheckbox v-bind="args" class="warning" label="Warning" v-model="value" />
                 <NCheckbox v-bind="args" class="info" label="Info" v-model="value" />
+            </div>
+        `
+    })
+}
+
+export const Sizes: Story = {
+    args: {},
+    render: args => ({
+        components: { NCheckbox },
+        setup() {
+            const value = ref(true)
+            return { args, value }
+        },
+        template: `
+            <div class="flex flex-col gap-4 w-96">
+                <NCheckbox v-bind="args" size="small" label="Small" v-model="value" />
+                <NCheckbox v-bind="args" size="medium" label="Medium" v-model="value" />
+                <NCheckbox v-bind="args" size="large" label="Large" v-model="value" />
             </div>
         `
     })
@@ -103,7 +121,7 @@ export const InlineLabel: Story = {
 
 export const Messages: Story = {
     args: {
-        message: 'This is a helper message'
+        helperText: 'This is a helper message'
     },
     render: args => ({
         components: { NCheckbox },
@@ -114,7 +132,7 @@ export const Messages: Story = {
         template: `
             <div class="flex flex-col gap-4 w-96">
                 <NCheckbox v-bind="args" label="Username" v-model="value" />
-                <NCheckbox v-bind="args" class="error" label="Error State" v-model="value" message="This field is required" />
+                <NCheckbox v-bind="args" class="error" label="Error State" v-model="value" helperText="This field is required" />
             </div>
         `
     })

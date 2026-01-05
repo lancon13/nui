@@ -230,9 +230,9 @@ Ensure you are using the correct prop:
 - Use `href` for external links (and optionally set `tag="a"`).
 
 ### How do I make a block-level button?
-Add the `w-full` utility class to the button:
+Add the `w-full` utility class to the button. To ensure the text stays centered within the wide button, you should also add `justify-center`:
 ```vue
-<NButton class="w-full" label="Full Width" />
+<NButton class="w-full justify-center" label="Full Width" />
 ```
 
 ### Can I change the border radius?

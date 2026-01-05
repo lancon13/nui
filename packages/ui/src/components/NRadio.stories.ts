@@ -52,10 +52,28 @@ export const Colors: Story = {
         template: `
             <div class="flex flex-col gap-4 w-96">
                 <NRadio v-bind="args" class="brand" label="Brand" v-model="value" value="brand" />
-                <NRadio v-bind="args" class="success" label="Success" v-model="value" value="success" />
-                <NRadio v-bind="args" class="error" label="Error" v-model="value" value="error" />
+                <NRadio v-bind="args" class="success" label="Success" v-model="value" value="success" helperText="Selection is valid" />
+                <NRadio v-bind="args" class="error" label="Error" v-model="value" value="error" helperText="Invalid option" />
                 <NRadio v-bind="args" class="warning" label="Warning" v-model="value" value="warning" />
                 <NRadio v-bind="args" class="info" label="Info" v-model="value" value="info" />
+            </div>
+        `
+    })
+}
+
+export const Sizes: Story = {
+    args: {},
+    render: args => ({
+        components: { NRadio },
+        setup() {
+            const value = ref('medium')
+            return { args, value }
+        },
+        template: `
+            <div class="flex flex-col gap-4 w-96">
+                <NRadio v-bind="args" size="small" label="Small" v-model="value" value="small" />
+                <NRadio v-bind="args" size="medium" label="Medium" v-model="value" value="medium" />
+                <NRadio v-bind="args" size="large" label="Large" v-model="value" value="large" />
             </div>
         `
     })
@@ -100,7 +118,7 @@ export const InlineLabel: Story = {
 
 export const Messages: Story = {
     args: {
-        message: 'Please pick one'
+        helperText: 'Please pick one'
     },
     render: args => ({
         components: { NRadio },
@@ -111,7 +129,7 @@ export const Messages: Story = {
         template: `
             <div class="flex flex-col gap-4 w-96">
                 <NRadio v-bind="args" label="Option A" v-model="value" value="a" />
-                <NRadio v-bind="args" class="error" label="Option B (Error)" v-model="value" value="b" message="Selection required" />
+                <NRadio v-bind="args" class="error" label="Option B (Error)" v-model="value" value="b" helperText="Selection required" />
             </div>
         `
     })
