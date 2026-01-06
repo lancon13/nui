@@ -24,14 +24,14 @@ export default defineConfig({
         emptyOutDir: false,
         lib: {
             entry: resolve(__dirname, 'src/index.ts'),
-            name: 'WhispliUI',
+            name: 'NUI',
             // ADD the formats you want to build
             formats: ['es', 'umd'],
             // FIX the file naming to match your package.json
             fileName: format => {
-                if (format === 'es') return 'wds-ui.js'
-                if (format === 'umd') return 'wds-ui.umd.cjs'
-                return `wds-ui.${format}.js`
+                if (format === 'es') return 'nui-ui.js'
+                if (format === 'umd') return 'nui-ui.umd.cjs'
+                return `nui-ui.${format}.js`
             }
         },
         rollupOptions: {
