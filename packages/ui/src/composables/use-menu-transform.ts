@@ -38,8 +38,8 @@ function transformNodes(nodes: VNodeChild[], submenuProps = defaultSubmenuProps)
         // Base props to preserve including ref and key
         const baseProps = {
             ...node.props,
-            ref: node.ref,
-            key: node.key
+            ref: node.ref ?? undefined,
+            key: node.key ?? undefined
         }
 
         // 1. Recursive NMenu
@@ -51,7 +51,7 @@ function transformNodes(nodes: VNodeChild[], submenuProps = defaultSubmenuProps)
 
         // Handle Fragments (e.g. v-for loops)
         if (node.type === Fragment) {
-            return h(Fragment, baseProps, transformNodes(getChildren(node), submenuProps))
+            return h(Fragment as any, baseProps as any, transformNodes(getChildren(node), submenuProps))
         }
 
         // 2. List Items (NListItem or li)
@@ -78,7 +78,7 @@ function transformNodes(nodes: VNodeChild[], submenuProps = defaultSubmenuProps)
 
             if (hasSubMenu) {
                 const subMenuNode = children[subMenuIndex] as VNode
-                return h(NListItem, baseProps, {
+                return h(NListItem, baseProps as any, {
                     ...existingSlots,
                     default: () => [
                         ...processedContent,
@@ -90,14 +90,14 @@ function transformNodes(nodes: VNodeChild[], submenuProps = defaultSubmenuProps)
                 })
             }
 
-            return h(NListItem, baseProps, { ...existingSlots, default: () => processedContent })
+            return h(NListItem, baseProps as any, { ...existingSlots, default: () => processedContent })
         }
 
         // 3. Generic wrappers (div, etc) -> Recurse deeper
         if (node.children) {
             const children = getChildren(node)
             if (children.length) {
-                return h(node.type as any, baseProps, {
+                return h(node.type as any, baseProps as any, {
                     default: () => transformNodes(children, submenuProps)
                 })
             }

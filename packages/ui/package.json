@@ -23,7 +23,8 @@
     "scripts": {
         "lint": "eslint -c ../../eslint.config.mjs \"src/**/*.{ts,js,cjs,mjs,vue}\"",
         "test": "echo \"No test specified\" && exit 0",
-        "build": "vue-tsc -p tsconfig.build.json --declaration --emitDeclarationOnly && mv dist/index.d.ts dist/wds-ui.d.ts && vite build",
+        "clean": "rm -rf dist",
+        "build": "vue-tsc -p tsconfig.build.json --declaration --emitDeclarationOnly && mv dist/index.d.ts dist/nui-ui.d.ts && vite build",
         "storybook:dev": "storybook dev",
         "storybook:build": "storybook build"
     },

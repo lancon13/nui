@@ -41,6 +41,38 @@ yarn add @nui/ui
     </template>
     ```
 
+## Local Consumption
+
+Since this package is not published to npm, you can use it locally in other projects:
+
+### Option 1: Local Path (Recommended for development)
+
+1.  In your consumer project:
+    ```bash
+    pnpm add /path/to/nui/packages/ui
+    # or
+    npm install /path/to/nui/packages/ui
+    ```
+
+### Option 2: Packing (Recommended for sharing)
+
+1.  Build the project:
+    ```bash
+    pnpm build
+    ```
+
+2.  Pack the UI library:
+    ```bash
+    cd packages/ui
+    pnpm pack
+    ```
+    This will generate a `.tgz` file (e.g., `nui-ui-0.0.1.tgz`).
+
+3.  In your consumer project, install the tarball:
+    ```bash
+    pnpm add /path/to/nui/packages/ui/nui-ui-0.0.1.tgz
+    ```
+
 ## Development
 
 This project is a monorepo managed with [pnpm](https://pnpm.io/).
