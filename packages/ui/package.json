@@ -23,8 +23,7 @@
     "scripts": {
         "lint": "eslint -c ../../eslint.config.mjs \"src/**/*.{ts,js,cjs,mjs,vue}\"",
         "test": "echo \"No test specified\" && exit 0",
-        "build": "pnpm icons:prepare && vue-tsc -p tsconfig.build.json --declaration --emitDeclarationOnly && mv dist/index.d.ts dist/wds-ui.d.ts && vite build",
-        "icons:prepare": "tsx scripts/prepare-icons.ts",
+        "build": "vue-tsc -p tsconfig.build.json --declaration --emitDeclarationOnly && mv dist/index.d.ts dist/wds-ui.d.ts && vite build",
         "storybook:dev": "storybook dev",
         "storybook:build": "storybook build"
     },
@@ -39,14 +38,14 @@
         "dayjs": "^1.11.13",
         "es-toolkit": "^1.39.7",
         "focus-trap": "^7",
-        "vue": "^3.5.18",
         "vue-forward-slots": "^5.0.4",
         "vue-i18n": "^11.1.11",
-        "vue-router": "^4.5.1",
         "zod": "^4.0.5"
     },
     "peerDependencies": {
-        "tailwindcss": ">=4.0.0"
+        "tailwindcss": ">=4.0.0",
+        "vue": "^3.5.18",
+        "vue-router": "^4.5.1"
     },
     "devDependencies": {
         "@chromatic-com/storybook": "^4.1.1",
@@ -77,6 +76,8 @@
         "vite-plugin-static-copy": "^3.1.2",
         "vite-svg-loader": "^5.1.0",
         "vitest": "^3.2.4",
+        "vue": "^3.5.18",
+        "vue-router": "^4.5.1",
         "vue-tsc": "^3.0.3"
     },
     "engines": {
