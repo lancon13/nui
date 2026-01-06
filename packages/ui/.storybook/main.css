@@ -1,5 +1,6 @@
 /*
     Styles needed for storybook
 */
+@import '@mdi/font/css/materialdesignicons.css';
 @import '../src/styles/index.css';
 @source "../src/components/**/*.{vue,js,ts,html}";

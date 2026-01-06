@@ -1,5 +1,0 @@
-/*
-    Styles needed for storybook
-*/
-@import '../src/styles/main.css';
-@source "../src/components/**/*.{vue,js,ts,html}";

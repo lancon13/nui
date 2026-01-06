@@ -41,6 +41,19 @@ yarn add @nui/ui
     </template>
     ```
 
+3.  **Setup Icons** (Optional):
+    NUI uses [Material Design Icons (MDI)](https://materialdesignicons.com/). If you use the `NIcon` component or components that utilize icons, you need to include the MDI CSS in your project.
+
+    ```bash
+    npm install @mdi/font
+    ```
+
+    Then import it in your entry file:
+
+    ```typescript
+    import '@mdi/font/css/materialdesignicons.css';
+    ```
+
 ## Local Consumption
 
 Since this package is not published to npm, you can use it locally in other projects:
