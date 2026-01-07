@@ -1,7 +1,10 @@
 <template>
     <component
-        :is="props.tag"
+        :is="actualTag"
         :class="compClasses"
+        :to="props.to"
+        :href="props.href"
+        :target="props.target"
         :role="isClickable ? 'button' : 'img'"
         :tabindex="isClickable ? 0 : undefined"
         :aria-disabled="props.disabled ? 'true' : undefined"
@@ -37,6 +40,12 @@
 
     const isClickable = computed(() => !props.disabled && (props.to || props.href || !!attrs.onClick))
 
+    const actualTag = computed(() => {
+        if (props.to && !props.disabled) return 'RouterLink'
+        if (props.href && !props.disabled) return 'a'
+        return props.tag
+    })
+
     const iconClasses = computed(() => {
         const name = props.name || 'mdi-account'
         if (name.startsWith('mdi-')) return ['mdi', name]
@@ -51,7 +60,6 @@
     ])
 
     const compBind = computed(() => ({
-        ...(isClickable.value ? { to: props.to, href: props.href, target: props.target } : {}),
         ...attrs
     }))
 

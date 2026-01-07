@@ -1,9 +1,12 @@
 <template>
     <component
-        :is="props.tag"
+        :is="actualTag"
         :class="compClasses"
-        :role="isClickable && props.tag === 'div' ? 'button' : undefined"
-        :tabindex="isClickable && props.tag === 'div' ? 0 : undefined"
+        :to="props.to"
+        :href="props.href"
+        :target="props.target"
+        :role="isClickable && actualTag === 'div' ? 'button' : undefined"
+        :tabindex="isClickable && actualTag === 'div' ? 0 : undefined"
         :aria-disabled="props.disabled ? 'true' : undefined"
         :aria-busy="props.loading ? 'true' : undefined"
         v-bind="compBind"
@@ -61,6 +64,12 @@
         return !props.disabled && (props.to || props.href || !!props.onClick || !!attrs.onClick)
     })
 
+    const actualTag = computed(() => {
+        if (props.to && !props.disabled) return 'RouterLink'
+        if (props.href && !props.disabled) return 'a'
+        return props.tag
+    })
+
     const compClasses = computed(() => {
         return [
             'n-card',
@@ -72,7 +81,6 @@
 
     const compBind = computed(() => {
         return {
-            ...(isClickable.value ? { to: props.to, href: props.href, target: props.target } : {}),
             ...attrs
         }
     })

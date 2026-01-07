@@ -1,6 +1,6 @@
 <template>
     <component
-        :is="props.tag"
+        :is="actualTag"
         :class="compClasses"
         :to="props.to"
         :href="props.href"
@@ -106,9 +106,14 @@
     }>()
 
     const isClickable = computed(() => !props.heading && (props.to || props.href || instance?.vnode.props?.onClick))
+    const actualTag = computed(() => {
+        if (props.to && !props.disabled) return 'RouterLink'
+        if (props.href && !props.disabled) return 'a'
+        return props.tag
+    })
     const itemRole = computed(() => {
         if (props.heading) return 'presentation'
-        if (props.to || props.href) return 'link'
+        if (actualTag.value === 'RouterLink' || actualTag.value === 'a') return 'link'
         if (isClickable.value) return 'button'
         return 'listitem'
     })
@@ -123,7 +128,6 @@
     ])
 
     const compBind = computed(() => ({
-        ...(isClickable.value && !props.expandable ? { to: props.to, href: props.href, target: props.target } : {}),
         ...attrs
     }))
 

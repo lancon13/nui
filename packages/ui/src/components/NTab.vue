@@ -1,6 +1,6 @@
 <template>
     <component
-        :is="props.tag"
+        :is="actualTag"
         :class="compClasses"
         :to="props.to"
         :href="props.href"
@@ -81,6 +81,11 @@
 
     const compClasses = computed(() => {
         return ['n-tab', props.loading ? 'n-tab--loading' : '']
+    })
+    const actualTag = computed(() => {
+        if (props.to) return 'RouterLink'
+        if (props.href) return 'a'
+        return props.tag
     })
     const iconClasses = computed(() => resolveClassProp(props.iconClass, props.prependIconClass))
 
