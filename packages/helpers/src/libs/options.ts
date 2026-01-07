@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Option } from '../types/options'
 
 export function toOptions<T extends object>(
@@ -8,14 +9,17 @@ export function toOptions<T extends object>(
     if (!options) return []
 
     if (Array.isArray(options))
-        return options.map(option => ({
-            label:
-                (Array.isArray(label)
-                    ? option[((label as string[]).find(l => option[l as keyof T]) as keyof T) ?? '']
-                    : option[label]) ?? '',
-            value: option[value] ?? '',
-            data: option
-        })) as { label: string; value: string; data: T }[]
+        return options.map(option => {
+            const labelKey = Array.isArray(label)
+                ? (label as string[]).find(l => (option as any)[l])
+                : (label as string)
+
+            return {
+                label: (labelKey ? (option as any)[labelKey] : '') ?? '',
+                value: (option[value] as any) ?? '',
+                data: option
+            }
+        })
     else
         return Object.entries(options).map(([value, label]) => ({
             label,

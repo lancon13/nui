@@ -73,7 +73,7 @@ export function useCall<P extends any[] = any[], R = unknown>(
             return self
         },
         refresh: () => {
-            return execute(1, ...(paramsState.value ?? []))
+            return execute(1, ...paramsState.value)
         }
     }
 
