@@ -101,6 +101,7 @@ All form inputs (`NInputText`, `NInputSelect`, `NInputCombo`) share a common bas
 ## 5. Icons
 
 - NUI uses **MDI (Material Design Icons)** string names.
+- **Setup Required:** The font assets are **not bundled** by default. You must install `@mdi/font` and import its CSS (`import '@mdi/font/css/materialdesignicons.css';`) in your application entry point.
 - Example: `mdi-check`, `mdi-alert-circle`, `mdi-loading`.
 - Components often have `loadingName` props defaulting to `mdi-loading` or `loading` (custom mapping).
 
