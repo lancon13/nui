@@ -35,11 +35,36 @@ export default defineConfig({
             }
         },
         rollupOptions: {
-            // This is correct! Ensures you don't bundle Vue into your library.
-            external: ['vue'],
+            // Externalize dependencies to avoid bundling them
+            external: [
+                'vue',
+                'vue-router',
+                '@nui/helpers',
+                '@floating-ui/vue',
+                '@vueuse/core',
+                '@vueuse/components',
+                '@vueuse/integrations',
+                '@vueuse/router',
+                'async-validator',
+                'dayjs',
+                'es-toolkit',
+                'es-toolkit/compat',
+                'focus-trap',
+                'vue-forward-slots',
+                'vue-i18n',
+                'zod'
+            ],
             output: {
                 globals: {
-                    vue: 'Vue'
+                    vue: 'Vue',
+                    'vue-router': 'VueRouter',
+                    '@nui/helpers': 'NUIHelpers',
+                    '@floating-ui/vue': 'FloatingVue',
+                    '@vueuse/core': 'VueUse',
+                    '@vueuse/components': 'VueUseComponents',
+                    dayjs: 'dayjs',
+                    zod: 'zod',
+                    'focus-trap': 'FocusTrap'
                 },
                 // This is correct! Puts all CSS into one file.
                 assetFileNames: assetInfo => {
