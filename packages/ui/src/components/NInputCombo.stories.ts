@@ -30,7 +30,39 @@ type Story = StoryObj<typeof meta>
 
 // --- Base Stories ---
 
-export const SingleSearchable: Story = {
+export const CustomClasses: Story = {
+    args: {
+        items: [
+            { label: 'Option 1', value: '1' },
+            { label: 'Option 2', value: '2' }
+        ]
+    },
+    render: args => ({
+        components: { NInputCombo },
+        setup() {
+            const value = ref('1')
+            return { args, value }
+        },
+        template: `
+            <div class="flex flex-col gap-4 w-96">
+                <NInputCombo 
+                    v-bind="args" 
+                    v-model="value" 
+                    label="Custom Wrapper" 
+                    wrapper-class="border border-brand p-2 bg-brand/5"
+                />
+                <NInputCombo 
+                    v-bind="args" 
+                    v-model="value" 
+                    label="Custom Container" 
+                    container-class="bg-info/10 p-2"
+                />
+            </div>
+        `
+    })
+}
+
+export const Basic: Story = {
     args: {
         useInput: true,
         clearable: true,

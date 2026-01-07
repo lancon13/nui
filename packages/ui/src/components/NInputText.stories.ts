@@ -40,6 +40,33 @@ export const Default: Story = {
     })
 }
 
+export const CustomClasses: Story = {
+    args: {},
+    render: args => ({
+        components: { NInputText },
+        setup() {
+            const value = ref('')
+            return { args, value }
+        },
+        template: `
+            <div class="flex flex-col gap-4 w-96">
+                <NInputText 
+                    v-bind="args" 
+                    v-model="value" 
+                    label="Custom Wrapper" 
+                    wrapper-class="border border-brand p-2 bg-brand/5"
+                />
+                <NInputText 
+                    v-bind="args" 
+                    v-model="value" 
+                    label="Custom Container" 
+                    container-class="bg-info/10 p-2"
+                />
+            </div>
+        `
+    })
+}
+
 export const Colors: Story = {
     args: {},
     render: args => ({

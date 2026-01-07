@@ -100,6 +100,8 @@
         loadingClass?: string | string[] | object
         format?: (value: string | number) => string
         parse?: (value: string) => string
+        wrapperClass?: string | object | string[]
+        containerClass?: string | object | string[]
     }
 
     defineOptions({
@@ -127,12 +129,13 @@
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const compClasses = computed(() => ['n-input-field', ...resolveClassProp((attrs as any).class)])
-    const containerClasses = computed(() => ['n-input-field-container'])
+    const containerClasses = computed(() => ['n-input-field-container', ...resolveClassProp(props.containerClass)])
     const wrapperClasses = computed(() => [
         'n-input-field-wrapper',
         props.loading ? 'n-input-field--loading' : '',
         isDisabled.value ? 'n-input-field--disabled' : '',
-        `n-input-field--size-${props.size}`
+        `n-input-field--size-${props.size}`,
+        ...resolveClassProp(props.wrapperClass)
     ])
     const labelClasses = computed(() => ['n-input-field-label'])
     const iconClasses = computed(() => resolveClassProp(props.iconClass, props.prependIconClass))
@@ -217,6 +220,7 @@
 
             .n-input-field-label {
                 @apply text-sm font-semibold;
+                @apply mb-1;
             }
             .n-input-field-message {
                 @apply text-sm;

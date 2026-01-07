@@ -58,6 +58,35 @@ export const Colors: Story = {
     })
 }
 
+export const CustomClasses: Story = {
+    args: {},
+    render: args => ({
+        components: { NInputField },
+        setup() {
+            const value = ref('')
+            return { args, value }
+        },
+        template: `
+            <div class="flex flex-col gap-4 w-[600px]">
+                <NInputField
+                    v-bind="args"
+                    v-model="value"
+                    label="Custom Wrapper Class"
+                    wrapper-class="border-2 border-dashed border-brand p-4 bg-brand/5"
+                    placeholder="Look at my border"
+                />
+                <NInputField
+                    v-bind="args"
+                    v-model="value"
+                    label="Custom Container Class"
+                    container-class="bg-success/10 p-2 rounded"
+                    placeholder="Look at my background"
+                />
+            </div>
+        `
+    })
+}
+
 export const Sizes: Story = {
     args: {},
     render: args => ({
