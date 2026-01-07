@@ -36,7 +36,7 @@
                     <input
                         :id="inputId"
                         v-model="model"
-                        type="text"
+                        :type="props.type"
                         :aria-busy="props.loading || undefined"
                         :disabled="props.disabled"
                         :readonly="props.readonly"
@@ -102,6 +102,7 @@
         parse?: (value: string) => string
         wrapperClass?: string | object | string[]
         containerClass?: string | object | string[]
+        type?: string
     }
 
     defineOptions({
@@ -115,7 +116,8 @@
         name: '',
         label: '',
         loadingName: 'loading',
-        size: 'medium'
+        size: 'medium',
+        type: 'text'
     })
 
     const [model, modifiers] = defineModel<never>({ default: undefined })
@@ -179,6 +181,16 @@
                     rounded-element
                     bg-input
                     transition-all duration-200;
+
+                &.pilled {
+                    @apply rounded-full;
+                }
+                &.squared {
+                    @apply rounded-none;
+                }
+                &.shadowed {
+                    @apply shadow-outer;
+                }
 
                 @apply has-[:focus-visible]:outline-0 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-focus has-[:focus-visible]:z-20;
 

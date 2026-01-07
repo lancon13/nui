@@ -83,7 +83,7 @@
                 class="cursor-pointer hover:text-error transition-colors"
                 @click.stop="handleClearSelection"
             />
-            <n-icon :name="props.dropdownIcon" :class="props.dropdownIconClass" />
+            <n-icon :name="props.dropdownIcon" :class="[props.dropdownIconClass, dropdown ? 'rotate-180' : '']" />
             <slot name="append"></slot>
         </template>
     </n-input-field>
@@ -577,6 +577,14 @@
                         @apply cursor-default;
                     }
                 }
+            }
+
+            .animate-dropdown {
+                @apply transition-transform duration-200 ease-in-out pointer-events-none;
+            }
+
+            &:focus-within .animate-dropdown {
+                @apply rotate-180;
             }
         }
     }

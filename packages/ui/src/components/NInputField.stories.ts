@@ -14,7 +14,8 @@ const meta = {
     argTypes: {
         loadingName: { control: 'text' },
         loadingClass: { control: 'text' },
-        message: { control: 'text' }
+        message: { control: 'text' },
+        type: { control: 'text' }
     }
 } satisfies Meta
 
@@ -131,6 +132,27 @@ export const Icons: Story = {
                 <NInputField v-bind="args" icon="mdi-magnify" placeholder="Search..." />
                 <NInputField v-bind="args" prepend-icon="mdi-account" placeholder="User" />
                 <NInputField v-bind="args" append-icon="mdi-eye" placeholder="Password" />
+            </div>
+        `
+    })
+}
+
+export const InputTypes: Story = {
+    args: {},
+    render: args => ({
+        components: { NInputField },
+        setup() {
+            return { args }
+        },
+        template: `
+            <div class="flex flex-col gap-4 w-96">
+                <NInputField v-bind="args" type="text" label="Text Input" placeholder="Normal text" />
+                <NInputField v-bind="args" type="password" label="Password Input" placeholder="Secret password" append-icon="mdi-eye" />
+                <NInputField v-bind="args" type="number" label="Number Input" placeholder="123" />
+                <NInputField v-bind="args" type="email" label="Email Input" placeholder="user@example.com" />
+                <NInputField v-bind="args" type="date" label="Date Input" />
+                <NInputField v-bind="args" type="datetime-local" label="DateTime Input" />
+                <NInputField v-bind="args" type="color" label="Color Input" class="w-20" />
             </div>
         `
     })
