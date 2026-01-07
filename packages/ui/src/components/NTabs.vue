@@ -4,7 +4,7 @@
         ref="tabListRef"
         :class="compClasses"
         v-bind="compBind"
-        role="tablist"
+        :role="isTabMode ? 'tablist' : 'group'"
         @keydown="handleKeydown"
     >
         <template v-for="(node, index) in slotDefaultNodes" :key="index">
@@ -13,9 +13,9 @@
                 :id="getTabId(node, index)"
                 :ref="(el: any) => setTabRef(el, index)"
                 :class="[isActive(node) ? 'n-tab--active' : '']"
-                role="tab"
-                :aria-selected="isActive(node) ? 'true' : 'false'"
-                :tabindex="isActive(node) ? 0 : -1"
+                :role="isTabMode ? 'tab' : undefined"
+                :aria-selected="isTabMode ? (isActive(node) ? 'true' : 'false') : undefined"
+                :tabindex="getTabIndex(node, index)"
                 @click="() => handleTabNodeClick(node)"
             />
         </template>
@@ -49,6 +49,9 @@
     const tabRefs = ref<HTMLElement[]>([])
     const tabListRef = ref<HTMLElement | null>(null)
 
+    const isTabMode = computed(() => model.value !== undefined && model.value !== null)
+    const hasActiveTab = computed(() => slotDefaultNodes.value.some(node => isActive(node)))
+
     const compClasses = computed(() => {
         return ['n-tabs']
     })
@@ -72,11 +75,18 @@
     })
 
     function isActive(node: VNode) {
-        if (!node.props?.name) return false
+        if (!isTabMode.value || !node.props?.name) return false
         if (props.multiple && Array.isArray(model.value)) {
             return model.value.includes(node.props?.name)
         }
         return node.props?.name === model.value
+    }
+
+    function getTabIndex(node: VNode, index: number) {
+        if (!isTabMode.value) return 0
+        if (isActive(node)) return 0
+        if (!hasActiveTab.value && index === 0) return 0
+        return -1
     }
 
     function getTabId(node: VNode, index: number) {
@@ -92,7 +102,7 @@
 
     // Event handler
     function handleTabNodeClick(tabNode: VNode) {
-        if (!tabNode.props?.name) return
+        if (!isTabMode.value || !tabNode.props?.name) return
         if (props.multiple && Array.isArray(model.value)) {
             const index = model.value.indexOf(tabNode.props?.name)
             if (index >= 0) {
@@ -139,17 +149,9 @@
 
         if (nextIndex !== -1) {
             tabs[nextIndex].focus()
-            // Optional: automatically select the tab on focus for single selection mode
-            // if (!props.multiple) {
-            //     // We need to map the DOM element back to the node name to update model
-            //     // This might be tricky without storing mapping.
-            //     // For now, let's stick to manual selection with Enter/Space (handled by button default or NTab click)
-            //     // OR: simulate click?
-            //     tabs[nextIndex].click()
-            // }
             // Standard behavior often involves automatic activation for tabs.
-            // Let's trigger click to activate.
-            if (!props.multiple) {
+            // Let's trigger click to activate only if in tab mode and not multiple.
+            if (isTabMode.value && !props.multiple) {
                 tabs[nextIndex].click()
             }
         }

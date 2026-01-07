@@ -39,6 +39,29 @@ export const Default: Story = {
     })
 }
 
+export const IndependentButtons: Story = {
+    args: {},
+    render: args => ({
+        components: { NTabs, NTab },
+        setup() {
+            const handleClick = (name: string) => {
+                alert(`Clicked ${name}`)
+            }
+            return { args, handleClick }
+        },
+        template: `
+            <div class="flex flex-col gap-4 w-[600px]">
+                <div class="text-sm opacity-60">In this mode, all tabs are focusable and act as individual buttons.</div>
+                <NTabs v-bind="args" class="individual gap-2 brand">
+                    <NTab name="refresh" icon="mdi-refresh" @click="handleClick('Refresh')">Refresh</NTab>
+                    <NTab name="print" icon="mdi-printer" @click="handleClick('Print')">Print</NTab>
+                    <NTab name="export" icon="mdi-export" @click="handleClick('Export')">Export</NTab>
+                </NTabs>
+            </div>
+        `
+    })
+}
+
 export const Spaced: Story = {
     args: {},
     render: args => ({

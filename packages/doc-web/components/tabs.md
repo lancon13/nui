@@ -189,6 +189,29 @@ If you provide `to` or `href`, the tab renders as a link. This is ideal for top-
 </NTabs>
 ```
 
+## Independent Buttons (Button Mode)
+
+If you omit `v-model` (or set it to `undefined` | `null`), the component switches to "Button Mode". In this mode:
+- Tabs behave as independent buttons.
+- They are all part of the natural tab sequence (`tabindex="0"`).
+- Keyboard navigation (Arrows, Home, End) still works for focus management.
+- Clicking a tab does not change any internal state or "selection".
+
+<div class="my-4 vp-raw">
+    <NTabs class="individual gap-2 brand">
+        <NTab label="Refresh" icon="mdi-refresh" @click="() => alert('Refreshed!')" />
+        <NTab label="Print" icon="mdi-printer" @click="() => alert('Printing...')" />
+        <NTab label="Export" icon="mdi-export" @click="() => alert('Exporting...')" />
+    </NTabs>
+</div>
+
+```vue
+<NTabs class="individual gap-2 brand">
+    <NTab label="Refresh" @click="handleRefresh" />
+    <NTab label="Print" @click="handlePrint" />
+</NTabs>
+```
+
 ## Tabbed Content View
 
 You can use the `v-model` state to conditionally render content in a container like `NCard`.

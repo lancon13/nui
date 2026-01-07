@@ -44,6 +44,7 @@
         href?: string
         target?: string
         disabled?: boolean
+        onClick?: (e: MouseEvent | KeyboardEvent) => void
     }
 
     defineOptions({
@@ -56,10 +57,8 @@
         tag: 'div'
     })
 
-    const emits = defineEmits<(event: 'click', e: MouseEvent | KeyboardEvent) => void>()
-
     const isClickable = computed(() => {
-        return !props.disabled && (props.to || props.href || !!attrs.onClick)
+        return !props.disabled && (props.to || props.href || !!props.onClick || !!attrs.onClick)
     })
 
     const compClasses = computed(() => {
@@ -93,7 +92,11 @@
             return
         }
         if (isClickable.value) {
-            emits('click', e)
+            props.onClick?.(e)
+            // If it's still in attrs (e.g. if we didn't use defineEmits)
+            if (attrs.onClick && typeof attrs.onClick === 'function' && attrs.onClick !== props.onClick) {
+                ;(attrs.onClick as Function)(e)
+            }
         }
     }
 </script>
