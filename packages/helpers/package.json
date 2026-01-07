@@ -1,0 +1,32 @@
+{
+  "name": "@nui/helpers",
+  "version": "0.0.1",
+  "description": "Helper functions for NUI",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc && vite build",
+    "dev": "vite build --watch",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@vueuse/core": "^12.0.0",
+    "dayjs": "^1.11.13",
+    "es-toolkit": "^1.39.7",
+    "vue": "^3.5.18",
+    "zod": "^4.0.5"
+  },
+  "devDependencies": {
+    "typescript": "~5.8.3",
+    "vite": "^7.1.5",
+    "vite-plugin-dts": "^4.5.0"
+  }
+}

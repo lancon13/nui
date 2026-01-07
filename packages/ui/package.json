@@ -29,6 +29,7 @@
         "storybook:build": "storybook build"
     },
     "dependencies": {
+        "@nui/helpers": "workspace:*",
         "@floating-ui/vue": "^1.1.9",
         "@mdi/font": "^7.4.47",
         "@vueuse/components": "^14.0.0",

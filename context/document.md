@@ -68,3 +68,9 @@ Ensure every component document includes the following sections using the projec
 - **Inheritance:** Most inputs wrap `NInputField`. Features like `size`, `color`, `helperText`, and layout slots are often implemented in `NInputField` and inherited.
 - **Side Effects:** modifying `NInputField` affects all derived inputs. Ensure changes are compatible across all consumers.
 - **Implementation:** Prefer implementing shared features in `NInputField` rather than duplicating logic in each wrapper, unless the feature is specific to the wrapper.
+
+### 3. Shared Logic & Helpers
+**Rule:** Any logic, utility function, or constant that is not strictly component-specific **MUST** be placed in `@nui/helpers`.
+- **DRY:** Do not duplicate utility functions (like date formatting or string manipulation) inside component files.
+- **Exposure:** If a helper is useful for the end-user (e.g., `useForm`, `toCurrency`), ensure it is exported in `@packages/helpers/src/index.ts` and mentioned in the documentation or README.
+- **Standardization:** When writing documentation examples that require complex logic (e.g., a specific date format), use the functions from `@nui/helpers` instead of writing inline vanilla JS.

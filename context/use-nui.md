@@ -168,3 +168,45 @@ Use these utility classes for consistent text styling:
 - **Body:** `body-text` (default text), `label-text` (font-semibold)
 - **Small:** `caption-text` (xs, bold)
 - **Links:** `link-text` (cursor pointer, hover effects)
+
+## 8. Helper Utilities (@nui/helpers)
+
+NUI provides a comprehensive set of helpers for common application logic.
+
+### Form Management (`useForm`)
+Use `useForm` for complex data entry. It supports Zod validation and history.
+
+```typescript
+import { useForm } from '@nui/helpers'
+import * as z from 'zod'
+
+const form = useForm({ name: '', age: 0 }, {
+    initialSchemas: z.object({
+        name: z.string().min(3),
+        age: z.number().min(18)
+    })
+})
+
+// Access data: form.data.name
+// Validate: form.validate()
+// State: form.isValid, form.isDirty
+```
+
+### Async Operations (`useCall`)
+Use `useCall` for API requests or any async logic requiring states (loading, error) and caching.
+
+```typescript
+import { useCall } from '@nui/helpers'
+
+const api = useCall(async (id: string) => fetch(`/api/user/${id}`))
+// api.call('123')
+// States: api.isLoading, api.result, api.error
+```
+
+### Data Formatting
+- **Case Conversion**: `toData(obj)` (to camelCase), `fromData(obj)` (to snake_case).
+- **Class Merging**: `toClassName(binding)` - use this when building custom components to normalize classes.
+- **Value Formatting**: `toDateString`, `toCurrency`, `toNumber`.
+
+### Type Transformations
+- Use `SnakeCase<T>` and `CamelCase<T>` types when dealing with API data structures.

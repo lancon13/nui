@@ -4,6 +4,9 @@
         "paths": {
             "@nui/ui/*": [
                 "packages/ui/src/*"
+            ],
+            "@nui/helpers": [
+                "packages/helpers/src/index.ts"
             ]
         },
         // Other common compiler options
