@@ -2,9 +2,6 @@
     <component
         :is="actualTag"
         :class="compClasses"
-        :to="props.to"
-        :href="props.href"
-        :target="props.target"
         :role="isClickable && actualTag === 'span' ? 'button' : undefined"
         :tabindex="isClickable && actualTag === 'span' ? 0 : undefined"
         :aria-disabled="props.disabled ? 'true' : undefined"
@@ -72,9 +69,16 @@
     })
 
     const compBind = computed(() => {
-        return {
-            ...attrs
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const bind: any = { ...attrs }
+        if (actualTag.value === 'RouterLink') {
+            bind.to = props.to
+            bind.target = props.target
+        } else if (actualTag.value === 'a') {
+            bind.href = props.href
+            bind.target = props.target
         }
+        return bind
     })
 
     function handleClick(e: MouseEvent | KeyboardEvent) {

@@ -2,9 +2,6 @@
     <component
         :is="actualTag"
         :class="compClasses"
-        :to="props.to"
-        :href="props.href"
-        :target="props.target"
         :role="isClickable ? 'button' : 'img'"
         :tabindex="isClickable ? 0 : undefined"
         :aria-disabled="props.disabled ? 'true' : undefined"
@@ -59,9 +56,18 @@
         ...iconClasses.value
     ])
 
-    const compBind = computed(() => ({
-        ...attrs
-    }))
+    const compBind = computed(() => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const bind: any = { ...attrs }
+        if (actualTag.value === 'RouterLink') {
+            bind.to = props.to
+            bind.target = props.target
+        } else if (actualTag.value === 'a') {
+            bind.href = props.href
+            bind.target = props.target
+        }
+        return bind
+    })
 
     function handleKey(e: KeyboardEvent) {
         if (props.disabled) {

@@ -2,9 +2,6 @@
     <component
         :is="actualTag"
         :class="compClasses"
-        :to="props.to"
-        :href="props.href"
-        :target="props.target"
         :role="itemRole"
         :tabindex="tabIndex"
         :aria-disabled="props.disabled ? 'true' : undefined"
@@ -127,9 +124,18 @@
         props.heading ? 'n-list-item--heading' : ''
     ])
 
-    const compBind = computed(() => ({
-        ...attrs
-    }))
+    const compBind = computed(() => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const bind: any = { ...attrs }
+        if (actualTag.value === 'RouterLink') {
+            bind.to = props.to
+            bind.target = props.target
+        } else if (actualTag.value === 'a') {
+            bind.href = props.href
+            bind.target = props.target
+        }
+        return bind
+    })
 
     const resolvedIconClasses = computed(() => resolveClassProp(props.iconClass, props.prependIconClass))
 

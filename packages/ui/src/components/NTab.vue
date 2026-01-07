@@ -2,9 +2,6 @@
     <component
         :is="actualTag"
         :class="compClasses"
-        :to="props.to"
-        :href="props.href"
-        :target="props.target"
         :type="props.type"
         :disabled="attrs.disabled || props.loading"
         :aria-disabled="attrs.disabled || props.loading ? 'true' : undefined"
@@ -90,9 +87,16 @@
     const iconClasses = computed(() => resolveClassProp(props.iconClass, props.prependIconClass))
 
     const compBind = computed(() => {
-        return {
-            ...attrs
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const bind: any = { ...attrs }
+        if (actualTag.value === 'RouterLink') {
+            bind.to = props.to
+            bind.target = props.target
+        } else if (actualTag.value === 'a') {
+            bind.href = props.href
+            bind.target = props.target
         }
+        return bind
     })
     const slotDefaultNodes = computed(() => {
         return wrapTextNode(slots.default?.() ?? [], 'span')

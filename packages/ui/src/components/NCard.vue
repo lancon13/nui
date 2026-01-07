@@ -2,9 +2,6 @@
     <component
         :is="actualTag"
         :class="compClasses"
-        :to="props.to"
-        :href="props.href"
-        :target="props.target"
         :role="isClickable && actualTag === 'div' ? 'button' : undefined"
         :tabindex="isClickable && actualTag === 'div' ? 0 : undefined"
         :aria-disabled="props.disabled ? 'true' : undefined"
@@ -80,9 +77,16 @@
     })
 
     const compBind = computed(() => {
-        return {
-            ...attrs
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const bind: any = { ...attrs }
+        if (actualTag.value === 'RouterLink') {
+            bind.to = props.to
+            bind.target = props.target
+        } else if (actualTag.value === 'a') {
+            bind.href = props.href
+            bind.target = props.target
         }
+        return bind
     })
 
     // Logic to detect if we should wrap content in .n-card-body
@@ -103,6 +107,7 @@
             props.onClick?.(e)
             // If it's still in attrs (e.g. if we didn't use defineEmits)
             if (attrs.onClick && typeof attrs.onClick === 'function' && attrs.onClick !== props.onClick) {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
                 ;(attrs.onClick as Function)(e)
             }
         }
