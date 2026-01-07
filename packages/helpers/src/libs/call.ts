@@ -3,10 +3,10 @@
 import { useAsyncState, type UseAsyncStateOptions } from '@vueuse/core'
 import { isEqual, toMerged } from 'es-toolkit'
 import { debounce, isNumber, throttle } from 'es-toolkit/compat'
-import { computed, reactive, ref, type Ref, toRef, watch } from 'vue'
+import { computed, ref, type Ref, toRef, watch } from 'vue'
 
 export type UseCall<P extends any[] = any[], R = unknown> = {
-    result: R
+    result: Ref<R>
     error: Ref<Error | null>
     isExecuting: Ref<boolean>
     isLoading: Ref<boolean>
@@ -14,6 +14,7 @@ export type UseCall<P extends any[] = any[], R = unknown> = {
     call: (...args: P) => Promise<R>
     immediate: (flag: boolean) => UseCall<P, R>
     cache: (flag: boolean) => UseCall<P, R>
+    shallow: (flag: boolean) => UseCall<P, R>
     refresh: () => Promise<R>
 }
 
@@ -50,17 +51,30 @@ export function useCall<P extends any[] = any[], R = unknown>(
 
     const isShallow = ref(false)
 
-    function shallow(flag: boolean = false) {
-        isShallow.value = flag
-        return self
-    }
-    function cache(flag: boolean = false) {
-        isWithoutCache.value = flag
-        return self
-    }
-    function immediate(flag: boolean = false) {
-        isImmediate.value = flag
-        return self
+    const self: UseCall<P, R> = {
+        isExecuting,
+        isLoading: ref(false),
+        isReady: ref(false),
+        result: resultState,
+        error: ref(null),
+        call: (...params: P) => {
+            return execute(1, ...params)
+        },
+        cache: (flag: boolean = false) => {
+            isWithoutCache.value = flag
+            return self
+        },
+        immediate: (flag: boolean = false) => {
+            isImmediate.value = flag
+            return self
+        },
+        shallow: (flag: boolean = false) => {
+            isShallow.value = flag
+            return self
+        },
+        refresh: () => {
+            return execute(1, ...(paramsState.value ?? []))
+        }
     }
 
     // Async call
@@ -128,9 +142,11 @@ export function useCall<P extends any[] = any[], R = unknown>(
         }
     )
 
+    self.isLoading = isLoading
+    self.isReady = isReady
+
     // Throttled with Debounced
-    const throttledFunc =
-        isNumber(options.throttle) && options.throttle > 0 ? throttle(func, options.throttle) : func
+    const throttledFunc = isNumber(options.throttle) && options.throttle > 0 ? throttle(func, options.throttle) : func
     const debouncedFunc =
         isNumber(options.debounce) && options.debounce > 0
             ? (debounce(throttledFunc, options.debounce) as (...params: P) => Promise<R>)
@@ -140,8 +156,7 @@ export function useCall<P extends any[] = any[], R = unknown>(
     watch(
         paramsState,
         (newValue, oldValue) => {
-            if (options.paramsChangedRefresh === true && !isEqual(newValue, oldValue))
-                execute(1, ...paramsState.value)
+            if (options.paramsChangedRefresh === true && !isEqual(newValue, oldValue)) execute(1, ...paramsState.value)
         },
         { deep: true }
     )
@@ -159,25 +174,7 @@ export function useCall<P extends any[] = any[], R = unknown>(
             error.value = newError
         }
     })
+    self.error = errorState
 
-    const refresh = () => {
-        return execute(1, ...(paramsState.value ?? []))
-    }
-
-    const self = {
-        isExecuting,
-        isLoading,
-        isReady,
-        result: resultState,
-        error: errorState,
-        call: (...params: P) => {
-            return execute(1, ...params)
-        },
-        cache,
-        immediate,
-        shallow,
-        refresh
-    }
-
-    return reactive(self) as unknown as UseCall<P, R>
+    return self
 }

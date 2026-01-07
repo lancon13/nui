@@ -18,7 +18,7 @@ export type UseFormOptions = {
 export type UseFormFieldState = {
     value: any
     schema: ZodType<any, any, any>
-    errors: z.core.$ZodIssue[]
+    errors: z.ZodIssue[]
     errorMessage: string | null
     dirtyErrorMessage: string | null
     changeErrorMessage: string | null
@@ -36,7 +36,7 @@ export type UseForm<T extends Record<string, any>> = {
     schemas: Ref<ZodObject<any>>
 
     // --- Computed State ---
-    errors: ComputedRef<Record<string, z.core.$ZodIssue[]>>
+    errors: ComputedRef<Record<string, z.ZodIssue[]>>
     changes: ComputedRef<Record<string, any>>
     modifies: ComputedRef<Record<string, any>>
     isValid: ComputedRef<boolean>
@@ -86,7 +86,7 @@ export function useForm<T extends Record<string, any>>(
     )
     const schemas = ref<ZodObject<any>>(options.initialSchemas)
 
-    const errors = ref<Record<string, z.core.$ZodIssue[]>>({})
+    const errors = ref<Record<string, z.ZodIssue[]>>({})
     const changes = ref<Record<string, any>>({})
     const modifies = ref<Record<string, any>>({})
 
@@ -121,7 +121,7 @@ export function useForm<T extends Record<string, any>>(
                 const errorMessage = errorMessages.value[key] ?? null
 
                 const fieldState = {
-                    value: data.value[key],
+                    value: (data.value as any)[key],
                     schema,
                     errors: errors.value[key] ?? [],
                     errorMessage,
@@ -154,7 +154,7 @@ export function useForm<T extends Record<string, any>>(
                       }
                       return es
                   },
-                  {} as Record<string, z.core.$ZodIssue[]>
+                  {} as Record<string, z.ZodIssue[]>
               )
             : {}
     }

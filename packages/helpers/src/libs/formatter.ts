@@ -76,10 +76,10 @@ export function fromData<T extends object | object[]>(data: T): SnakeCase<T> {
 
     if (Array.isArray(data)) return data.map(item => fromData(item)) as unknown as SnakeCase<T>
 
-    return Object.entries(data).reduce((newObject, [key, value]) => {
-        ;(newObject as Record<string, unknown>)[toSnakeCase(key)] = fromData(value)
+    return (Object.entries(data) as [string, any][]).reduce((newObject, [key, value]) => {
+        ;(newObject as any)[toSnakeCase(key)] = fromData(value)
         return newObject
-    }, {} as SnakeCase<T>)
+    }, {} as any) as SnakeCase<T>
 }
 
 // Function to convert data keys to camelCase
@@ -88,8 +88,8 @@ export function toData<T extends object | object[]>(data: T): CamelCase<T> {
 
     if (Array.isArray(data)) return data.map(item => toData(item)) as unknown as CamelCase<T>
 
-    return Object.entries(data).reduce((newObject, [key, value]) => {
-        ;(newObject as Record<string, unknown>)[toCamelCase(key)] = toData(value)
+    return (Object.entries(data) as [string, any][]).reduce((newObject, [key, value]) => {
+        ;(newObject as any)[toCamelCase(key)] = toData(value)
         return newObject
-    }, {} as CamelCase<T>)
+    }, {} as any) as CamelCase<T>
 }
