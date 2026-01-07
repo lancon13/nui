@@ -11,7 +11,7 @@
         :aria-expanded="props.expandable ? model : undefined"
         v-bind="compBind"
         @click="handleClick"
-        @keydown.enter.space.prevent="handleClick"
+        @keydown="handleKeydown"
     >
         <div v-if="props.expandable" class="n-list-item-header" @click.stop="handleExpandableHeaderClick">
             <slot name="prepend" />
@@ -152,6 +152,18 @@
             return
         }
         if (isClickable.value) emits('click', e)
+    }
+
+    function handleKeydown(e: KeyboardEvent) {
+        if (!isClickable.value) return
+        if (['Enter', ' '].includes(e.key)) {
+            const target = e.target as HTMLElement
+            if (['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName) || target.isContentEditable) {
+                return
+            }
+            e.preventDefault()
+            handleClick(e)
+        }
     }
 
     function handleExpandableHeaderClick() {

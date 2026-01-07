@@ -1,14 +1,13 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { useRefHistory, UseRefHistoryOptions } from '@vueuse/core'
+import { useRefHistory, UseRefHistoryOptions, UseRefHistoryRecord } from '@vueuse/core'
 import { cloneDeep, isEqual } from 'es-toolkit'
 import { isEmpty } from 'es-toolkit/compat'
 import { computed, ComputedRef, nextTick, Ref, ref, toRaw, watch } from 'vue'
 import * as z from 'zod'
 import { ZodObject, ZodType } from 'zod'
 import { toRawDeep } from './data'
-import { UseRefHistoryRecord } from '@vueuse/core'
 
 export type UseFormOptions = {
     initialSchemas?: ZodObject<any>
@@ -63,10 +62,7 @@ export type UseForm<T extends Record<string, any>> = {
     getRawData: () => T
 }
 
-export function useForm<T extends Record<string, any>>(
-    initialData: T,
-    options?: UseFormOptions
-): UseForm<T> {
+export function useForm<T extends Record<string, any>>(initialData: T, options?: UseFormOptions): UseForm<T> {
     const data = ref<T>(initialData)
     const baseData = ref(cloneDeep(data.value))
 
@@ -104,8 +100,7 @@ export function useForm<T extends Record<string, any>>(
     const errorMessages = computed(() =>
         Object.entries(errors.value).reduce(
             (es, [key, issues]) => {
-                if (issues.length > 0 && typeof issues?.[0]?.message === 'string')
-                    es[key] = issues?.[0]?.message
+                if (issues.length > 0 && typeof issues?.[0]?.message === 'string') es[key] = issues?.[0]?.message
                 return es
             },
             {} as Record<string, string>

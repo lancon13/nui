@@ -4,6 +4,7 @@ import NIcon from './NIcon.vue'
 import NButton from './NButton.vue'
 import NCard from './NCard.vue'
 import NTooltip from './NTooltip.vue'
+import NInputText from './NInputText.vue'
 
 const meta = {
     title: 'UI/NCard',
@@ -192,6 +193,26 @@ export const Loading: Story = {
                 </NCard>
                 <NButton label="Toggle Loading" @click="toggleLoading" />
             </div>
+        `
+    })
+}
+
+export const InteractiveWithInput: Story = {
+    args: {},
+    render: args => ({
+        components: { NCard, NInputText },
+        setup() {
+            const text = ref('')
+            return { args, text }
+        },
+        template: `
+            <NCard v-bind="args" class="w-96" @click="() => {}">
+                <div class="n-card-body content-col">
+                    <p class="mb-4 text-sm opacity-60">This card is clickable. Typing "space" in the input below should work correctly.</p>
+                    <NInputText v-model="text" label="Test Input" placeholder="Try typing spaces..." />
+                    <div class="mt-2 text-xs font-mono bg-surface-indent p-2 rounded">Value: "{{ text }}"</div>
+                </div>
+            </NCard>
         `
     })
 }

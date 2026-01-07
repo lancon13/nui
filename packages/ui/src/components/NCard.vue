@@ -8,7 +8,7 @@
         :aria-busy="props.loading ? 'true' : undefined"
         v-bind="compBind"
         @click="handleClick"
-        @keydown.enter.space.prevent="handleClick"
+        @keydown="handleKeydown"
     >
         <slot v-if="shouldNotAddWrapper" name="default"></slot>
         <div v-else class="n-card-body">
@@ -97,6 +97,18 @@
             if (attrs.onClick && typeof attrs.onClick === 'function' && attrs.onClick !== props.onClick) {
                 ;(attrs.onClick as Function)(e)
             }
+        }
+    }
+
+    function handleKeydown(e: KeyboardEvent) {
+        if (!isClickable.value) return
+        if (['Enter', ' '].includes(e.key)) {
+            const target = e.target as HTMLElement
+            if (['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName) || target.isContentEditable) {
+                return
+            }
+            e.preventDefault()
+            handleClick(e)
         }
     }
 </script>
