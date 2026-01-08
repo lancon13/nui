@@ -14,6 +14,7 @@ type NDialogAction = Omit<NButtonProps, 'onClick'> & {
 export type NDialogOptions = Omit<NModalProps, 'tag' | 'content'> &
     Omit<NCardProps, 'tag' | 'clickable' | 'to' | 'href' | 'target'> & {
         modalTag?: NModalProps['tag']
+        class?: string | string[] | object
         cardTag?: NCardProps['tag']
         cardClass?: string | string[] | object
         title?: string
@@ -49,7 +50,8 @@ export function useDialog() {
             noOverlayHide: options['noOverlayHide'],
             noEscHide: options['noEscHide'],
             focusOnShow: options['focusOnShow'],
-            role: options['role']
+            role: options['role'],
+            class: options['class']
         }
         const cardProps = {
             tag: options['cardTag'],
@@ -239,23 +241,25 @@ export function useDialog() {
             ...(options || {}),
             title,
             content: message,
-            actions: [
-                {
-                    label: 'Cancel',
-                    class: 'flat',
-                    onClick: ({ hide, executeCallbacks }) => {
-                        executeCallbacks('cancel')
-                        hide()
-                    }
-                },
-                {
-                    label: 'OK',
-                    onClick: ({ hide, executeCallbacks }) => {
-                        executeCallbacks('ok')
-                        hide()
-                    }
-                }
-            ],
+            actions: options?.actions
+                ? options.actions
+                : [
+                      {
+                          label: 'Cancel',
+                          class: 'flat',
+                          onClick: ({ hide, executeCallbacks }) => {
+                              executeCallbacks('cancel')
+                              hide()
+                          }
+                      },
+                      {
+                          label: 'OK',
+                          onClick: ({ hide, executeCallbacks }) => {
+                              executeCallbacks('ok')
+                              hide()
+                          }
+                      }
+                  ],
             hideOnAction: false,
             noOverlayHide: true,
             noEscHide: true,
