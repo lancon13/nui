@@ -1,5 +1,5 @@
 import { useFocusTrap } from '@vueuse/integrations/useFocusTrap'
-import { nextTick, watch, type Ref } from 'vue'
+import { nextTick, watch, type Ref, ref } from 'vue'
 import { delay } from '../helpers/tools'
 
 export function useFocusable(
@@ -16,8 +16,8 @@ export function useFocusable(
         activate,
         deactivate,
         hasFocus: isFocusTrapped,
-        pause,
-        unpause
+        pause: originalPause,
+        unpause: originalUnpause
     } = useFocusTrap(contentRef, {
         immediate: false,
         allowOutsideClick: (event: MouseEvent | TouchEvent) => {
@@ -33,6 +33,24 @@ export function useFocusable(
             return false
         }
     })
+
+    const pauseCount = ref(0)
+
+    const pause = () => {
+        pauseCount.value++
+        if (pauseCount.value === 1) {
+            originalPause()
+        }
+    }
+
+    const unpause = () => {
+        if (pauseCount.value > 0) {
+            pauseCount.value--
+        }
+        if (pauseCount.value === 0) {
+            originalUnpause()
+        }
+    }
 
     function findFirstFocusable(element: HTMLElement): HTMLElement | null {
         if (!element) {

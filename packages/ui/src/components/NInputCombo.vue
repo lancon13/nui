@@ -337,11 +337,12 @@
     const focusInputRef = computed(() => (focusPaused.value ? null : inputRef.value))
 
     // --- Watchers ---
-    watch(dropdown, isOpen => {
+    watch(dropdown, (isOpen, _, onCleanup) => {
         if (isOpen) {
             nModalFocusable?.pause()
-        } else {
-            nModalFocusable?.unpause()
+            onCleanup(() => {
+                nModalFocusable?.unpause()
+            })
         }
     })
 
