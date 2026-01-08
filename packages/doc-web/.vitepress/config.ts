@@ -10,7 +10,8 @@ export default defineConfig({
         plugins: [tailwindcss()],
         resolve: {
             alias: {
-                '@nui/ui': path.resolve(__dirname, '../../ui/src')
+                '@nui/ui': path.resolve(__dirname, '../../ui/src'),
+                '@nui/helpers': path.resolve(__dirname, '../../helpers/src')
             }
         }
     },
@@ -89,7 +90,17 @@ export default defineConfig({
                 items: [
                     { text: 'useDialog', link: '/composables/use-dialog' },
                     { text: 'useNotify', link: '/composables/use-notify' },
-                    { text: 'useModal', link: '/composables/use-modal' }
+                    { text: 'useModal', link: '/composables/use-modal' },
+                    { text: 'useForm', link: '/composables/use-form' },
+                    { text: 'useCall', link: '/composables/use-call' }
+                ]
+            },
+            {
+                text: 'Helpers',
+                items: [
+                    { text: 'Formatting', link: '/helpers/formatting' },
+                    { text: 'File', link: '/helpers/file' },
+                    { text: 'Miscellaneous', link: '/helpers/miscellaneous' }
                 ]
             }
         ]

@@ -29,6 +29,10 @@ This document serves as a context provider for LLMs working on documentation fil
 </NCard>
 ```
 
+### 2. Styling Constraints
+- **Rule:** **DO NOT** use `max-w-*` utility classes (e.g., `max-w-md`, `max-w-4xl`) in documentation examples.
+- **Why:** These constraints often conflict with the responsive container width of the documentation site, leading to inconsistent or cramped layouts. Use `w-full` or specific fixed widths if strictly necessary.
+
 ## Interactive Examples
 
 ### 1. Reactivity

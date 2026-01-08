@@ -1,4 +1,4 @@
-# useModal
+# useModal <NChip class="text-xs flat brand">@nui/ui</NChip>
 
 A composable to programmatically create and control modals.
 

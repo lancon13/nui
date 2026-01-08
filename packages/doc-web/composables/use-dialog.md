@@ -1,4 +1,4 @@
-# useDialog
+# useDialog <NChip class="text-xs flat brand">@nui/ui</NChip>
 
 A composable to programmatically create dialogs, alerts, confirmations, and prompts.
 

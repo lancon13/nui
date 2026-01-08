@@ -1,4 +1,4 @@
-# useNotify
+# useNotify <NChip class="text-xs flat brand">@nui/ui</NChip>
 
 A composable to programmatically show toast notifications.
 
