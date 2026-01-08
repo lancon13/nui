@@ -89,5 +89,11 @@ export function useFocusable(
         }
     })
 
-    return { isFocusTrapped, pause, unpause }
+    const focusContent = () => {
+        if (contentRef.value) {
+            contentRef.value.focus()
+        }
+    }
+
+    return { isFocusTrapped, pause, unpause, focusContent }
 }

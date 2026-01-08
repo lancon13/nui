@@ -78,7 +78,7 @@
     const { register, unregister, getZIndex, isTop } = useComponentStack('n-modal')
     const contentRef = useTemplateRef<HTMLElement | null>('contentRef')
 
-    const { pause, unpause } = useFocusable(
+    const { pause, unpause, focusContent } = useFocusable(
         model,
         contentRef,
         computed(() => props.overlay),
@@ -91,13 +91,13 @@
             : undefined
     )
 
-    provide('n-modal-focusable', { pause, unpause })
+    provide('n-modal-focusable', { pause, unpause, focusContent })
 
     const stackZIndex = computed(() => getZIndex(modalId))
 
     const overlayClasses = computed(() => ['n-modal-overlay'])
     const overlayStyles = computed(() => ({ zIndex: stackZIndex.value }))
-    const modalClasses = computed(() => ['n-modal', `n-modal--direction-${props.direction}`])
+    const modalClasses = computed(() => ['n-modal', `n-modal--direction-${props.direction}`, 'outline-none'])
     const modalStyles = computed(() => ({ zIndex: stackZIndex.value }))
     const modalBind = computed(() => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
@@ -106,13 +106,13 @@
 
         // Destructure standard attributes handled explicitly in template to avoid duplicates
         // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
-        const { 'aria-modal': am, role: r, ...remainingAttrs } = attrs
+        const { 'aria-modal': am, role: r, tabindex, ...remainingAttrs } = attrs
 
         // Also exclude them from props rest if present
         // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
         const { 'aria-modal': pam, ...finalRest } = rest as Record<string, unknown>
 
-        return { ...finalRest, ...remainingAttrs }
+        return { tabindex: tabindex ?? '-1', ...finalRest, ...remainingAttrs }
     })
 
     useEventListener('keydown', e => {
@@ -145,8 +145,46 @@
         hide()
     }
 
-    function handleModalMouseDown() {
+    function isFocusable(element: HTMLElement): boolean {
+        if (!element) return false
+        if (element === document.body) return false
+
+        const focusableSelector = [
+            'a[href]',
+            'button:not([disabled])',
+            'input:not([disabled])',
+            'textarea:not([disabled])',
+            'select:not([disabled])',
+            'details',
+            '[tabindex]:not([tabindex="-1"])',
+            '[contenteditable]',
+            'label'
+        ].join(', ')
+
+        // Check if the element itself matches
+        if (element.matches(focusableSelector)) return true
+        if (element.getAttribute('tabindex') && element.getAttribute('tabindex') !== '-1') return true
+
+        // Check if it's inside a focusable element (e.g. span in button)
+        if (element.closest(focusableSelector)) return true
+
+        return false
+    }
+
+    function handleModalMouseDown(e: MouseEvent) {
         if (props.persist) return
+
+        const target = e.target as HTMLElement
+        // If clicking on empty space (non-focusable), focus the container to avoid trap reset
+        if (!isFocusable(target)) {
+            // We focus the container so focus is "inside" the trap
+            // This allows the previous input to blur properly
+            if (contentRef.value) {
+                e.preventDefault()
+                contentRef.value.focus()
+            }
+        }
+        
         pause()
     }
 

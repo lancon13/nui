@@ -187,7 +187,11 @@
     // Internal cache to resolve labels for selected items that might be filtered out
     const itemRegistry = ref(new Map<any, any>())
 
-    const nModalFocusable = inject('n-modal-focusable', null) as { pause: () => void; unpause: () => void } | null
+    const nModalFocusable = inject('n-modal-focusable', null) as {
+        pause: () => void
+        unpause: () => void
+        focusContent: () => void
+    } | null
 
     // --- Helpers ---
 
@@ -341,6 +345,9 @@
         if (isOpen) {
             nModalFocusable?.pause()
             onCleanup(() => {
+                if (document.activeElement === document.body) {
+                    nModalFocusable?.focusContent()
+                }
                 nModalFocusable?.unpause()
             })
         }
