@@ -231,7 +231,7 @@
     })
 
     const filteredItems = computed(() => {
-        if (!inputValue.value) return props.items
+        if (!props.useInput || !inputValue.value) return props.items
         const search = inputValue.value.toLowerCase()
         return props.items.filter(item => {
             return (item[props.labelField] || '').toLowerCase().includes(search)
