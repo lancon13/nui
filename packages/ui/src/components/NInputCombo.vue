@@ -47,7 +47,7 @@
                     @keydown.down.prevent="handleInputKeydown"
                     @keydown.enter.prevent="handleEnter"
                     @keydown.backspace="handleBackspace"
-                    @keydown.esc="handleCloseDropdown"
+                    @keydown.esc="onInputEsc"
                 />
             </div>
 
@@ -94,7 +94,17 @@
     /* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
     import { useDebounceFn } from '@vueuse/core'
     import { omit } from 'es-toolkit/object'
-    import { computed, nextTick, ref, useAttrs, useSlots, useTemplateRef, watch, type HTMLAttributes } from 'vue'
+    import {
+        computed,
+        inject,
+        nextTick,
+        ref,
+        useAttrs,
+        useSlots,
+        useTemplateRef,
+        watch,
+        type HTMLAttributes
+    } from 'vue'
     import { resolveClassProp } from '../helpers/dom'
     import { generatePseudoRandomKey } from '../helpers/tools'
     import NChip from './NChip.vue'
@@ -176,6 +186,8 @@
 
     // Internal cache to resolve labels for selected items that might be filtered out
     const itemRegistry = ref(new Map<any, any>())
+
+    const nModalFocusable = inject('n-modal-focusable', null) as { pause: () => void; unpause: () => void } | null
 
     // --- Helpers ---
 
@@ -325,6 +337,14 @@
     const focusInputRef = computed(() => (focusPaused.value ? null : inputRef.value))
 
     // --- Watchers ---
+    watch(dropdown, isOpen => {
+        if (isOpen) {
+            nModalFocusable?.pause()
+        } else {
+            nModalFocusable?.unpause()
+        }
+    })
+
     watch(
         () => props.items,
         newItems => {
@@ -363,6 +383,7 @@
             focusPrevItem(e.target as HTMLElement)
         } else if (e.key === 'Escape') {
             e.preventDefault()
+            e.stopPropagation()
             handleCloseDropdown()
         } else if (e.key === 'ArrowLeft') {
             e.preventDefault()
@@ -530,6 +551,13 @@
         dropdown.value = false
         await nextTick()
         focusPaused.value = false
+    }
+
+    function onInputEsc(e: KeyboardEvent) {
+        if (dropdown.value) {
+            e.stopPropagation()
+            handleCloseDropdown()
+        }
     }
 
     function handleInputKeydown() {

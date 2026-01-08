@@ -1,5 +1,5 @@
 import { useFocusTrap } from '@vueuse/integrations/useFocusTrap'
-import { watch, nextTick, type Ref } from 'vue'
+import { nextTick, watch, type Ref } from 'vue'
 import { delay } from '../helpers/tools'
 
 export function useFocusable(
@@ -19,7 +19,19 @@ export function useFocusable(
         pause,
         unpause
     } = useFocusTrap(contentRef, {
-        immediate: false
+        immediate: false,
+        allowOutsideClick: (event: MouseEvent | TouchEvent) => {
+            const target = event.target as HTMLElement
+            // Allow clicks on elements that have a parent with the class 'n-popover' (nested popovers)
+            if (target.closest('.n-popover')) {
+                return true
+            }
+            // Allow clicks on overlays (to trigger close)
+            if (target.closest('.n-modal-overlay') || target.closest('.n-drawer-overlay')) {
+                return true
+            }
+            return false
+        }
     })
 
     function findFirstFocusable(element: HTMLElement): HTMLElement | null {

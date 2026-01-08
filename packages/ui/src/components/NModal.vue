@@ -35,7 +35,7 @@
 
 <script setup lang="ts">
     import { useEventListener } from '@vueuse/core'
-    import { computed, type HTMLAttributes, nextTick, onUnmounted, useAttrs, useTemplateRef, watch } from 'vue'
+    import { computed, type HTMLAttributes, onUnmounted, provide, useAttrs, useTemplateRef, watch } from 'vue'
     import { useComponentStack } from '../composables/use-component-stack'
     import { useFocusable } from '../composables/use-focusable'
     import { useTeleportContainer } from '../composables/use-teleport-container'
@@ -91,6 +91,8 @@
             : undefined
     )
 
+    provide('n-modal-focusable', { pause, unpause })
+
     const stackZIndex = computed(() => getZIndex(modalId))
 
     const overlayClasses = computed(() => ['n-modal-overlay'])
@@ -107,10 +109,10 @@
         const { 'aria-modal': am, role: r, ...remainingAttrs } = attrs
 
         // Also exclude them from props rest if present
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars, @typescript-eslint/no-explicit-any
-        const { 'aria-modal': pAm, role: pR, ...cleanRest } = rest as any
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
+        const { 'aria-modal': pam, ...finalRest } = rest as Record<string, unknown>
 
-        return { ...cleanRest, ...remainingAttrs }
+        return { ...finalRest, ...remainingAttrs }
     })
 
     useEventListener('keydown', e => {
@@ -121,19 +123,21 @@
         }
     })
 
-    watch(model, async value => {
-        await nextTick()
-        if (value) {
-            register(modalId)
-        } else {
-            unregister(modalId)
-        }
-    })
+    watch(
+        model,
+        isOpen => {
+            if (isOpen) {
+                register(modalId)
+            } else {
+                setTimeout(() => unregister(modalId), 300)
+            }
+        },
+        { immediate: true }
+    )
 
     onUnmounted(() => {
         unregister(modalId)
     })
-
     function handleOverlayClick(e: MouseEvent) {
         if (props.persist || props.noOverlayHide) return
         const target = e.target as HTMLElement
