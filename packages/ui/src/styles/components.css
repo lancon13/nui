@@ -1,0 +1,132 @@
+@reference "tailwindcss";
+@reference "./theme.css";
+
+@layer components {
+    [class*='n-'] {
+        @apply transition-shadow duration-200 ease-in-out;
+        @apply focus-visible:outline-0 focus-visible:ring-2 focus-visible:ring-focus focus-visible:z-20;
+
+        &[class*='--clickable'] {
+            @apply cursor-pointer;
+            @apply hover:opacity-80;
+            @apply transition-shadow duration-200 ease-in-out;
+            @apply focus:outline-0 focus:ring-2 focus:ring-focus;
+        }
+
+        &.pilled {
+            @apply rounded-full;
+        }
+        &.squared {
+            @apply rounded-none;
+        }
+        &.shadowed {
+            @apply shadow-outer;
+        }
+    }
+
+    .n-space {
+        @apply grow;
+    }
+
+    .n-separator,
+    .n-divider {
+        @apply border-b border-border;
+
+        &.n-vertical {
+            @apply border-l border-b-0 self-stretch;
+        }
+    }
+
+    .n-placeholder {
+        @apply !text-transparent !bg-text/50 animate-pulse;
+
+        &[class*='n-'] {
+            @apply !text-transparent !bg-text/50 animate-pulse;
+        }
+    }
+
+    /* Modals Container */
+    #n-modals-container {
+        @apply fixed z-1000
+            top-0 left-0 w-full h-full
+            transition-[opacity,translate] duration-200 ease-in-out
+            overflow-auto
+            hidden;
+
+        &:has(*) {
+            @apply grid grid-cols-1 place-items-center-safe;
+        }
+        &:has(.n-modal-enter-active),
+        &:has(.n-modal-leave-active) {
+            @apply overflow-hidden;
+        }
+        &:has(.n-modal-overlay) {
+            @apply z-1001;
+        }
+    }
+
+    /* Drawers Container */
+    #n-drawers-container {
+        @apply fixed z-1000
+            top-0 left-0 w-full h-full
+            transition-[opacity,translate] duration-200 ease-in-out
+            overflow-auto
+            hidden;
+
+        &:has(*) {
+            @apply grid grid-cols-1 place-items-center-safe;
+        }
+        &:has(.n-drawer-enter-active),
+        &:has(.n-drawer-leave-active) {
+            @apply overflow-hidden;
+        }
+        &:has(.n-drawer-overlay) {
+            @apply z-1001;
+        }
+    }
+
+    /* Toasts Containers */
+    [id^='n-toasts-container--'] {
+        @apply fixed z-1001
+            transition-[opacity,translate] duration-200 ease-in-out
+            hidden;
+        &:has(*) {
+            @apply flex gap-2 overflow-visible;
+        }
+        &:has(.n-toast-overlay) {
+            @apply z-1002;
+        }
+    }
+
+    #n-toasts-container--position-top-left {
+        @apply top-0 left-0 mt-4 ml-4 flex-col items-start;
+    }
+    #n-toasts-container--position-top-center,
+    #n-toasts-container--position-top {
+        @apply top-0 w-full h-0 mt-4 flex-col items-center z-1000;
+    }
+    #n-toasts-container--position-top-right {
+        @apply top-0 right-0 mt-4 mr-4 flex-col items-end;
+    }
+
+    #n-toasts-container--position-center-left {
+        @apply top-[calc(50%-(var(--spacing)*8))] left-0 ml-4 flex-col justify-center items-start z-1000;
+    }
+    #n-toasts-container--position-center-center {
+        @apply top-[calc(50%-(var(--spacing)*8))] left-0 w-full flex-col justify-center items-center z-1000;
+    }
+    #n-toasts-container--position-center-right {
+        @apply top-[calc(50%-(var(--spacing)*8))] right-0 mr-4 flex-col justify-center items-end z-1000;
+    }
+
+    #n-toasts-container--position-bottom-left {
+        @apply bottom-0 left-0 mb-4 ml-4 flex-col-reverse items-start;
+    }
+    #n-toasts-container--position-bottom-center,
+    #n-toasts-container--position-bottom {
+        @apply bottom-0 w-full h-0 mb-4 flex-col-reverse items-center z-1000;
+    }
+    #n-toasts-container--position-bottom-right {
+        @apply bottom-0 right-0 mb-4 mr-4 flex-col-reverse items-end;
+    }
+}

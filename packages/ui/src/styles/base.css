@@ -1,4 +1,11 @@
+@reference "tailwindcss";
+@reference "./theme.css";
+
 @layer base {
+    html {
+        @apply bg-background text-text;
+    }
+
     h1 {
         @apply text-5xl;
     }

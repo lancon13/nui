@@ -50,25 +50,33 @@ import '@mdi/font/css/materialdesignicons.css';
 
 ## Tailwind CSS v4 Integration
 
-If you are using Tailwind CSS v4 in your project, you can import the source components directly to allow for better tree-shaking and theme integration.
+If you are using Tailwind CSS v4 in your project, you can import the NUI theme variables directly to allow for better tree-shaking and theme integration.
 
 ### Theme Setup
 
-Import the NUI theme in your main CSS file:
+Import the NUI theme variables in your main CSS file. This will merge NUI's colors, spacing, and radius variables into your Tailwind theme:
 
 ```css
 @import "tailwindcss";
-@import "@nui/ui/styles/index.css";
+@import "@nui/ui/styles/theme.css";
 
 /* Your custom theme overrides here */
 ```
 
 ### Source Processing
 
-Add the NUI source to your Tailwind config (or use `@source` directive in v4):
+To ensure Tailwind processes the styles within NUI components, add the NUI source to your CSS entry point:
 
 ```css
 @source "../../node_modules/@nui/ui/src/components/**/*.vue";
+```
+
+### Global Styles (Optional)
+
+If you want NUI's global resets and typography, you can also import the base styles:
+
+```css
+@import "@nui/ui/styles/base.css";
 ```
 
 ## Documentation

@@ -56,6 +56,19 @@ yarn add @nui/ui
     import '@mdi/font/css/materialdesignicons.css';
     ```
 
+## Tailwind CSS v4 Integration
+
+For projects using Tailwind CSS v4, you can integrate NUI's theme variables directly:
+
+```css
+/* In your main CSS file */
+@import "tailwindcss";
+@import "@nui/ui/styles/theme.css"; /* NUI Theme Variables */
+
+/* To process NUI components source */
+@source "./node_modules/@nui/ui/src/components/**/*.vue";
+```
+
 ## Local Consumption
 
 Since this package is not published to npm, you can use it locally in other projects:
