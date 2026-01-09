@@ -1,7 +1,5 @@
 @layer theme, base, components, utilities;
 
-/* @import '@mdi/font/css/materialdesignicons.css'; */
-/* @import 'tailwindcss'; */
 @import 'tailwindcss/theme.css' layer(theme);
 @import 'tailwindcss/utilities.css' layer(utilities);
 

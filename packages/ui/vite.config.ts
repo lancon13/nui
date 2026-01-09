@@ -40,6 +40,7 @@ export default defineConfig({
                 'vue',
                 'vue-router',
                 '@nui/helpers',
+                '@mdi/font',
                 '@floating-ui/vue',
                 '@vueuse/core',
                 '@vueuse/components',

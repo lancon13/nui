@@ -41,14 +41,16 @@ yarn add @nui/ui
     </template>
     ```
 
-3.  **Setup Icons** (Optional):
-    NUI uses [Material Design Icons (MDI)](https://materialdesignicons.com/). If you use the `NIcon` component or components that utilize icons, you need to include the MDI CSS in your project.
+3.  **Setup Icons** (Required for icons):
+    NUI components use [Material Design Icons (MDI)](https://materialdesignicons.com/) via CSS classes. To keep the library lightweight, **the icon font is not bundled with the library**. 
+
+    If you use any component with icons (e.g., `NIcon`, `NButton`, `NInput`), you **must** include the MDI CSS in your project:
 
     ```bash
     npm install @mdi/font
     ```
 
-    Then import it in your entry file:
+    Then import it in your main entry file (e.g., `main.ts`):
 
     ```typescript
     import '@mdi/font/css/materialdesignicons.css';
@@ -114,13 +116,13 @@ This project is a monorepo managed with [pnpm](https://pnpm.io/).
     ```bash
     pnpm dev
     ```
-    This will start the VitePress documentation site locally.
+    This will start the VitePress documentation site locally. Icons are pre-configured for the documentation site.
 
 -   **Start Storybook**:
     ```bash
     pnpm ui:storybook
     ```
-    This starts the Storybook environment for developing and testing components in isolation.
+    This starts the Storybook environment. Icons are pre-configured for Storybook development.
 
 ### Building
 

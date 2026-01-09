@@ -62,6 +62,21 @@ Utilities to work with TypeScript enums:
 - `tryCall`: Tuple-based error handling for promises (`[error, result]`).
 - `generatePseudoRandomKey`: Alphanumeric key generator.
 
+## NUI Ecosystem
+
+This package is part of the NUI ecosystem. If you are using `@nui/ui` alongside these helpers, please note that NUI components rely on **Material Design Icons (MDI)** for iconography.
+
+To set up icons in your project:
+
+1. Install the font:
+   ```bash
+   npm install @mdi/font
+   ```
+2. Import the CSS in your main entry file:
+   ```typescript
+   import '@mdi/font/css/materialdesignicons.css';
+   ```
+
 ## Extension & Modification
 
 When adding or modifying helpers:
