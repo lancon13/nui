@@ -14,7 +14,14 @@
             "types": "./dist/nui-ui.d.ts",
             "import": "./dist/nui-ui.js",
             "require": "./dist/nui-ui.umd.cjs"
-        }
+        },
+        "./components.css": {
+            "style": "./dist/components.css",
+            "import": "./dist/components.css",
+            "default": "./dist/components.css"
+        },
+        "./styles/*": "./src/styles/*",
+        "./dist/*": "./dist/*"
     },
     "files": [
         "src/",
