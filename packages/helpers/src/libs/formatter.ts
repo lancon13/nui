@@ -1,6 +1,9 @@
-import dayjs from 'dayjs'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import * as _dayjs from 'dayjs'
 import { CamelCase, SnakeCase } from '../types/data'
 import { isUUID } from './validation'
+
+const dayjs = (_dayjs as any).default || _dayjs
 
 /**
  * Converts various Vue-style class bindings to a single string of space-separated class names.
@@ -38,10 +41,7 @@ export function toCapitalCase(str: string): string {
     return str.charAt(0).toUpperCase() + str.slice(1)
 }
 
-export function toDateString(
-    date: Date | string | null,
-    format: string = 'DD MMM YYYY (ddd)'
-): string {
+export function toDateString(date: Date | string | null, format: string = 'DD MMM YYYY (ddd)'): string {
     return dayjs(date).format(format)
 }
 

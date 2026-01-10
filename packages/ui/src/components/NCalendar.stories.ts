@@ -1,22 +1,12 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite'
-import dayjs from 'dayjs'
-import isLeapYear from 'dayjs/plugin/isLeapYear'
-import isoWeek from 'dayjs/plugin/isoWeek'
-import isoWeeksInYear from 'dayjs/plugin/isoWeeksInYear'
-import weekOfYear from 'dayjs/plugin/weekOfYear'
 import { computed, ref, watch } from 'vue'
-import { getYearWeekFromMonth } from '../helpers'
+import dayjs, { getYearWeekFromMonth } from '../helpers/date'
 import NButton from './NButton.vue'
 import NCalendar from './NCalendar.vue'
 import NCard from './NCard.vue'
 import NCheckbox from './NCheckbox.vue'
 import NIcon from './NIcon.vue'
 import NInputSelect from './NInputSelect.vue'
-
-dayjs.extend(weekOfYear)
-dayjs.extend(isoWeek)
-dayjs.extend(isoWeeksInYear)
-dayjs.extend(isLeapYear)
 
 const meta = {
     title: 'UI/NCalendar',
@@ -884,7 +874,7 @@ export const IndependentDualViews: Story = {
         components: { NCalendar, NButton, NCard },
         setup() {
             const range = ref<any>(null)
-            
+
             // Base year/month for the dual view
             const currentYear = ref(2025)
             const currentMonth = ref(0) // 0 = Jan
@@ -892,17 +882,19 @@ export const IndependentDualViews: Story = {
             // Helper to generate a visible list for a specific month only
             const getMonthVisible = (year: number, month: number) => {
                 const start = dayjs(`${year}-${String(month + 1).padStart(2, '0')}-01`)
-                return [{
-                    begin: start.format('YYYY-MM-DD'),
-                    end: start.endOf('month').format('YYYY-MM-DD')
-                }]
+                return [
+                    {
+                        begin: start.format('YYYY-MM-DD'),
+                        end: start.endOf('month').format('YYYY-MM-DD')
+                    }
+                ]
             }
 
             // Create view configurations
             const views = computed(() => {
                 const month1 = currentMonth.value
                 const year1 = currentYear.value
-                
+
                 // Calculate next month
                 let month2 = month1 + 1
                 let year2 = year1
@@ -991,7 +983,7 @@ export const TripleViewComparison: Story = {
         setup() {
             const range1 = ref(null)
             const range2 = ref(null)
-            
+
             // Standard viewing props
             const viewingYear = ref(2025)
             const viewingWeek = ref(1)
@@ -1002,13 +994,15 @@ export const TripleViewComparison: Story = {
                 return months.map(m => {
                     const y = viewingYear.value
                     const { year, week } = getYearWeekFromMonth(y, m)
-                    
+
                     // Generate visibility for this month only
                     const start = dayjs(`${y}-${String(m + 1).padStart(2, '0')}-01`)
-                    const visible = [{
-                        begin: start.format('YYYY-MM-DD'),
-                        end: start.endOf('month').format('YYYY-MM-DD')
-                    }]
+                    const visible = [
+                        {
+                            begin: start.format('YYYY-MM-DD'),
+                            end: start.endOf('month').format('YYYY-MM-DD')
+                        }
+                    ]
 
                     return {
                         viewingYear: year,

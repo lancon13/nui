@@ -15,19 +15,31 @@
             "import": "./dist/nui-ui.js",
             "require": "./dist/nui-ui.umd.cjs"
         },
+        "./components": {
+            "types": "./src/components/index.ts",
+            "import": "./src/components/index.ts"
+        },
+        "./styles/*": "./src/styles/*",
+        "./dist/*": "./dist/*",
+        "./src/*": "./src/*",
         "./components.css": {
             "style": "./dist/components.css",
             "import": "./dist/components.css",
             "default": "./dist/components.css"
-        },
-        "./styles/*": "./src/styles/*",
-        "./dist/*": "./dist/*",
-        "./src/*": "./src/*"
+        }
     },
     "files": [
         "src/",
-        "dist/"
+        "dist/",
+        "components.d.ts"
     ],
+    "typesVersions": {
+        "*": {
+            "components": [
+                "src/components/index.ts"
+            ]
+        }
+    },
     "scripts": {
         "lint": "eslint -c ../../eslint.config.mjs \"src/**/*.{ts,js,cjs,mjs,vue}\"",
         "test": "echo \"No test specified\" && exit 0",

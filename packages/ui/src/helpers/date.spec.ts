@@ -1,6 +1,14 @@
 import { describe, expect, it } from 'vitest'
-import { getMonthFromYearWeek, getVisibleSegments, getYearWeekFromMonth, normalizeDateRanges, generateCalendarDays, removeMatchingRange, validateRange, type CalendarGenerationConfig } from './date'
-import dayjs from 'dayjs'
+import dayjs, {
+    generateCalendarDays,
+    getMonthFromYearWeek,
+    getVisibleSegments,
+    getYearWeekFromMonth,
+    normalizeDateRanges,
+    removeMatchingRange,
+    validateRange,
+    type CalendarGenerationConfig
+} from './date'
 
 describe('validateRange', () => {
     const start = dayjs('2025-01-01')
@@ -50,7 +58,7 @@ describe('removeMatchingRange', () => {
         ]
         const target = { begin: '2025-01-01', end: '2025-01-05' }
         const result = removeMatchingRange(list, target)
-        
+
         expect(result).toHaveLength(1)
         expect(result[0]).toEqual({ begin: '2025-01-10', end: '2025-01-15' })
         // Ensure immutability
@@ -59,7 +67,7 @@ describe('removeMatchingRange', () => {
 
     it('should ignore non-range items', () => {
         const list = ['2025-01-01', { begin: '2025-01-05', end: '2025-01-10' }]
-        // Trying to remove something that looks like the string but passed as range? 
+        // Trying to remove something that looks like the string but passed as range?
         // The function only compares objects with 'begin'.
         const target = { begin: '2025-01-01', end: '2025-01-01' }
         const result = removeMatchingRange(list, target)
@@ -172,7 +180,7 @@ describe('getMonthFromYearWeek', () => {
 
 describe('getVisibleSegments', () => {
     const start = dayjs('2025-01-01') // Wed
-    const end = dayjs('2025-01-10')   // Following Fri
+    const end = dayjs('2025-01-10') // Following Fri
 
     it('should return full range if no visibility list is provided', () => {
         const segments = getVisibleSegments(start, end, null)

@@ -53,7 +53,8 @@ export default defineConfig({
                 'focus-trap',
                 'vue-forward-slots',
                 'vue-i18n',
-                'zod'
+                'zod',
+                /^dayjs\/plugin\//
             ],
             output: {
                 globals: {

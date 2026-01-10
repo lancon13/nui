@@ -4,7 +4,9 @@ A powerful, customizable calendar component for date picking, range selection, a
 
 <script setup>
 import { ref } from 'vue'
-import dayjs from 'dayjs'
+import * as _dayjs from 'dayjs'
+
+const dayjs = _dayjs.default || _dayjs
 
 const date = ref(null)
 const range = ref(null)
@@ -21,7 +23,9 @@ const disabledDates = ['2025-01-01', '2025-01-05']
 ## Design Concepts
 
 ### Why Week-Based Navigation?
+
 Unlike traditional month-based calendars, `NCalendar` is built on an **ISO Week** grid system.
+
 - **Stability**: It always renders a fixed number of rows (default 6). This prevents the UI from "jumping" in height when switching between months with 4, 5, or 6 weeks.
 - **Continuity**: Time is continuous. A "Month" view is just a window into the continuous stream of weeks.
 - **Precision**: Using `viewingYear` (ISO Year) and `viewingWeek` (ISO Week) ensures deterministic rendering, especially for days that cross year boundaries (e.g., Dec 29 - Jan 4).
@@ -37,12 +41,12 @@ While the internal engine works on weeks, we provide a `setMonth(month, year)` h
 
 ```vue
 <script setup>
-import { ref } from 'vue'
-const date = ref(null)
+    import { ref } from 'vue'
+    const date = ref(null)
 </script>
 
 <template>
-  <NCalendar v-model="date" />
+    <NCalendar v-model="date" />
 </template>
 ```
 
@@ -82,22 +86,16 @@ Allow picking multiple independent dates or multiple ranges.
 
 ```vue
 <script setup>
-import { ref } from 'vue'
+    import { ref } from 'vue'
 
-const dates = ref(['2025-01-01'])
-const isRange = ref(false)
+    const dates = ref(['2025-01-01'])
+    const isRange = ref(false)
 </script>
 
 <template>
-  <label>
-    <input type="checkbox" v-model="isRange"> Range Mode
-  </label>
-  
-  <NCalendar 
-    v-model="dates" 
-    multiple 
-    :range="isRange" 
-  />
+    <label> <input type="checkbox" v-model="isRange" /> Range Mode </label>
+
+    <NCalendar v-model="dates" multiple :range="isRange" />
 </template>
 ```
 
@@ -113,14 +111,11 @@ You can disable specific dates, ranges, or patterns using the `disabled` prop.
 
 ```vue
 <script setup>
-const disabled = [
-  '2025-01-01',
-  { begin: '2025-01-10', end: '2025-01-15' }
-]
+    const disabled = ['2025-01-01', { begin: '2025-01-10', end: '2025-01-15' }]
 </script>
 
 <template>
-  <NCalendar :disabled="disabled" />
+    <NCalendar :disabled="disabled" />
 </template>
 ```
 
@@ -209,80 +204,83 @@ Customize the header, cells, week labels, or footer.
 
 ## Props
 
-| Prop | Type | Default | Description |
-| --- | --- | --- | --- |
-| `modelValue` | `string \| Array \| Object` | `[]` | Selected value(s). String for single, Object for range, Array for multiple. |
-| `viewingYear` | `number` | `dayjs().year()` | The ISO year currently being viewed. |
-| `viewingWeek` | `number` | `dayjs().week()` | The ISO week currently being viewed. |
-| `rows` | `number` | `6` | Number of weeks to display per view. |
-| `numViews` | `number` | `1` | Number of calendar views to render side-by-side. |
-| `views` | `Array` | - | Advanced configuration for independent views (see Stories). |
-| `multiple` | `boolean` | `false` | Enable selecting multiple dates/ranges. |
-| `range` | `boolean` | `false` | Enable range selection mode. |
-| `disabled` | `Array` | `[]` | Dates or ranges to disable interaction. |
-| `visible` | `Array` | - | Whitelist of visible dates (others hidden). |
-| `firstDayOfWeek` | `number` | `1` | 0 (Sun) to 6 (Sat). |
-| `activeMonth` | `number \| Array` | - | Highlight/restrict dates to specific month(s) (0-11). |
-| `minRange` | `number` | `1` | Minimum days for a valid range. |
-| `maxRange` | `number` | `30` | Maximum days for a valid range. |
-| `selectable` | `boolean` | `true` | Enable selection interaction. |
-| `unselectable` | `boolean` | `true` | Allow deselection by clicking selected item. |
+| Prop             | Type                        | Default          | Description                                                                 |
+| ---------------- | --------------------------- | ---------------- | --------------------------------------------------------------------------- |
+| `modelValue`     | `string \| Array \| Object` | `[]`             | Selected value(s). String for single, Object for range, Array for multiple. |
+| `viewingYear`    | `number`                    | `dayjs().year()` | The ISO year currently being viewed.                                        |
+| `viewingWeek`    | `number`                    | `dayjs().week()` | The ISO week currently being viewed.                                        |
+| `rows`           | `number`                    | `6`              | Number of weeks to display per view.                                        |
+| `numViews`       | `number`                    | `1`              | Number of calendar views to render side-by-side.                            |
+| `views`          | `Array`                     | -                | Advanced configuration for independent views (see Stories).                 |
+| `multiple`       | `boolean`                   | `false`          | Enable selecting multiple dates/ranges.                                     |
+| `range`          | `boolean`                   | `false`          | Enable range selection mode.                                                |
+| `disabled`       | `Array`                     | `[]`             | Dates or ranges to disable interaction.                                     |
+| `visible`        | `Array`                     | -                | Whitelist of visible dates (others hidden).                                 |
+| `firstDayOfWeek` | `number`                    | `1`              | 0 (Sun) to 6 (Sat).                                                         |
+| `activeMonth`    | `number \| Array`           | -                | Highlight/restrict dates to specific month(s) (0-11).                       |
+| `minRange`       | `number`                    | `1`              | Minimum days for a valid range.                                             |
+| `maxRange`       | `number`                    | `30`             | Maximum days for a valid range.                                             |
+| `selectable`     | `boolean`                   | `true`           | Enable selection interaction.                                               |
+| `unselectable`   | `boolean`                   | `true`           | Allow deselection by clicking selected item.                                |
 
 ## Slots
 
-| Slot | Description |
-| --- | --- |
-| `calendar-header` | Header content for all views. Receives `{ index, startDate, endDate }`. |
-| `calendar-header-{index}` | Header content for a specific view index. |
-| `cell` | Custom content for each day cell. Receives `{ day, calendarIndex }`. |
-| `week-label-container` | Wrapper for the week day labels row. |
-| `week-label-{day}` | Custom content for a specific weekday label (0-6). |
-| `calendar-footer` | Footer content below the grid. |
+| Slot                      | Description                                                             |
+| ------------------------- | ----------------------------------------------------------------------- |
+| `calendar-header`         | Header content for all views. Receives `{ index, startDate, endDate }`. |
+| `calendar-header-{index}` | Header content for a specific view index.                               |
+| `cell`                    | Custom content for each day cell. Receives `{ day, calendarIndex }`.    |
+| `week-label-container`    | Wrapper for the week day labels row.                                    |
+| `week-label-{day}`        | Custom content for a specific weekday label (0-6).                      |
+| `calendar-footer`         | Footer content below the grid.                                          |
 
 ## Events
 
-| Event | Payload | Description |
-| --- | --- | --- |
-| `update:modelValue` | `CalendarValue` | Fired when selection changes. |
-| `update:viewingYear` | `number` | Fired when navigation changes the year. |
-| `update:viewingWeek` | `number` | Fired when navigation changes the week. |
+| Event                | Payload         | Description                             |
+| -------------------- | --------------- | --------------------------------------- |
+| `update:modelValue`  | `CalendarValue` | Fired when selection changes.           |
+| `update:viewingYear` | `number`        | Fired when navigation changes the year. |
+| `update:viewingWeek` | `number`        | Fired when navigation changes the week. |
 
 ## Exposed Methods
 
-| Method | Description |
-| --- | --- |
+| Method                   | Description                                                                |
+| ------------------------ | -------------------------------------------------------------------------- |
 | `setMonth(month, year?)` | Helper to update `viewingYear` and `viewingWeek` to show a specific month. |
 
 ## Recipes & FAQ
 
 ### How to use `setMonth`?
 
-Because `NCalendar` uses a week-based system, navigating to a specific month isn't just "setting a prop"—it requires calculating the correct ISO year and week. 
+Because `NCalendar` uses a week-based system, navigating to a specific month isn't just "setting a prop"—it requires calculating the correct ISO year and week.
 We provide an exposed method `setMonth(monthIndex, year)` for this. You can access it via a Template Ref.
 
 ```vue
 <script setup>
-import { ref } from 'vue'
+    import { ref } from 'vue'
 
-const calendarRef = ref(null)
+    const calendarRef = ref(null)
 
-// 0 = January, 11 = December
-const goToJune = () => {
-  calendarRef.value?.setMonth(5, 2025)
-}
+    // 0 = January, 11 = December
+    const goToJune = () => {
+        calendarRef.value?.setMonth(5, 2025)
+    }
 </script>
 
 <template>
-  <button @click="goToJune">Go to June 2025</button>
-  <NCalendar ref="calendarRef" />
+    <button @click="goToJune">Go to June 2025</button>
+    <NCalendar ref="calendarRef" />
 </template>
 ```
 
 ### How do I highlight today?
+
 The `day` object in the `#cell` slot has an `isToday` boolean property. You can use this to apply conditional classes.
 
 ### How to format the header date?
+
 Use the `calendar-header` slot. It provides `startDate` (of the grid view). You can use `dayjs` (or any library) to add 2 weeks to `startDate` to approximate the visible month, as grid starts often bleed into the previous month.
 
 ### Can I block weekends?
+
 Yes, you can use the `disabled` prop with a function generator or simply pass ranges. However, `NCalendar` disabled prop currently expects explicit date strings or ranges. For repetitive patterns like weekends, you might need to generate the disabled list for the visible range or handle validation manually in `@update:modelValue`.

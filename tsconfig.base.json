@@ -13,8 +13,12 @@
         "target": "ESNext",
         "module": "ESNext",
         "moduleResolution": "bundler",
-        "lib": ["ESNext", "DOM"],
+        "lib": [
+            "ESNext",
+            "DOM"
+        ],
         "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
         "strict": true,
         "skipLibCheck": true
     },

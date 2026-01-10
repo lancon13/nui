@@ -1,4 +1,4 @@
-import dayjs from 'dayjs';
+import { type Dayjs } from '../helpers/date';
 import { type CalendarValue } from '../helpers';
 export interface CalendarViewProps {
     viewingYear?: number;
@@ -30,12 +30,12 @@ export interface NCalendarProps extends CalendarViewProps {
 declare function setMonth(month: number, year?: number | string): void;
 declare var __VLS_2: `calendar-header-${number}`, __VLS_3: {
     index: number;
-    startDate: dayjs.Dayjs;
-    endDate: dayjs.Dayjs;
+    startDate: Dayjs;
+    endDate: Dayjs;
 }, __VLS_5: {
     index: number;
-    startDate: dayjs.Dayjs;
-    endDate: dayjs.Dayjs;
+    startDate: Dayjs;
+    endDate: Dayjs;
 }, __VLS_7: {
     calendarIndex: number;
 }, __VLS_10: `week-label-${number}`, __VLS_11: {
@@ -47,8 +47,8 @@ declare var __VLS_2: `calendar-header-${number}`, __VLS_3: {
     calendarIndex: number;
 }, __VLS_15: {
     index: number;
-    startDate: dayjs.Dayjs;
-    endDate: dayjs.Dayjs;
+    startDate: Dayjs;
+    endDate: Dayjs;
 };
 type __VLS_Slots = {} & {
     [K in NonNullable<typeof __VLS_2>]?: (props: typeof __VLS_3) => any;

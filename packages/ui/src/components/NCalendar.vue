@@ -98,14 +98,7 @@
 <script setup lang="ts">
     /* eslint-disable @typescript-eslint/no-explicit-any */
     /* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
-    import dayjs from 'dayjs'
-    import isoWeek from 'dayjs/plugin/isoWeek'
-    import isSameOrAfter from 'dayjs/plugin/isSameOrAfter'
-    import isSameOrBefore from 'dayjs/plugin/isSameOrBefore'
-    import localeData from 'dayjs/plugin/localeData'
-    import updateLocale from 'dayjs/plugin/updateLocale'
-    import weekday from 'dayjs/plugin/weekday'
-    import weekOfYear from 'dayjs/plugin/weekOfYear'
+    import dayjs, { type Dayjs } from '../helpers/date'
     import { computed, nextTick, ref, toRefs, watch } from 'vue'
     import {
         checkDateInList,
@@ -119,15 +112,6 @@
         type DateRange
     } from '../helpers'
     import { resolveClassProp } from '../helpers/dom'
-
-    // --- Plugins ---
-    dayjs.extend(weekOfYear)
-    dayjs.extend(isoWeek)
-    dayjs.extend(weekday)
-    dayjs.extend(localeData)
-    dayjs.extend(updateLocale)
-    dayjs.extend(isSameOrAfter)
-    dayjs.extend(isSameOrBefore)
 
     // --- Props & Types ---
     export interface CalendarViewProps {
@@ -219,7 +203,7 @@
 
     // --- State ---
     const internalPendingRange = ref<DateRange | null>(null)
-    const hoveredDate = ref<dayjs.Dayjs | null>(null)
+    const hoveredDate = ref<Dayjs | null>(null)
     const currentFocusDate = ref<string>(dayjs().format('YYYY-MM-DD'))
     const cellRefs = new Map<string, HTMLElement>()
 
@@ -281,8 +265,8 @@
 
         const pendingInvalid = isPendingRangeInvalid.value
 
-        let pendingStart: dayjs.Dayjs | null = null
-        let pendingEnd: dayjs.Dayjs | null = null
+        let pendingStart: Dayjs | null = null
+        let pendingEnd: Dayjs | null = null
         if (range.value && internalPendingRange.value?.begin && hoveredDate.value) {
             const start = dayjs(internalPendingRange.value.begin)
             const end = hoveredDate.value
@@ -340,7 +324,7 @@
             })
 
             // Calculate start date for this specific view
-            let currentStart: dayjs.Dayjs
+            let currentStart: Dayjs
             if (views.value && (viewConfig.viewingYear !== undefined || viewConfig.viewingWeek !== undefined)) {
                 // Independent start logic
                 const isoMonday = dayjs().year(currentYear).isoWeek(currentWeek).startOf('isoWeek')
@@ -401,7 +385,7 @@
     })
 
     // --- Interaction ---
-    function handleHover(date: dayjs.Dayjs | null) {
+    function handleHover(date: Dayjs | null) {
         hoveredDate.value = date
     }
 

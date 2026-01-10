@@ -1,4 +1,5 @@
-import dayjs from 'dayjs';
+import { Dayjs } from 'dayjs';
+declare const dayjs: any;
 export type DateRange = {
     begin?: string | Date;
     end?: string | Date;
@@ -15,7 +16,7 @@ export declare function normalizeDateRanges(values: CalendarValue[]): CalendarVa
  * Checks if a given date exists in a list of dates/ranges.
  * Handles string dates, Date objects, and DateRange objects.
  */
-export declare function checkDateInList(date: dayjs.Dayjs, list?: CalendarValue[] | null): boolean;
+export declare function checkDateInList(date: Dayjs, list?: CalendarValue[] | null): boolean;
 /**
  * Returns the ISO week and year for the start of a given month.
  * Useful for initializing calendar views.
@@ -39,9 +40,9 @@ export declare function getMonthFromYearWeek(year: number, week: number): {
  * Splits a requested date range into multiple visible segments based on a visibility list.
  * If visibleList is null or empty, the entire range is considered visible and returned as a single segment.
  */
-export declare function getVisibleSegments(start: dayjs.Dayjs, end: dayjs.Dayjs, visibleList: CalendarValue[] | null): DateRange[];
+export declare function getVisibleSegments(start: Dayjs, end: Dayjs, visibleList: CalendarValue[] | null): DateRange[];
 export interface CalendarDay {
-    date: dayjs.Dayjs;
+    date: Dayjs;
     dateString: string;
     dayOfMonth: number;
     ariaLabel: string;
@@ -57,15 +58,15 @@ export interface CalendarDay {
     isInRange: boolean;
 }
 export interface CalendarGenerationConfig extends RangeValidationConfig {
-    start: dayjs.Dayjs;
+    start: Dayjs;
     daysCount: number;
     activeMonth?: number | number[] | null;
     selected: CalendarValue[];
     isRange: boolean;
-    pendingStart?: dayjs.Dayjs | null;
-    pendingEnd?: dayjs.Dayjs | null;
+    pendingStart?: Dayjs | null;
+    pendingEnd?: Dayjs | null;
     pendingInvalid?: boolean;
-    hoveredDate?: dayjs.Dayjs | null;
+    hoveredDate?: Dayjs | null;
     visible?: CalendarValue[] | null;
 }
 export interface RangeValidationConfig {
@@ -78,7 +79,7 @@ export interface RangeValidationConfig {
  * Note: Visibility is not checked here; ranges crossing hidden dates are considered valid
  * (they will just be split by getVisibleSegments later).
  */
-export declare function validateRange(start: dayjs.Dayjs, end: dayjs.Dayjs, config: RangeValidationConfig): boolean;
+export declare function validateRange(start: Dayjs, end: Dayjs, config: RangeValidationConfig): boolean;
 export declare function generateCalendarDays(config: CalendarGenerationConfig): CalendarDay[];
 /**
  * Removes a specific range from a list of calendar values if it exists.
@@ -86,3 +87,5 @@ export declare function generateCalendarDays(config: CalendarGenerationConfig): 
  * Does not modify the input array.
  */
 export declare function removeMatchingRange(list: CalendarValue[], targetRange: DateRange): CalendarValue[];
+export type { Dayjs } from 'dayjs';
+export default dayjs;

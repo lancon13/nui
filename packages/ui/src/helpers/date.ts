@@ -1,15 +1,43 @@
-import dayjs from 'dayjs'
-import advancedFormat from 'dayjs/plugin/advancedFormat'
-import isoWeek from 'dayjs/plugin/isoWeek'
-import isSameOrAfter from 'dayjs/plugin/isSameOrAfter'
-import isSameOrBefore from 'dayjs/plugin/isSameOrBefore'
-import weekOfYear from 'dayjs/plugin/weekOfYear'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import * as _dayjs from 'dayjs'
+import * as advancedFormat from 'dayjs/plugin/advancedFormat'
+import * as isoWeek from 'dayjs/plugin/isoWeek'
+import * as isSameOrAfter from 'dayjs/plugin/isSameOrAfter'
+import * as isSameOrBefore from 'dayjs/plugin/isSameOrBefore'
+import * as localeData from 'dayjs/plugin/localeData'
+import * as updateLocale from 'dayjs/plugin/updateLocale'
+import * as weekday from 'dayjs/plugin/weekday'
+import * as weekOfYear from 'dayjs/plugin/weekOfYear'
+import * as isLeapYear from 'dayjs/plugin/isLeapYear'
+import * as isoWeeksInYear from 'dayjs/plugin/isoWeeksInYear'
 
-dayjs.extend(isoWeek)
-dayjs.extend(weekOfYear)
-dayjs.extend(advancedFormat)
-dayjs.extend(isSameOrAfter)
-dayjs.extend(isSameOrBefore)
+import { Dayjs } from 'dayjs'
+
+// Interop check: Force access to the actual function/object
+// whether the bundler wraps it in .default or not.
+const dayjs = (_dayjs as any).default || _dayjs
+const _advancedFormat = (advancedFormat as any).default || advancedFormat
+const _isoWeek = (isoWeek as any).default || isoWeek
+const _isSameOrAfter = (isSameOrAfter as any).default || isSameOrAfter
+const _isSameOrBefore = (isSameOrBefore as any).default || isSameOrBefore
+const _localeData = (localeData as any).default || localeData
+const _updateLocale = (updateLocale as any).default || updateLocale
+const _weekday = (weekday as any).default || weekday
+const _weekOfYear = (weekOfYear as any).default || weekOfYear
+const _isLeapYear = (isLeapYear as any).default || isLeapYear
+const _isoWeeksInYear = (isoWeeksInYear as any).default || isoWeeksInYear
+
+// Apply all your specific plugins
+dayjs.extend(_advancedFormat)
+dayjs.extend(_isoWeek)
+dayjs.extend(_isSameOrAfter)
+dayjs.extend(_isSameOrBefore)
+dayjs.extend(_localeData)
+dayjs.extend(_updateLocale)
+dayjs.extend(_weekday)
+dayjs.extend(_weekOfYear)
+dayjs.extend(_isLeapYear)
+dayjs.extend(_isoWeeksInYear)
 
 export type DateRange = {
     begin?: string | Date
@@ -28,13 +56,13 @@ export function normalizeDateRanges(values: CalendarValue[]): CalendarValue[] {
     if (!values || values.length === 0) return []
 
     // 1. Normalize to [start, end] dayjs objects
-    const intervals: { start: dayjs.Dayjs; end: dayjs.Dayjs }[] = []
+    const intervals: { start: Dayjs; end: Dayjs }[] = []
 
     for (const item of values) {
         if (!item) continue
 
-        let start: dayjs.Dayjs
-        let end: dayjs.Dayjs
+        let start: Dayjs
+        let end: Dayjs
 
         if (typeof item === 'string' || item instanceof Date) {
             start = dayjs(item)
@@ -74,7 +102,7 @@ export function normalizeDateRanges(values: CalendarValue[]): CalendarValue[] {
     intervals.sort((a, b) => a.start.diff(b.start))
 
     // 3. Merge
-    const merged: { start: dayjs.Dayjs; end: dayjs.Dayjs }[] = []
+    const merged: { start: Dayjs; end: Dayjs }[] = []
     let current = intervals[0]
 
     for (let i = 1; i < intervals.length; i++) {
@@ -117,7 +145,7 @@ export function normalizeDateRanges(values: CalendarValue[]): CalendarValue[] {
  * Checks if a given date exists in a list of dates/ranges.
  * Handles string dates, Date objects, and DateRange objects.
  */
-export function checkDateInList(date: dayjs.Dayjs, list?: CalendarValue[] | null): boolean {
+export function checkDateInList(date: Dayjs, list?: CalendarValue[] | null): boolean {
     if (!list || list.length === 0) return false
 
     const dateStr = date.format('YYYY-MM-DD')
@@ -191,11 +219,7 @@ export function getMonthFromYearWeek(year: number, week: number): { year: number
  * Splits a requested date range into multiple visible segments based on a visibility list.
  * If visibleList is null or empty, the entire range is considered visible and returned as a single segment.
  */
-export function getVisibleSegments(
-    start: dayjs.Dayjs,
-    end: dayjs.Dayjs,
-    visibleList: CalendarValue[] | null
-): DateRange[] {
+export function getVisibleSegments(start: Dayjs, end: Dayjs, visibleList: CalendarValue[] | null): DateRange[] {
     if (!visibleList || visibleList.length === 0) {
         return [
             {
@@ -206,7 +230,7 @@ export function getVisibleSegments(
     }
 
     const segments: DateRange[] = []
-    let segmentStart: dayjs.Dayjs | null = null
+    let segmentStart: Dayjs | null = null
 
     // Ensure start is before end
     let d = start.clone()
@@ -244,7 +268,7 @@ export function getVisibleSegments(
 }
 
 export interface CalendarDay {
-    date: dayjs.Dayjs
+    date: Dayjs
     dateString: string
     dayOfMonth: number
     ariaLabel: string
@@ -261,15 +285,15 @@ export interface CalendarDay {
 }
 
 export interface CalendarGenerationConfig extends RangeValidationConfig {
-    start: dayjs.Dayjs
+    start: Dayjs
     daysCount: number
     activeMonth?: number | number[] | null
     selected: CalendarValue[]
     isRange: boolean
-    pendingStart?: dayjs.Dayjs | null
-    pendingEnd?: dayjs.Dayjs | null
+    pendingStart?: Dayjs | null
+    pendingEnd?: Dayjs | null
     pendingInvalid?: boolean
-    hoveredDate?: dayjs.Dayjs | null
+    hoveredDate?: Dayjs | null
     visible?: CalendarValue[] | null
 }
 
@@ -284,7 +308,7 @@ export interface RangeValidationConfig {
  * Note: Visibility is not checked here; ranges crossing hidden dates are considered valid
  * (they will just be split by getVisibleSegments later).
  */
-export function validateRange(start: dayjs.Dayjs, end: dayjs.Dayjs, config: RangeValidationConfig): boolean {
+export function validateRange(start: Dayjs, end: Dayjs, config: RangeValidationConfig): boolean {
     const diff = Math.abs(end.diff(start, 'day')) + 1
     if (config.minRange !== undefined && diff < config.minRange) return false
     if (config.maxRange !== undefined && diff > config.maxRange) return false
@@ -317,15 +341,15 @@ export function generateCalendarDays(config: CalendarGenerationConfig): Calendar
     let current = start.clone()
     const today = dayjs()
 
-    const isDateDisabled = (d: dayjs.Dayjs) => checkDateInList(d, disabled)
-    const isDateVisible = (d: dayjs.Dayjs) => !visible || checkDateInList(d, visible)
+    const isDateDisabled = (d: Dayjs) => checkDateInList(d, disabled)
+    const isDateVisible = (d: Dayjs) => !visible || checkDateInList(d, visible)
 
-    const isPending = (d: dayjs.Dayjs) => {
+    const isPending = (d: Dayjs) => {
         if (!pendingStart || !pendingEnd) return false
         return d.isSameOrAfter(pendingStart, 'day') && d.isSameOrBefore(pendingEnd, 'day')
     }
 
-    const isDateSelected = (d: dayjs.Dayjs) => {
+    const isDateSelected = (d: Dayjs) => {
         if (checkDateInList(d, selected)) return true
         // If range mode, check if it matches the exact pending start (anchor)
         // This is mainly for UI feedback before range is closed
@@ -335,7 +359,7 @@ export function generateCalendarDays(config: CalendarGenerationConfig): Calendar
         return false
     }
 
-    const isEffectiveSelected = (d: dayjs.Dayjs) => isDateSelected(d) || isPending(d)
+    const isEffectiveSelected = (d: Dayjs) => isDateSelected(d) || isPending(d)
 
     for (let i = 0; i < daysCount; i++) {
         const isDisabled = isDateDisabled(current)
@@ -390,10 +414,7 @@ export function removeMatchingRange(list: CalendarValue[], targetRange: DateRang
     const idx = list.findIndex(item => {
         if (typeof item === 'object' && item !== null && 'begin' in item) {
             const r = item as DateRange
-            return (
-                dayjs(r.begin).isSame(targetRange.begin, 'day') &&
-                dayjs(r.end).isSame(targetRange.end, 'day')
-            )
+            return dayjs(r.begin).isSame(targetRange.begin, 'day') && dayjs(r.end).isSame(targetRange.end, 'day')
         }
         return false
     })
@@ -405,3 +426,6 @@ export function removeMatchingRange(list: CalendarValue[], targetRange: DateRang
     newList.splice(idx, 1)
     return newList
 }
+
+export type { Dayjs } from 'dayjs'
+export default dayjs
