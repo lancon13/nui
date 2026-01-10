@@ -4,9 +4,7 @@ A powerful, customizable calendar component for date picking, range selection, a
 
 <script setup>
 import { ref } from 'vue'
-import * as _dayjs from 'dayjs'
-
-const dayjs = _dayjs.default || _dayjs
+import * as dayjs from 'dayjs'
 
 const date = ref(null)
 const range = ref(null)

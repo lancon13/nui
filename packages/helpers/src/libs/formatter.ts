@@ -1,9 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import * as _dayjs from 'dayjs'
+import dayjs from 'dayjs/esm'
 import { CamelCase, SnakeCase } from '../types/data'
 import { isUUID } from './validation'
-
-const dayjs = (_dayjs as any).default || _dayjs
 
 /**
  * Converts various Vue-style class bindings to a single string of space-separated class names.

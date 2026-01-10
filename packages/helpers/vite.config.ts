@@ -17,7 +17,7 @@ export default defineConfig({
             fileName: 'index'
         },
         rollupOptions: {
-            external: ['vue', '@vueuse/core', 'dayjs', 'es-toolkit', 'es-toolkit/compat', 'zod'],
+            external: ['vue', '@vueuse/core', 'dayjs', 'es-toolkit', 'es-toolkit/compat', 'zod', /^dayjs\/plugin\//],
             output: {
                 globals: {
                     vue: 'Vue',

@@ -11,7 +11,8 @@ export default defineConfig({
         resolve: {
             alias: {
                 '@nui/ui': path.resolve(__dirname, '../../ui/src'),
-                '@nui/helpers': path.resolve(__dirname, '../../helpers/src')
+                '@nui/helpers': path.resolve(__dirname, '../../helpers/src'),
+                'dayjs/esm': 'dayjs'
             }
         }
     },

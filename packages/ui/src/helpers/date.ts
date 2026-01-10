@@ -1,43 +1,28 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import * as _dayjs from 'dayjs'
-import * as advancedFormat from 'dayjs/plugin/advancedFormat'
-import * as isoWeek from 'dayjs/plugin/isoWeek'
-import * as isSameOrAfter from 'dayjs/plugin/isSameOrAfter'
-import * as isSameOrBefore from 'dayjs/plugin/isSameOrBefore'
-import * as localeData from 'dayjs/plugin/localeData'
-import * as updateLocale from 'dayjs/plugin/updateLocale'
-import * as weekday from 'dayjs/plugin/weekday'
-import * as weekOfYear from 'dayjs/plugin/weekOfYear'
-import * as isLeapYear from 'dayjs/plugin/isLeapYear'
-import * as isoWeeksInYear from 'dayjs/plugin/isoWeeksInYear'
-
-import { Dayjs } from 'dayjs'
-
-// Interop check: Force access to the actual function/object
-// whether the bundler wraps it in .default or not.
-const dayjs = (_dayjs as any).default || _dayjs
-const _advancedFormat = (advancedFormat as any).default || advancedFormat
-const _isoWeek = (isoWeek as any).default || isoWeek
-const _isSameOrAfter = (isSameOrAfter as any).default || isSameOrAfter
-const _isSameOrBefore = (isSameOrBefore as any).default || isSameOrBefore
-const _localeData = (localeData as any).default || localeData
-const _updateLocale = (updateLocale as any).default || updateLocale
-const _weekday = (weekday as any).default || weekday
-const _weekOfYear = (weekOfYear as any).default || weekOfYear
-const _isLeapYear = (isLeapYear as any).default || isLeapYear
-const _isoWeeksInYear = (isoWeeksInYear as any).default || isoWeeksInYear
+import dayjs from 'dayjs/esm'
+import advancedFormat from 'dayjs/esm/plugin/advancedFormat'
+import isoWeek from 'dayjs/esm/plugin/isoWeek'
+import isSameOrAfter from 'dayjs/esm/plugin/isSameOrAfter'
+import isSameOrBefore from 'dayjs/esm/plugin/isSameOrBefore'
+import localeData from 'dayjs/esm/plugin/localeData'
+import updateLocale from 'dayjs/esm/plugin/updateLocale'
+import weekday from 'dayjs/esm/plugin/weekday'
+import weekOfYear from 'dayjs/esm/plugin/weekOfYear'
+import isLeapYear from 'dayjs/esm/plugin/isLeapYear'
+import isoWeeksInYear from 'dayjs/esm/plugin/isoWeeksInYear'
+import { type Dayjs } from 'dayjs'
 
 // Apply all your specific plugins
-dayjs.extend(_advancedFormat)
-dayjs.extend(_isoWeek)
-dayjs.extend(_isSameOrAfter)
-dayjs.extend(_isSameOrBefore)
-dayjs.extend(_localeData)
-dayjs.extend(_updateLocale)
-dayjs.extend(_weekday)
-dayjs.extend(_weekOfYear)
-dayjs.extend(_isLeapYear)
-dayjs.extend(_isoWeeksInYear)
+dayjs.extend(advancedFormat)
+dayjs.extend(isoWeek)
+dayjs.extend(isSameOrAfter)
+dayjs.extend(isSameOrBefore)
+dayjs.extend(localeData)
+dayjs.extend(updateLocale)
+dayjs.extend(weekday)
+dayjs.extend(weekOfYear)
+dayjs.extend(isLeapYear)
+dayjs.extend(isoWeeksInYear)
 
 export type DateRange = {
     begin?: string | Date
@@ -233,7 +218,7 @@ export function getVisibleSegments(start: Dayjs, end: Dayjs, visibleList: Calend
     let segmentStart: Dayjs | null = null
 
     // Ensure start is before end
-    let d = start.clone()
+    let d = start.clone() as any
     const limit = end.clone()
 
     if (d.isAfter(limit)) {
@@ -315,7 +300,7 @@ export function validateRange(start: Dayjs, end: Dayjs, config: RangeValidationC
 
     const [rangeStart, rangeEnd] = start.isBefore(end) ? [start, end] : [end, start]
 
-    let d = rangeStart.clone()
+    let d = rangeStart.clone() as any
     while (d.isSameOrBefore(rangeEnd, 'day')) {
         if (config.disabled && checkDateInList(d, config.disabled)) return false
         d = d.add(1, 'day')
@@ -344,7 +329,7 @@ export function generateCalendarDays(config: CalendarGenerationConfig): Calendar
     const isDateDisabled = (d: Dayjs) => checkDateInList(d, disabled)
     const isDateVisible = (d: Dayjs) => !visible || checkDateInList(d, visible)
 
-    const isPending = (d: Dayjs) => {
+    const isPending = (d: any) => {
         if (!pendingStart || !pendingEnd) return false
         return d.isSameOrAfter(pendingStart, 'day') && d.isSameOrBefore(pendingEnd, 'day')
     }
@@ -428,4 +413,4 @@ export function removeMatchingRange(list: CalendarValue[], targetRange: DateRang
 }
 
 export type { Dayjs } from 'dayjs'
-export default dayjs
+export default dayjs as any

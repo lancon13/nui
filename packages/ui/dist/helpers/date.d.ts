@@ -1,5 +1,4 @@
-import { Dayjs } from 'dayjs';
-declare const dayjs: any;
+import { type Dayjs } from 'dayjs';
 export type DateRange = {
     begin?: string | Date;
     end?: string | Date;
@@ -88,4 +87,5 @@ export declare function generateCalendarDays(config: CalendarGenerationConfig): 
  */
 export declare function removeMatchingRange(list: CalendarValue[], targetRange: DateRange): CalendarValue[];
 export type { Dayjs } from 'dayjs';
-export default dayjs;
+declare const _default: any;
+export default _default;
