@@ -27,8 +27,10 @@
 </template>
 
 <script setup lang="ts">
-    /* eslint-disable no-unused-vars */
+    /* eslint-disable @typescript-eslint/no-explicit-any */
+    /* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
     import { computed, HTMLAttributes, useAttrs } from 'vue'
+    import { cn } from '../helpers/classes'
     import NIcon from './NIcon.vue'
 
     export type NChipProps = Partial</* @vue-ignore */ HTMLAttributes> & {
@@ -67,12 +69,17 @@
     })
 
     const compClasses = computed(() => {
-        return ['n-chip', isClickable.value ? 'n-chip--clickable' : '', props.disabled ? 'n-chip--disabled' : '']
+        return cn(
+            'n-chip',
+            isClickable.value ? 'n-chip--clickable' : '',
+            props.disabled ? 'n-chip--disabled' : '',
+            attrs.class as any
+        )
     })
 
     const compBind = computed(() => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const bind: any = { ...attrs }
+        const { class: _, ...bind } = attrs as any
         if (actualTag.value === 'RouterLink') {
             bind.to = props.to
             bind.target = props.target

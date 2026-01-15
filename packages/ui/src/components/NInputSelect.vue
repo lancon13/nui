@@ -36,6 +36,7 @@
     import { omit } from 'es-toolkit/object'
     import { computed, h, type HTMLAttributes, useAttrs, useSlots, type VNode } from 'vue'
     import { resolveClassProp, wrapTextNode } from '../helpers/dom'
+    import { cn } from '../helpers/classes'
     import NIcon from './NIcon.vue'
     import NInputField, { type NInputFieldProps } from './NInputField.vue'
 
@@ -95,11 +96,9 @@
     })
 
     const otherSlots = computed(() => omit(slots, ['default', 'append']))
-    const compClasses = computed(() => [
-        'n-input-select',
-        !props.showCheckmark ? 'n-input-select--no-checkmark' : '',
-        ...resolveClassProp((attrs as any).class)
-    ])
+    const compClasses = computed(() =>
+        cn('n-input-select', !props.showCheckmark ? 'n-input-select--no-checkmark' : '', (attrs.class as any))
+    )
 
     // Bind props that belong to NInputField wrapper
     const compBind = computed(() => {

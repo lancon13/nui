@@ -72,10 +72,12 @@
 </template>
 
 <script setup lang="ts">
-    /* eslint-disable no-unused-vars */
+    /* eslint-disable @typescript-eslint/no-explicit-any */
+    /* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
     import { omit } from 'es-toolkit/object'
     import { computed, HTMLAttributes, useAttrs, useSlots } from 'vue'
     import { resolveClassProp, wrapTextNode } from '../helpers/dom'
+    import { cn } from '../helpers/classes'
     import { generatePseudoRandomKey } from '../helpers/tools'
     import NIcon from './NIcon.vue'
     import NLoading from './NLoading.vue'
@@ -130,7 +132,7 @@
     const isDisabled = computed(() => !!props.disabled)
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const compClasses = computed(() => ['n-input-field', ...resolveClassProp((attrs as any).class)])
+    const compClasses = computed(() => cn('n-input-field', attrs.class as any))
     const containerClasses = computed(() => ['n-input-field-container', ...resolveClassProp(props.containerClass)])
     const wrapperClasses = computed(() => [
         'n-input-field-wrapper',

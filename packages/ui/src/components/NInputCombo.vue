@@ -106,6 +106,7 @@
         type HTMLAttributes
     } from 'vue'
     import { resolveClassProp } from '../helpers/dom'
+    import { cn } from '../helpers/classes'
     import { generatePseudoRandomKey } from '../helpers/tools'
     import NChip from './NChip.vue'
     import NIcon from './NIcon.vue'
@@ -295,7 +296,7 @@
         omit(slots, ['default', 'item', 'item-content', 'chip', 'append', 'no-option'])
     )
 
-    const compClasses = computed(() => ['n-input-combo', ...resolveClassProp((attrs as any).class)])
+    const compClasses = computed(() => cn('n-input-combo', (attrs.class as any)))
 
     const inputFieldProps = computed(() => {
         const {
@@ -336,7 +337,7 @@
         return getItemLabel(selectedOptions.value) ? '' : attrs['placeholder'] || ''
     })
 
-    const valueClasses = computed(() => ['n-input-combo-value', ...resolveClassProp(props.valueClass)])
+    const valueClasses = computed(() => cn('n-input-combo-value', props.valueClass))
 
     const focusInputRef = computed(() => (focusPaused.value ? null : inputRef.value))
 

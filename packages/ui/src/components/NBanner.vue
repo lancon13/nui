@@ -43,9 +43,11 @@
 </template>
 
 <script setup lang="ts">
-    /* eslint-disable no-unused-vars */
+    /* eslint-disable @typescript-eslint/no-explicit-any */
+    /* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
     import { computed, HTMLAttributes, useAttrs, useSlots, watch } from 'vue'
     import { wrapTextNode } from '../helpers/dom'
+    import { cn } from '../helpers/classes'
     import { usePausableTimer } from '../composables/use-pausable-timer'
     import NIcon from './NIcon.vue'
     import NButton, { NButtonProps } from './NButton.vue'
@@ -127,10 +129,13 @@
 
     // --- Computed Styles & Classes ---
     const compClasses = computed(() => {
-        return ['n-banner', props.inlineActions ? 'n-banner--inline' : '']
+        return cn('n-banner', props.inlineActions ? 'n-banner--inline' : '', attrs.class as any)
     })
 
-    const compBind = computed(() => ({ ...attrs }))
+    const compBind = computed(() => {
+        const { class: _, ...bind } = attrs
+        return bind
+    })
 
     const compStyles = computed(() => ({
         '--n-banner-duration': `${props.duration}ms`

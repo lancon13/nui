@@ -34,11 +34,14 @@
 </template>
 
 <script setup lang="ts">
+    /* eslint-disable @typescript-eslint/no-explicit-any */
+    /* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
     import { useEventListener } from '@vueuse/core'
     import { computed, type HTMLAttributes, onUnmounted, provide, useAttrs, useTemplateRef, watch } from 'vue'
     import { useComponentStack } from '../composables/use-component-stack'
     import { useFocusable } from '../composables/use-focusable'
     import { useTeleportContainer } from '../composables/use-teleport-container'
+    import { cn } from '../helpers/classes'
     import { generatePseudoRandomKey } from '../helpers/tools'
 
     export type NModalDirection = 'center' | 'top' | 'bottom' | 'left' | 'right'
@@ -97,19 +100,18 @@
 
     const overlayClasses = computed(() => ['n-modal-overlay'])
     const overlayStyles = computed(() => ({ zIndex: stackZIndex.value }))
-    const modalClasses = computed(() => ['n-modal', `n-modal--direction-${props.direction}`, 'outline-none'])
+    const modalClasses = computed(() =>
+        cn('n-modal', `n-modal--direction-${props.direction}`, 'outline-none', attrs.class as any)
+    )
     const modalStyles = computed(() => ({ zIndex: stackZIndex.value }))
     const modalBind = computed(() => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
         const { tag, content, overlay, noOverlayHide, noEscHide, direction, persist, focusOnShow, role, ...rest } =
             props
 
         // Destructure standard attributes handled explicitly in template to avoid duplicates
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
-        const { 'aria-modal': am, role: r, tabindex, ...remainingAttrs } = attrs
+        const { 'aria-modal': am, role: r, tabindex, class: _, ...remainingAttrs } = attrs
 
         // Also exclude them from props rest if present
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
         const { 'aria-modal': pam, ...finalRest } = rest as Record<string, unknown>
 
         return { tabindex: tabindex ?? '-1', ...finalRest, ...remainingAttrs }

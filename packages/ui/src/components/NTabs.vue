@@ -23,8 +23,11 @@
 </template>
 
 <script setup lang="ts">
+    /* eslint-disable @typescript-eslint/no-explicit-any */
+    /* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
     import { computed, ref, useAttrs, useSlots, VNode, type ComponentPublicInstance } from 'vue'
     import { isVNodeNameContain } from '../helpers/dom'
+    import { cn } from '../helpers/classes'
     import { generatePseudoRandomKey } from '../helpers/tools'
 
     defineOptions({
@@ -53,12 +56,11 @@
     const hasActiveTab = computed(() => slotDefaultNodes.value.some(node => isActive(node)))
 
     const compClasses = computed(() => {
-        return ['n-tabs']
+        return cn('n-tabs', attrs.class as any)
     })
     const compBind = computed(() => {
-        return {
-            ...attrs
-        }
+        const { class: _, ...bind } = attrs
+        return bind
     })
 
     const slotDefaultNodes = computed(() => {

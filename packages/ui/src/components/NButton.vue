@@ -50,8 +50,11 @@
 </template>
 
 <script setup lang="ts">
+    /* eslint-disable @typescript-eslint/no-explicit-any */
+    /* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
     import { computed, HTMLAttributes, useAttrs, useSlots } from 'vue'
     import { wrapTextNode } from '../helpers/dom'
+    import { cn } from '../helpers/classes'
     import NIcon from './NIcon.vue'
     import NLoading from './NLoading.vue'
 
@@ -85,7 +88,7 @@
     })
 
     const compClasses = computed(() => {
-        return ['n-button', props.loading ? 'n-button--loading' : '']
+        return cn('n-button', props.loading ? 'n-button--loading' : '', attrs.class as any)
     })
     const actualTag = computed(() => {
         if (props.to) return 'RouterLink'
@@ -94,7 +97,7 @@
     })
     const compBind = computed(() => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const bind: any = { ...attrs }
+        const { class: _, ...bind } = attrs as any
         if (actualTag.value === 'RouterLink') {
             bind.to = props.to
             bind.target = props.target

@@ -26,6 +26,7 @@
     import { omit } from 'es-toolkit/object'
     import { computed, ref, useAttrs, useSlots, watch, type HTMLAttributes } from 'vue'
     import { resolveClassProp } from '../helpers/dom'
+    import { cn } from '../helpers/classes'
     import NInputField, { type NInputFieldProps } from './NInputField.vue'
 
     export type NInputTextProps = Partial</* @vue-ignore */ HTMLAttributes> &
@@ -55,7 +56,7 @@
     const internalModel = ref(model.value)
 
     const otherSlots = computed(() => omit(slots, ['default']))
-    const compClasses = computed(() => ['n-input-text', ...resolveClassProp((attrs as any).class)])
+    const compClasses = computed(() => cn('n-input-text', (attrs.class as any)))
     const compBind = computed(() => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { type, inputClass, modelValue, modelModifiers, debounce, ...rest } = props as any

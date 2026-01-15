@@ -8,9 +8,11 @@
 
 <script setup lang="ts">
     /* eslint-disable @typescript-eslint/no-explicit-any */
+    /* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
     import { computed, Fragment, h, type HTMLAttributes, useAttrs, useSlots, type VNode } from 'vue'
     import { useMenuTransform } from '../composables/use-menu-transform'
     import { generatePseudoRandomKey } from '../helpers/tools'
+    import { cn } from '../helpers/classes'
     import NList from './NList.vue'
     import NListItem, { type NListItemProps } from './NListItem.vue'
 
@@ -37,8 +39,11 @@
     })
 
     const { transformedNodes } = useMenuTransform(slots)
-    const compClasses = computed(() => ['n-list'])
-    const compBind = computed(() => ({ ...attrs }))
+    const compClasses = computed(() => cn('n-list', attrs.class as any))
+    const compBind = computed(() => {
+        const { class: _, ...bind } = attrs
+        return bind
+    })
 
     const slotDefaultNodes = computed(() => {
         return props.items ? createNodesFromData(props.items) : transformedNodes.value

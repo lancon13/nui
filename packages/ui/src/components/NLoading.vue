@@ -6,7 +6,10 @@
 </template>
 
 <script setup lang="ts">
+    /* eslint-disable @typescript-eslint/no-explicit-any */
+    /* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
     import { computed, type HTMLAttributes, useAttrs } from 'vue'
+    import { cn } from '../helpers/classes'
     import NIcon from './NIcon.vue'
 
     export type NLoadingProps = Partial</* @vue-ignore */ HTMLAttributes> & {
@@ -24,7 +27,7 @@
     const compBind = computed(() => {
         return {
             name: props.name || 'loading',
-            class: props.class || 'animate-spin',
+            class: cn('animate-spin', props.class),
             ...attrs
         }
     })

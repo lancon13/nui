@@ -85,9 +85,11 @@
 </template>
 
 <script setup lang="ts">
-    /* eslint-disable no-unused-vars */
+    /* eslint-disable @typescript-eslint/no-explicit-any */
+    /* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
     import { computed, HTMLAttributes, useAttrs, useSlots } from 'vue'
     import { wrapTextNode, resolveClassProp } from '../helpers/dom'
+    import { cn } from '../helpers/classes'
     import { generatePseudoRandomKey } from '../helpers/tools'
     import NIcon from './NIcon.vue'
 
@@ -137,7 +139,7 @@
 
     const resolvedIconClasses = computed(() => resolveClassProp(props.iconClass, props.prependIconClass))
 
-    const compClasses = computed(() => ['n-toggle'])
+    const compClasses = computed(() => cn('n-toggle', attrs.class as any))
     const containerClasses = computed(() => ['n-toggle-container'])
     const wrapperClasses = computed(() => ['n-toggle-wrapper', props.size ? `n-toggle--${props.size}` : ''])
     const labelClasses = computed(() => ['n-toggle-label'])
@@ -145,7 +147,7 @@
     // Split attributes: class/style go to wrapper, others to input
     const elementAttrs = computed(() => {
         const { class: className, style } = attrs
-        return { class: className, style }
+        return { style }
     })
 
     const inputAttrs = computed(() => {

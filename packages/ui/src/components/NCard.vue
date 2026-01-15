@@ -30,9 +30,11 @@
 </template>
 
 <script setup lang="ts">
-    /* eslint-disable no-unused-vars */
+    /* eslint-disable @typescript-eslint/no-explicit-any */
+    /* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
     import { computed, HTMLAttributes, useAttrs, useSlots } from 'vue'
     import { isVNodeClassContain } from '../helpers/dom'
+    import { cn } from '../helpers/classes'
     import NLoading from './NLoading.vue'
 
     export type NCardProps = Partial</* @vue-ignore */ HTMLAttributes> & {
@@ -68,17 +70,18 @@
     })
 
     const compClasses = computed(() => {
-        return [
+        return cn(
             'n-card',
             props.loading ? 'n-card--loading' : '',
             props.disabled ? 'n-card--disabled' : '',
-            isClickable.value ? 'n-card--clickable' : ''
-        ]
+            isClickable.value ? 'n-card--clickable' : '',
+            attrs.class as any
+        )
     })
 
     const compBind = computed(() => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const bind: any = { ...attrs }
+        const { class: _, ...bind } = attrs as any
         if (actualTag.value === 'RouterLink') {
             bind.to = props.to
             bind.target = props.target

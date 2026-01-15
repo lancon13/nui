@@ -1,5 +1,10 @@
 <template>
-    <component :is="props.tag" :class="['n-form']" v-bind="compBind" :role="props.tag !== 'form' ? 'form' : undefined">
+    <component
+        :is="props.tag"
+        :class="cn('n-form', attrs.class as any)"
+        v-bind="compBind"
+        :role="props.tag !== 'form' ? 'form' : undefined"
+    >
         <slot name="title">
             <component
                 :is="props.titleTag"
@@ -20,7 +25,10 @@
 </template>
 
 <script setup lang="ts">
+    /* eslint-disable @typescript-eslint/no-explicit-any */
+    /* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
     import { computed, type HTMLAttributes, useAttrs } from 'vue'
+    import { cn } from '../helpers/classes'
     import { generatePseudoRandomKey } from '../helpers/tools'
     import NBanner from './NBanner.vue'
 
@@ -55,7 +63,7 @@
     const bannerIcon = computed(() => statusIcons[props.status] || '')
 
     const compBind = computed(() => {
-        const bind = { ...attrs }
+        const { class: _, ...bind } = attrs as any
         if (props.title && !bind['aria-labelledby']) {
             bind['aria-labelledby'] = titleId
         }

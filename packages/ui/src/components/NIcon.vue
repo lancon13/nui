@@ -13,8 +13,10 @@
 </template>
 
 <script setup lang="ts">
-    /* eslint-disable no-unused-vars */
+    /* eslint-disable @typescript-eslint/no-explicit-any */
+    /* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
     import { computed, getCurrentInstance, type HTMLAttributes, useAttrs } from 'vue'
+    import { cn } from '../helpers/classes'
 
     export type NIconProps = Partial</* @vue-ignore */ HTMLAttributes> & {
         name: string
@@ -49,16 +51,19 @@
         return ['mdi', `mdi-${name}`]
     })
 
-    const compClasses = computed(() => [
-        'n-icon',
-        isClickable.value ? 'n-icon--clickable' : '',
-        props.disabled ? 'n-icon--disabled' : '',
-        ...iconClasses.value
-    ])
+    const compClasses = computed(() =>
+        cn(
+            'n-icon',
+            isClickable.value ? 'n-icon--clickable' : '',
+            props.disabled ? 'n-icon--disabled' : '',
+            ...iconClasses.value,
+            attrs.class as any
+        )
+    )
 
     const compBind = computed(() => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const bind: any = { ...attrs }
+        const { class: _, ...bind } = attrs as any
         if (actualTag.value === 'RouterLink') {
             bind.to = props.to
             bind.target = props.target

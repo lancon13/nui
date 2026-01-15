@@ -65,8 +65,11 @@
 </template>
 
 <script setup lang="ts">
+    /* eslint-disable @typescript-eslint/no-explicit-any */
+    /* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
     import { computed, getCurrentInstance, type HTMLAttributes, useAttrs, useSlots, type VNode } from 'vue'
     import { resolveClassProp, wrapTextNode } from '../helpers/dom'
+    import { cn } from '../helpers/classes'
     import NIcon from './NIcon.vue'
 
     export type NListItemProps = Partial</* @vue-ignore */ HTMLAttributes> & {
@@ -116,17 +119,20 @@
     })
     const tabIndex = computed(() => (isClickable.value || props.expandable ? 0 : undefined))
 
-    const compClasses = computed(() => [
-        'n-list-item',
-        isClickable.value && !props.expandable ? 'n-list-item--clickable' : '',
-        props.disabled ? 'n-list-item--disabled' : '',
-        props.expandable ? 'n-list-item--expandable' : '',
-        props.heading ? 'n-list-item--heading' : ''
-    ])
+    const compClasses = computed(() =>
+        cn(
+            'n-list-item',
+            isClickable.value && !props.expandable ? 'n-list-item--clickable' : '',
+            props.disabled ? 'n-list-item--disabled' : '',
+            props.expandable ? 'n-list-item--expandable' : '',
+            props.heading ? 'n-list-item--heading' : '',
+            attrs.class as any
+        )
+    )
 
     const compBind = computed(() => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const bind: any = { ...attrs }
+        const { class: _, ...bind } = attrs as any
         if (actualTag.value === 'RouterLink') {
             bind.to = props.to
             bind.target = props.target

@@ -48,6 +48,7 @@
     import { computed, type HTMLAttributes, onMounted, ref, useAttrs, useTemplateRef, watch } from 'vue'
     import { useFloating } from '../composables/use-floating'
     import { useTeleportContainer } from '../composables/use-teleport-container'
+    import { cn } from '../helpers/classes'
     import { getElement, getParentElement } from '../helpers/dom'
 
     export type NPopoverDirection = 'top' | 'bottom' | 'left' | 'right'
@@ -158,7 +159,7 @@
         return styles
     })
 
-    const compClasses = computed(() => ['n-popover', `n-popover--direction-${placement.value}`])
+    const compClasses = computed(() => cn('n-popover', `n-popover--direction-${placement.value}`, attrs.class as any))
 
     const compBind = computed(() => {
         const {
@@ -186,6 +187,8 @@
             ...rest
         } = props
 
+        const { class: _, ...bind } = attrs
+
         return {
             style: compStyles.value,
             onMouseenter: handleContentHoverFocusIn,
@@ -193,7 +196,7 @@
             onFocusin: handleContentHoverFocusIn,
             onFocusout: handleContentHoverFocusOut,
             ...(rest as any),
-            ...attrs
+            ...bind
         }
     })
 

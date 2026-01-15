@@ -5,7 +5,10 @@
 </template>
 
 <script setup lang="ts">
+    /* eslint-disable @typescript-eslint/no-explicit-any */
+    /* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
     import { computed, HTMLAttributes, useAttrs } from 'vue'
+    import { cn } from '../helpers/classes'
 
     export type NFooterProps = Partial</* @vue-ignore */ HTMLAttributes> & {
         tag?: string
@@ -21,12 +24,11 @@
     })
 
     const compClasses = computed(() => {
-        return ['n-footer']
+        return cn('n-footer', attrs.class as any)
     })
     const compBind = computed(() => {
-        return {
-            ...attrs
-        }
+        const { class: _, ...bind } = attrs
+        return bind
     })
 </script>
 

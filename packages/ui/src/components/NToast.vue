@@ -37,11 +37,14 @@
 </template>
 
 <script setup lang="ts">
+    /* eslint-disable @typescript-eslint/no-explicit-any */
+    /* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
     import { useEventListener } from '@vueuse/core'
     import { computed, type HTMLAttributes, nextTick, onUnmounted, ref, useAttrs, useTemplateRef, watch } from 'vue'
     import { useComponentStack } from '../composables/use-component-stack'
     import { usePausableTimer } from '../composables/use-pausable-timer'
     import { useTeleportContainer } from '../composables/use-teleport-container'
+    import { cn } from '../helpers/classes'
     import { generatePseudoRandomKey } from '../helpers/tools'
 
     export type NToastProps = Partial</* @vue-ignore */ HTMLAttributes> & {
@@ -100,7 +103,7 @@
     const overlayClasses = computed(() => ['n-toast-overlay', `n-toast-overlay--position-${props.position}`])
     const overlayStyles = computed(() => ({ zIndex: stackZIndex.value, order: stackOrderIndex.value }))
 
-    const toastClasses = computed(() => ['n-toast', `n-toast--position-${props.position}`])
+    const toastClasses = computed(() => cn('n-toast', `n-toast--position-${props.position}`, attrs.class as any))
     const toastStyles = computed(() => ({ zIndex: stackZIndex.value, order: stackOrderIndex.value }))
     const toastBind = computed(() => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
@@ -109,7 +112,7 @@
 
         // Destructure standard attributes handled explicitly in template to avoid duplicates
         // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
-        const { 'aria-live': ariaLive, 'aria-atomic': ariaAtomic, role: roleAttr, ...remainingAttrs } = attrs
+        const { 'aria-live': ariaLive, 'aria-atomic': ariaAtomic, role: roleAttr, class: _, ...remainingAttrs } = attrs
 
         // Also exclude them from props rest if present (since NToastProps extends HTMLAttributes)
         // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars, @typescript-eslint/no-explicit-any

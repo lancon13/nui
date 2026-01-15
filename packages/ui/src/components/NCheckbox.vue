@@ -84,9 +84,11 @@
 </template>
 
 <script setup lang="ts">
-    /* eslint-disable no-unused-vars */
+    /* eslint-disable @typescript-eslint/no-explicit-any */
+    /* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
     import { computed, HTMLAttributes, useAttrs, useSlots } from 'vue'
     import { resolveClassProp, wrapTextNode } from '../helpers/dom'
+    import { cn } from '../helpers/classes'
     import { generatePseudoRandomKey } from '../helpers/tools'
     import NIcon from './NIcon.vue'
 
@@ -133,7 +135,7 @@
     const [model, modifiers] = defineModel<boolean | null>({ default: null })
     const inputId = `input-id-${generatePseudoRandomKey()}`
 
-    const compClasses = computed(() => ['n-checkbox'])
+    const compClasses = computed(() => cn('n-checkbox', attrs.class as any))
     const containerClasses = computed(() => ['n-checkbox-container'])
     const wrapperClasses = computed(() => ['n-checkbox-wrapper', props.size ? `n-checkbox--${props.size}` : ''])
     const labelClasses = computed(() => ['n-checkbox-label'])
@@ -142,7 +144,7 @@
     // Split attributes: class/style go to wrapper, others to input
     const elementAttrs = computed(() => {
         const { class: className, style } = attrs
-        return { class: className, style }
+        return { style }
     })
 
     const inputAttrs = computed(() => {

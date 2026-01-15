@@ -1,5 +1,5 @@
 <template>
-    <div class="n-calendar" tabindex="-1" @keydown="handleRootKey">
+    <div :class="cn('n-calendar', (attrs.class as any))" tabindex="-1" v-bind="attrs" @keydown="handleRootKey">
         <div :class="containerClasses">
             <div v-for="(view, calIndex) in calendarsGrid" :key="calIndex" :class="view.viewClasses">
                 <!-- Custom Header Slot -->
@@ -52,7 +52,7 @@
                         :ref="el => setCellRef(el, day.dateString)"
                         :class="[
                             'n-calendar-view-grid-cell',
-                            ...view.extraGridCellClasses,
+                            view.extraGridCellClasses,
                             {
                                 'n-calendar-view-grid-cell--outside': !day.isCurrentMonth,
                                 'n-calendar-view-grid-cell--today': day.isToday,
@@ -99,7 +99,8 @@
     /* eslint-disable @typescript-eslint/no-explicit-any */
     /* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
     import dayjs, { type Dayjs } from '../helpers/date'
-    import { computed, nextTick, ref, toRefs, watch } from 'vue'
+    import { computed, nextTick, ref, toRefs, watch, useAttrs } from 'vue'
+    import { cn } from '../helpers/classes'
     import {
         checkDateInList,
         generateCalendarDays,
@@ -143,6 +144,9 @@
         containerClass?: string | string[] | object
     }
 
+    defineOptions({ inheritAttrs: false })
+
+    const attrs = useAttrs()
     const props = withDefaults(defineProps<NCalendarProps>(), {
         modelValue: () => [],
         viewingYear: () => dayjs().year(),
@@ -208,7 +212,7 @@
     const cellRefs = new Map<string, HTMLElement>()
 
     // --- Class Resolution ---
-    const containerClasses = computed(() => resolveClassProp('n-calendar-container', containerClass.value))
+    const containerClasses = computed(() => cn('n-calendar-container', containerClass.value))
 
     // --- Focus Management ---
     const setCellRef = (el: any, date: string) => {
@@ -292,13 +296,13 @@
             const currentVisible = currentVisibleRaw ? normalizeDateRanges(currentVisibleRaw) : null
 
             // Classes
-            const currentViewClasses = resolveClassProp('n-calendar-view', viewConfig.viewClass ?? viewClass.value)
-            const currentContainerClasses = resolveClassProp(
+            const currentViewClasses = cn('n-calendar-view', viewConfig.viewClass ?? viewClass.value)
+            const currentContainerClasses = cn(
                 'n-calendar-view-week-label-container',
                 viewConfig.weekLabelContainerClass ?? weekLabelContainerClass.value
             )
-            const currentGridClasses = resolveClassProp('n-calendar-view-grid', viewConfig.gridClass ?? gridClass.value)
-            const currentExtraGridCellClasses = resolveClassProp(viewConfig.gridCellClass ?? gridCellClass.value)
+            const currentGridClasses = cn('n-calendar-view-grid', viewConfig.gridClass ?? gridClass.value)
+            const currentExtraGridCellClasses = cn(viewConfig.gridCellClass ?? gridCellClass.value)
 
             // Labels
             const currentWeekNamesRaw = viewConfig.weekLabelNames ?? customWeekNames.value

@@ -11,8 +11,9 @@
 <script setup lang="ts">
     /* eslint-disable @typescript-eslint/no-explicit-any */
     /* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
-    import { computed, Fragment, h, type HTMLAttributes, useSlots, useTemplateRef, type VNode } from 'vue'
+    import { computed, Fragment, h, type HTMLAttributes, useAttrs, useSlots, useTemplateRef, type VNode } from 'vue'
     import { useMenuTransform } from '../composables'
+    import { cn } from '../helpers/classes'
     import NIcon from './NIcon.vue'
     import NListItem from './NListItem.vue'
     import NMenu from './NMenu.vue'
@@ -43,6 +44,7 @@
     }
 
     const slots = useSlots()
+    const attrs = useAttrs()
     const props = withDefaults(defineProps<NMenuProps>(), {
         tag: 'div',
         listTag: 'ul',
@@ -64,7 +66,7 @@
     const popoverRef = useTemplateRef('popoverRef')
     const { transformedNodes } = useMenuTransform(slots, defaultSubmenuProps)
 
-    const compClasses = computed(() => ['n-menu'])
+    const compClasses = computed(() => cn('n-menu', (attrs.class as any)))
     const compBind = computed(() => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
         const {
@@ -82,13 +84,16 @@
             ...rest
         } = props
 
+        const { class: _, ...bind } = attrs
+
         return {
             ...rest,
             hoverTriggerAnchor: triggerByHover ? props.hoverTriggerAnchor : null,
             focusTriggerAnchor: triggerByFocus ? props.focusTriggerAnchor : null,
             clickTriggerAnchor: triggerByInteraction ? props.clickTriggerAnchor : null,
             attachParent: triggerByInteraction ? props.attachParent : null,
-            allowClickToHide
+            allowClickToHide,
+            ...bind
         }
     })
 

@@ -43,7 +43,7 @@
             :class="imageClasses"
             :style="imageStyles"
             :loading="props.lazy ? 'lazy' : undefined"
-            v-bind="$attrs"
+            v-bind="imageBind"
             @load="handleLoad"
             @error="handleError"
         />
@@ -51,8 +51,11 @@
 </template>
 
 <script setup lang="ts">
+    /* eslint-disable @typescript-eslint/no-explicit-any */
+    /* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
     import { useIntersectionObserver } from '@vueuse/core'
-    import { computed, ref, useTemplateRef, type HTMLAttributes } from 'vue'
+    import { computed, ref, useAttrs, useTemplateRef, type HTMLAttributes } from 'vue'
+    import { cn } from '../helpers/classes'
     import NIcon from './NIcon.vue'
     import NLoading from './NLoading.vue'
 
@@ -79,6 +82,7 @@
         inheritAttrs: false
     })
 
+    const attrs = useAttrs()
     const props = withDefaults(defineProps<NImageProps>(), {
         alt: '',
         lazy: false,
@@ -141,14 +145,22 @@
         return styles
     })
 
-    const imageClasses = computed(() => [
-        'n-image-img',
-        `n-image-img--fit-${props.fit}`,
-        props.aspectRatio || (props.width && props.height)
-            ? 'absolute inset-0 w-full h-full'
-            : 'block max-w-full h-auto',
-        isLoading.value || props.loading ? 'opacity-0' : 'opacity-100'
-    ])
+    const imageClasses = computed(() =>
+        cn(
+            'n-image-img',
+            `n-image-img--fit-${props.fit}`,
+            props.aspectRatio || (props.width && props.height)
+                ? 'absolute inset-0 w-full h-full'
+                : 'block max-w-full h-auto',
+            isLoading.value || props.loading ? 'opacity-0' : 'opacity-100',
+            attrs.class as any
+        )
+    )
+
+    const imageBind = computed(() => {
+        const { class: _, ...bind } = attrs
+        return bind
+    })
 
     const imageStyles = computed(() => ({}))
 </script>

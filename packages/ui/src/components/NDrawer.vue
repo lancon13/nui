@@ -28,9 +28,12 @@
 </template>
 
 <script setup lang="ts">
+    /* eslint-disable @typescript-eslint/no-explicit-any */
+    /* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
     import { vOnClickOutside } from '@vueuse/components'
     import { useEventListener } from '@vueuse/core'
     import { computed, type HTMLAttributes, useAttrs, useTemplateRef } from 'vue'
+    import { cn } from '../helpers/classes'
     import { useFocusable } from '../composables/use-focusable'
 
     export type NDrawerDirection = 'top' | 'bottom' | 'left' | 'right'
@@ -80,12 +83,18 @@
     )
 
     const overlayClasses = computed(() => ['n-drawer-overlay'])
-    const drawerClasses = computed(() => [
-        'n-drawer',
-        `n-drawer--direction-${props.direction}`,
-        model.value ? 'n-drawer--active' : undefined
-    ])
-    const drawerBind = computed(() => ({ ...attrs }))
+    const drawerClasses = computed(() =>
+        cn(
+            'n-drawer',
+            `n-drawer--direction-${props.direction}`,
+            model.value ? 'n-drawer--active' : undefined,
+            attrs.class as any
+        )
+    )
+    const drawerBind = computed(() => {
+        const { class: _, ...bind } = attrs
+        return bind
+    })
 
     useEventListener('keydown', e => {
         if (model.value && e.key === 'Escape' && !props.persist && !props.noEscHide) {
