@@ -31,10 +31,10 @@ declare const __VLS_base: import("vue").DefineComponent<__VLS_PublicProps, {
     tag: string;
     overlay: boolean;
     content: string;
-    direction: NDrawerDirection;
     noOverlayHide: boolean;
     noClickOutsideHide: boolean;
     noEscHide: boolean;
+    direction: NDrawerDirection;
     persist: boolean;
     focusOnShow: boolean;
 }, {}, {}, {}, string, import("vue").ComponentProvideOptions, false, {}, any>;

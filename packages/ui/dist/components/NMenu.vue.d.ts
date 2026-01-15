@@ -280,6 +280,9 @@ declare const __VLS_export: import("vue").DefineComponent<NMenuProps, {
             tag: string;
             overlay: boolean;
             content: string;
+            direction: import("./NPopover.vue").NPopoverDirection;
+            fit: boolean;
+            position: import("./NPopover.vue").NPopoverPosition;
             showDelay: number;
             hideDelay: number;
             persistent: boolean;
@@ -287,13 +290,10 @@ declare const __VLS_export: import("vue").DefineComponent<NMenuProps, {
             triggerByFocus: boolean;
             triggerByInteraction: boolean;
             allowClickToHide: boolean;
-            direction: import("./NPopover.vue").NPopoverDirection;
-            position: import("./NPopover.vue").NPopoverPosition;
             margin: number;
             offset: [number, number];
             autoReposition: boolean;
             stacked: boolean;
-            fit: boolean;
         }, {}, string, {}, import("vue").GlobalComponents, import("vue").GlobalDirectives, string, import("vue").ComponentProvideOptions> & {
             beforeCreate?: (() => void) | (() => void)[];
             created?: (() => void) | (() => void)[];
@@ -319,6 +319,9 @@ declare const __VLS_export: import("vue").DefineComponent<NMenuProps, {
         tag: string;
         overlay: boolean;
         content: string;
+        direction: import("./NPopover.vue").NPopoverDirection;
+        fit: boolean;
+        position: import("./NPopover.vue").NPopoverPosition;
         showDelay: number;
         hideDelay: number;
         persistent: boolean;
@@ -326,13 +329,10 @@ declare const __VLS_export: import("vue").DefineComponent<NMenuProps, {
         triggerByFocus: boolean;
         triggerByInteraction: boolean;
         allowClickToHide: boolean;
-        direction: import("./NPopover.vue").NPopoverDirection;
-        position: import("./NPopover.vue").NPopoverPosition;
         margin: number;
         offset: [number, number];
         autoReposition: boolean;
         stacked: boolean;
-        fit: boolean;
     }> & Omit<Readonly<Partial<HTMLAttributes> & {
         tag?: string;
         content?: string;
@@ -360,7 +360,7 @@ declare const __VLS_export: import("vue").DefineComponent<NMenuProps, {
         modelValue?: boolean;
     }> & Readonly<{
         "onUpdate:modelValue"?: ((value: boolean) => any) | undefined;
-    }>, "contentRef" | "show" | "hide" | ("role" | "tag" | "overlay" | "content" | "showDelay" | "hideDelay" | "persistent" | "triggerByHover" | "triggerByFocus" | "triggerByInteraction" | "allowClickToHide" | "direction" | "position" | "margin" | "offset" | "autoReposition" | "stacked" | "fit")> & import("vue").ShallowUnwrapRef<{
+    }>, "hide" | "show" | "contentRef" | ("role" | "tag" | "overlay" | "content" | "direction" | "fit" | "position" | "showDelay" | "hideDelay" | "persistent" | "triggerByHover" | "triggerByFocus" | "triggerByInteraction" | "allowClickToHide" | "margin" | "offset" | "autoReposition" | "stacked")> & import("vue").ShallowUnwrapRef<{
         show: () => void;
         hide: (skipReturnFocus?: boolean) => void;
         contentRef: Readonly<import("vue").ShallowRef<HTMLElement | null>>;
@@ -379,11 +379,11 @@ declare const __VLS_export: import("vue").DefineComponent<NMenuProps, {
     onSelect?: ((item: NMenuItemData) => any) | undefined;
 }>, {
     tag: string;
+    contentField: string;
     triggerByHover: boolean;
     triggerByFocus: boolean;
     triggerByInteraction: boolean;
     allowClickToHide: boolean;
-    contentField: string;
     listTag: string;
     listClass: string | string[] | object;
     valueField: string;

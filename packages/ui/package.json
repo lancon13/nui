@@ -55,9 +55,11 @@
         "@vueuse/integrations": "^14.0.0",
         "@vueuse/router": "^14.0.0",
         "async-validator": "^4.2.5",
+        "clsx": "^2.1.1",
         "dayjs": "^1.11.13",
         "es-toolkit": "^1.39.7",
         "focus-trap": "^7",
+        "tailwind-merge": "^3.4.0",
         "vue-forward-slots": "^5.0.4",
         "vue-i18n": "^11.1.11",
         "zod": "^4.0.5"
@@ -70,10 +72,10 @@
         "vue-router": "^4.5.1"
     },
     "devDependencies": {
-        "@mdi/font": "^7.4.47",
-        "@nui/helpers": "workspace:*",
         "@chromatic-com/storybook": "^4.1.1",
         "@intlify/unplugin-vue-i18n": "^6.0.8",
+        "@mdi/font": "^7.4.47",
+        "@nui/helpers": "workspace:*",
         "@storybook/addon-a11y": "^9.1.5",
         "@storybook/addon-docs": "^9.1.5",
         "@storybook/addon-themes": "^9.1.10",

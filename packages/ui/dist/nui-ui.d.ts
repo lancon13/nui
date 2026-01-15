@@ -1,4 +1,4 @@
-import './styles/index.css';
+import './styles/components-index.css';
 export * from './components';
 export * from './layouts';
 export * from './composables';

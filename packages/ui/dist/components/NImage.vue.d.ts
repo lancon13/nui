@@ -31,8 +31,8 @@ declare const __VLS_base: import("vue").DefineComponent<NImageProps, {}, {}, {},
     onLoad?: ((event: Event) => any) | undefined;
 }>, {
     alt: string;
-    fit: "cover" | "contain" | "fill" | "none" | "scale-down";
     lazy: boolean;
+    fit: "cover" | "contain" | "fill" | "none" | "scale-down";
     threshold: number;
 }, {}, {}, {}, string, import("vue").ComponentProvideOptions, false, {}, any>;
 declare const __VLS_export: __VLS_WithSlots<typeof __VLS_base, __VLS_Slots>;

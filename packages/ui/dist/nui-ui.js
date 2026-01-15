@@ -1,9 +1,9 @@
-import { defineComponent as Q, useAttrs as se, getCurrentInstance as ct, computed as f, createBlock as S, openBlock as v, resolveDynamicComponent as H, mergeProps as Y, withKeys as Ze, withModifiers as Ee, withCtx as R, renderSlot as $, h as j, Text as rn, Comment as un, isVNode as Vt, createElementBlock as B, createVNode as X, normalizeProps as Ye, guardReactiveProps as Ke, useSlots as $e, unref as fe, createCommentVNode as A, Transition as Se, normalizeClass as T, toDisplayString as ie, Fragment as ne, renderList as le, createTextVNode as gt, ref as te, toValue as Te, watch as ge, nextTick as ye, mergeModels as me, useModel as he, useTemplateRef as We, onMounted as cn, Teleport as It, toRefs as xn, createElementVNode as K, shallowRef as qt, withDirectives as qe, provide as Ln, onUnmounted as dn, normalizeStyle as St, render as je, getCurrentScope as Rn, onScopeDispose as En, isRef as Yt, vModelDynamic as fn, createSlots as wt, vModelSelect as Vn, inject as Pn, vModelCheckbox as pn, vModelRadio as Hn } from "vue";
-import { useFloating as Yn, autoUpdate as Wn, offset as Qt, flip as zn, shift as Un } from "@floating-ui/vue";
-import { useEventListener as rt, useTimeoutFn as en, useElementSize as jn, toArray as Kn, unrefElement as Gn, tryOnScopeDispose as Zn, useDebounceFn as vn, useIntersectionObserver as Xn } from "@vueuse/core";
-import { toClassName as Jn, generatePseudoRandomKey as _e, delay as tn } from "@nui/helpers";
-import { vOnClickOutside as qn } from "@vueuse/components";
-import { createFocusTrap as Qn } from "focus-trap";
+import { defineComponent as Q, useAttrs as se, getCurrentInstance as ct, computed as f, createBlock as S, openBlock as v, resolveDynamicComponent as H, mergeProps as Y, withKeys as Ze, withModifiers as Ee, withCtx as R, renderSlot as $, createElementBlock as B, createCommentVNode as A, normalizeClass as T, createTextVNode as gt, toDisplayString as ie, h as j, Text as rn, Comment as un, isVNode as Vt, ref as te, getCurrentScope as xn, onScopeDispose as Ln, unref as fe, createVNode as X, normalizeProps as Ye, guardReactiveProps as Ke, useSlots as $e, Transition as Se, Fragment as ne, renderList as le, mergeModels as me, useModel as he, watch as ge, createElementVNode as K, normalizeStyle as It, toRefs as Rn, nextTick as ye, withDirectives as qe, isRef as Yt, vModelCheckbox as cn, shallowRef as qt, toValue as Te, useTemplateRef as We, vModelDynamic as dn, provide as En, onUnmounted as fn, Teleport as St, render as je, onMounted as pn, inject as Vn, createSlots as wt, vModelSelect as Pn, vModelRadio as Hn } from "vue";
+import { generatePseudoRandomKey as _e, delay as Qt, toClassName as Yn } from "@nui/helpers";
+import { vOnClickOutside as Wn } from "@vueuse/components";
+import { toArray as zn, unrefElement as Un, tryOnScopeDispose as jn, useEventListener as rt, useIntersectionObserver as Kn, useTimeoutFn as en, useElementSize as Gn, useDebounceFn as vn } from "@vueuse/core";
+import { createFocusTrap as Zn } from "focus-trap";
+import { useFloating as Xn, autoUpdate as Jn, offset as tn, flip as qn, shift as Qn } from "@floating-ui/vue";
 const z = /* @__PURE__ */ Q({
   inheritAttrs: !1,
   __name: "NIcon",
@@ -49,6 +49,71 @@ const z = /* @__PURE__ */ Q({
       _: 3
     }, 16, ["class", "role", "tabindex", "aria-disabled", "onKeydown"]));
   }
+}), ea = ["aria-hidden"], ta = {
+  key: 2,
+  class: "n-avatar-sizer",
+  "aria-hidden": "true"
+}, na = ["src", "alt"], Ks = /* @__PURE__ */ Q({
+  inheritAttrs: !1,
+  __name: "NAvatar",
+  props: {
+    src: {},
+    alt: {},
+    icon: {},
+    label: {},
+    tag: { default: "span" },
+    to: {},
+    href: {},
+    target: {},
+    disabled: { type: Boolean }
+  },
+  emits: ["click"],
+  setup(o, { emit: s }) {
+    const t = se(), e = o, n = s, a = f(() => !e.disabled && (e.to || e.href || !!t.onClick)), l = f(() => e.to && !e.disabled ? "RouterLink" : e.href && !e.disabled ? "a" : e.tag), c = f(() => ["n-avatar", a.value ? "n-avatar--clickable" : "", e.disabled ? "n-avatar--disabled" : ""]), r = f(() => {
+      const u = { ...t };
+      return l.value === "RouterLink" ? (u.to = e.to, u.target = e.target) : l.value === "a" && (u.href = e.href, u.target = e.target), u;
+    });
+    function i(u) {
+      if (e.disabled) {
+        u.preventDefault(), u.stopPropagation();
+        return;
+      }
+      a.value && n("click", u);
+    }
+    return (u, d) => (v(), S(H(l.value), Y({
+      class: c.value,
+      role: a.value && l.value === "span" ? "button" : void 0,
+      tabindex: a.value && l.value === "span" ? 0 : void 0,
+      "aria-disabled": e.disabled ? "true" : void 0
+    }, r.value, {
+      onClick: i,
+      onKeydown: Ze(Ee(i, ["prevent"]), ["enter", "space"])
+    }), {
+      default: R(() => [
+        e.icon ? (v(), S(z, {
+          key: 0,
+          name: e.icon,
+          class: T({ "opacity-0": e.src }),
+          "aria-hidden": "true"
+        }, null, 8, ["name", "class"])) : e.label || u.$slots.default ? (v(), B("span", {
+          key: 1,
+          class: T(["n-avatar-label", { "opacity-0": e.src }]),
+          "aria-hidden": e.src ? "true" : void 0
+        }, [
+          $(u.$slots, "default", {}, () => [
+            gt(ie(e.label), 1)
+          ])
+        ], 10, ea)) : (v(), B("span", ta, " ")),
+        e.src ? (v(), B("img", {
+          key: 3,
+          src: e.src,
+          alt: e.alt || e.label || "",
+          class: "n-avatar-image"
+        }, null, 8, na)) : A("", !0)
+      ]),
+      _: 3
+    }, 16, ["class", "role", "tabindex", "aria-disabled", "onKeydown"]));
+  }
 }), _t = (o, s) => {
   if (typeof document > "u") return null;
   const t = document;
@@ -58,7 +123,7 @@ const z = /* @__PURE__ */ Q({
     return _t(o)?.parentElement || null;
   const s = ct();
   return s ? s.proxy?.$el?.parentElement || null : (console.warn("getParentElement() without a selector can only be used inside setup() or lifecycle hooks."), null);
-}, ea = (o) => {
+}, aa = (o) => {
   if (Vt(o) && o.type) {
     if (typeof o.type == "string")
       return o.type;
@@ -69,9 +134,9 @@ const z = /* @__PURE__ */ Q({
   }
   return "";
 }, kt = (o, s) => {
-  const t = ea(o);
+  const t = aa(o);
   return t ? (Array.isArray(s) ? s : [s]).includes(t) : !1;
-}, ta = (o, s) => {
+}, sa = (o, s) => {
   if (!o.props || typeof o.props.class != "string")
     return !1;
   const t = o.props.class.split(/\s+/);
@@ -95,7 +160,37 @@ function de(...o) {
     t && (typeof t == "string" ? s.push(t) : Array.isArray(t) ? s.push(...t) : typeof t == "object" && s.push(t));
   }), s;
 }
-const na = {
+function hn(o, s, t = {}) {
+  const { immediate: e = !1 } = t, n = te(!1), a = te(!1);
+  let l = null, c = 0, r = 0;
+  const i = () => {
+    n.value = !1, a.value = !1, r = 0, l && (clearTimeout(l), l = null);
+  }, u = () => {
+    i();
+    const g = fe(s);
+    g <= 0 || (n.value = !0, a.value = !1, r = g, c = Date.now(), l = setTimeout(() => {
+      n.value = !1, o();
+    }, r));
+  }, d = () => {
+    if (!n.value || a.value || !l) return;
+    a.value = !0, clearTimeout(l), l = null;
+    const g = Date.now() - c;
+    r -= g;
+  }, p = () => {
+    !n.value || !a.value || (a.value = !1, c = Date.now(), l = setTimeout(() => {
+      n.value = !1, o();
+    }, r));
+  };
+  return xn() && Ln(i), e && u(), {
+    start: u,
+    stop: i,
+    pause: d,
+    resume: p,
+    isPending: n,
+    isPaused: a
+  };
+}
+const la = {
   key: 0,
   class: "n-loading-overlay"
 }, dt = /* @__PURE__ */ Q({
@@ -112,11 +207,11 @@ const na = {
       class: t.class || "animate-spin",
       ...s
     }));
-    return (n, a) => t.overlay ? (v(), B("span", na, [
+    return (n, a) => t.overlay ? (v(), B("span", la, [
       X(z, Ye(Ke(e.value)), null, 16)
     ])) : (v(), S(z, Ye(Y({ key: 1 }, e.value)), null, 16));
   }
-}), aa = { key: 1 }, Pt = /* @__PURE__ */ Q({
+}), oa = { key: 1 }, Pt = /* @__PURE__ */ Q({
   inheritAttrs: !1,
   __name: "NButton",
   props: {
@@ -173,7 +268,7 @@ const na = {
           ]),
           "aria-hidden": "true"
         }, null, 8, ["name", "class"])) : A("", !0),
-        e.label ? (v(), B("span", aa, ie(e.label), 1)) : A("", !0),
+        e.label ? (v(), B("span", oa, ie(e.label), 1)) : A("", !0),
         (v(!0), B(ne, null, le(c.value, (u, d) => (v(), S(H(u), { key: d }))), 128)),
         e.appendIcon ? (v(), S(z, {
           key: 2,
@@ -186,469 +281,107 @@ const na = {
       _: 3
     }, 16, ["class", "type", "disabled", "aria-disabled", "aria-busy"]));
   }
-}), sa = ["aria-hidden"], la = {
-  key: 2,
-  class: "n-avatar-sizer",
+}), ra = ["innerHTML"], ia = {
+  class: "n-banner-progress",
   "aria-hidden": "true"
-}, oa = ["src", "alt"], Ks = /* @__PURE__ */ Q({
+}, gn = /* @__PURE__ */ Q({
   inheritAttrs: !1,
-  __name: "NAvatar",
-  props: {
-    src: {},
-    alt: {},
-    icon: {},
+  __name: "NBanner",
+  props: /* @__PURE__ */ me({
+    tag: { default: "div" },
     label: {},
-    tag: { default: "span" },
-    to: {},
-    href: {},
-    target: {},
-    disabled: { type: Boolean }
-  },
-  emits: ["click"],
+    icon: {},
+    iconClass: {},
+    labelClass: {},
+    actionsClass: {},
+    inlineActions: { type: Boolean, default: !0 },
+    duration: { default: 0 },
+    showProgress: { type: Boolean, default: !1 },
+    actions: {}
+  }, {
+    modelValue: { type: Boolean, default: !0 },
+    modelModifiers: {}
+  }),
+  emits: /* @__PURE__ */ me(["timer-begin", "timer-end", "timer-pause", "timer-resume"], ["update:modelValue"]),
   setup(o, { emit: s }) {
-    const t = se(), e = o, n = s, a = f(() => !e.disabled && (e.to || e.href || !!t.onClick)), l = f(() => e.to && !e.disabled ? "RouterLink" : e.href && !e.disabled ? "a" : e.tag), c = f(() => ["n-avatar", a.value ? "n-avatar--clickable" : "", e.disabled ? "n-avatar--disabled" : ""]), r = f(() => {
-      const u = { ...t };
-      return l.value === "RouterLink" ? (u.to = e.to, u.target = e.target) : l.value === "a" && (u.href = e.href, u.target = e.target), u;
-    });
-    function i(u) {
-      if (e.disabled) {
-        u.preventDefault(), u.stopPropagation();
-        return;
-      }
-      a.value && n("click", u);
-    }
-    return (u, d) => (v(), S(H(l.value), Y({
-      class: c.value,
-      role: a.value && l.value === "span" ? "button" : void 0,
-      tabindex: a.value && l.value === "span" ? 0 : void 0,
-      "aria-disabled": e.disabled ? "true" : void 0
-    }, r.value, {
-      onClick: i,
-      onKeydown: Ze(Ee(i, ["prevent"]), ["enter", "space"])
+    const t = s, e = $e(), n = se(), a = o, l = he(o, "modelValue"), c = hn(
+      () => {
+        t("timer-end");
+      },
+      f(() => a.duration),
+      { immediate: !1 }
+    ), r = () => {
+      a.duration > 0 && !c.isPaused.value && (c.pause(), t("timer-pause"));
+    }, i = () => {
+      a.duration > 0 && c.isPaused.value && (c.resume(), t("timer-resume"));
+    };
+    ge(
+      l,
+      (w) => {
+        w && a.duration > 0 ? (c.start(), t("timer-begin")) : c.stop();
+      },
+      { immediate: !0 }
+    );
+    const u = f(() => ["n-banner", a.inlineActions ? "n-banner--inline" : ""]), d = f(() => ({ ...n })), p = f(() => ({
+      "--n-banner-duration": `${a.duration}ms`
+    })), g = f(() => we(e.default?.() ?? [], "div"));
+    return (w, k) => l.value ? (v(), S(H(a.tag), Y({
+      key: 0,
+      class: u.value,
+      style: p.value
+    }, d.value, {
+      role: "status",
+      "aria-live": "polite",
+      "aria-atomic": "true",
+      onMouseenter: r,
+      onMouseleave: i,
+      onFocusin: r,
+      onFocusout: i
     }), {
       default: R(() => [
-        e.icon ? (v(), S(z, {
-          key: 0,
-          name: e.icon,
-          class: T({ "opacity-0": e.src }),
-          "aria-hidden": "true"
-        }, null, 8, ["name", "class"])) : e.label || u.$slots.default ? (v(), B("span", {
-          key: 1,
-          class: T(["n-avatar-label", { "opacity-0": e.src }]),
-          "aria-hidden": e.src ? "true" : void 0
+        K("div", {
+          class: T(["n-banner-label", a.labelClass])
         }, [
-          $(u.$slots, "default", {}, () => [
-            gt(ie(e.label), 1)
-          ])
-        ], 10, sa)) : (v(), B("span", la, " ")),
-        e.src ? (v(), B("img", {
-          key: 3,
-          src: e.src,
-          alt: e.alt || e.label || "",
-          class: "n-avatar-image"
-        }, null, 8, oa)) : A("", !0)
-      ]),
-      _: 3
-    }, 16, ["class", "role", "tabindex", "aria-disabled", "onKeydown"]));
-  }
-}), ra = { key: 1 }, ia = /* @__PURE__ */ Q({
-  inheritAttrs: !1,
-  __name: "NChip",
-  props: {
-    icon: {},
-    prependIcon: {},
-    appendIcon: {},
-    tag: { default: "span" },
-    label: {},
-    removable: { type: Boolean },
-    removableClass: {},
-    clickable: { type: Boolean },
-    to: {},
-    href: {},
-    target: {},
-    disabled: { type: Boolean }
-  },
-  emits: ["click", "remove"],
-  setup(o, { emit: s }) {
-    const t = se(), e = o, n = s, a = f(() => !e.disabled && (e.to || e.href || !!t.onClick)), l = f(() => e.to && !e.disabled ? "RouterLink" : e.href && !e.disabled ? "a" : e.tag), c = f(() => ["n-chip", a.value ? "n-chip--clickable" : "", e.disabled ? "n-chip--disabled" : ""]), r = f(() => {
-      const d = { ...t };
-      return l.value === "RouterLink" ? (d.to = e.to, d.target = e.target) : l.value === "a" && (d.href = e.href, d.target = e.target), d;
-    });
-    function i() {
-      n("remove");
-    }
-    function u(d) {
-      if (e.disabled) {
-        d.preventDefault(), d.stopPropagation();
-        return;
-      }
-      a.value && n("click", d);
-    }
-    return (d, p) => (v(), S(H(l.value), Y({
-      class: c.value,
-      role: a.value && l.value === "span" ? "button" : void 0,
-      tabindex: a.value && l.value === "span" ? 0 : void 0,
-      "aria-disabled": e.disabled ? "true" : void 0
-    }, r.value, {
-      onClick: u,
-      onKeydown: Ze(Ee(u, ["prevent"]), ["enter", "space"])
-    }), {
-      default: R(() => [
-        $(d.$slots, "prepend"),
-        e.prependIcon || e.icon ? (v(), S(z, {
+          $(w.$slots, "icon", {}, () => [
+            a.icon ? (v(), S(z, {
+              key: 0,
+              name: a.icon,
+              class: T(a.iconClass),
+              "aria-hidden": "true"
+            }, null, 8, ["name", "class"])) : A("", !0)
+          ]),
+          a.label ? (v(), B("span", {
+            key: 0,
+            innerHTML: a.label
+          }, null, 8, ra)) : A("", !0),
+          (v(!0), B(ne, null, le(g.value, (C, h) => (v(), S(H(C), { key: h }))), 128))
+        ], 2),
+        w.$slots.actions || a.actions ? (v(), B("div", {
           key: 0,
-          name: e.prependIcon || e.icon,
-          "aria-hidden": "true"
-        }, null, 8, ["name"])) : A("", !0),
-        e.label || d.$slots.default ? (v(), B("span", ra, [
-          $(d.$slots, "default", {}, () => [
-            gt(ie(e.label), 1)
+          class: T(["n-banner-actions", a.actionsClass])
+        }, [
+          $(w.$slots, "actions", {}, () => [
+            (v(!0), B(ne, null, le(a.actions, (C, h) => (v(), S(Pt, Y({
+              key: h,
+              ref_for: !0
+            }, C), null, 16))), 128))
           ])
-        ])) : A("", !0),
-        e.appendIcon ? (v(), S(z, {
-          key: 2,
-          name: e.appendIcon,
-          "aria-hidden": "true"
-        }, null, 8, ["name"])) : A("", !0),
-        $(d.$slots, "append"),
-        e.removable ? $(d.$slots, "removable", { key: 3 }, () => [
-          X(z, {
-            name: "mdi-close",
-            class: T(e.removableClass),
-            clickable: "",
-            onClick: Ee(i, ["stop"])
-          }, null, 8, ["class"])
+        ], 2)) : A("", !0),
+        a.showProgress && a.duration > 0 ? $(w.$slots, "progress", { key: 1 }, () => [
+          K("div", ia, [
+            K("div", {
+              class: "n-banner-progress-bar",
+              style: It({ animationPlayState: fe(c).isPaused.value ? "paused" : "running" })
+            }, null, 4)
+          ])
         ]) : A("", !0)
       ]),
       _: 3
-    }, 16, ["class", "role", "tabindex", "aria-disabled", "onKeydown"]));
+    }, 16, ["class", "style"])) : A("", !0);
   }
 });
-function hn(o, s) {
-  const { model: t, contentRef: e, attachParentEl: n, placement: a } = s, l = te(!1), c = te(!1), r = te(!1), i = f(() => ({
-    triggerByHover: !0,
-    triggerByFocus: !0,
-    triggerByInteraction: !0,
-    ...Te(o)
-  }));
-  rt(() => typeof document < "u" ? document : null, "mouseup", () => {
-    c.value = !1;
-  }), rt(() => typeof document < "u" ? document : null, "keyup", () => {
-    c.value = !1;
-  });
-  const u = en(
-    () => {
-      q();
-    },
-    f(() => i.value.showDelay ?? 0),
-    {
-      immediate: !1
-    }
-  ), d = en(
-    () => {
-      document.activeElement !== Te(g) && !l.value && ve();
-    },
-    f(() => i.value.hideDelay ?? 0),
-    {
-      immediate: !1
-    }
-  ), p = te(null), g = te(null), w = te(null), { width: k, height: C } = jn(n), {
-    x: h,
-    y,
-    strategy: m,
-    placement: _
-  } = Yn(n, e, {
-    placement: a,
-    whileElementsMounted: Wn,
-    middleware: f(() => {
-      const [Z, oe] = i.value.offset ?? [0, 0], be = [Qt(i.value.margin), Qt({ crossAxis: Z, mainAxis: oe })];
-      return i.value.autoReposition && (be.push(zn()), be.push(Un({ padding: 8 }))), be;
-    })
-  }), O = f(() => ({
-    position: m.value,
-    top: y.value != null ? `${y.value}px` : "",
-    left: h.value != null ? `${h.value}px` : ""
-  })), N = () => {
-    u.isPending.value && u.stop(), d.isPending.value && d.stop();
-  }, V = (Z, oe, be) => {
-    Z && Object.entries(oe).forEach(([Ie, De]) => {
-      be === "add" ? Z.addEventListener(Ie, De) : Z.removeEventListener(Ie, De);
-    });
-  };
-  ge(
-    () => [
-      i.value.hoverTriggerAnchor,
-      i.value.focusTriggerAnchor,
-      i.value.clickTriggerAnchor,
-      n.value
-    ],
-    () => {
-      ye(() => {
-        const Z = i.value, oe = (ce) => ce ? _t(ce) : typeof ce > "u" ? n.value : null, be = oe(Z.hoverTriggerAnchor), Ie = oe(Z.focusTriggerAnchor), De = oe(Z.clickTriggerAnchor), Pe = {
-          mouseenter: F,
-          mouseleave: W
-        }, Ne = {
-          focus: F,
-          blur: W,
-          mousedown: L,
-          keydown: M
-        }, ke = {
-          click: G
-        }, Ae = (ce, He, Ce) => {
-          ce.value !== He && (V(ce.value, Ce, "remove"), ce.value = He, V(ce.value, Ce, "add"));
-        };
-        Ae(p, be, Pe), Ae(g, Ie, Ne), Ae(w, De, ke);
-      });
-    },
-    { deep: !0, immediate: !0, flush: "post" }
-  );
-  function L() {
-    c.value = !0;
-  }
-  function M(Z) {
-    (Z.key === "Enter" || Z.key === " ") && (c.value = !0);
-  }
-  function G(Z) {
-    if (t.value) {
-      if (i.value.allowClickToHide) {
-        if (i.value.persistent) return;
-        N(), ve();
-      }
-    } else
-      d.isPending.value && d.stop(), u.start();
-  }
-  function F() {
-    c.value || r.value || (d.isPending.value && d.stop(), u.isPending.value || u.start());
-  }
-  function W(Z) {
-    i.value.persistent || Z.type === "mouseleave" && !i.value.triggerByHover || (u.isPending.value && u.stop(), d.isPending.value || d.start());
-  }
-  function pe() {
-    l.value = !0, d.isPending.value && d.stop();
-  }
-  function ue() {
-    i.value.persistent || (l.value = !1, i.value.triggerByHover && (d.isPending.value || d.start()));
-  }
-  rt("keydown", (Z) => {
-    t.value && Z.key === "Escape" && !i.value.persistent && (Z.preventDefault(), Z.stopPropagation(), ve());
-  });
-  const q = () => {
-    t.value = !0;
-  }, ve = (Z = !1) => {
-    const oe = e.value?.contains(document.activeElement);
-    t.value = !1, !Z && oe && ye(() => {
-      r.value = !0, g.value ? g.value.focus() : n.value && n.value?.focus(), setTimeout(() => {
-        r.value = !1;
-      }, 0);
-    });
-  };
-  return {
-    show: q,
-    hide: ve,
-    handleContentHoverFocusIn: pe,
-    handleContentHoverFocusOut: ue,
-    compStyles: O,
-    placement: _,
-    parentWidth: k,
-    parentHeight: C
-  };
-}
-function Dt(o, s = "") {
-  const t = te(!1);
-  return ge(
-    () => [Te(o), Te(s)],
-    async (e, n) => {
-      if (!(typeof document > "u")) {
-        if (t.value = !1, Array.isArray(n)) {
-          const a = document.getElementById(n[0]);
-          a && a.childElementCount === 0 && document.body.removeChild(a);
-        }
-        if (await ye(), !document.getElementById(e[0])) {
-          const a = document.createElement("div");
-          a.id = e[0], e[1] && (a.className = Jn(e[1])), document.body.appendChild(a);
-        }
-        t.value = !0;
-      }
-    },
-    { immediate: !0 }
-  ), { isReady: t };
-}
-const ua = ["innerHTML"], ca = {
-  key: 0,
-  class: "n-tooltip-overlay",
-  "aria-hidden": "true"
-}, da = ["innerHTML"], fa = ["innerHTML"], pa = /* @__PURE__ */ Q({
-  inheritAttrs: !1,
-  __name: "NTooltip",
-  props: /* @__PURE__ */ me({
-    tag: { default: "span" },
-    content: { default: "" },
-    showDelay: { default: 75 },
-    hideDelay: { default: 250 },
-    persistent: { type: Boolean, default: !1 },
-    hoverTriggerAnchor: {},
-    focusTriggerAnchor: {},
-    clickTriggerAnchor: {},
-    attachParent: {},
-    triggerByHover: { type: Boolean, default: !0 },
-    triggerByFocus: { type: Boolean, default: !0 },
-    triggerByInteraction: { type: Boolean, default: !1 },
-    allowClickToHide: { type: Boolean, default: !1 },
-    direction: { default: "bottom" },
-    position: { default: "" },
-    margin: { default: 8 },
-    offset: { default: () => [0, 0] },
-    autoReposition: { type: Boolean, default: !0 },
-    stacked: { type: Boolean, default: !1 },
-    overlay: { type: Boolean, default: !1 },
-    fit: { type: Boolean, default: !1 },
-    role: { default: "tooltip" }
-  }, {
-    modelValue: { type: Boolean, default: !1 },
-    modelModifiers: {}
-  }),
-  emits: ["update:modelValue"],
-  setup(o, { expose: s }) {
-    const t = se(), e = o, n = he(o, "modelValue"), a = We("contentRef"), { isReady: l } = Dt("n-tooltips-container"), c = te(null), r = te(null), i = f(() => r.value || c.value), u = () => {
-      e.attachParent ? r.value = _t(e.attachParent) : r.value = null;
-    }, d = f(() => `${e.direction}${e.position !== "" ? `-${e.position}` : ""}`), p = f(() => ({
-      ...e,
-      hoverTriggerAnchor: e.triggerByHover ? e.hoverTriggerAnchor : null,
-      focusTriggerAnchor: e.triggerByFocus ? e.focusTriggerAnchor : null,
-      clickTriggerAnchor: e.triggerByInteraction ? e.clickTriggerAnchor : null
-    })), {
-      show: g,
-      hide: w,
-      handleContentHoverFocusIn: k,
-      handleContentHoverFocusOut: C,
-      compStyles: h,
-      placement: y,
-      parentWidth: m
-    } = hn(p, {
-      model: f({
-        get: () => n.value,
-        set: (V) => {
-          n.value = V;
-        }
-      }),
-      contentRef: a,
-      attachParentEl: i,
-      placement: d
-    }), _ = f(() => {
-      const V = { ...h.value };
-      return e.fit && (V.width = `${m.value}px`), V;
-    }), O = f(() => ["n-tooltip", `n-tooltip--direction-${y.value}`]), N = f(() => {
-      const {
-        tag: V,
-        content: L,
-        showDelay: M,
-        hideDelay: G,
-        persistent: F,
-        hoverTriggerAnchor: W,
-        focusTriggerAnchor: pe,
-        clickTriggerAnchor: ue,
-        attachParent: q,
-        triggerByHover: ve,
-        triggerByFocus: Z,
-        triggerByInteraction: oe,
-        allowClickToHide: be,
-        direction: Ie,
-        position: De,
-        margin: Pe,
-        offset: Ne,
-        autoReposition: ke,
-        stacked: Ae,
-        overlay: ce,
-        fit: He,
-        role: Ce,
-        ...Qe
-      } = e;
-      return {
-        style: _.value,
-        onMouseenter: k,
-        onMouseleave: C,
-        onFocusin: k,
-        onFocusout: C,
-        ...Qe,
-        ...t
-      };
-    });
-    return cn(() => {
-      c.value = mn(), u();
-    }), ge(() => e.attachParent, u), s({ show: g, hide: w, contentRef: a }), (V, L) => e.stacked ? (v(), S(Se, {
-      key: 0,
-      name: "n-tooltip"
-    }, {
-      default: R(() => [
-        n.value ? (v(), S(H(e.tag), Y({
-          key: 0,
-          ref_key: "contentRef",
-          ref: a,
-          class: O.value,
-          role: e.role
-        }, N.value), {
-          default: R(() => [
-            $(V.$slots, "default", {}, () => [
-              e.content ? (v(), B("span", {
-                key: 0,
-                innerHTML: e.content
-              }, null, 8, ua)) : A("", !0)
-            ])
-          ]),
-          _: 3
-        }, 16, ["class", "role"])) : A("", !0)
-      ]),
-      _: 3
-    })) : fe(l) ? (v(), S(It, {
-      key: 1,
-      to: "#n-tooltips-container"
-    }, [
-      X(Se, {
-        name: e.overlay ? "n-tooltip-overlay" : "n-tooltip"
-      }, {
-        default: R(() => [
-          n.value && e.overlay ? (v(), B("div", ca, [
-            (v(), S(H(e.tag), Y({
-              ref_key: "contentRef",
-              ref: a,
-              class: O.value,
-              role: e.role
-            }, N.value), {
-              default: R(() => [
-                $(V.$slots, "default", {}, () => [
-                  e.content ? (v(), B("span", {
-                    key: 0,
-                    innerHTML: e.content
-                  }, null, 8, da)) : A("", !0)
-                ])
-              ]),
-              _: 3
-            }, 16, ["class", "role"]))
-          ])) : n.value ? (v(), S(H(e.tag), Y({
-            key: 1,
-            ref_key: "contentRef",
-            ref: a,
-            class: O.value,
-            role: e.role
-          }, N.value), {
-            default: R(() => [
-              $(V.$slots, "default", {}, () => [
-                e.content ? (v(), B("span", {
-                  key: 0,
-                  innerHTML: e.content
-                }, null, 8, fa)) : A("", !0)
-              ])
-            ]),
-            _: 3
-          }, 16, ["class", "role"])) : A("", !0)
-        ]),
-        _: 3
-      }, 8, ["name"])
-    ])) : A("", !0);
-  }
-});
-var gn = 60, yn = gn * 60, bn = yn * 24, va = bn * 7, ut = 1e3, Et = gn * ut, nn = yn * ut, ma = bn * ut, ha = va * ut, At = "millisecond", nt = "second", at = "minute", st = "hour", Be = "day", Ue = "week", xe = "month", kn = "quarter", Oe = "year", lt = "date", Cn = "YYYY-MM-DDTHH:mm:ssZ", an = "Invalid Date", ga = /^(\d{4})[-/]?(\d{1,2})?[-/]?(\d{0,2})[Tt\s]*(\d{1,2})?:?(\d{1,2})?:?(\d{1,2})?[.:]?(\d+)?$/, ya = /\[([^\]]+)]|Y{1,4}|M{1,4}|D{1,2}|d{1,4}|H{1,2}|h{1,2}|a|A|m{1,2}|s{1,2}|Z{1,2}|SSS/g;
-const ba = {
+var yn = 60, bn = yn * 60, kn = bn * 24, ua = kn * 7, ut = 1e3, Et = yn * ut, nn = bn * ut, ca = kn * ut, da = ua * ut, Dt = "millisecond", nt = "second", at = "minute", st = "hour", Be = "day", Ue = "week", xe = "month", Cn = "quarter", Oe = "year", lt = "date", wn = "YYYY-MM-DDTHH:mm:ssZ", an = "Invalid Date", fa = /^(\d{4})[-/]?(\d{1,2})?[-/]?(\d{0,2})[Tt\s]*(\d{1,2})?:?(\d{1,2})?:?(\d{1,2})?[.:]?(\d+)?$/, pa = /\[([^\]]+)]|Y{1,4}|M{1,4}|D{1,2}|d{1,4}|H{1,2}|h{1,2}|a|A|m{1,2}|s{1,2}|Z{1,2}|SSS/g;
+const va = {
   name: "en",
   weekdays: "Sunday_Monday_Tuesday_Wednesday_Thursday_Friday_Saturday".split("_"),
   months: "January_February_March_April_May_June_July_August_September_October_November_December".split("_"),
@@ -660,16 +393,16 @@ const ba = {
 var Ht = function(s, t, e) {
   var n = String(s);
   return !n || n.length >= t ? s : "" + Array(t + 1 - n.length).join(e) + s;
-}, ka = function(s) {
+}, ma = function(s) {
   var t = -s.utcOffset(), e = Math.abs(t), n = Math.floor(e / 60), a = e % 60;
   return (t <= 0 ? "+" : "-") + Ht(n, 2, "0") + ":" + Ht(a, 2, "0");
-}, Ca = function o(s, t) {
+}, ha = function o(s, t) {
   if (s.date() < t.date()) return -o(t, s);
   var e = (t.year() - s.year()) * 12 + (t.month() - s.month()), n = s.clone().add(e, xe), a = t - n < 0, l = s.clone().add(e + (a ? -1 : 1), xe);
   return +(-(e + (t - n) / (a ? n - l : l - n)) || 0);
-}, wa = function(s) {
+}, ga = function(s) {
   return s < 0 ? Math.ceil(s) || 0 : Math.floor(s);
-}, $a = function(s) {
+}, ya = function(s) {
   var t = {
     M: xe,
     y: Oe,
@@ -679,25 +412,25 @@ var Ht = function(s, t, e) {
     h: st,
     m: at,
     s: nt,
-    ms: At,
-    Q: kn
+    ms: Dt,
+    Q: Cn
   };
   return t[s] || String(s || "").toLowerCase().replace(/s$/, "");
-}, Ia = function(s) {
+}, ba = function(s) {
   return s === void 0;
 };
-const Sa = {
+const ka = {
   s: Ht,
-  z: ka,
-  m: Ca,
-  a: wa,
-  p: $a,
-  u: Ia
+  z: ma,
+  m: ha,
+  a: ga,
+  p: ya,
+  u: ba
 };
 var mt = "en", Xe = {};
-Xe[mt] = ba;
-var wn = "$isDayjsObject", Wt = function(s) {
-  return s instanceof Mt || !!(s && s[wn]);
+Xe[mt] = va;
+var $n = "$isDayjsObject", Wt = function(s) {
+  return s instanceof At || !!(s && s[$n]);
 }, $t = function o(s, t, e) {
   var n;
   if (!s) return mt;
@@ -716,8 +449,8 @@ var wn = "$isDayjsObject", Wt = function(s) {
   if (Wt(s))
     return s.clone();
   var e = typeof t == "object" ? t : {};
-  return e.date = s, e.args = arguments, new Mt(e);
-}, _a = function(s, t) {
+  return e.date = s, e.args = arguments, new At(e);
+}, Ca = function(s, t) {
   return x(s, {
     locale: t.$L,
     utc: t.$u,
@@ -725,30 +458,30 @@ var wn = "$isDayjsObject", Wt = function(s) {
     $offset: t.$offset
     // todo: refactor; do not use this.$offset in you code
   });
-}, ee = Sa;
+}, ee = ka;
 ee.l = $t;
 ee.i = Wt;
-ee.w = _a;
-var Da = function(s) {
+ee.w = Ca;
+var wa = function(s) {
   var t = s.date, e = s.utc;
   if (t === null) return /* @__PURE__ */ new Date(NaN);
   if (ee.u(t)) return /* @__PURE__ */ new Date();
   if (t instanceof Date) return new Date(t);
   if (typeof t == "string" && !/Z$/i.test(t)) {
-    var n = t.match(ga);
+    var n = t.match(fa);
     if (n) {
       var a = n[2] - 1 || 0, l = (n[7] || "0").substring(0, 3);
       return e ? new Date(Date.UTC(n[1], a, n[3] || 1, n[4] || 0, n[5] || 0, n[6] || 0, l)) : new Date(n[1], a, n[3] || 1, n[4] || 0, n[5] || 0, n[6] || 0, l);
     }
   }
   return new Date(t);
-}, Mt = /* @__PURE__ */ (function() {
+}, At = /* @__PURE__ */ (function() {
   function o(t) {
-    this.$L = $t(t.locale, null, !0), this.parse(t), this.$x = this.$x || t.x || {}, this[wn] = !0;
+    this.$L = $t(t.locale, null, !0), this.parse(t), this.$x = this.$x || t.x || {}, this[$n] = !0;
   }
   var s = o.prototype;
   return s.parse = function(e) {
-    this.$d = Da(e), this.init();
+    this.$d = wa(e), this.init();
   }, s.init = function() {
     var e = this.$d;
     this.$y = e.getFullYear(), this.$M = e.getMonth(), this.$D = e.getDate(), this.$W = e.getDay(), this.$H = e.getHours(), this.$m = e.getMinutes(), this.$s = e.getSeconds(), this.$ms = e.getMilliseconds();
@@ -805,7 +538,7 @@ var Da = function(s) {
   }, s.endOf = function(e) {
     return this.startOf(e, !1);
   }, s.$set = function(e, n) {
-    var a, l = ee.p(e), c = "set" + (this.$u ? "UTC" : ""), r = (a = {}, a[Be] = c + "Date", a[lt] = c + "Date", a[xe] = c + "Month", a[Oe] = c + "FullYear", a[st] = c + "Hours", a[at] = c + "Minutes", a[nt] = c + "Seconds", a[At] = c + "Milliseconds", a)[l], i = l === Be ? this.$D + (n - this.$W) : n;
+    var a, l = ee.p(e), c = "set" + (this.$u ? "UTC" : ""), r = (a = {}, a[Be] = c + "Date", a[lt] = c + "Date", a[xe] = c + "Month", a[Oe] = c + "FullYear", a[st] = c + "Hours", a[at] = c + "Minutes", a[nt] = c + "Seconds", a[Dt] = c + "Milliseconds", a)[l], i = l === Be ? this.$D + (n - this.$W) : n;
     if (l === xe || l === Oe) {
       var u = this.clone().set(lt, 1);
       u.$d[r](i), u.init(), this.$d = u.set(lt, Math.min(this.$D, u.daysInMonth())).$d;
@@ -837,7 +570,7 @@ var Da = function(s) {
   }, s.format = function(e) {
     var n = this, a = this.$locale();
     if (!this.isValid()) return a.invalidDate || an;
-    var l = e || Cn, c = ee.z(this), r = this.$H, i = this.$m, u = this.$M, d = a.weekdays, p = a.months, g = a.meridiem, w = function(m, _, O, N) {
+    var l = e || wn, c = ee.z(this), r = this.$H, i = this.$m, u = this.$M, d = a.weekdays, p = a.months, g = a.meridiem, w = function(m, _, O, N) {
       return m && (m[_] || m(n, l)) || O[_].slice(0, N);
     }, k = function(m) {
       return ee.s(r % 12 || 12, m, "0");
@@ -897,7 +630,7 @@ var Da = function(s) {
       }
       return null;
     };
-    return l.replace(ya, function(y, m) {
+    return l.replace(pa, function(y, m) {
       return m || h(y) || c.replace(":", "");
     });
   }, s.utcOffset = function() {
@@ -913,14 +646,14 @@ var Da = function(s) {
       case xe:
         p = d();
         break;
-      case kn:
+      case Cn:
         p = d() / 3;
         break;
       case Ue:
-        p = (u - i) / ha;
+        p = (u - i) / da;
         break;
       case Be:
-        p = (u - i) / ma;
+        p = (u - i) / ca;
         break;
       case st:
         p = u / nn;
@@ -955,15 +688,15 @@ var Da = function(s) {
   }, s.toString = function() {
     return this.$d.toUTCString();
   }, o;
-})(), $n = Mt.prototype;
-x.prototype = $n;
-[["$ms", At], ["$s", nt], ["$m", at], ["$H", st], ["$W", Be], ["$M", xe], ["$y", Oe], ["$D", lt]].forEach(function(o) {
-  $n[o[1]] = function(s) {
+})(), In = At.prototype;
+x.prototype = In;
+[["$ms", Dt], ["$s", nt], ["$m", at], ["$H", st], ["$W", Be], ["$M", xe], ["$y", Oe], ["$D", lt]].forEach(function(o) {
+  In[o[1]] = function(s) {
     return this.$g(s, o[0], o[1]);
   };
 });
 x.extend = function(o, s) {
-  return o.$i || (o(s, Mt, x), o.$i = !0), x;
+  return o.$i || (o(s, At, x), o.$i = !0), x;
 };
 x.locale = $t;
 x.isDayjs = Wt;
@@ -973,13 +706,13 @@ x.unix = function(o) {
 x.en = Xe[mt];
 x.Ls = Xe;
 x.p = {};
-const Aa = (function(o, s) {
+const $a = (function(o, s) {
   var t = s.prototype, e = t.format;
   t.format = function(n) {
     var a = this, l = this.$locale();
     if (!this.isValid())
       return e.bind(this)(n);
-    var c = this.$utils(), r = n || Cn, i = r.replace(/\[([^\]]+)]|Q|wo|ww|w|WW|W|zzz|z|gggg|GGGG|Do|X|x|k{1,2}|S/g, function(u) {
+    var c = this.$utils(), r = n || wn, i = r.replace(/\[([^\]]+)]|Q|wo|ww|w|WW|W|zzz|z|gggg|GGGG|Do|X|x|k{1,2}|S/g, function(u) {
       switch (u) {
         case "Q":
           return Math.ceil((a.$M + 1) / 3);
@@ -1016,8 +749,8 @@ const Aa = (function(o, s) {
     return e.bind(this)(i);
   };
 });
-var Ma = "isoweek";
-const Ta = (function(o, s, t) {
+var Ia = "isoweek";
+const Sa = (function(o, s, t) {
   var e = function(r, i) {
     var u = (i ? t.utc : t)().year(r).startOf(Oe), d = 4 - u.isoWeekday();
     return u.isoWeekday() > 4 && (d += 7), u.add(d, Be);
@@ -1038,23 +771,23 @@ const Ta = (function(o, s, t) {
   var l = a.startOf;
   a.startOf = function(c, r) {
     var i = this.$utils(), u = i.u(r) ? !0 : r, d = i.p(c);
-    return d === Ma ? u ? this.date(this.date() - (this.isoWeekday() - 1)).startOf("day") : this.date(this.date() - 1 - (this.isoWeekday() - 1) + 7).endOf("day") : l.bind(this)(c, r);
+    return d === Ia ? u ? this.date(this.date() - (this.isoWeekday() - 1)).startOf("day") : this.date(this.date() - 1 - (this.isoWeekday() - 1) + 7).endOf("day") : l.bind(this)(c, r);
   };
-}), Ba = (function(o, s) {
+}), _a = (function(o, s) {
   s.prototype.isSameOrAfter = function(t, e) {
     return this.isSame(t, e) || this.isAfter(t, e);
   };
-}), Oa = (function(o, s) {
+}), Da = (function(o, s) {
   s.prototype.isSameOrBefore = function(t, e) {
     return this.isSame(t, e) || this.isBefore(t, e);
   };
 });
-var Na = function(s) {
+var Aa = function(s) {
   return s.replace(/(\[[^\]]+])|(MMMM|MM|DD|dddd)/g, function(t, e, n) {
     return e || n.slice(1);
   });
 };
-const Fa = (function(o, s, t) {
+const Ma = (function(o, s, t) {
   var e = s.prototype, n = function(u) {
     return u && (u.indexOf ? u : u.s);
   }, a = function(u, d, p, g, w) {
@@ -1069,7 +802,7 @@ const Fa = (function(o, s, t) {
   }, l = function() {
     return t.Ls[t.locale()];
   }, c = function(u, d) {
-    return u.formats[d] || Na(u.formats[d.toUpperCase()]);
+    return u.formats[d] || Aa(u.formats[d.toUpperCase()]);
   }, r = function() {
     var u = this;
     return {
@@ -1138,7 +871,7 @@ const Fa = (function(o, s, t) {
   }, t.weekdaysMin = function(i) {
     return a(l(), "weekdaysMin", "weekdays", 2, i);
   };
-}), xa = (function(o, s, t) {
+}), Ta = (function(o, s, t) {
   t.updateLocale = function(e, n) {
     var a = t.Ls, l = a[e];
     if (l) {
@@ -1148,13 +881,13 @@ const Fa = (function(o, s, t) {
       }), l;
     }
   };
-}), La = (function(o, s) {
+}), Ba = (function(o, s) {
   var t = s.prototype;
   t.weekday = function(e) {
     var n = this.$locale().weekStart || 0, a = this.$W, l = (a < n ? a + 7 : a) - n;
     return this.$utils().u(e) ? l : this.subtract(l, "day").add(e, "day");
   };
-}), Ra = (function(o, s, t) {
+}), Oa = (function(o, s, t) {
   var e = s.prototype;
   e.week = function(n) {
     if (n === void 0 && (n = null), n !== null)
@@ -1165,33 +898,33 @@ const Fa = (function(o, s, t) {
       if (l.isBefore(c))
         return 1;
     }
-    var r = t(this).startOf(Oe).date(a), i = r.startOf(Ue).subtract(1, At), u = this.diff(i, Ue, !0);
+    var r = t(this).startOf(Oe).date(a), i = r.startOf(Ue).subtract(1, Dt), u = this.diff(i, Ue, !0);
     return u < 0 ? t(this).startOf("week").week() : Math.ceil(u);
   }, e.weeks = function(n) {
     return n === void 0 && (n = null), this.week(n);
   };
-}), Ea = (function(o, s) {
+}), Na = (function(o, s) {
   var t = s.prototype;
   t.isLeapYear = function() {
     return this.$y % 4 === 0 && this.$y % 100 !== 0 || this.$y % 400 === 0;
   };
-}), Va = (function(o, s) {
+}), Fa = (function(o, s) {
   var t = s.prototype;
   t.isoWeeksInYear = function() {
     var e = this.isLeapYear(), n = this.endOf("y"), a = n.day();
     return a === 4 || e && a === 5 ? 53 : 52;
   };
 });
-x.extend(Aa);
+x.extend($a);
+x.extend(Sa);
+x.extend(_a);
+x.extend(Da);
+x.extend(Ma);
 x.extend(Ta);
 x.extend(Ba);
 x.extend(Oa);
+x.extend(Na);
 x.extend(Fa);
-x.extend(xa);
-x.extend(La);
-x.extend(Ra);
-x.extend(Ea);
-x.extend(Va);
 function ze(o) {
   if (!o || o.length === 0) return [];
   const s = [];
@@ -1251,14 +984,14 @@ function it(o, s) {
       }
   return !1;
 }
-function Pa(o, s, t = 0) {
+function xa(o, s, t = 0) {
   let e = x(`${o}-${String(s + 1).padStart(2, "0")}-01`);
   return t !== 0 && (e = e.add(t, "week")), {
     year: e.isoWeekYear(),
     week: e.isoWeek()
   };
 }
-function Ha(o, s, t) {
+function La(o, s, t) {
   if (!t || t.length === 0)
     return [
       {
@@ -1292,7 +1025,7 @@ function sn(o, s, t) {
   }
   return !0;
 }
-function Ya(o) {
+function Ra(o) {
   const {
     start: s,
     daysCount: t,
@@ -1329,7 +1062,7 @@ function Ya(o) {
   }
   return d;
 }
-function Wa(o, s) {
+function Ea(o, s) {
   if (!o || o.length === 0) return o;
   const t = o.findIndex((n) => {
     if (typeof n == "object" && n !== null && "begin" in n) {
@@ -1342,7 +1075,7 @@ function Wa(o, s) {
   const e = [...o];
   return e.splice(t, 1), e;
 }
-const za = ["aria-label"], Ua = ["aria-multiselectable"], ja = ["aria-label", "aria-selected", "aria-disabled", "tabindex", "onClick", "onMouseenter", "onFocus", "onKeydown"], Ka = { class: "n-calendar-view-day-number" }, Gs = /* @__PURE__ */ Q({
+const Va = ["aria-label"], Pa = ["aria-multiselectable"], Ha = ["aria-label", "aria-selected", "aria-disabled", "tabindex", "onClick", "onMouseenter", "onFocus", "onKeydown"], Ya = { class: "n-calendar-view-day-number" }, Gs = /* @__PURE__ */ Q({
   __name: "NCalendar",
   props: {
     modelValue: { default: () => [] },
@@ -1395,7 +1128,7 @@ const za = ["aria-label"], Ua = ["aria-multiselectable"], ja = ["aria-label", "a
       gridClass: M,
       gridCellClass: G,
       views: F
-    } = xn(e), W = te(null), pe = te(null), ue = te(x().format("YYYY-MM-DD")), q = /* @__PURE__ */ new Map(), ve = f(() => de("n-calendar-container", V.value)), Z = (E, J) => {
+    } = Rn(e), W = te(null), pe = te(null), ue = te(x().format("YYYY-MM-DD")), q = /* @__PURE__ */ new Map(), ve = f(() => de("n-calendar-container", V.value)), Z = (E, J) => {
       E ? q.set(J, E) : q.delete(J);
     }, oe = async () => {
       await ye();
@@ -1452,7 +1185,7 @@ const za = ["aria-label"], Ua = ["aria-multiselectable"], ja = ["aria-label", "a
           const Re = (i.value ?? 6) * 7;
           Rt = b.add(ae * Re, "day");
         }
-        const Nn = Ya({
+        const Nn = Ra({
           start: Rt,
           daysCount: Ut * 7,
           activeMonth: jt,
@@ -1484,7 +1217,7 @@ const za = ["aria-label"], Ua = ["aria-multiselectable"], ja = ["aria-label", "a
     });
     ge(() => ke.value, oe);
     function Ae(E, J) {
-      const b = J !== void 0 ? Number(J) : l.value, { year: D, week: I } = Pa(b, E);
+      const b = J !== void 0 ? Number(J) : l.value, { year: D, week: I } = xa(b, E);
       n("update:viewingYear", D), n("update:viewingWeek", I);
     }
     s({
@@ -1534,7 +1267,7 @@ const za = ["aria-label"], Ua = ["aria-multiselectable"], ja = ["aria-label", "a
           end: ae.format("YYYY-MM-DD")
         };
         if (w.value) {
-          const re = Wa(J, U);
+          const re = Ea(J, U);
           if (re.length < J.length) {
             p.value ? n("update:modelValue", ze(re)) : n("update:modelValue", null), Ce();
             return;
@@ -1545,7 +1278,7 @@ const za = ["aria-label"], Ua = ["aria-multiselectable"], ja = ["aria-label", "a
           maxRange: h.value,
           disabled: De.value
         })) {
-          const re = Ha(P, ae, Pe.value);
+          const re = La(P, ae, Pe.value);
           if (re.length > 0) {
             p.value ? J.push(...re) : J = re;
             const Me = ze(J);
@@ -1605,7 +1338,7 @@ const za = ["aria-label"], Ua = ["aria-multiselectable"], ja = ["aria-label", "a
                 }, () => [
                   gt(ie(I), 1)
                 ])
-              ], 10, za))), 128))
+              ], 10, Va))), 128))
             ], 2)
           ]),
           K("div", {
@@ -1650,10 +1383,10 @@ const za = ["aria-label"], Ua = ["aria-multiselectable"], ja = ["aria-label", "a
                 day: I,
                 calendarIndex: D
               }, () => [
-                K("span", Ka, ie(I.dayOfMonth), 1)
+                K("span", Ya, ie(I.dayOfMonth), 1)
               ]) : A("", !0)
-            ], 42, ja))), 128))
-          ], 42, Ua),
+            ], 42, Ha))), 128))
+          ], 42, Pa),
           $(E.$slots, "calendar-footer", {
             index: D,
             startDate: b.days[0]?.date,
@@ -1663,10 +1396,10 @@ const za = ["aria-label"], Ua = ["aria-multiselectable"], ja = ["aria-label", "a
       ], 2)
     ], 32));
   }
-}), Ga = {
+}), Wa = {
   key: 1,
   class: "n-card-body"
-}, Za = /* @__PURE__ */ Q({
+}, za = /* @__PURE__ */ Q({
   inheritAttrs: !1,
   __name: "NCard",
   props: {
@@ -1691,7 +1424,7 @@ const za = ["aria-label"], Ua = ["aria-multiselectable"], ja = ["aria-label", "a
       return a.value === "RouterLink" ? (d.to = e.to, d.target = e.target) : a.value === "a" && (d.href = e.href, d.target = e.target), d;
     }), r = f(() => {
       const d = s.default?.() ?? [];
-      return d.length === 0 ? !1 : d.length > 0 && ta(d[0], ["n-card-body"]) ? !0 : d.length > 1;
+      return d.length === 0 ? !1 : d.length > 0 && sa(d[0], ["n-card-body"]) ? !0 : d.length > 1;
     });
     function i(d) {
       if (e.disabled) {
@@ -1719,7 +1452,7 @@ const za = ["aria-label"], Ua = ["aria-multiselectable"], ja = ["aria-label", "a
       onKeydown: u
     }), {
       default: R(() => [
-        r.value ? $(d.$slots, "default", { key: 0 }) : (v(), B("div", Ga, [
+        r.value ? $(d.$slots, "default", { key: 0 }) : (v(), B("div", Wa, [
           $(d.$slots, "default")
         ])),
         $(d.$slots, "loading", {}, () => [
@@ -1740,160 +1473,205 @@ const za = ["aria-label"], Ua = ["aria-multiselectable"], ja = ["aria-label", "a
       _: 3
     }, 16, ["class", "role", "tabindex", "aria-disabled", "aria-busy"]));
   }
-}), Zs = /* @__PURE__ */ Q({
+}), Ua = ["name", ".indeterminate"], ja = { class: "n-checkbox-display" }, Ka = {
+  key: 3,
+  class: "n-checkbox-overlay"
+}, Ga = {
+  key: 1,
+  class: "n-checkbox-message"
+}, Zs = /* @__PURE__ */ Q({
   inheritAttrs: !1,
-  __name: "NTabs",
+  __name: "NCheckbox",
   props: /* @__PURE__ */ me({
-    tag: { default: "div" },
-    multiple: { type: Boolean, default: !1 }
-  }, {
-    modelValue: {},
-    modelModifiers: {}
-  }),
-  emits: ["update:modelValue"],
-  setup(o) {
-    const s = $e(), t = se(), e = he(o, "modelValue"), n = o, a = _e(), l = te([]), c = te(null), r = f(() => e.value !== void 0 && e.value !== null), i = f(() => p.value.some((m) => g(m))), u = f(() => ["n-tabs"]), d = f(() => ({
-      ...t
-    })), p = f(() => {
-      const m = s.default?.() ?? [];
-      return !m || m.length === 0 ? [] : (Array.isArray(m) ? m : [m]).map((N) => kt(N, "NTab") ? N : null).filter((N) => !!N);
-    });
-    function g(m) {
-      return !r.value || !m.props?.name ? !1 : n.multiple && Array.isArray(e.value) ? e.value.includes(m.props?.name) : m.props?.name === e.value;
-    }
-    function w(m, _) {
-      return !r.value || g(m) || !i.value && _ === 0 ? 0 : -1;
-    }
-    function k(m, _) {
-      return m.props?.id || `n-tab-${a}-${_}`;
-    }
-    function C(m, _) {
-      m && (l.value[_] = m.$el || m);
-    }
-    function h(m) {
-      if (!(!r.value || !m.props?.name))
-        if (n.multiple && Array.isArray(e.value)) {
-          const _ = e.value.indexOf(m.props?.name);
-          _ >= 0 ? e.value = e.value.toSpliced(_, 1) : e.value = [...e.value, m.props?.name];
-        } else
-          e.value = m.props?.name ?? "";
-    }
-    function y(m) {
-      const _ = l.value.filter(
-        (L) => !L.hasAttribute("disabled") && L.getAttribute("aria-disabled") !== "true"
-      );
-      if (_.length === 0) return;
-      const O = document.activeElement, N = _.indexOf(O);
-      let V = -1;
-      switch (m.key) {
-        case "ArrowRight":
-        case "ArrowDown":
-          V = (N + 1) % _.length, m.preventDefault();
-          break;
-        case "ArrowLeft":
-        case "ArrowUp":
-          V = (N - 1 + _.length) % _.length, m.preventDefault();
-          break;
-        case "Home":
-          V = 0, m.preventDefault();
-          break;
-        case "End":
-          V = _.length - 1, m.preventDefault();
-          break;
-      }
-      V !== -1 && (_[V].focus(), r.value && !n.multiple && _[V].click());
-    }
-    return (m, _) => (v(), S(H(n.tag), Y({
-      ref_key: "tabListRef",
-      ref: c,
-      class: u.value
-    }, d.value, {
-      role: r.value ? "tablist" : "group",
-      onKeydown: y
-    }), {
-      default: R(() => [
-        (v(!0), B(ne, null, le(p.value, (O, N) => (v(), S(H(O), {
-          key: N,
-          id: k(O, N),
-          ref_for: !0,
-          ref: (V) => C(V, N),
-          class: T([g(O) ? "n-tab--active" : ""]),
-          role: r.value ? "tab" : void 0,
-          "aria-selected": r.value ? g(O) ? "true" : "false" : void 0,
-          tabindex: w(O, N),
-          onClick: () => h(O)
-        }, null, 8, ["id", "class", "role", "aria-selected", "tabindex", "onClick"]))), 128))
-      ]),
-      _: 1
-    }, 16, ["class", "role"]));
-  }
-}), Xa = { key: 1 }, Xs = /* @__PURE__ */ Q({
-  inheritAttrs: !1,
-  __name: "NTab",
-  props: {
-    name: {},
+    tag: { default: "label" },
+    name: { default: "" },
+    label: { default: "" },
+    inlineLabel: { type: Boolean, default: !1 },
     icon: {},
     iconClass: {},
     prependIcon: {},
     prependIconClass: {},
     appendIcon: {},
     appendIconClass: {},
-    label: {},
-    tag: { default: "button" },
-    type: { default: "button" },
-    loading: { type: Boolean },
-    loadingName: { default: "loading" },
-    loadingClass: {},
-    to: {},
-    href: {},
-    target: {}
-  },
+    inputClass: {},
+    message: {},
+    helperText: {},
+    uncheckedIcon: { default: "" },
+    uncheckedIconClass: {},
+    checkedIcon: { default: "mdi-check-bold" },
+    checkedIconClass: {},
+    indeterminateIcon: { default: "mdi-minus" },
+    indeterminateIconClass: {},
+    size: { default: "medium" }
+  }, {
+    modelValue: { type: [Boolean, null], default: null },
+    modelModifiers: {}
+  }),
+  emits: ["update:modelValue"],
   setup(o) {
-    const s = $e(), t = se(), e = o, n = f(() => ["n-tab", e.loading ? "n-tab--loading" : ""]), a = f(() => e.to ? "RouterLink" : e.href ? "a" : e.tag), l = f(() => de(e.iconClass, e.prependIconClass)), c = f(() => {
-      const i = { ...t };
-      return a.value === "RouterLink" ? (i.to = e.to, i.target = e.target) : a.value === "a" && (i.href = e.href, i.target = e.target), i;
-    }), r = f(() => we(s.default?.() ?? [], "span"));
-    return (i, u) => (v(), S(H(a.value), Y({
-      class: n.value,
-      type: e.type,
-      disabled: fe(t).disabled || e.loading,
-      "aria-disabled": fe(t).disabled || e.loading ? "true" : void 0,
-      "aria-busy": e.loading ? "true" : void 0
-    }, c.value), {
-      default: R(() => [
-        $(i.$slots, "loading", {}, () => [
-          X(Se, { name: "n-loading-overlay" }, {
-            default: R(() => [
-              e.loading ? (v(), S(dt, {
+    const s = $e(), t = se(), e = o, [n, a] = he(o, "modelValue"), l = `input-id-${_e()}`, c = f(() => ["n-checkbox"]), r = f(() => ["n-checkbox-container"]), i = f(() => ["n-checkbox-wrapper", e.size ? `n-checkbox--${e.size}` : ""]), u = f(() => ["n-checkbox-label"]), d = f(() => de(e.iconClass, e.prependIconClass)), p = f(() => {
+      const { class: h, style: y } = t;
+      return { class: h, style: y };
+    }), g = f(() => {
+      const { class: h, style: y, ...m } = t;
+      return m;
+    }), w = f(() => ({
+      ...e,
+      modifiers: a,
+      inputId: l,
+      modelValue: n.value
+    })), k = f(() => we(s.before?.(w.value) ?? [], "span")), C = f(() => we(s.after?.(w.value) ?? [], "span"));
+    return (h, y) => (v(), B("div", {
+      class: T(i.value)
+    }, [
+      (v(!0), B(ne, null, le(k.value, (m, _) => (v(), S(H(m), { key: _ }))), 128)),
+      K("div", {
+        class: T(r.value)
+      }, [
+        !e.inlineLabel && (e.label || h.$slots.label) ? $(h.$slots, "label", { key: 0 }, () => [
+          K("label", {
+            class: T(u.value),
+            for: l
+          }, ie(e.label), 3)
+        ]) : A("", !0),
+        $(h.$slots, "top"),
+        (v(), S(H(e.tag), Y({ class: c.value }, p.value), {
+          default: R(() => [
+            $(h.$slots, "prepend"),
+            e.prependIcon || e.icon ? (v(), S(z, {
+              key: 0,
+              name: e.prependIcon || e.icon,
+              class: T(d.value),
+              "aria-hidden": "true"
+            }, null, 8, ["name", "class"])) : A("", !0),
+            qe(K("input", Y({
+              id: l,
+              "onUpdate:modelValue": y[0] || (y[0] = (m) => Yt(n) ? n.value = m : null),
+              name: e.name,
+              type: "checkbox",
+              class: ["peer", e.inputClass],
+              ".indeterminate": fe(n) === null
+            }, g.value), null, 48, Ua), [
+              [cn, fe(n)]
+            ]),
+            K("div", ja, [
+              e.uncheckedIcon ? (v(), S(z, {
                 key: 0,
-                overlay: !0,
-                name: e.loadingName,
-                class: T(e.loadingClass),
+                name: e.uncheckedIcon,
+                class: T(["n-checkbox-display-unchecked", e.uncheckedIconClass]),
+                "aria-hidden": "true"
+              }, null, 8, ["name", "class"])) : A("", !0),
+              e.checkedIcon ? (v(), S(z, {
+                key: 1,
+                name: e.checkedIcon,
+                class: T(["n-checkbox-display-checked", e.checkedIconClass]),
+                "aria-hidden": "true"
+              }, null, 8, ["name", "class"])) : A("", !0),
+              e.indeterminateIcon ? (v(), S(z, {
+                key: 2,
+                name: e.indeterminateIcon,
+                class: T(["n-checkbox-display-indeterminate", e.indeterminateIconClass]),
                 "aria-hidden": "true"
               }, null, 8, ["name", "class"])) : A("", !0)
             ]),
-            _: 1
-          })
-        ]),
-        $(i.$slots, "prepend"),
+            $(h.$slots, "default", Ye(Ke(w.value))),
+            e.inlineLabel && (e.label || h.$slots.label) ? $(h.$slots, "inlineLabel", { key: 1 }, () => [
+              K("label", {
+                class: T(u.value),
+                for: l
+              }, ie(e.label), 3)
+            ]) : A("", !0),
+            e.appendIcon ? (v(), S(z, {
+              key: 2,
+              name: e.appendIcon,
+              class: T(e.appendIconClass),
+              "aria-hidden": "true"
+            }, null, 8, ["name", "class"])) : A("", !0),
+            $(h.$slots, "append"),
+            h.$slots.overlay ? (v(), B("div", Ka, [
+              $(h.$slots, "overlay")
+            ])) : A("", !0)
+          ]),
+          _: 3
+        }, 16, ["class"])),
+        $(h.$slots, "dropdown"),
+        $(h.$slots, "bottom"),
+        e.message || e.helperText ? (v(), B("div", Ga, ie(e.message || e.helperText), 1)) : A("", !0)
+      ], 2),
+      (v(!0), B(ne, null, le(C.value, (m, _) => (v(), S(H(m), { key: _ }))), 128))
+    ], 2));
+  }
+}), Za = { key: 1 }, Xa = /* @__PURE__ */ Q({
+  inheritAttrs: !1,
+  __name: "NChip",
+  props: {
+    icon: {},
+    prependIcon: {},
+    appendIcon: {},
+    tag: { default: "span" },
+    label: {},
+    removable: { type: Boolean },
+    removableClass: {},
+    clickable: { type: Boolean },
+    to: {},
+    href: {},
+    target: {},
+    disabled: { type: Boolean }
+  },
+  emits: ["click", "remove"],
+  setup(o, { emit: s }) {
+    const t = se(), e = o, n = s, a = f(() => !e.disabled && (e.to || e.href || !!t.onClick)), l = f(() => e.to && !e.disabled ? "RouterLink" : e.href && !e.disabled ? "a" : e.tag), c = f(() => ["n-chip", a.value ? "n-chip--clickable" : "", e.disabled ? "n-chip--disabled" : ""]), r = f(() => {
+      const d = { ...t };
+      return l.value === "RouterLink" ? (d.to = e.to, d.target = e.target) : l.value === "a" && (d.href = e.href, d.target = e.target), d;
+    });
+    function i() {
+      n("remove");
+    }
+    function u(d) {
+      if (e.disabled) {
+        d.preventDefault(), d.stopPropagation();
+        return;
+      }
+      a.value && n("click", d);
+    }
+    return (d, p) => (v(), S(H(l.value), Y({
+      class: c.value,
+      role: a.value && l.value === "span" ? "button" : void 0,
+      tabindex: a.value && l.value === "span" ? 0 : void 0,
+      "aria-disabled": e.disabled ? "true" : void 0
+    }, r.value, {
+      onClick: u,
+      onKeydown: Ze(Ee(u, ["prevent"]), ["enter", "space"])
+    }), {
+      default: R(() => [
+        $(d.$slots, "prepend"),
         e.prependIcon || e.icon ? (v(), S(z, {
           key: 0,
           name: e.prependIcon || e.icon,
-          class: T(l.value),
           "aria-hidden": "true"
-        }, null, 8, ["name", "class"])) : A("", !0),
-        e.label ? (v(), B("span", Xa, ie(e.label), 1)) : A("", !0),
-        (v(!0), B(ne, null, le(r.value, (d, p) => (v(), S(H(d), { key: p }))), 128)),
+        }, null, 8, ["name"])) : A("", !0),
+        e.label || d.$slots.default ? (v(), B("span", Za, [
+          $(d.$slots, "default", {}, () => [
+            gt(ie(e.label), 1)
+          ])
+        ])) : A("", !0),
         e.appendIcon ? (v(), S(z, {
           key: 2,
           name: e.appendIcon,
-          class: T(e.appendIconClass),
           "aria-hidden": "true"
-        }, null, 8, ["name", "class"])) : A("", !0),
-        $(i.$slots, "append")
+        }, null, 8, ["name"])) : A("", !0),
+        $(d.$slots, "append"),
+        e.removable ? $(d.$slots, "removable", { key: 3 }, () => [
+          X(z, {
+            name: "mdi-close",
+            class: T(e.removableClass),
+            clickable: "",
+            onClick: Ee(i, ["stop"])
+          }, null, 8, ["class"])
+        ]) : A("", !0)
       ]),
       _: 3
-    }, 16, ["class", "type", "disabled", "aria-disabled", "aria-busy"]));
+    }, 16, ["class", "role", "tabindex", "aria-disabled", "onKeydown"]));
   }
 });
 typeof WorkerGlobalScope < "u" && globalThis instanceof WorkerGlobalScope;
@@ -1905,13 +1683,13 @@ function qa(o, s = {}) {
   }, u = () => {
     t && (t.unpause(), l.value = !1);
   };
-  return ge(f(() => Kn(Te(o)).map((d) => {
+  return ge(f(() => zn(Te(o)).map((d) => {
     const p = Te(d);
-    return typeof p == "string" ? p : Gn(p);
+    return typeof p == "string" ? p : Un(p);
   }).filter(Ja)), (d) => {
     if (d.length)
       if (!t)
-        t = Qn(d, {
+        t = Zn(d, {
           ...n,
           onActivate() {
             a.value = !0, s.onActivate && s.onActivate();
@@ -1924,7 +1702,7 @@ function qa(o, s = {}) {
         const p = t?.active;
         t?.updateContainerElements(d), !p && e && c();
       }
-  }, { flush: "post" }), Zn(() => r()), {
+  }, { flush: "post" }), jn(() => r()), {
     hasFocus: a,
     isPaused: l,
     activate: c,
@@ -1933,7 +1711,7 @@ function qa(o, s = {}) {
     unpause: u
   };
 }
-function In(o, s, t, e, n) {
+function Sn(o, s, t, e, n) {
   const {
     activate: a,
     deactivate: l,
@@ -1967,16 +1745,16 @@ function In(o, s, t, e, n) {
   }
   return ge(o, async (k) => {
     if (await ye(), !k) {
-      t.value && (typeof n?.hide == "number" && await tn(n.hide), l());
+      t.value && (typeof n?.hide == "number" && await Qt(n.hide), l());
       return;
     }
     const C = g(s.value);
-    e.value && C && (typeof n?.show == "number" && await tn(n.show), t.value ? a() : C.focus());
+    e.value && C && (typeof n?.show == "number" && await Qt(n.show), t.value ? a() : C.focus());
   }), { isFocusTrapped: c, pause: d, unpause: p, focusContent: () => {
     s.value && s.value.focus();
   } };
 }
-const Qa = ["innerHTML"], Js = /* @__PURE__ */ Q({
+const Qa = ["innerHTML"], Xs = /* @__PURE__ */ Q({
   inheritAttrs: !1,
   __name: "NDrawer",
   props: /* @__PURE__ */ me({
@@ -1995,7 +1773,7 @@ const Qa = ["innerHTML"], Js = /* @__PURE__ */ Q({
   }),
   emits: ["update:modelValue"],
   setup(o, { expose: s }) {
-    const t = se(), e = o, n = he(o, "modelValue"), a = We("contentRef"), { pause: l, unpause: c } = In(
+    const t = se(), e = o, n = he(o, "modelValue"), a = We("contentRef"), { pause: l, unpause: c } = Sn(
       n,
       a,
       f(() => e.overlay),
@@ -2063,9 +1841,176 @@ const Qa = ["innerHTML"], Js = /* @__PURE__ */ Q({
         ]),
         _: 3
       }, 16, ["aria-modal", "class"])), [
-        [fe(qn), p]
+        [fe(Wn), p]
       ])
     ], 64));
+  }
+}), Js = /* @__PURE__ */ Q({
+  inheritAttrs: !1,
+  __name: "NForm",
+  props: {
+    tag: { default: "form" },
+    title: {},
+    titleTag: { default: "h1" },
+    titleClass: {},
+    message: {},
+    status: { default: "info" }
+  },
+  setup(o) {
+    const s = {
+      success: "mdi-check-circle",
+      error: "mdi-close-circle",
+      info: "mdi-information",
+      warning: "mdi-alert-circle"
+    }, t = se(), e = o, n = `n-form-title-${_e()}`, a = f(() => s[e.status] || ""), l = f(() => {
+      const c = { ...t };
+      return e.title && !c["aria-labelledby"] && (c["aria-labelledby"] = n), c;
+    });
+    return (c, r) => (v(), S(H(e.tag), Y({ class: ["n-form"] }, l.value, {
+      role: e.tag !== "form" ? "form" : void 0
+    }), {
+      default: R(() => [
+        $(c.$slots, "title", {}, () => [
+          e.title ? (v(), S(H(e.titleTag), {
+            key: 0,
+            id: n,
+            class: T(["n-form-title", e.titleClass])
+          }, {
+            default: R(() => [
+              gt(ie(e.title), 1)
+            ]),
+            _: 1
+          }, 8, ["class"])) : A("", !0)
+        ]),
+        $(c.$slots, "message", {}, () => [
+          e.message ? (v(), S(gn, {
+            key: 0,
+            icon: a.value,
+            class: T(e.status)
+          }, {
+            default: R(() => [
+              gt(ie(e.message), 1)
+            ]),
+            _: 1
+          }, 8, ["icon", "class"])) : A("", !0)
+        ]),
+        $(c.$slots, "default")
+      ]),
+      _: 3
+    }, 16, ["role"]));
+  }
+}), es = ["aria-label"], ts = { class: "w-full h-full bg-surface flex items-center justify-center text-error p-4" }, ns = ["src", "srcset", "sizes", "alt", "loading"], qs = /* @__PURE__ */ Q({
+  inheritAttrs: !1,
+  __name: "NImage",
+  props: {
+    src: {},
+    alt: { default: "" },
+    srcset: {},
+    sizes: {},
+    lazy: { type: Boolean, default: !1 },
+    aspectRatio: {},
+    fit: { default: "cover" },
+    width: {},
+    height: {},
+    containerClass: {},
+    placeholderClass: {},
+    errorClass: {},
+    threshold: { default: 0.1 },
+    loading: { type: Boolean },
+    loadingName: {},
+    loadingClass: {}
+  },
+  emits: ["load", "error"],
+  setup(o, { emit: s }) {
+    const t = o, e = s, n = We("containerRef"), a = te(!t.lazy), l = te(!0), c = te(!1);
+    if (t.lazy) {
+      const { stop: g } = Kn(
+        n,
+        ([{ isIntersecting: w }]) => {
+          w && (a.value = !0, g());
+        },
+        {
+          threshold: t.threshold
+        }
+      );
+    }
+    function r(g) {
+      l.value = !1, e("load", g);
+    }
+    function i(g) {
+      l.value = !1, c.value = !0, e("error", g);
+    }
+    const u = f(() => {
+      const g = {
+        ...t.aspectRatio ? { aspectRatio: t.aspectRatio } : {},
+        ...t.width ? { width: typeof t.width == "number" ? `${t.width}px` : t.width } : {},
+        ...t.height ? { height: typeof t.height == "number" ? `${t.height}px` : t.height } : {}
+      };
+      return t.aspectRatio && !t.width && !t.height && (g.width = "100%"), g;
+    }), d = f(() => [
+      "n-image-img",
+      `n-image-img--fit-${t.fit}`,
+      t.aspectRatio || t.width && t.height ? "absolute inset-0 w-full h-full" : "block max-w-full h-auto",
+      l.value || t.loading ? "opacity-0" : "opacity-100"
+    ]), p = f(() => ({}));
+    return (g, w) => (v(), B("div", {
+      ref_key: "containerRef",
+      ref: n,
+      class: T([
+        "n-image",
+        t.containerClass,
+        { "n-image--block": t.width === "100%" || t.height === "100%" }
+      ]),
+      style: It(u.value),
+      role: "img",
+      "aria-label": t.alt
+    }, [
+      X(Se, { name: "n-image-fade" }, {
+        default: R(() => [
+          (l.value || t.loading) && !c.value ? (v(), B("div", {
+            key: 0,
+            class: T(["n-image-placeholder", t.placeholderClass])
+          }, [
+            $(g.$slots, "placeholder", {}, () => [
+              X(dt, {
+                overlay: "",
+                name: t.loadingName,
+                class: T(t.loadingClass)
+              }, null, 8, ["name", "class"])
+            ])
+          ], 2)) : A("", !0)
+        ]),
+        _: 3
+      }),
+      c.value ? (v(), B("div", {
+        key: 0,
+        class: T(["n-image-error", t.errorClass])
+      }, [
+        $(g.$slots, "error", {}, () => [
+          K("div", ts, [
+            X(z, {
+              name: "alert-circle",
+              class: "mr-2"
+            }),
+            w[0] || (w[0] = K("span", { class: "text-sm" }, "Failed to load image", -1))
+          ])
+        ])
+      ], 2)) : A("", !0),
+      a.value ? (v(), B("img", Y({
+        key: 1,
+        ref: "imageRef",
+        src: t.src,
+        srcset: t.srcset,
+        sizes: t.sizes,
+        alt: t.alt,
+        class: d.value,
+        style: p.value,
+        loading: t.lazy ? "lazy" : void 0
+      }, g.$attrs, {
+        onLoad: r,
+        onError: i
+      }), null, 16, ns)) : A("", !0)
+    ], 14, es));
   }
 });
 function ln(o) {
@@ -2074,14 +2019,14 @@ function ln(o) {
   const s = Object.getPrototypeOf(o);
   return s === null || s === Object.prototype || Object.getPrototypeOf(s) === null ? Object.prototype.toString.call(o) === "[object Object]" : !1;
 }
-function es(o) {
+function as(o) {
   return o === "__proto__";
 }
 function ot(o, s) {
   const t = Object.keys(s);
   for (let e = 0; e < t.length; e++) {
     const n = t[e];
-    if (es(n))
+    if (as(n))
       continue;
     const a = s[n], l = o[n];
     Array.isArray(a) ? Array.isArray(l) ? o[n] = ot(l, a) : o[n] = ot([], a) : ln(a) ? ln(l) ? o[n] = ot(l, a) : o[n] = ot({}, a) : (l === void 0 || a !== void 0) && (o[n] = a);
@@ -2096,132 +2041,128 @@ function Ve(o, s) {
   }
   return t;
 }
-const ts = { class: "overflow-hidden" }, ns = { class: "px-4 pb-2" }, Je = /* @__PURE__ */ Q({
+const ss = ["type", "aria-busy", "disabled", "readonly"], ls = {
+  key: 2,
+  class: "n-input-field-overlay"
+}, os = {
+  key: 1,
+  class: "n-input-field-message"
+}, zt = /* @__PURE__ */ Q({
   inheritAttrs: !1,
-  __name: "NListItem",
+  __name: "NInputField",
   props: /* @__PURE__ */ me({
-    tag: { default: "li" },
-    to: {},
-    href: {},
-    target: {},
+    tag: { default: "div" },
+    name: { default: "" },
+    label: { default: "" },
+    disabled: { type: Boolean },
+    readonly: { type: Boolean },
     icon: {},
     iconClass: {},
     prependIcon: {},
     prependIconClass: {},
     appendIcon: {},
     appendIconClass: {},
-    disabled: { type: Boolean },
-    expandable: { type: Boolean },
-    heading: { type: Boolean },
-    contentField: { default: "content" }
+    message: {},
+    helperText: {},
+    size: { default: "medium" },
+    loading: { type: Boolean },
+    loadingName: { default: "loading" },
+    loadingClass: {},
+    format: {},
+    parse: {},
+    wrapperClass: {},
+    containerClass: {},
+    type: { default: "text" }
   }, {
-    modelValue: { type: Boolean, default: !1 },
+    modelValue: { default: void 0 },
     modelModifiers: {}
   }),
-  emits: /* @__PURE__ */ me(["click"], ["update:modelValue"]),
-  setup(o, { expose: s, emit: t }) {
-    const e = ct(), n = $e(), a = se(), l = o, c = he(o, "modelValue"), r = t, i = f(() => !l.heading && (l.to || l.href || e?.vnode.props?.onClick)), u = f(() => l.to && !l.disabled ? "RouterLink" : l.href && !l.disabled ? "a" : l.tag), d = f(() => l.heading ? "presentation" : u.value === "RouterLink" || u.value === "a" ? "link" : i.value ? "button" : "listitem"), p = f(() => i.value || l.expandable ? 0 : void 0), g = f(() => [
-      "n-list-item",
-      i.value && !l.expandable ? "n-list-item--clickable" : "",
-      l.disabled ? "n-list-item--disabled" : "",
-      l.expandable ? "n-list-item--expandable" : "",
-      l.heading ? "n-list-item--heading" : ""
-    ]), w = f(() => {
-      const L = { ...a };
-      return u.value === "RouterLink" ? (L.to = l.to, L.target = l.target) : u.value === "a" && (L.href = l.href, L.target = l.target), L;
-    }), k = f(() => de(l.iconClass, l.prependIconClass)), C = f(() => {
-      const L = n.default?.();
-      return L && L.length > 0 ? we(L, "span") : l.contentField && a[l.contentField] ? we(a[l.contentField], "span") : [];
-    }), h = f(() => {
-      const L = n.content?.();
-      return L && L.length > 0 ? we(L, "span") : [];
-    }), y = (L) => L.nodes;
-    function m(L) {
-      if (l.disabled || l.heading) {
-        L.preventDefault(), L.stopPropagation();
-        return;
-      }
-      i.value && r("click", L);
-    }
-    function _(L) {
-      if (i.value && ["Enter", " "].includes(L.key)) {
-        const M = L.target;
-        if (["INPUT", "TEXTAREA", "SELECT"].includes(M.tagName) || M.isContentEditable)
-          return;
-        L.preventDefault(), m(L);
-      }
-    }
-    function O() {
-      c.value = !c.value;
-    }
-    return s({ expand: () => {
-      c.value = !0;
-    }, collapse: () => {
-      c.value = !1;
-    } }), (L, M) => (v(), S(H(u.value), Y({
-      class: g.value,
-      role: d.value,
-      tabindex: p.value,
-      "aria-disabled": l.disabled ? "true" : void 0,
-      "aria-expanded": l.expandable ? c.value : void 0
-    }, w.value, {
-      onClick: m,
-      onKeydown: _
-    }), {
-      default: R(() => [
-        l.expandable ? (v(), B("div", {
-          key: 0,
-          class: "n-list-item-header",
-          onClick: Ee(O, ["stop"])
-        }, [
-          $(L.$slots, "prepend"),
-          l.prependIcon || l.icon ? (v(), S(z, {
-            key: 0,
-            name: l.prependIcon || l.icon,
-            class: T(k.value),
-            "aria-hidden": "true"
-          }, null, 8, ["name", "class"])) : A("", !0),
-          X(y, { nodes: C.value }, null, 8, ["nodes"]),
-          l.appendIcon ? (v(), S(z, {
-            key: 1,
-            name: l.appendIcon,
-            class: T(l.appendIconClass),
-            "aria-hidden": "true"
-          }, null, 8, ["name", "class"])) : A("", !0),
-          $(L.$slots, "append")
-        ])) : (v(), B(ne, { key: 1 }, [
-          $(L.$slots, "prepend"),
-          l.prependIcon || l.icon ? (v(), S(z, {
-            key: 0,
-            name: l.prependIcon || l.icon,
-            class: T(k.value),
-            "aria-hidden": "true"
-          }, null, 8, ["name", "class"])) : A("", !0),
-          X(y, { nodes: C.value }, null, 8, ["nodes"]),
-          l.appendIcon ? (v(), S(z, {
-            key: 1,
-            name: l.appendIcon,
-            class: T(l.appendIconClass),
-            "aria-hidden": "true"
-          }, null, 8, ["name", "class"])) : A("", !0),
-          $(L.$slots, "append")
-        ], 64)),
-        l.expandable ? (v(), B("div", {
-          key: 2,
-          class: T(["n-list-item-content", [c.value ? "n-list-item-content--expanded" : ""]])
-        }, [
-          K("div", ts, [
-            K("div", ns, [
-              X(y, { nodes: h.value }, null, 8, ["nodes"])
-            ])
-          ])
-        ], 2)) : A("", !0)
-      ]),
-      _: 3
-    }, 16, ["class", "role", "tabindex", "aria-disabled", "aria-expanded"]));
+  emits: ["update:modelValue"],
+  setup(o) {
+    const s = $e(), t = se(), e = o, [n, a] = he(o, "modelValue"), l = `input-id-${_e()}`, c = f(() => typeof e.format == "function" ? e.format(n.value) : n.value), r = f(() => !!e.disabled), i = f(() => ["n-input-field", ...de(t.class)]), u = f(() => ["n-input-field-container", ...de(e.containerClass)]), d = f(() => [
+      "n-input-field-wrapper",
+      e.loading ? "n-input-field--loading" : "",
+      r.value ? "n-input-field--disabled" : "",
+      `n-input-field--size-${e.size}`,
+      ...de(e.wrapperClass)
+    ]), p = f(() => ["n-input-field-label"]), g = f(() => de(e.iconClass, e.prependIconClass)), w = f(() => Ve(t, ["class"])), k = f(() => Ve(t, ["class"])), C = f(() => ({
+      ...e,
+      modifiers: a,
+      inputId: l,
+      modelValue: n.value,
+      formattedModelValue: c.value
+    })), h = f(() => we(s.before?.(C.value) ?? [], "span")), y = f(() => we(s.after?.(C.value) ?? [], "span"));
+    return (m, _) => (v(), B("div", {
+      class: T(d.value)
+    }, [
+      (v(!0), B(ne, null, le(h.value, (O, N) => (v(), S(H(O), { key: N }))), 128)),
+      K("div", {
+        class: T(u.value)
+      }, [
+        e.label || m.$slots.label ? $(m.$slots, "label", { key: 0 }, () => [
+          K("label", {
+            class: T(p.value),
+            for: l
+          }, ie(e.label), 3)
+        ]) : A("", !0),
+        $(m.$slots, "top"),
+        (v(), S(H(e.tag), Y({ class: i.value }, w.value), {
+          default: R(() => [
+            $(m.$slots, "loading", {}, () => [
+              X(Se, { name: "n-loading-overlay" }, {
+                default: R(() => [
+                  e.loading ? (v(), S(dt, {
+                    key: 0,
+                    overlay: !0,
+                    name: e.loadingName,
+                    class: T(e.loadingClass),
+                    "aria-hidden": "true"
+                  }, null, 8, ["name", "class"])) : A("", !0)
+                ]),
+                _: 1
+              })
+            ]),
+            $(m.$slots, "prepend"),
+            e.prependIcon || e.icon ? (v(), S(z, {
+              key: 0,
+              name: e.prependIcon || e.icon,
+              class: T(g.value),
+              "aria-hidden": "true"
+            }, null, 8, ["name", "class"])) : A("", !0),
+            $(m.$slots, "default", Ye(Ke(C.value)), () => [
+              qe(K("input", Y({
+                id: l,
+                "onUpdate:modelValue": _[0] || (_[0] = (O) => Yt(n) ? n.value = O : null),
+                type: e.type,
+                "aria-busy": e.loading || void 0,
+                disabled: e.disabled,
+                readonly: e.readonly
+              }, k.value), null, 16, ss), [
+                [dn, fe(n)]
+              ])
+            ]),
+            e.appendIcon ? (v(), S(z, {
+              key: 1,
+              name: e.appendIcon,
+              class: T(e.appendIconClass),
+              "aria-hidden": "true"
+            }, null, 8, ["name", "class"])) : A("", !0),
+            $(m.$slots, "append"),
+            m.$slots.overlay ? (v(), B("div", ls, [
+              $(m.$slots, "overlay")
+            ])) : A("", !0)
+          ]),
+          _: 3
+        }, 16, ["class"])),
+        $(m.$slots, "dropdown"),
+        $(m.$slots, "bottom"),
+        e.message || e.helperText ? (v(), B("div", os, ie(e.message || e.helperText), 1)) : A("", !0)
+      ], 2),
+      (v(!0), B(ne, null, le(y.value, (O, N) => (v(), S(H(O), { key: N }))), 128))
+    ], 2));
   }
-}), on = 1e3, as = 10, Ge = te(/* @__PURE__ */ new Map());
-function Sn(o) {
+}), on = 1e3, rs = 10, Ge = te(/* @__PURE__ */ new Map());
+function _n(o) {
   const s = Symbol(`stack-id-${_e()}`);
   ge(
     () => Te(o),
@@ -2249,7 +2190,7 @@ function Sn(o) {
     },
     getZIndex: (r) => {
       const u = t().findIndex(({ itemId: d }) => d === r);
-      return u === -1 ? on : on + u * as;
+      return u === -1 ? on : on + u * rs;
     },
     getOrderIndex: (r) => t().findIndex(({ itemId: u }) => u === r),
     isTop: (r) => {
@@ -2258,7 +2199,27 @@ function Sn(o) {
     }
   };
 }
-const ss = ["innerHTML"], _n = /* @__PURE__ */ Q({
+function Mt(o, s = "") {
+  const t = te(!1);
+  return ge(
+    () => [Te(o), Te(s)],
+    async (e, n) => {
+      if (!(typeof document > "u")) {
+        if (t.value = !1, Array.isArray(n)) {
+          const a = document.getElementById(n[0]);
+          a && a.childElementCount === 0 && document.body.removeChild(a);
+        }
+        if (await ye(), !document.getElementById(e[0])) {
+          const a = document.createElement("div");
+          a.id = e[0], e[1] && (a.className = Yn(e[1])), document.body.appendChild(a);
+        }
+        t.value = !0;
+      }
+    },
+    { immediate: !0 }
+  ), { isReady: t };
+}
+const is = ["innerHTML"], Dn = /* @__PURE__ */ Q({
   inheritAttrs: !1,
   __name: "NModal",
   props: /* @__PURE__ */ me({
@@ -2277,7 +2238,7 @@ const ss = ["innerHTML"], _n = /* @__PURE__ */ Q({
   }),
   emits: ["update:modelValue"],
   setup(o, { expose: s }) {
-    const t = se(), e = o, n = he(o, "modelValue"), { isReady: a } = Dt("n-modals-container"), l = Symbol(`modal-id-${_e()}`), { register: c, unregister: r, getZIndex: i, isTop: u } = Sn("n-modal"), d = We("contentRef"), { pause: p, unpause: g, focusContent: w } = In(
+    const t = se(), e = o, n = he(o, "modelValue"), { isReady: a } = Mt("n-modals-container"), l = Symbol(`modal-id-${_e()}`), { register: c, unregister: r, getZIndex: i, isTop: u } = _n("n-modal"), d = We("contentRef"), { pause: p, unpause: g, focusContent: w } = Sn(
       n,
       d,
       f(() => e.overlay),
@@ -2287,7 +2248,7 @@ const ss = ["innerHTML"], _n = /* @__PURE__ */ Q({
         hide: 300
       } : void 0
     );
-    Ln("n-modal-focusable", { pause: p, unpause: g, focusContent: w });
+    En("n-modal-focusable", { pause: p, unpause: g, focusContent: w });
     const k = f(() => i(l)), C = f(() => ["n-modal-overlay"]), h = f(() => ({ zIndex: k.value })), y = f(() => ["n-modal", `n-modal--direction-${e.direction}`, "outline-none"]), m = f(() => ({ zIndex: k.value })), _ = f(() => {
       const { tag: F, content: W, overlay: pe, noOverlayHide: ue, noEscHide: q, direction: ve, persist: Z, focusOnShow: oe, role: be, ...Ie } = e, { "aria-modal": De, role: Pe, tabindex: Ne, ...ke } = t, { "aria-modal": Ae, ...ce } = Ie;
       return { tabindex: Ne ?? "-1", ...ce, ...ke };
@@ -2300,7 +2261,7 @@ const ss = ["innerHTML"], _n = /* @__PURE__ */ Q({
         F ? c(l) : setTimeout(() => r(l), 300);
       },
       { immediate: !0 }
-    ), dn(() => {
+    ), fn(() => {
       r(l);
     });
     function O(F) {
@@ -2336,7 +2297,7 @@ const ss = ["innerHTML"], _n = /* @__PURE__ */ Q({
     }, G = () => {
       n.value = !1;
     };
-    return s({ show: M, hide: G }), (F, W) => fe(a) ? (v(), S(It, {
+    return s({ show: M, hide: G }), (F, W) => fe(a) ? (v(), S(St, {
       key: 0,
       to: "#n-modals-container"
     }, [
@@ -2345,7 +2306,7 @@ const ss = ["innerHTML"], _n = /* @__PURE__ */ Q({
           e.overlay && n.value ? (v(), B("div", {
             key: 0,
             class: T(C.value),
-            style: St(h.value),
+            style: It(h.value),
             "aria-hidden": "true",
             onMousedown: O
           }, null, 38)) : A("", !0)
@@ -2371,7 +2332,7 @@ const ss = ["innerHTML"], _n = /* @__PURE__ */ Q({
                 e.content ? (v(), B("span", {
                   key: 0,
                   innerHTML: e.content
-                }, null, 8, ss)) : A("", !0)
+                }, null, 8, is)) : A("", !0)
               ])
             ]),
             _: 3
@@ -2382,7 +2343,7 @@ const ss = ["innerHTML"], _n = /* @__PURE__ */ Q({
     ])) : A("", !0);
   }
 });
-function qs() {
+function Qs() {
   const o = ct();
   if (!o)
     throw new Error("useDialog must be called within setup() or a lifecycle hook.");
@@ -2424,7 +2385,7 @@ function qs() {
       } });
     }));
     const C = X(
-      _n,
+      Dn,
       {
         ...u,
         "onUpdate:modelValue": (M) => {
@@ -2433,7 +2394,7 @@ function qs() {
       },
       {
         default: () => j(
-          Za,
+          za,
           {
             ...d
           },
@@ -2559,7 +2520,136 @@ ${r}`, i);
     })
   };
 }
-function Qs() {
+function An(o, s) {
+  const { model: t, contentRef: e, attachParentEl: n, placement: a } = s, l = te(!1), c = te(!1), r = te(!1), i = f(() => ({
+    triggerByHover: !0,
+    triggerByFocus: !0,
+    triggerByInteraction: !0,
+    ...Te(o)
+  }));
+  rt(() => typeof document < "u" ? document : null, "mouseup", () => {
+    c.value = !1;
+  }), rt(() => typeof document < "u" ? document : null, "keyup", () => {
+    c.value = !1;
+  });
+  const u = en(
+    () => {
+      q();
+    },
+    f(() => i.value.showDelay ?? 0),
+    {
+      immediate: !1
+    }
+  ), d = en(
+    () => {
+      document.activeElement !== Te(g) && !l.value && ve();
+    },
+    f(() => i.value.hideDelay ?? 0),
+    {
+      immediate: !1
+    }
+  ), p = te(null), g = te(null), w = te(null), { width: k, height: C } = Gn(n), {
+    x: h,
+    y,
+    strategy: m,
+    placement: _
+  } = Xn(n, e, {
+    placement: a,
+    whileElementsMounted: Jn,
+    middleware: f(() => {
+      const [Z, oe] = i.value.offset ?? [0, 0], be = [tn(i.value.margin), tn({ crossAxis: Z, mainAxis: oe })];
+      return i.value.autoReposition && (be.push(qn()), be.push(Qn({ padding: 8 }))), be;
+    })
+  }), O = f(() => ({
+    position: m.value,
+    top: y.value != null ? `${y.value}px` : "",
+    left: h.value != null ? `${h.value}px` : ""
+  })), N = () => {
+    u.isPending.value && u.stop(), d.isPending.value && d.stop();
+  }, V = (Z, oe, be) => {
+    Z && Object.entries(oe).forEach(([Ie, De]) => {
+      be === "add" ? Z.addEventListener(Ie, De) : Z.removeEventListener(Ie, De);
+    });
+  };
+  ge(
+    () => [
+      i.value.hoverTriggerAnchor,
+      i.value.focusTriggerAnchor,
+      i.value.clickTriggerAnchor,
+      n.value
+    ],
+    () => {
+      ye(() => {
+        const Z = i.value, oe = (ce) => ce ? _t(ce) : typeof ce > "u" ? n.value : null, be = oe(Z.hoverTriggerAnchor), Ie = oe(Z.focusTriggerAnchor), De = oe(Z.clickTriggerAnchor), Pe = {
+          mouseenter: F,
+          mouseleave: W
+        }, Ne = {
+          focus: F,
+          blur: W,
+          mousedown: L,
+          keydown: M
+        }, ke = {
+          click: G
+        }, Ae = (ce, He, Ce) => {
+          ce.value !== He && (V(ce.value, Ce, "remove"), ce.value = He, V(ce.value, Ce, "add"));
+        };
+        Ae(p, be, Pe), Ae(g, Ie, Ne), Ae(w, De, ke);
+      });
+    },
+    { deep: !0, immediate: !0, flush: "post" }
+  );
+  function L() {
+    c.value = !0;
+  }
+  function M(Z) {
+    (Z.key === "Enter" || Z.key === " ") && (c.value = !0);
+  }
+  function G(Z) {
+    if (t.value) {
+      if (i.value.allowClickToHide) {
+        if (i.value.persistent) return;
+        N(), ve();
+      }
+    } else
+      d.isPending.value && d.stop(), u.start();
+  }
+  function F() {
+    c.value || r.value || (d.isPending.value && d.stop(), u.isPending.value || u.start());
+  }
+  function W(Z) {
+    i.value.persistent || Z.type === "mouseleave" && !i.value.triggerByHover || (u.isPending.value && u.stop(), d.isPending.value || d.start());
+  }
+  function pe() {
+    l.value = !0, d.isPending.value && d.stop();
+  }
+  function ue() {
+    i.value.persistent || (l.value = !1, i.value.triggerByHover && (d.isPending.value || d.start()));
+  }
+  rt("keydown", (Z) => {
+    t.value && Z.key === "Escape" && !i.value.persistent && (Z.preventDefault(), Z.stopPropagation(), ve());
+  });
+  const q = () => {
+    t.value = !0;
+  }, ve = (Z = !1) => {
+    const oe = e.value?.contains(document.activeElement);
+    t.value = !1, !Z && oe && ye(() => {
+      r.value = !0, g.value ? g.value.focus() : n.value && n.value?.focus(), setTimeout(() => {
+        r.value = !1;
+      }, 0);
+    });
+  };
+  return {
+    show: q,
+    hide: ve,
+    handleContentHoverFocusIn: pe,
+    handleContentHoverFocusOut: ue,
+    compStyles: O,
+    placement: _,
+    parentWidth: k,
+    parentHeight: C
+  };
+}
+function el() {
   const o = ct();
   if (!o)
     throw new Error("useModal must be called within setup() or a lifecycle hook.");
@@ -2575,7 +2665,7 @@ function Qs() {
       je(null, l), l.remove();
     }
     const p = X(
-      _n,
+      Dn,
       {
         ...r
       },
@@ -2627,135 +2717,7 @@ function Qs() {
     }
   };
 }
-function Dn(o, s, t = {}) {
-  const { immediate: e = !1 } = t, n = te(!1), a = te(!1);
-  let l = null, c = 0, r = 0;
-  const i = () => {
-    n.value = !1, a.value = !1, r = 0, l && (clearTimeout(l), l = null);
-  }, u = () => {
-    i();
-    const g = fe(s);
-    g <= 0 || (n.value = !0, a.value = !1, r = g, c = Date.now(), l = setTimeout(() => {
-      n.value = !1, o();
-    }, r));
-  }, d = () => {
-    if (!n.value || a.value || !l) return;
-    a.value = !0, clearTimeout(l), l = null;
-    const g = Date.now() - c;
-    r -= g;
-  }, p = () => {
-    !n.value || !a.value || (a.value = !1, c = Date.now(), l = setTimeout(() => {
-      n.value = !1, o();
-    }, r));
-  };
-  return Rn() && En(i), e && u(), {
-    start: u,
-    stop: i,
-    pause: d,
-    resume: p,
-    isPending: n,
-    isPaused: a
-  };
-}
-const ls = ["innerHTML"], os = {
-  class: "n-banner-progress",
-  "aria-hidden": "true"
-}, An = /* @__PURE__ */ Q({
-  inheritAttrs: !1,
-  __name: "NBanner",
-  props: /* @__PURE__ */ me({
-    tag: { default: "div" },
-    label: {},
-    icon: {},
-    iconClass: {},
-    labelClass: {},
-    actionsClass: {},
-    inlineActions: { type: Boolean, default: !0 },
-    duration: { default: 0 },
-    showProgress: { type: Boolean, default: !1 },
-    actions: {}
-  }, {
-    modelValue: { type: Boolean, default: !0 },
-    modelModifiers: {}
-  }),
-  emits: /* @__PURE__ */ me(["timer-begin", "timer-end", "timer-pause", "timer-resume"], ["update:modelValue"]),
-  setup(o, { emit: s }) {
-    const t = s, e = $e(), n = se(), a = o, l = he(o, "modelValue"), c = Dn(
-      () => {
-        t("timer-end");
-      },
-      f(() => a.duration),
-      { immediate: !1 }
-    ), r = () => {
-      a.duration > 0 && !c.isPaused.value && (c.pause(), t("timer-pause"));
-    }, i = () => {
-      a.duration > 0 && c.isPaused.value && (c.resume(), t("timer-resume"));
-    };
-    ge(
-      l,
-      (w) => {
-        w && a.duration > 0 ? (c.start(), t("timer-begin")) : c.stop();
-      },
-      { immediate: !0 }
-    );
-    const u = f(() => ["n-banner", a.inlineActions ? "n-banner--inline" : ""]), d = f(() => ({ ...n })), p = f(() => ({
-      "--n-banner-duration": `${a.duration}ms`
-    })), g = f(() => we(e.default?.() ?? [], "div"));
-    return (w, k) => l.value ? (v(), S(H(a.tag), Y({
-      key: 0,
-      class: u.value,
-      style: p.value
-    }, d.value, {
-      role: "status",
-      "aria-live": "polite",
-      "aria-atomic": "true",
-      onMouseenter: r,
-      onMouseleave: i,
-      onFocusin: r,
-      onFocusout: i
-    }), {
-      default: R(() => [
-        K("div", {
-          class: T(["n-banner-label", a.labelClass])
-        }, [
-          $(w.$slots, "icon", {}, () => [
-            a.icon ? (v(), S(z, {
-              key: 0,
-              name: a.icon,
-              class: T(a.iconClass),
-              "aria-hidden": "true"
-            }, null, 8, ["name", "class"])) : A("", !0)
-          ]),
-          a.label ? (v(), B("span", {
-            key: 0,
-            innerHTML: a.label
-          }, null, 8, ls)) : A("", !0),
-          (v(!0), B(ne, null, le(g.value, (C, h) => (v(), S(H(C), { key: h }))), 128))
-        ], 2),
-        w.$slots.actions || a.actions ? (v(), B("div", {
-          key: 0,
-          class: T(["n-banner-actions", a.actionsClass])
-        }, [
-          $(w.$slots, "actions", {}, () => [
-            (v(!0), B(ne, null, le(a.actions, (C, h) => (v(), S(Pt, Y({
-              key: h,
-              ref_for: !0
-            }, C), null, 16))), 128))
-          ])
-        ], 2)) : A("", !0),
-        a.showProgress && a.duration > 0 ? $(w.$slots, "progress", { key: 1 }, () => [
-          K("div", os, [
-            K("div", {
-              class: "n-banner-progress-bar",
-              style: St({ animationPlayState: fe(c).isPaused.value ? "paused" : "running" })
-            }, null, 4)
-          ])
-        ]) : A("", !0)
-      ]),
-      _: 3
-    }, 16, ["class", "style"])) : A("", !0);
-  }
-}), rs = ["innerHTML"], is = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])', us = /* @__PURE__ */ Q({
+const us = ["innerHTML"], cs = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])', ds = /* @__PURE__ */ Q({
   inheritAttrs: !1,
   __name: "NToast",
   props: /* @__PURE__ */ me({
@@ -2774,14 +2736,14 @@ const ls = ["innerHTML"], os = {
   }),
   emits: ["update:modelValue"],
   setup(o, { expose: s }) {
-    const t = se(), e = o, n = he(o, "modelValue"), { isReady: a } = Dt(f(() => `n-toasts-container--position-${e.position}`)), l = We("contentRef"), c = te(null), r = Symbol(`toast-id-${_e()}`), { register: i, unregister: u, getZIndex: d, getOrderIndex: p, isTop: g } = Sn(
+    const t = se(), e = o, n = he(o, "modelValue"), { isReady: a } = Mt(f(() => `n-toasts-container--position-${e.position}`)), l = We("contentRef"), c = te(null), r = Symbol(`toast-id-${_e()}`), { register: i, unregister: u, getZIndex: d, getOrderIndex: p, isTop: g } = _n(
       f(() => `n-toast--position-${e.position}`)
     ), {
       start: w,
       stop: k,
       pause: C,
       resume: h
-    } = Dn(
+    } = hn(
       () => ue(),
       f(() => e.duration),
       { immediate: !1 }
@@ -2790,14 +2752,14 @@ const ls = ["innerHTML"], os = {
       return { ...et, ...Ce };
     }), M = () => {
       if (!l.value) return;
-      const q = l.value.querySelector(is);
+      const q = l.value.querySelector(cs);
       q ? q.focus() : l.value.focus();
     };
     rt("keydown", (q) => {
       n.value && q.key === "Escape" && !e.noEscHide && g(r) && (q.preventDefault(), q.stopPropagation(), ue());
     }), ge(n, async (q) => {
       q ? (i(r), c.value = document.activeElement, e.duration > 0 && w(), await ye(), e.focusOnShow && M()) : (k(), c.value && (c.value.focus(), c.value = null), u(r));
-    }), dn(() => {
+    }), fn(() => {
       u(r);
     });
     function G(q) {
@@ -2816,7 +2778,7 @@ const ls = ["innerHTML"], os = {
     }, ue = () => {
       n.value = !1;
     };
-    return s({ show: pe, hide: ue }), (q, ve) => fe(a) ? (v(), S(It, {
+    return s({ show: pe, hide: ue }), (q, ve) => fe(a) ? (v(), S(St, {
       key: 0,
       to: `#n-toasts-container--position-${e.position}`
     }, [
@@ -2825,7 +2787,7 @@ const ls = ["innerHTML"], os = {
           e.overlay && n.value ? (v(), B("div", {
             key: 0,
             class: T(_.value),
-            style: St(O.value),
+            style: It(O.value),
             "aria-hidden": "true",
             onMousedown: G
           }, null, 38)) : A("", !0)
@@ -2857,7 +2819,7 @@ const ls = ["innerHTML"], os = {
                 e.content ? (v(), B("span", {
                   key: 0,
                   innerHTML: e.content
-                }, null, 8, rs)) : A("", !0)
+                }, null, 8, us)) : A("", !0)
               ])
             ]),
             _: 3
@@ -2868,7 +2830,7 @@ const ls = ["innerHTML"], os = {
     ], 8, ["to"])) : A("", !0);
   }
 });
-function el() {
+function tl() {
   const o = ct();
   if (!o)
     throw new Error("useNotify must be called within setup() or a lifecycle hook.");
@@ -2907,7 +2869,7 @@ function el() {
       } };
     }));
     const w = X(
-      us,
+      ds,
       {
         ...u,
         "onUpdate:modelValue": (M) => {
@@ -2916,7 +2878,7 @@ function el() {
       },
       {
         default: () => j(
-          An,
+          gn,
           {
             ...d,
             onTimerBegin: r.onTimerBegin,
@@ -2996,10 +2958,192 @@ function el() {
     info: (r, i) => e(r, { bannerClass: "info", ...i })
   };
 }
-const cs = ["innerHTML"], ds = {
+const fs = { class: "overflow-hidden" }, ps = { class: "px-4 pb-2" }, Je = /* @__PURE__ */ Q({
+  inheritAttrs: !1,
+  __name: "NListItem",
+  props: /* @__PURE__ */ me({
+    tag: { default: "li" },
+    to: {},
+    href: {},
+    target: {},
+    icon: {},
+    iconClass: {},
+    prependIcon: {},
+    prependIconClass: {},
+    appendIcon: {},
+    appendIconClass: {},
+    disabled: { type: Boolean },
+    expandable: { type: Boolean },
+    heading: { type: Boolean },
+    contentField: { default: "content" }
+  }, {
+    modelValue: { type: Boolean, default: !1 },
+    modelModifiers: {}
+  }),
+  emits: /* @__PURE__ */ me(["click"], ["update:modelValue"]),
+  setup(o, { expose: s, emit: t }) {
+    const e = ct(), n = $e(), a = se(), l = o, c = he(o, "modelValue"), r = t, i = f(() => !l.heading && (l.to || l.href || e?.vnode.props?.onClick)), u = f(() => l.to && !l.disabled ? "RouterLink" : l.href && !l.disabled ? "a" : l.tag), d = f(() => l.heading ? "presentation" : u.value === "RouterLink" || u.value === "a" ? "link" : i.value ? "button" : "listitem"), p = f(() => i.value || l.expandable ? 0 : void 0), g = f(() => [
+      "n-list-item",
+      i.value && !l.expandable ? "n-list-item--clickable" : "",
+      l.disabled ? "n-list-item--disabled" : "",
+      l.expandable ? "n-list-item--expandable" : "",
+      l.heading ? "n-list-item--heading" : ""
+    ]), w = f(() => {
+      const L = { ...a };
+      return u.value === "RouterLink" ? (L.to = l.to, L.target = l.target) : u.value === "a" && (L.href = l.href, L.target = l.target), L;
+    }), k = f(() => de(l.iconClass, l.prependIconClass)), C = f(() => {
+      const L = n.default?.();
+      return L && L.length > 0 ? we(L, "span") : l.contentField && a[l.contentField] ? we(a[l.contentField], "span") : [];
+    }), h = f(() => {
+      const L = n.content?.();
+      return L && L.length > 0 ? we(L, "span") : [];
+    }), y = (L) => L.nodes;
+    function m(L) {
+      if (l.disabled || l.heading) {
+        L.preventDefault(), L.stopPropagation();
+        return;
+      }
+      i.value && r("click", L);
+    }
+    function _(L) {
+      if (i.value && ["Enter", " "].includes(L.key)) {
+        const M = L.target;
+        if (["INPUT", "TEXTAREA", "SELECT"].includes(M.tagName) || M.isContentEditable)
+          return;
+        L.preventDefault(), m(L);
+      }
+    }
+    function O() {
+      c.value = !c.value;
+    }
+    return s({ expand: () => {
+      c.value = !0;
+    }, collapse: () => {
+      c.value = !1;
+    } }), (L, M) => (v(), S(H(u.value), Y({
+      class: g.value,
+      role: d.value,
+      tabindex: p.value,
+      "aria-disabled": l.disabled ? "true" : void 0,
+      "aria-expanded": l.expandable ? c.value : void 0
+    }, w.value, {
+      onClick: m,
+      onKeydown: _
+    }), {
+      default: R(() => [
+        l.expandable ? (v(), B("div", {
+          key: 0,
+          class: "n-list-item-header",
+          onClick: Ee(O, ["stop"])
+        }, [
+          $(L.$slots, "prepend"),
+          l.prependIcon || l.icon ? (v(), S(z, {
+            key: 0,
+            name: l.prependIcon || l.icon,
+            class: T(k.value),
+            "aria-hidden": "true"
+          }, null, 8, ["name", "class"])) : A("", !0),
+          X(y, { nodes: C.value }, null, 8, ["nodes"]),
+          l.appendIcon ? (v(), S(z, {
+            key: 1,
+            name: l.appendIcon,
+            class: T(l.appendIconClass),
+            "aria-hidden": "true"
+          }, null, 8, ["name", "class"])) : A("", !0),
+          $(L.$slots, "append")
+        ])) : (v(), B(ne, { key: 1 }, [
+          $(L.$slots, "prepend"),
+          l.prependIcon || l.icon ? (v(), S(z, {
+            key: 0,
+            name: l.prependIcon || l.icon,
+            class: T(k.value),
+            "aria-hidden": "true"
+          }, null, 8, ["name", "class"])) : A("", !0),
+          X(y, { nodes: C.value }, null, 8, ["nodes"]),
+          l.appendIcon ? (v(), S(z, {
+            key: 1,
+            name: l.appendIcon,
+            class: T(l.appendIconClass),
+            "aria-hidden": "true"
+          }, null, 8, ["name", "class"])) : A("", !0),
+          $(L.$slots, "append")
+        ], 64)),
+        l.expandable ? (v(), B("div", {
+          key: 2,
+          class: T(["n-list-item-content", [c.value ? "n-list-item-content--expanded" : ""]])
+        }, [
+          K("div", fs, [
+            K("div", ps, [
+              X(y, { nodes: h.value }, null, 8, ["nodes"])
+            ])
+          ])
+        ], 2)) : A("", !0)
+      ]),
+      _: 3
+    }, 16, ["class", "role", "tabindex", "aria-disabled", "aria-expanded"]));
+  }
+}), Ct = {
+  direction: "right",
+  position: "start",
+  stacked: !0
+};
+function vt(o) {
+  const { children: s } = o;
+  return typeof s == "string" || typeof s == "number" ? [String(s)] : Array.isArray(s) ? s : s && typeof s == "object" && "default" in s && typeof s.default == "function" ? s.default() : [];
+}
+function tt(o, s = Ct) {
+  return o.map((t) => {
+    if (!Vt(t) || t.type === rn || t.type === un)
+      return t;
+    const e = {
+      ...t.props,
+      ref: t.ref ?? void 0,
+      key: t.key ?? void 0
+    };
+    if (t.type === ht || kt(t, "NMenu"))
+      return j(ht, ot(Ct, { ...e, ...s }), {
+        default: () => tt(vt(t), s)
+      });
+    if (t.type === ne)
+      return j(ne, e, tt(vt(t), s));
+    if (t.type === Je || kt(t, "NListItem") || t.type === "li") {
+      const n = vt(t), a = n.findIndex(
+        (u) => Vt(u) && (u.type === "ul" || kt(u, ["NMenu", "NList"]))
+      ), l = a !== -1, c = l ? n.filter((u, d) => d !== a) : n, r = tt(c, s), i = t.children && typeof t.children == "object" && !Array.isArray(t.children) ? { ...t.children } : {};
+      if (l) {
+        const u = n[a];
+        return j(Je, e, {
+          ...i,
+          default: () => [
+            ...r,
+            j(ht, ot(Ct, { ...u.props, ...s }), {
+              default: () => tt(vt(u), s)
+            }),
+            j(z, { name: "chevron-right", class: "ml-8 -mr-2" })
+          ]
+        });
+      }
+      return j(Je, e, { ...i, default: () => r });
+    }
+    if (t.children) {
+      const n = vt(t);
+      if (n.length)
+        return j(t.type, e, {
+          default: () => tt(n, s)
+        });
+    }
+    return t;
+  });
+}
+function Mn(o, s = Ct) {
+  return {
+    transformedNodes: f(() => tt(o.default?.() ?? [], s))
+  };
+}
+const vs = ["innerHTML"], ms = {
   key: 0,
   class: "n-popover-overlay"
-}, fs = ["innerHTML"], ps = ["innerHTML"], vs = /* @__PURE__ */ Q({
+}, hs = ["innerHTML"], gs = ["innerHTML"], ys = /* @__PURE__ */ Q({
   inheritAttrs: !1,
   __name: "NPopover",
   props: /* @__PURE__ */ me({
@@ -3031,7 +3175,7 @@ const cs = ["innerHTML"], ds = {
   }),
   emits: ["update:modelValue"],
   setup(o, { expose: s }) {
-    const t = se(), e = o, n = he(o, "modelValue"), a = We("contentRef"), { isReady: l } = Dt("n-popovers-container"), c = te(null), r = te(null), i = f(() => r.value || c.value), u = () => {
+    const t = se(), e = o, n = he(o, "modelValue"), a = We("contentRef"), { isReady: l } = Mt("n-popovers-container"), c = te(null), r = te(null), i = f(() => r.value || c.value), u = () => {
       e.attachParent ? r.value = _t(e.attachParent) : r.value = null;
     }, d = f(() => `${e.direction}${e.position !== "" ? `-${e.position}` : ""}`), p = f(() => ({
       ...e,
@@ -3046,7 +3190,7 @@ const cs = ["innerHTML"], ds = {
       compStyles: h,
       placement: y,
       parentWidth: m
-    } = hn(p, {
+    } = An(p, {
       model: f({
         get: () => n.value,
         set: (V) => {
@@ -3094,7 +3238,7 @@ const cs = ["innerHTML"], ds = {
         ...t
       };
     });
-    return cn(() => {
+    return pn(() => {
       c.value = mn(), u();
     }), ge(() => e.attachParent, u), s({ show: g, hide: w, contentRef: a }), (V, L) => e.stacked ? (v(), S(Se, {
       key: 0,
@@ -3113,14 +3257,14 @@ const cs = ["innerHTML"], ds = {
               e.content ? (v(), B("span", {
                 key: 0,
                 innerHTML: e.content
-              }, null, 8, cs)) : A("", !0)
+              }, null, 8, vs)) : A("", !0)
             ])
           ]),
           _: 3
         }, 16, ["class", "role"])) : A("", !0)
       ]),
       _: 3
-    })) : fe(l) ? (v(), S(It, {
+    })) : fe(l) ? (v(), S(St, {
       key: 1,
       to: "#n-popovers-container"
     }, [
@@ -3128,7 +3272,7 @@ const cs = ["innerHTML"], ds = {
         name: e.overlay ? "n-popover-overlay" : "n-popover"
       }, {
         default: R(() => [
-          n.value && e.overlay ? (v(), B("div", ds, [
+          n.value && e.overlay ? (v(), B("div", ms, [
             (v(), S(H(e.tag), Y({
               ref_key: "contentRef",
               ref: a,
@@ -3140,7 +3284,7 @@ const cs = ["innerHTML"], ds = {
                   e.content ? (v(), B("span", {
                     key: 0,
                     innerHTML: e.content
-                  }, null, 8, fs)) : A("", !0)
+                  }, null, 8, hs)) : A("", !0)
                 ])
               ]),
               _: 3
@@ -3157,7 +3301,7 @@ const cs = ["innerHTML"], ds = {
                 e.content ? (v(), B("span", {
                   key: 0,
                   innerHTML: e.content
-                }, null, 8, ps)) : A("", !0)
+                }, null, 8, gs)) : A("", !0)
               ])
             ]),
             _: 3
@@ -3291,7 +3435,7 @@ const cs = ["innerHTML"], ds = {
       }
       return n.item ? j(ne, null, n.item(k) ?? []) : j(Je, O, () => n["item-content"]?.(k) ?? C);
     }), p = f(() => a.items && a.items.length ? d(a.items, e) : r.value);
-    return s({ popoverRef: c }), (g, w) => (v(), S(vs, Y({
+    return s({ popoverRef: c }), (g, w) => (v(), S(ys, Y({
       ref_key: "popoverRef",
       ref: c,
       class: i.value
@@ -3312,464 +3456,10 @@ const cs = ["innerHTML"], ds = {
       _: 1
     }, 16, ["class"]));
   }
-}), Ct = {
-  direction: "right",
-  position: "start",
-  stacked: !0
-};
-function vt(o) {
-  const { children: s } = o;
-  return typeof s == "string" || typeof s == "number" ? [String(s)] : Array.isArray(s) ? s : s && typeof s == "object" && "default" in s && typeof s.default == "function" ? s.default() : [];
-}
-function tt(o, s = Ct) {
-  return o.map((t) => {
-    if (!Vt(t) || t.type === rn || t.type === un)
-      return t;
-    const e = {
-      ...t.props,
-      ref: t.ref ?? void 0,
-      key: t.key ?? void 0
-    };
-    if (t.type === ht || kt(t, "NMenu"))
-      return j(ht, ot(Ct, { ...e, ...s }), {
-        default: () => tt(vt(t), s)
-      });
-    if (t.type === ne)
-      return j(ne, e, tt(vt(t), s));
-    if (t.type === Je || kt(t, "NListItem") || t.type === "li") {
-      const n = vt(t), a = n.findIndex(
-        (u) => Vt(u) && (u.type === "ul" || kt(u, ["NMenu", "NList"]))
-      ), l = a !== -1, c = l ? n.filter((u, d) => d !== a) : n, r = tt(c, s), i = t.children && typeof t.children == "object" && !Array.isArray(t.children) ? { ...t.children } : {};
-      if (l) {
-        const u = n[a];
-        return j(Je, e, {
-          ...i,
-          default: () => [
-            ...r,
-            j(ht, ot(Ct, { ...u.props, ...s }), {
-              default: () => tt(vt(u), s)
-            }),
-            j(z, { name: "chevron-right", class: "ml-8 -mr-2" })
-          ]
-        });
-      }
-      return j(Je, e, { ...i, default: () => r });
-    }
-    if (t.children) {
-      const n = vt(t);
-      if (n.length)
-        return j(t.type, e, {
-          default: () => tt(n, s)
-        });
-    }
-    return t;
-  });
-}
-function Mn(o, s = Ct) {
-  return {
-    transformedNodes: f(() => tt(o.default?.() ?? [], s))
-  };
-}
-const ms = /* @__PURE__ */ Q({
-  inheritAttrs: !1,
-  __name: "NList",
-  props: {
-    tag: { default: "ul" },
-    items: {},
-    valueField: { default: "value" },
-    childrenField: { default: "children" },
-    contentField: { default: "content" }
-  },
-  setup(o) {
-    const s = $e(), t = se(), e = o, { transformedNodes: n } = Mn(s), a = f(() => ["n-list"]), l = f(() => ({ ...t })), c = f(() => e.items ? r(e.items) : n.value);
-    function r(i) {
-      return i.length === 0 ? [
-        s.empty ? j(ne, null, s.empty({ items: i }) ?? []) : j(Je, { key: "empty" }, () => s["empty-content"]?.() ?? "No item found.")
-      ] : i.map((u) => {
-        const d = u[e.contentField], p = u[e.childrenField], g = { ...u };
-        delete g[e.contentField], delete g[e.childrenField];
-        const w = u?.[e.valueField] || _e(), k = p && Array.isArray(p) && p.length > 0 ? j(ms, {
-          items: p,
-          tag: e.tag,
-          valueField: e.valueField,
-          childrenField: e.childrenField,
-          contentField: e.contentField,
-          class: "w-full pl-4"
-        }) : null;
-        if (s.item)
-          return j(ne, { key: w }, s.item({ ...u, childrenNodes: k }) ?? []);
-        const C = { key: w, ...g }, h = {
-          default: () => s["item-content"]?.(u) ?? d
-        };
-        if (k)
-          if (C.expandable)
-            h.content = () => k;
-          else {
-            const y = h.default;
-            h.default = () => [y(), k];
-          }
-        return j(Je, C, h);
-      });
-    }
-    return (i, u) => (v(), S(H(e.tag), Y({ class: a.value }, l.value, { role: "list" }), {
-      default: R(() => [
-        (v(!0), B(ne, null, le(c.value, (d, p) => (v(), S(H(d), {
-          key: d?.key || p
-        }))), 128))
-      ]),
-      _: 1
-    }, 16, ["class"]));
-  }
-}), hs = ["type", "aria-busy", "disabled", "readonly"], gs = {
-  key: 2,
-  class: "n-input-field-overlay"
-}, ys = {
-  key: 1,
-  class: "n-input-field-message"
-}, zt = /* @__PURE__ */ Q({
-  inheritAttrs: !1,
-  __name: "NInputField",
-  props: /* @__PURE__ */ me({
-    tag: { default: "div" },
-    name: { default: "" },
-    label: { default: "" },
-    disabled: { type: Boolean },
-    readonly: { type: Boolean },
-    icon: {},
-    iconClass: {},
-    prependIcon: {},
-    prependIconClass: {},
-    appendIcon: {},
-    appendIconClass: {},
-    message: {},
-    helperText: {},
-    size: { default: "medium" },
-    loading: { type: Boolean },
-    loadingName: { default: "loading" },
-    loadingClass: {},
-    format: {},
-    parse: {},
-    wrapperClass: {},
-    containerClass: {},
-    type: { default: "text" }
-  }, {
-    modelValue: { default: void 0 },
-    modelModifiers: {}
-  }),
-  emits: ["update:modelValue"],
-  setup(o) {
-    const s = $e(), t = se(), e = o, [n, a] = he(o, "modelValue"), l = `input-id-${_e()}`, c = f(() => typeof e.format == "function" ? e.format(n.value) : n.value), r = f(() => !!e.disabled), i = f(() => ["n-input-field", ...de(t.class)]), u = f(() => ["n-input-field-container", ...de(e.containerClass)]), d = f(() => [
-      "n-input-field-wrapper",
-      e.loading ? "n-input-field--loading" : "",
-      r.value ? "n-input-field--disabled" : "",
-      `n-input-field--size-${e.size}`,
-      ...de(e.wrapperClass)
-    ]), p = f(() => ["n-input-field-label"]), g = f(() => de(e.iconClass, e.prependIconClass)), w = f(() => Ve(t, ["class"])), k = f(() => Ve(t, ["class"])), C = f(() => ({
-      ...e,
-      modifiers: a,
-      inputId: l,
-      modelValue: n.value,
-      formattedModelValue: c.value
-    })), h = f(() => we(s.before?.(C.value) ?? [], "span")), y = f(() => we(s.after?.(C.value) ?? [], "span"));
-    return (m, _) => (v(), B("div", {
-      class: T(d.value)
-    }, [
-      (v(!0), B(ne, null, le(h.value, (O, N) => (v(), S(H(O), { key: N }))), 128)),
-      K("div", {
-        class: T(u.value)
-      }, [
-        e.label || m.$slots.label ? $(m.$slots, "label", { key: 0 }, () => [
-          K("label", {
-            class: T(p.value),
-            for: l
-          }, ie(e.label), 3)
-        ]) : A("", !0),
-        $(m.$slots, "top"),
-        (v(), S(H(e.tag), Y({ class: i.value }, w.value), {
-          default: R(() => [
-            $(m.$slots, "loading", {}, () => [
-              X(Se, { name: "n-loading-overlay" }, {
-                default: R(() => [
-                  e.loading ? (v(), S(dt, {
-                    key: 0,
-                    overlay: !0,
-                    name: e.loadingName,
-                    class: T(e.loadingClass),
-                    "aria-hidden": "true"
-                  }, null, 8, ["name", "class"])) : A("", !0)
-                ]),
-                _: 1
-              })
-            ]),
-            $(m.$slots, "prepend"),
-            e.prependIcon || e.icon ? (v(), S(z, {
-              key: 0,
-              name: e.prependIcon || e.icon,
-              class: T(g.value),
-              "aria-hidden": "true"
-            }, null, 8, ["name", "class"])) : A("", !0),
-            $(m.$slots, "default", Ye(Ke(C.value)), () => [
-              qe(K("input", Y({
-                id: l,
-                "onUpdate:modelValue": _[0] || (_[0] = (O) => Yt(n) ? n.value = O : null),
-                type: e.type,
-                "aria-busy": e.loading || void 0,
-                disabled: e.disabled,
-                readonly: e.readonly
-              }, k.value), null, 16, hs), [
-                [fn, fe(n)]
-              ])
-            ]),
-            e.appendIcon ? (v(), S(z, {
-              key: 1,
-              name: e.appendIcon,
-              class: T(e.appendIconClass),
-              "aria-hidden": "true"
-            }, null, 8, ["name", "class"])) : A("", !0),
-            $(m.$slots, "append"),
-            m.$slots.overlay ? (v(), B("div", gs, [
-              $(m.$slots, "overlay")
-            ])) : A("", !0)
-          ]),
-          _: 3
-        }, 16, ["class"])),
-        $(m.$slots, "dropdown"),
-        $(m.$slots, "bottom"),
-        e.message || e.helperText ? (v(), B("div", ys, ie(e.message || e.helperText), 1)) : A("", !0)
-      ], 2),
-      (v(!0), B(ne, null, le(y.value, (O, N) => (v(), S(H(O), { key: N }))), 128))
-    ], 2));
-  }
-}), bs = ["id", "name", "type", "disabled", "readonly"], tl = /* @__PURE__ */ Q({
-  inheritAttrs: !1,
-  __name: "NInputText",
-  props: /* @__PURE__ */ me({
-    tag: {},
-    name: {},
-    label: {},
-    disabled: { type: Boolean },
-    readonly: { type: Boolean },
-    icon: {},
-    iconClass: {},
-    prependIcon: {},
-    prependIconClass: {},
-    appendIcon: {},
-    appendIconClass: {},
-    message: {},
-    helperText: {},
-    size: { default: "medium" },
-    loading: { type: Boolean },
-    loadingName: {},
-    loadingClass: {},
-    format: {},
-    parse: {},
-    wrapperClass: {},
-    containerClass: {},
-    type: { default: "text" },
-    inputClass: {},
-    debounce: { default: 0 }
-  }, {
-    modelValue: { default: "" },
-    modelModifiers: {}
-  }),
-  emits: ["update:modelValue"],
-  setup(o) {
-    const s = $e(), t = se(), e = o, n = he(o, "modelValue"), a = te(n.value), l = f(() => Ve(s, ["default"])), c = f(() => ["n-input-text", ...de(t.class)]), r = f(() => {
-      const { type: p, inputClass: g, modelValue: w, modelModifiers: k, debounce: C, ...h } = e;
-      return { ...h, style: t.style };
-    }), i = f(() => Ve(t, ["class", "style"])), u = vn((p) => {
-      n.value = p;
-    }, e.debounce);
-    ge(
-      () => n.value,
-      (p) => {
-        p !== a.value && (a.value = p);
-      }
-    );
-    function d() {
-      e.debounce > 0 ? u(a.value) : n.value = a.value;
-    }
-    return (p, g) => (v(), S(zt, Y({
-      modelValue: a.value,
-      "onUpdate:modelValue": g[1] || (g[1] = (w) => a.value = w),
-      class: c.value
-    }, r.value), wt({
-      default: R(({ inputId: w }) => [
-        qe(K("input", Y({
-          id: w,
-          "onUpdate:modelValue": g[0] || (g[0] = (k) => a.value = k),
-          name: e.name,
-          type: e.type,
-          disabled: e.disabled,
-          readonly: e.readonly,
-          class: ["peer", e.inputClass]
-        }, i.value, { onInput: d }), null, 16, bs), [
-          [fn, a.value]
-        ])
-      ]),
-      _: 2
-    }, [
-      le(l.value, (w, k) => ({
-        name: k,
-        fn: R((C) => [
-          $(p.$slots, k, Ye(Ke(C)))
-        ])
-      }))
-    ]), 1040, ["modelValue", "class"]));
-  }
-}), ks = ["id", "name", "multiple", "disabled"], nl = /* @__PURE__ */ Q({
-  inheritAttrs: !1,
-  __name: "NInputSelect",
-  props: /* @__PURE__ */ me({
-    tag: {},
-    name: {},
-    label: {},
-    disabled: { type: Boolean },
-    readonly: { type: Boolean },
-    icon: {},
-    iconClass: {},
-    prependIcon: {},
-    prependIconClass: {},
-    appendIcon: {},
-    appendIconClass: {},
-    message: {},
-    helperText: {},
-    size: {},
-    loading: { type: Boolean },
-    loadingName: {},
-    loadingClass: {},
-    format: {},
-    parse: {},
-    wrapperClass: {},
-    containerClass: {},
-    type: {},
-    inputClass: {},
-    multiple: { type: Boolean, default: !1 },
-    dropdownIcon: { default: "mdi-menu-down" },
-    dropdownIconClass: { default: "text-xl" },
-    options: {},
-    formatOption: {},
-    formatOptGroup: {},
-    showCheckmark: { type: Boolean, default: !0 }
-  }, {
-    modelValue: {},
-    modelModifiers: {}
-  }),
-  emits: ["update:modelValue"],
-  setup(o) {
-    const s = $e(), t = se(), e = o, n = he(o, "modelValue"), a = f({
-      get: () => {
-        if (e.multiple) {
-          if (!n.value) return [];
-          if (Array.isArray(n.value)) return n.value;
-          try {
-            const p = JSON.parse(n.value);
-            return Array.isArray(p) ? p : [];
-          } catch {
-            return [];
-          }
-        }
-        return n.value;
-      },
-      set: (p) => {
-        n.value = p;
-      }
-    }), l = f(() => Ve(s, ["default", "append"])), c = f(() => [
-      "n-input-select",
-      e.showCheckmark ? "" : "n-input-select--no-checkmark",
-      ...de(t.class)
-    ]), r = f(() => {
-      const {
-        inputClass: p,
-        dropdownIcon: g,
-        dropdownIconClass: w,
-        formatOption: k,
-        formatOptGroup: C,
-        multiple: h,
-        options: y,
-        modelValue: m,
-        modelModifiers: _,
-        showCheckmark: O,
-        ...N
-      } = e;
-      return { ...N, style: t.style };
-    }), i = f(() => Ve(t, ["class", "style"])), u = (p) => p.map((g) => {
-      if ("options" in g) {
-        const w = g, { label: k, options: C, ...h } = w, y = C?.map((m) => {
-          const { label: _, value: O, ...N } = m;
-          return j(
-            "option",
-            {
-              value: O,
-              label: typeof e.formatOption == "function" ? e.formatOption(_) : _,
-              ...N
-            },
-            _
-          );
-        }) ?? [];
-        return j(
-          "optgroup",
-          {
-            label: typeof e.formatOptGroup == "function" ? e.formatOptGroup(k) : k,
-            ...h
-          },
-          y
-        );
-      } else {
-        const w = g, { label: k, value: C, ...h } = w;
-        return j(
-          "option",
-          {
-            value: C,
-            label: typeof e.formatOption == "function" ? e.formatOption(k) : k,
-            ...h
-          },
-          k
-        );
-      }
-    }), d = f(() => e.options && e.options.length ? u(e.options) : we(s.default?.() ?? [], "option"));
-    return (p, g) => (v(), S(zt, Y({
-      modelValue: n.value,
-      "onUpdate:modelValue": g[1] || (g[1] = (w) => n.value = w),
-      class: c.value
-    }, r.value), wt({
-      default: R(({ inputId: w }) => [
-        qe(K("select", Y({
-          id: w,
-          "onUpdate:modelValue": g[0] || (g[0] = (k) => a.value = k),
-          name: e.name,
-          multiple: e.multiple,
-          disabled: e.disabled,
-          size: 1,
-          class: ["peer", e.inputClass]
-        }, i.value), [
-          (v(!0), B(ne, null, le(d.value, (k, C) => (v(), S(H(k), { key: C }))), 128))
-        ], 16, ks), [
-          [Vn, a.value]
-        ])
-      ]),
-      append: R(() => [
-        X(z, {
-          name: e.dropdownIcon,
-          class: T([e.dropdownIconClass, "n-input-select-dropdown-icon"]),
-          "aria-hidden": "true"
-        }, null, 8, ["name", "class"]),
-        $(p.$slots, "append")
-      ]),
-      _: 2
-    }, [
-      le(l.value, (w, k) => ({
-        name: k,
-        fn: R((C) => [
-          $(p.$slots, k, Ye(Ke(C)))
-        ])
-      }))
-    ]), 1040, ["modelValue", "class"]));
-  }
-}), Cs = {
+}), bs = {
   key: 0,
   class: "n-input-combo-chips-container"
-}, ws = ["id", "name", "disabled", "readonly", "value", "placeholder", "aria-expanded", "onKeydown"], al = /* @__PURE__ */ Q({
+}, ks = ["id", "name", "disabled", "readonly", "value", "placeholder", "aria-expanded", "onKeydown"], nl = /* @__PURE__ */ Q({
   inheritAttrs: !1,
   __name: "NInputCombo",
   props: /* @__PURE__ */ me({
@@ -3824,7 +3514,7 @@ const ms = /* @__PURE__ */ Q({
   }),
   emits: /* @__PURE__ */ me(["filter", "clear"], ["update:modelValue", "update:inputValue", "update:dropdown"]),
   setup(o, { emit: s }) {
-    const t = o, e = s, n = $e(), a = se(), l = he(o, "modelValue"), c = he(o, "inputValue"), r = he(o, "dropdown"), i = We("inputRef"), u = We("menuRef"), d = te(!1), p = te(!1), g = `menu-${_e()}`, w = te(/* @__PURE__ */ new Map()), k = Pn("n-modal-focusable", null);
+    const t = o, e = s, n = $e(), a = se(), l = he(o, "modelValue"), c = he(o, "inputValue"), r = he(o, "dropdown"), i = We("inputRef"), u = We("menuRef"), d = te(!1), p = te(!1), g = `menu-${_e()}`, w = te(/* @__PURE__ */ new Map()), k = Vn("n-modal-focusable", null);
     function C(b) {
       for (const D of b) {
         const I = D[t.valueField];
@@ -4030,14 +3720,14 @@ const ms = /* @__PURE__ */ Q({
           class: "n-input-combo-display-container",
           onClick: ce
         }, [
-          O.value ? (v(), B("div", Cs, [
+          O.value ? (v(), B("div", bs, [
             (v(!0), B(ne, null, le(_.value, (P, ae) => $(b.$slots, "chip", {
               key: m(P),
               item: P,
               index: ae,
               remove: () => Ae(ae)
             }, () => [
-              X(ia, Y({
+              X(Xa, Y({
                 label: y(P),
                 removable: ""
               }, { ref_for: !0 }, t.chipProps, {
@@ -4078,7 +3768,7 @@ const ms = /* @__PURE__ */ Q({
               Ze(et, ["backspace"]),
               Ze(E, ["esc"])
             ]
-          }), null, 16, ws)
+          }), null, 16, ks)
         ]),
         !t.disabled && !t.loading ? (v(), S(ht, Y({
           key: 0,
@@ -4135,20 +3825,297 @@ const ms = /* @__PURE__ */ Q({
       }))
     ]), 1040, ["class"]));
   }
-}), $s = ["name", ".indeterminate"], Is = { class: "n-checkbox-display" }, Ss = {
-  key: 3,
-  class: "n-checkbox-overlay"
-}, _s = {
-  key: 1,
-  class: "n-checkbox-message"
-}, sl = /* @__PURE__ */ Q({
+}), Cs = ["id", "name", "multiple", "disabled"], al = /* @__PURE__ */ Q({
   inheritAttrs: !1,
-  __name: "NCheckbox",
+  __name: "NInputSelect",
+  props: /* @__PURE__ */ me({
+    tag: {},
+    name: {},
+    label: {},
+    disabled: { type: Boolean },
+    readonly: { type: Boolean },
+    icon: {},
+    iconClass: {},
+    prependIcon: {},
+    prependIconClass: {},
+    appendIcon: {},
+    appendIconClass: {},
+    message: {},
+    helperText: {},
+    size: {},
+    loading: { type: Boolean },
+    loadingName: {},
+    loadingClass: {},
+    format: {},
+    parse: {},
+    wrapperClass: {},
+    containerClass: {},
+    type: {},
+    inputClass: {},
+    multiple: { type: Boolean, default: !1 },
+    dropdownIcon: { default: "mdi-menu-down" },
+    dropdownIconClass: { default: "text-xl" },
+    options: {},
+    formatOption: {},
+    formatOptGroup: {},
+    showCheckmark: { type: Boolean, default: !0 }
+  }, {
+    modelValue: {},
+    modelModifiers: {}
+  }),
+  emits: ["update:modelValue"],
+  setup(o) {
+    const s = $e(), t = se(), e = o, n = he(o, "modelValue"), a = f({
+      get: () => {
+        if (e.multiple) {
+          if (!n.value) return [];
+          if (Array.isArray(n.value)) return n.value;
+          try {
+            const p = JSON.parse(n.value);
+            return Array.isArray(p) ? p : [];
+          } catch {
+            return [];
+          }
+        }
+        return n.value;
+      },
+      set: (p) => {
+        n.value = p;
+      }
+    }), l = f(() => Ve(s, ["default", "append"])), c = f(() => [
+      "n-input-select",
+      e.showCheckmark ? "" : "n-input-select--no-checkmark",
+      ...de(t.class)
+    ]), r = f(() => {
+      const {
+        inputClass: p,
+        dropdownIcon: g,
+        dropdownIconClass: w,
+        formatOption: k,
+        formatOptGroup: C,
+        multiple: h,
+        options: y,
+        modelValue: m,
+        modelModifiers: _,
+        showCheckmark: O,
+        ...N
+      } = e;
+      return { ...N, style: t.style };
+    }), i = f(() => Ve(t, ["class", "style"])), u = (p) => p.map((g) => {
+      if ("options" in g) {
+        const w = g, { label: k, options: C, ...h } = w, y = C?.map((m) => {
+          const { label: _, value: O, ...N } = m;
+          return j(
+            "option",
+            {
+              value: O,
+              label: typeof e.formatOption == "function" ? e.formatOption(_) : _,
+              ...N
+            },
+            _
+          );
+        }) ?? [];
+        return j(
+          "optgroup",
+          {
+            label: typeof e.formatOptGroup == "function" ? e.formatOptGroup(k) : k,
+            ...h
+          },
+          y
+        );
+      } else {
+        const w = g, { label: k, value: C, ...h } = w;
+        return j(
+          "option",
+          {
+            value: C,
+            label: typeof e.formatOption == "function" ? e.formatOption(k) : k,
+            ...h
+          },
+          k
+        );
+      }
+    }), d = f(() => e.options && e.options.length ? u(e.options) : we(s.default?.() ?? [], "option"));
+    return (p, g) => (v(), S(zt, Y({
+      modelValue: n.value,
+      "onUpdate:modelValue": g[1] || (g[1] = (w) => n.value = w),
+      class: c.value
+    }, r.value), wt({
+      default: R(({ inputId: w }) => [
+        qe(K("select", Y({
+          id: w,
+          "onUpdate:modelValue": g[0] || (g[0] = (k) => a.value = k),
+          name: e.name,
+          multiple: e.multiple,
+          disabled: e.disabled,
+          size: 1,
+          class: ["peer", e.inputClass]
+        }, i.value), [
+          (v(!0), B(ne, null, le(d.value, (k, C) => (v(), S(H(k), { key: C }))), 128))
+        ], 16, Cs), [
+          [Pn, a.value]
+        ])
+      ]),
+      append: R(() => [
+        X(z, {
+          name: e.dropdownIcon,
+          class: T([e.dropdownIconClass, "n-input-select-dropdown-icon"]),
+          "aria-hidden": "true"
+        }, null, 8, ["name", "class"]),
+        $(p.$slots, "append")
+      ]),
+      _: 2
+    }, [
+      le(l.value, (w, k) => ({
+        name: k,
+        fn: R((C) => [
+          $(p.$slots, k, Ye(Ke(C)))
+        ])
+      }))
+    ]), 1040, ["modelValue", "class"]));
+  }
+}), ws = ["id", "name", "type", "disabled", "readonly"], sl = /* @__PURE__ */ Q({
+  inheritAttrs: !1,
+  __name: "NInputText",
+  props: /* @__PURE__ */ me({
+    tag: {},
+    name: {},
+    label: {},
+    disabled: { type: Boolean },
+    readonly: { type: Boolean },
+    icon: {},
+    iconClass: {},
+    prependIcon: {},
+    prependIconClass: {},
+    appendIcon: {},
+    appendIconClass: {},
+    message: {},
+    helperText: {},
+    size: { default: "medium" },
+    loading: { type: Boolean },
+    loadingName: {},
+    loadingClass: {},
+    format: {},
+    parse: {},
+    wrapperClass: {},
+    containerClass: {},
+    type: { default: "text" },
+    inputClass: {},
+    debounce: { default: 0 }
+  }, {
+    modelValue: { default: "" },
+    modelModifiers: {}
+  }),
+  emits: ["update:modelValue"],
+  setup(o) {
+    const s = $e(), t = se(), e = o, n = he(o, "modelValue"), a = te(n.value), l = f(() => Ve(s, ["default"])), c = f(() => ["n-input-text", ...de(t.class)]), r = f(() => {
+      const { type: p, inputClass: g, modelValue: w, modelModifiers: k, debounce: C, ...h } = e;
+      return { ...h, style: t.style };
+    }), i = f(() => Ve(t, ["class", "style"])), u = vn((p) => {
+      n.value = p;
+    }, e.debounce);
+    ge(
+      () => n.value,
+      (p) => {
+        p !== a.value && (a.value = p);
+      }
+    );
+    function d() {
+      e.debounce > 0 ? u(a.value) : n.value = a.value;
+    }
+    return (p, g) => (v(), S(zt, Y({
+      modelValue: a.value,
+      "onUpdate:modelValue": g[1] || (g[1] = (w) => a.value = w),
+      class: c.value
+    }, r.value), wt({
+      default: R(({ inputId: w }) => [
+        qe(K("input", Y({
+          id: w,
+          "onUpdate:modelValue": g[0] || (g[0] = (k) => a.value = k),
+          name: e.name,
+          type: e.type,
+          disabled: e.disabled,
+          readonly: e.readonly,
+          class: ["peer", e.inputClass]
+        }, i.value, { onInput: d }), null, 16, ws), [
+          [dn, a.value]
+        ])
+      ]),
+      _: 2
+    }, [
+      le(l.value, (w, k) => ({
+        name: k,
+        fn: R((C) => [
+          $(p.$slots, k, Ye(Ke(C)))
+        ])
+      }))
+    ]), 1040, ["modelValue", "class"]));
+  }
+}), $s = /* @__PURE__ */ Q({
+  inheritAttrs: !1,
+  __name: "NList",
+  props: {
+    tag: { default: "ul" },
+    items: {},
+    valueField: { default: "value" },
+    childrenField: { default: "children" },
+    contentField: { default: "content" }
+  },
+  setup(o) {
+    const s = $e(), t = se(), e = o, { transformedNodes: n } = Mn(s), a = f(() => ["n-list"]), l = f(() => ({ ...t })), c = f(() => e.items ? r(e.items) : n.value);
+    function r(i) {
+      return i.length === 0 ? [
+        s.empty ? j(ne, null, s.empty({ items: i }) ?? []) : j(Je, { key: "empty" }, () => s["empty-content"]?.() ?? "No item found.")
+      ] : i.map((u) => {
+        const d = u[e.contentField], p = u[e.childrenField], g = { ...u };
+        delete g[e.contentField], delete g[e.childrenField];
+        const w = u?.[e.valueField] || _e(), k = p && Array.isArray(p) && p.length > 0 ? j($s, {
+          items: p,
+          tag: e.tag,
+          valueField: e.valueField,
+          childrenField: e.childrenField,
+          contentField: e.contentField,
+          class: "w-full pl-4"
+        }) : null;
+        if (s.item)
+          return j(ne, { key: w }, s.item({ ...u, childrenNodes: k }) ?? []);
+        const C = { key: w, ...g }, h = {
+          default: () => s["item-content"]?.(u) ?? d
+        };
+        if (k)
+          if (C.expandable)
+            h.content = () => k;
+          else {
+            const y = h.default;
+            h.default = () => [y(), k];
+          }
+        return j(Je, C, h);
+      });
+    }
+    return (i, u) => (v(), S(H(e.tag), Y({ class: a.value }, l.value, { role: "list" }), {
+      default: R(() => [
+        (v(!0), B(ne, null, le(c.value, (d, p) => (v(), S(H(d), {
+          key: d?.key || p
+        }))), 128))
+      ]),
+      _: 1
+    }, 16, ["class"]));
+  }
+}), Is = ["value", "name"], Ss = { class: "n-radio-display" }, _s = {
+  key: 3,
+  class: "n-radio-overlay"
+}, Ds = {
+  key: 1,
+  class: "n-radio-message"
+}, ll = /* @__PURE__ */ Q({
+  inheritAttrs: !1,
+  __name: "NRadio",
   props: /* @__PURE__ */ me({
     tag: { default: "label" },
     name: { default: "" },
     label: { default: "" },
     inlineLabel: { type: Boolean, default: !1 },
+    value: {},
     icon: {},
     iconClass: {},
     prependIcon: {},
@@ -4158,92 +4125,79 @@ const ms = /* @__PURE__ */ Q({
     inputClass: {},
     message: {},
     helperText: {},
-    uncheckedIcon: { default: "" },
+    uncheckedIcon: { default: "undefined" },
     uncheckedIconClass: {},
-    checkedIcon: { default: "mdi-check-bold" },
+    checkedIcon: { default: "mdi-circle" },
     checkedIconClass: {},
-    indeterminateIcon: { default: "mdi-minus" },
-    indeterminateIconClass: {},
+    color: {},
     size: { default: "medium" }
   }, {
-    modelValue: { type: [Boolean, null], default: null },
+    modelValue: { default: null },
     modelModifiers: {}
   }),
   emits: ["update:modelValue"],
   setup(o) {
-    const s = $e(), t = se(), e = o, [n, a] = he(o, "modelValue"), l = `input-id-${_e()}`, c = f(() => ["n-checkbox"]), r = f(() => ["n-checkbox-container"]), i = f(() => [
-      "n-checkbox-wrapper",
-      e.size ? `n-checkbox--${e.size}` : ""
-    ]), u = f(() => ["n-checkbox-label"]), d = f(() => de(e.iconClass, e.prependIconClass)), p = f(() => {
-      const { class: h, style: y } = t;
-      return { class: h, style: y };
-    }), g = f(() => {
-      const { class: h, style: y, ...m } = t;
-      return m;
-    }), w = f(() => ({
+    const s = $e(), t = se(), e = o, n = he(o, "modelValue"), a = `input-id-${_e()}`, l = f(() => ["n-radio"]), c = f(() => ["n-radio-container"]), r = f(() => ["n-radio-wrapper", e.size ? `n-radio--${e.size}` : ""]), i = f(() => ["n-radio-label"]), u = f(() => de(e.iconClass, e.prependIconClass)), d = f(() => {
+      const { class: C, style: h } = t;
+      return { class: C, style: h };
+    }), p = f(() => {
+      const { class: C, style: h, ...y } = t;
+      return y;
+    }), g = f(() => ({
       ...e,
-      modifiers: a,
-      inputId: l,
+      inputId: a,
       modelValue: n.value
-    })), k = f(() => we(s.before?.(w.value) ?? [], "span")), C = f(() => we(s.after?.(w.value) ?? [], "span"));
-    return (h, y) => (v(), B("div", {
-      class: T(i.value)
+    })), w = f(() => we(s.before?.(g.value) ?? [], "span")), k = f(() => we(s.after?.(g.value) ?? [], "span"));
+    return (C, h) => (v(), B("div", {
+      class: T(r.value)
     }, [
-      (v(!0), B(ne, null, le(k.value, (m, _) => (v(), S(H(m), { key: _ }))), 128)),
+      (v(!0), B(ne, null, le(w.value, (y, m) => (v(), S(H(y), { key: m }))), 128)),
       K("div", {
-        class: T(r.value)
+        class: T(c.value)
       }, [
-        !e.inlineLabel && (e.label || h.$slots.label) ? $(h.$slots, "label", { key: 0 }, () => [
+        !e.inlineLabel && (e.label || C.$slots.label) ? $(C.$slots, "label", { key: 0 }, () => [
           K("label", {
-            class: T(u.value),
-            for: l
+            class: T(i.value),
+            for: a
           }, ie(e.label), 3)
         ]) : A("", !0),
-        $(h.$slots, "top"),
-        (v(), S(H(e.tag), Y({ class: c.value }, p.value), {
+        $(C.$slots, "top"),
+        (v(), S(H(e.tag), Y({ class: l.value }, d.value), {
           default: R(() => [
-            $(h.$slots, "prepend"),
+            $(C.$slots, "prepend"),
             e.prependIcon || e.icon ? (v(), S(z, {
               key: 0,
               name: e.prependIcon || e.icon,
-              class: T(d.value),
+              class: T(u.value),
               "aria-hidden": "true"
             }, null, 8, ["name", "class"])) : A("", !0),
             qe(K("input", Y({
-              id: l,
-              "onUpdate:modelValue": y[0] || (y[0] = (m) => Yt(n) ? n.value = m : null),
+              id: a,
+              "onUpdate:modelValue": h[0] || (h[0] = (y) => n.value = y),
+              value: e.value,
               name: e.name,
-              type: "checkbox",
-              class: ["peer", e.inputClass],
-              ".indeterminate": fe(n) === null
-            }, g.value), null, 48, $s), [
-              [pn, fe(n)]
+              type: "radio",
+              class: ["peer", e.inputClass]
+            }, p.value), null, 16, Is), [
+              [Hn, n.value]
             ]),
-            K("div", Is, [
-              e.uncheckedIcon ? (v(), S(z, {
-                key: 0,
+            K("div", Ss, [
+              X(z, {
                 name: e.uncheckedIcon,
-                class: T(["n-checkbox-display-unchecked", e.uncheckedIconClass]),
+                class: T(["n-radio-display-unchecked", e.uncheckedIconClass]),
                 "aria-hidden": "true"
-              }, null, 8, ["name", "class"])) : A("", !0),
-              e.checkedIcon ? (v(), S(z, {
-                key: 1,
+              }, null, 8, ["name", "class"]),
+              X(z, {
                 name: e.checkedIcon,
-                class: T(["n-checkbox-display-checked", e.checkedIconClass]),
+                class: T(["n-radio-display-checked", e.checkedIconClass]),
                 "aria-hidden": "true"
-              }, null, 8, ["name", "class"])) : A("", !0),
-              e.indeterminateIcon ? (v(), S(z, {
-                key: 2,
-                name: e.indeterminateIcon,
-                class: T(["n-checkbox-display-indeterminate", e.indeterminateIconClass]),
-                "aria-hidden": "true"
-              }, null, 8, ["name", "class"])) : A("", !0)
+              }, null, 8, ["name", "class"])
             ]),
-            $(h.$slots, "default", Ye(Ke(w.value))),
-            e.inlineLabel && (e.label || h.$slots.label) ? $(h.$slots, "inlineLabel", { key: 1 }, () => [
+            $(C.$slots, "default", Ye(Ke(g.value))),
+            e.inlineLabel && (e.label || C.$slots.label) ? $(C.$slots, "inlineLabel", { key: 1 }, () => [
               K("label", {
-                class: T(u.value),
-                for: l
+                class: T(i.value),
+                for: a
               }, ie(e.label), 3)
             ]) : A("", !0),
             e.appendIcon ? (v(), S(z, {
@@ -4252,27 +4206,182 @@ const ms = /* @__PURE__ */ Q({
               class: T(e.appendIconClass),
               "aria-hidden": "true"
             }, null, 8, ["name", "class"])) : A("", !0),
-            $(h.$slots, "append"),
-            h.$slots.overlay ? (v(), B("div", Ss, [
-              $(h.$slots, "overlay")
+            $(C.$slots, "append"),
+            C.$slots.overlay ? (v(), B("div", _s, [
+              $(C.$slots, "overlay")
             ])) : A("", !0)
           ]),
           _: 3
         }, 16, ["class"])),
-        $(h.$slots, "dropdown"),
-        $(h.$slots, "bottom"),
-        e.message || e.helperText ? (v(), B("div", _s, ie(e.message || e.helperText), 1)) : A("", !0)
+        $(C.$slots, "dropdown"),
+        $(C.$slots, "bottom"),
+        e.message || e.helperText ? (v(), B("div", Ds, ie(e.message || e.helperText), 1)) : A("", !0)
       ], 2),
-      (v(!0), B(ne, null, le(C.value, (m, _) => (v(), S(H(m), { key: _ }))), 128))
+      (v(!0), B(ne, null, le(k.value, (y, m) => (v(), S(H(y), { key: m }))), 128))
     ], 2));
   }
-}), Ds = ["name", ".indeterminate"], As = { class: "n-toggle-track" }, Ms = { class: "n-toggle-thumb" }, Ts = {
+}), As = { key: 1 }, ol = /* @__PURE__ */ Q({
+  inheritAttrs: !1,
+  __name: "NTab",
+  props: {
+    name: {},
+    icon: {},
+    iconClass: {},
+    prependIcon: {},
+    prependIconClass: {},
+    appendIcon: {},
+    appendIconClass: {},
+    label: {},
+    tag: { default: "button" },
+    type: { default: "button" },
+    loading: { type: Boolean },
+    loadingName: { default: "loading" },
+    loadingClass: {},
+    to: {},
+    href: {},
+    target: {}
+  },
+  setup(o) {
+    const s = $e(), t = se(), e = o, n = f(() => ["n-tab", e.loading ? "n-tab--loading" : ""]), a = f(() => e.to ? "RouterLink" : e.href ? "a" : e.tag), l = f(() => de(e.iconClass, e.prependIconClass)), c = f(() => {
+      const i = { ...t };
+      return a.value === "RouterLink" ? (i.to = e.to, i.target = e.target) : a.value === "a" && (i.href = e.href, i.target = e.target), i;
+    }), r = f(() => we(s.default?.() ?? [], "span"));
+    return (i, u) => (v(), S(H(a.value), Y({
+      class: n.value,
+      type: e.type,
+      disabled: fe(t).disabled || e.loading,
+      "aria-disabled": fe(t).disabled || e.loading ? "true" : void 0,
+      "aria-busy": e.loading ? "true" : void 0
+    }, c.value), {
+      default: R(() => [
+        $(i.$slots, "loading", {}, () => [
+          X(Se, { name: "n-loading-overlay" }, {
+            default: R(() => [
+              e.loading ? (v(), S(dt, {
+                key: 0,
+                overlay: !0,
+                name: e.loadingName,
+                class: T(e.loadingClass),
+                "aria-hidden": "true"
+              }, null, 8, ["name", "class"])) : A("", !0)
+            ]),
+            _: 1
+          })
+        ]),
+        $(i.$slots, "prepend"),
+        e.prependIcon || e.icon ? (v(), S(z, {
+          key: 0,
+          name: e.prependIcon || e.icon,
+          class: T(l.value),
+          "aria-hidden": "true"
+        }, null, 8, ["name", "class"])) : A("", !0),
+        e.label ? (v(), B("span", As, ie(e.label), 1)) : A("", !0),
+        (v(!0), B(ne, null, le(r.value, (d, p) => (v(), S(H(d), { key: p }))), 128)),
+        e.appendIcon ? (v(), S(z, {
+          key: 2,
+          name: e.appendIcon,
+          class: T(e.appendIconClass),
+          "aria-hidden": "true"
+        }, null, 8, ["name", "class"])) : A("", !0),
+        $(i.$slots, "append")
+      ]),
+      _: 3
+    }, 16, ["class", "type", "disabled", "aria-disabled", "aria-busy"]));
+  }
+}), rl = /* @__PURE__ */ Q({
+  inheritAttrs: !1,
+  __name: "NTabs",
+  props: /* @__PURE__ */ me({
+    tag: { default: "div" },
+    multiple: { type: Boolean, default: !1 }
+  }, {
+    modelValue: {},
+    modelModifiers: {}
+  }),
+  emits: ["update:modelValue"],
+  setup(o) {
+    const s = $e(), t = se(), e = he(o, "modelValue"), n = o, a = _e(), l = te([]), c = te(null), r = f(() => e.value !== void 0 && e.value !== null), i = f(() => p.value.some((m) => g(m))), u = f(() => ["n-tabs"]), d = f(() => ({
+      ...t
+    })), p = f(() => {
+      const m = s.default?.() ?? [];
+      return !m || m.length === 0 ? [] : (Array.isArray(m) ? m : [m]).map((N) => kt(N, "NTab") ? N : null).filter((N) => !!N);
+    });
+    function g(m) {
+      return !r.value || !m.props?.name ? !1 : n.multiple && Array.isArray(e.value) ? e.value.includes(m.props?.name) : m.props?.name === e.value;
+    }
+    function w(m, _) {
+      return !r.value || g(m) || !i.value && _ === 0 ? 0 : -1;
+    }
+    function k(m, _) {
+      return m.props?.id || `n-tab-${a}-${_}`;
+    }
+    function C(m, _) {
+      m && (l.value[_] = m.$el || m);
+    }
+    function h(m) {
+      if (!(!r.value || !m.props?.name))
+        if (n.multiple && Array.isArray(e.value)) {
+          const _ = e.value.indexOf(m.props?.name);
+          _ >= 0 ? e.value = e.value.toSpliced(_, 1) : e.value = [...e.value, m.props?.name];
+        } else
+          e.value = m.props?.name ?? "";
+    }
+    function y(m) {
+      const _ = l.value.filter(
+        (L) => !L.hasAttribute("disabled") && L.getAttribute("aria-disabled") !== "true"
+      );
+      if (_.length === 0) return;
+      const O = document.activeElement, N = _.indexOf(O);
+      let V = -1;
+      switch (m.key) {
+        case "ArrowRight":
+        case "ArrowDown":
+          V = (N + 1) % _.length, m.preventDefault();
+          break;
+        case "ArrowLeft":
+        case "ArrowUp":
+          V = (N - 1 + _.length) % _.length, m.preventDefault();
+          break;
+        case "Home":
+          V = 0, m.preventDefault();
+          break;
+        case "End":
+          V = _.length - 1, m.preventDefault();
+          break;
+      }
+      V !== -1 && (_[V].focus(), r.value && !n.multiple && _[V].click());
+    }
+    return (m, _) => (v(), S(H(n.tag), Y({
+      ref_key: "tabListRef",
+      ref: c,
+      class: u.value
+    }, d.value, {
+      role: r.value ? "tablist" : "group",
+      onKeydown: y
+    }), {
+      default: R(() => [
+        (v(!0), B(ne, null, le(p.value, (O, N) => (v(), S(H(O), {
+          key: N,
+          id: k(O, N),
+          ref_for: !0,
+          ref: (V) => C(V, N),
+          class: T([g(O) ? "n-tab--active" : ""]),
+          role: r.value ? "tab" : void 0,
+          "aria-selected": r.value ? g(O) ? "true" : "false" : void 0,
+          tabindex: w(O, N),
+          onClick: () => h(O)
+        }, null, 8, ["id", "class", "role", "aria-selected", "tabindex", "onClick"]))), 128))
+      ]),
+      _: 1
+    }, 16, ["class", "role"]));
+  }
+}), Ms = ["name", ".indeterminate"], Ts = { class: "n-toggle-track" }, Bs = { class: "n-toggle-thumb" }, Os = {
   key: 3,
   class: "n-toggle-overlay"
-}, Bs = {
+}, Ns = {
   key: 1,
   class: "n-toggle-message"
-}, ll = /* @__PURE__ */ Q({
+}, il = /* @__PURE__ */ Q({
   inheritAttrs: !1,
   __name: "NToggle",
   props: /* @__PURE__ */ me({
@@ -4302,10 +4411,7 @@ const ms = /* @__PURE__ */ Q({
   }),
   emits: ["update:modelValue"],
   setup(o) {
-    const s = $e(), t = se(), e = o, [n, a] = he(o, "modelValue"), l = `input-id-${_e()}`, c = f(() => de(e.iconClass, e.prependIconClass)), r = f(() => ["n-toggle"]), i = f(() => ["n-toggle-container"]), u = f(() => [
-      "n-toggle-wrapper",
-      e.size ? `n-toggle--${e.size}` : ""
-    ]), d = f(() => ["n-toggle-label"]), p = f(() => {
+    const s = $e(), t = se(), e = o, [n, a] = he(o, "modelValue"), l = `input-id-${_e()}`, c = f(() => de(e.iconClass, e.prependIconClass)), r = f(() => ["n-toggle"]), i = f(() => ["n-toggle-container"]), u = f(() => ["n-toggle-wrapper", e.size ? `n-toggle--${e.size}` : ""]), d = f(() => ["n-toggle-label"]), p = f(() => {
       const { class: h, style: y } = t;
       return { class: h, style: y };
     }), g = f(() => {
@@ -4347,11 +4453,11 @@ const ms = /* @__PURE__ */ Q({
               type: "checkbox",
               ".indeterminate": fe(n) === null,
               class: ["peer", e.inputClass]
-            }, g.value), null, 48, Ds), [
-              [pn, fe(n)]
+            }, g.value), null, 48, Ms), [
+              [cn, fe(n)]
             ]),
-            K("div", As, [
-              K("div", Ms, [
+            K("div", Ts, [
+              K("div", Bs, [
                 X(z, {
                   name: e.uncheckedIcon,
                   class: T(["n-toggle-display-unchecked", e.uncheckedIconClass]),
@@ -4383,7 +4489,7 @@ const ms = /* @__PURE__ */ Q({
               "aria-hidden": "true"
             }, null, 8, ["name", "class"])) : A("", !0),
             $(h.$slots, "append"),
-            h.$slots.overlay ? (v(), B("div", Ts, [
+            h.$slots.overlay ? (v(), B("div", Os, [
               $(h.$slots, "overlay")
             ])) : A("", !0)
           ]),
@@ -4391,299 +4497,183 @@ const ms = /* @__PURE__ */ Q({
         }, 16, ["class"])),
         $(h.$slots, "dropdown"),
         $(h.$slots, "bottom"),
-        e.message || e.helperText ? (v(), B("div", Bs, ie(e.message || e.helperText), 1)) : A("", !0)
+        e.message || e.helperText ? (v(), B("div", Ns, ie(e.message || e.helperText), 1)) : A("", !0)
       ], 2),
       (v(!0), B(ne, null, le(C.value, (m, _) => (v(), S(H(m), { key: _ }))), 128))
     ], 2));
   }
-}), Os = ["value", "name"], Ns = { class: "n-radio-display" }, Fs = {
-  key: 3,
-  class: "n-radio-overlay"
-}, xs = {
-  key: 1,
-  class: "n-radio-message"
-}, ol = /* @__PURE__ */ Q({
+}), Fs = ["innerHTML"], xs = {
+  key: 0,
+  class: "n-tooltip-overlay",
+  "aria-hidden": "true"
+}, Ls = ["innerHTML"], Rs = ["innerHTML"], Es = /* @__PURE__ */ Q({
   inheritAttrs: !1,
-  __name: "NRadio",
+  __name: "NTooltip",
   props: /* @__PURE__ */ me({
-    tag: { default: "label" },
-    name: { default: "" },
-    label: { default: "" },
-    inlineLabel: { type: Boolean, default: !1 },
-    value: {},
-    icon: {},
-    iconClass: {},
-    prependIcon: {},
-    prependIconClass: {},
-    appendIcon: {},
-    appendIconClass: {},
-    inputClass: {},
-    message: {},
-    helperText: {},
-    uncheckedIcon: { default: "undefined" },
-    uncheckedIconClass: {},
-    checkedIcon: { default: "mdi-circle" },
-    checkedIconClass: {},
-    color: {},
-    size: { default: "medium" }
+    tag: { default: "span" },
+    content: { default: "" },
+    showDelay: { default: 75 },
+    hideDelay: { default: 250 },
+    persistent: { type: Boolean, default: !1 },
+    hoverTriggerAnchor: {},
+    focusTriggerAnchor: {},
+    clickTriggerAnchor: {},
+    attachParent: {},
+    triggerByHover: { type: Boolean, default: !0 },
+    triggerByFocus: { type: Boolean, default: !0 },
+    triggerByInteraction: { type: Boolean, default: !1 },
+    allowClickToHide: { type: Boolean, default: !1 },
+    direction: { default: "bottom" },
+    position: { default: "" },
+    margin: { default: 8 },
+    offset: { default: () => [0, 0] },
+    autoReposition: { type: Boolean, default: !0 },
+    stacked: { type: Boolean, default: !1 },
+    overlay: { type: Boolean, default: !1 },
+    fit: { type: Boolean, default: !1 },
+    role: { default: "tooltip" }
   }, {
-    modelValue: { default: null },
+    modelValue: { type: Boolean, default: !1 },
     modelModifiers: {}
   }),
   emits: ["update:modelValue"],
-  setup(o) {
-    const s = $e(), t = se(), e = o, n = he(o, "modelValue"), a = `input-id-${_e()}`, l = f(() => ["n-radio"]), c = f(() => ["n-radio-container"]), r = f(() => [
-      "n-radio-wrapper",
-      e.size ? `n-radio--${e.size}` : ""
-    ]), i = f(() => ["n-radio-label"]), u = f(() => de(e.iconClass, e.prependIconClass)), d = f(() => {
-      const { class: C, style: h } = t;
-      return { class: C, style: h };
-    }), p = f(() => {
-      const { class: C, style: h, ...y } = t;
-      return y;
-    }), g = f(() => ({
+  setup(o, { expose: s }) {
+    const t = se(), e = o, n = he(o, "modelValue"), a = We("contentRef"), { isReady: l } = Mt("n-tooltips-container"), c = te(null), r = te(null), i = f(() => r.value || c.value), u = () => {
+      e.attachParent ? r.value = _t(e.attachParent) : r.value = null;
+    }, d = f(() => `${e.direction}${e.position !== "" ? `-${e.position}` : ""}`), p = f(() => ({
       ...e,
-      inputId: a,
-      modelValue: n.value
-    })), w = f(() => we(s.before?.(g.value) ?? [], "span")), k = f(() => we(s.after?.(g.value) ?? [], "span"));
-    return (C, h) => (v(), B("div", {
-      class: T(r.value)
-    }, [
-      (v(!0), B(ne, null, le(w.value, (y, m) => (v(), S(H(y), { key: m }))), 128)),
-      K("div", {
-        class: T(c.value)
-      }, [
-        !e.inlineLabel && (e.label || C.$slots.label) ? $(C.$slots, "label", { key: 0 }, () => [
-          K("label", {
-            class: T(i.value),
-            for: a
-          }, ie(e.label), 3)
-        ]) : A("", !0),
-        $(C.$slots, "top"),
-        (v(), S(H(e.tag), Y({ class: l.value }, d.value), {
+      hoverTriggerAnchor: e.triggerByHover ? e.hoverTriggerAnchor : null,
+      focusTriggerAnchor: e.triggerByFocus ? e.focusTriggerAnchor : null,
+      clickTriggerAnchor: e.triggerByInteraction ? e.clickTriggerAnchor : null
+    })), {
+      show: g,
+      hide: w,
+      handleContentHoverFocusIn: k,
+      handleContentHoverFocusOut: C,
+      compStyles: h,
+      placement: y,
+      parentWidth: m
+    } = An(p, {
+      model: f({
+        get: () => n.value,
+        set: (V) => {
+          n.value = V;
+        }
+      }),
+      contentRef: a,
+      attachParentEl: i,
+      placement: d
+    }), _ = f(() => {
+      const V = { ...h.value };
+      return e.fit && (V.width = `${m.value}px`), V;
+    }), O = f(() => ["n-tooltip", `n-tooltip--direction-${y.value}`]), N = f(() => {
+      const {
+        tag: V,
+        content: L,
+        showDelay: M,
+        hideDelay: G,
+        persistent: F,
+        hoverTriggerAnchor: W,
+        focusTriggerAnchor: pe,
+        clickTriggerAnchor: ue,
+        attachParent: q,
+        triggerByHover: ve,
+        triggerByFocus: Z,
+        triggerByInteraction: oe,
+        allowClickToHide: be,
+        direction: Ie,
+        position: De,
+        margin: Pe,
+        offset: Ne,
+        autoReposition: ke,
+        stacked: Ae,
+        overlay: ce,
+        fit: He,
+        role: Ce,
+        ...Qe
+      } = e;
+      return {
+        style: _.value,
+        onMouseenter: k,
+        onMouseleave: C,
+        onFocusin: k,
+        onFocusout: C,
+        ...Qe,
+        ...t
+      };
+    });
+    return pn(() => {
+      c.value = mn(), u();
+    }), ge(() => e.attachParent, u), s({ show: g, hide: w, contentRef: a }), (V, L) => e.stacked ? (v(), S(Se, {
+      key: 0,
+      name: "n-tooltip"
+    }, {
+      default: R(() => [
+        n.value ? (v(), S(H(e.tag), Y({
+          key: 0,
+          ref_key: "contentRef",
+          ref: a,
+          class: O.value,
+          role: e.role
+        }, N.value), {
           default: R(() => [
-            $(C.$slots, "prepend"),
-            e.prependIcon || e.icon ? (v(), S(z, {
-              key: 0,
-              name: e.prependIcon || e.icon,
-              class: T(u.value),
-              "aria-hidden": "true"
-            }, null, 8, ["name", "class"])) : A("", !0),
-            qe(K("input", Y({
-              id: a,
-              "onUpdate:modelValue": h[0] || (h[0] = (y) => n.value = y),
-              value: e.value,
-              name: e.name,
-              type: "radio",
-              class: ["peer", e.inputClass]
-            }, p.value), null, 16, Os), [
-              [Hn, n.value]
-            ]),
-            K("div", Ns, [
-              X(z, {
-                name: e.uncheckedIcon,
-                class: T(["n-radio-display-unchecked", e.uncheckedIconClass]),
-                "aria-hidden": "true"
-              }, null, 8, ["name", "class"]),
-              X(z, {
-                name: e.checkedIcon,
-                class: T(["n-radio-display-checked", e.checkedIconClass]),
-                "aria-hidden": "true"
-              }, null, 8, ["name", "class"])
-            ]),
-            $(C.$slots, "default", Ye(Ke(g.value))),
-            e.inlineLabel && (e.label || C.$slots.label) ? $(C.$slots, "inlineLabel", { key: 1 }, () => [
-              K("label", {
-                class: T(i.value),
-                for: a
-              }, ie(e.label), 3)
-            ]) : A("", !0),
-            e.appendIcon ? (v(), S(z, {
-              key: 2,
-              name: e.appendIcon,
-              class: T(e.appendIconClass),
-              "aria-hidden": "true"
-            }, null, 8, ["name", "class"])) : A("", !0),
-            $(C.$slots, "append"),
-            C.$slots.overlay ? (v(), B("div", Fs, [
-              $(C.$slots, "overlay")
-            ])) : A("", !0)
+            $(V.$slots, "default", {}, () => [
+              e.content ? (v(), B("span", {
+                key: 0,
+                innerHTML: e.content
+              }, null, 8, Fs)) : A("", !0)
+            ])
           ]),
           _: 3
-        }, 16, ["class"])),
-        $(C.$slots, "dropdown"),
-        $(C.$slots, "bottom"),
-        e.message || e.helperText ? (v(), B("div", xs, ie(e.message || e.helperText), 1)) : A("", !0)
-      ], 2),
-      (v(!0), B(ne, null, le(k.value, (y, m) => (v(), S(H(y), { key: m }))), 128))
-    ], 2));
-  }
-}), rl = /* @__PURE__ */ Q({
-  inheritAttrs: !1,
-  __name: "NForm",
-  props: {
-    tag: { default: "form" },
-    title: {},
-    titleTag: { default: "h1" },
-    titleClass: {},
-    message: {},
-    status: { default: "info" }
-  },
-  setup(o) {
-    const s = {
-      success: "mdi-check-circle",
-      error: "mdi-close-circle",
-      info: "mdi-information",
-      warning: "mdi-alert-circle"
-    }, t = se(), e = o, n = `n-form-title-${_e()}`, a = f(() => s[e.status] || ""), l = f(() => {
-      const c = { ...t };
-      return e.title && !c["aria-labelledby"] && (c["aria-labelledby"] = n), c;
-    });
-    return (c, r) => (v(), S(H(e.tag), Y({ class: ["n-form"] }, l.value, {
-      role: e.tag !== "form" ? "form" : void 0
-    }), {
-      default: R(() => [
-        $(c.$slots, "title", {}, () => [
-          e.title ? (v(), S(H(e.titleTag), {
-            key: 0,
-            id: n,
-            class: T(["n-form-title", e.titleClass])
-          }, {
-            default: R(() => [
-              gt(ie(e.title), 1)
-            ]),
-            _: 1
-          }, 8, ["class"])) : A("", !0)
-        ]),
-        $(c.$slots, "message", {}, () => [
-          e.message ? (v(), S(An, {
-            key: 0,
-            icon: a.value,
-            class: T(e.status)
-          }, {
-            default: R(() => [
-              gt(ie(e.message), 1)
-            ]),
-            _: 1
-          }, 8, ["icon", "class"])) : A("", !0)
-        ]),
-        $(c.$slots, "default")
+        }, 16, ["class", "role"])) : A("", !0)
       ]),
       _: 3
-    }, 16, ["role"]));
-  }
-}), Ls = ["aria-label"], Rs = { class: "w-full h-full bg-surface flex items-center justify-center text-error p-4" }, Es = ["src", "srcset", "sizes", "alt", "loading"], il = /* @__PURE__ */ Q({
-  inheritAttrs: !1,
-  __name: "NImage",
-  props: {
-    src: {},
-    alt: { default: "" },
-    srcset: {},
-    sizes: {},
-    lazy: { type: Boolean, default: !1 },
-    aspectRatio: {},
-    fit: { default: "cover" },
-    width: {},
-    height: {},
-    containerClass: {},
-    placeholderClass: {},
-    errorClass: {},
-    threshold: { default: 0.1 },
-    loading: { type: Boolean },
-    loadingName: {},
-    loadingClass: {}
-  },
-  emits: ["load", "error"],
-  setup(o, { emit: s }) {
-    const t = o, e = s, n = We("containerRef"), a = te(!t.lazy), l = te(!0), c = te(!1);
-    if (t.lazy) {
-      const { stop: g } = Xn(
-        n,
-        ([{ isIntersecting: w }]) => {
-          w && (a.value = !0, g());
-        },
-        {
-          threshold: t.threshold
-        }
-      );
-    }
-    function r(g) {
-      l.value = !1, e("load", g);
-    }
-    function i(g) {
-      l.value = !1, c.value = !0, e("error", g);
-    }
-    const u = f(() => {
-      const g = {
-        ...t.aspectRatio ? { aspectRatio: t.aspectRatio } : {},
-        ...t.width ? { width: typeof t.width == "number" ? `${t.width}px` : t.width } : {},
-        ...t.height ? { height: typeof t.height == "number" ? `${t.height}px` : t.height } : {}
-      };
-      return t.aspectRatio && !t.width && !t.height && (g.width = "100%"), g;
-    }), d = f(() => [
-      "n-image-img",
-      `n-image-img--fit-${t.fit}`,
-      t.aspectRatio || t.width && t.height ? "absolute inset-0 w-full h-full" : "block max-w-full h-auto",
-      l.value || t.loading ? "opacity-0" : "opacity-100"
-    ]), p = f(() => ({}));
-    return (g, w) => (v(), B("div", {
-      ref_key: "containerRef",
-      ref: n,
-      class: T([
-        "n-image",
-        t.containerClass,
-        { "n-image--block": t.width === "100%" || t.height === "100%" }
-      ]),
-      style: St(u.value),
-      role: "img",
-      "aria-label": t.alt
+    })) : fe(l) ? (v(), S(St, {
+      key: 1,
+      to: "#n-tooltips-container"
     }, [
-      X(Se, { name: "n-image-fade" }, {
+      X(Se, {
+        name: e.overlay ? "n-tooltip-overlay" : "n-tooltip"
+      }, {
         default: R(() => [
-          (l.value || t.loading) && !c.value ? (v(), B("div", {
-            key: 0,
-            class: T(["n-image-placeholder", t.placeholderClass])
-          }, [
-            $(g.$slots, "placeholder", {}, () => [
-              X(dt, {
-                overlay: "",
-                name: t.loadingName,
-                class: T(t.loadingClass)
-              }, null, 8, ["name", "class"])
-            ])
-          ], 2)) : A("", !0)
+          n.value && e.overlay ? (v(), B("div", xs, [
+            (v(), S(H(e.tag), Y({
+              ref_key: "contentRef",
+              ref: a,
+              class: O.value,
+              role: e.role
+            }, N.value), {
+              default: R(() => [
+                $(V.$slots, "default", {}, () => [
+                  e.content ? (v(), B("span", {
+                    key: 0,
+                    innerHTML: e.content
+                  }, null, 8, Ls)) : A("", !0)
+                ])
+              ]),
+              _: 3
+            }, 16, ["class", "role"]))
+          ])) : n.value ? (v(), S(H(e.tag), Y({
+            key: 1,
+            ref_key: "contentRef",
+            ref: a,
+            class: O.value,
+            role: e.role
+          }, N.value), {
+            default: R(() => [
+              $(V.$slots, "default", {}, () => [
+                e.content ? (v(), B("span", {
+                  key: 0,
+                  innerHTML: e.content
+                }, null, 8, Rs)) : A("", !0)
+              ])
+            ]),
+            _: 3
+          }, 16, ["class", "role"])) : A("", !0)
         ]),
         _: 3
-      }),
-      c.value ? (v(), B("div", {
-        key: 0,
-        class: T(["n-image-error", t.errorClass])
-      }, [
-        $(g.$slots, "error", {}, () => [
-          K("div", Rs, [
-            X(z, {
-              name: "alert-circle",
-              class: "mr-2"
-            }),
-            w[0] || (w[0] = K("span", { class: "text-sm" }, "Failed to load image", -1))
-          ])
-        ])
-      ], 2)) : A("", !0),
-      a.value ? (v(), B("img", Y({
-        key: 1,
-        ref: "imageRef",
-        src: t.src,
-        srcset: t.srcset,
-        sizes: t.sizes,
-        alt: t.alt,
-        class: d.value,
-        style: p.value,
-        loading: t.lazy ? "lazy" : void 0
-      }, g.$attrs, {
-        onLoad: r,
-        onError: i
-      }), null, 16, Es)) : A("", !0)
-    ], 14, Ls));
+      }, 8, ["name"])
+    ])) : A("", !0);
   }
 }), ul = /* @__PURE__ */ Q({
   inheritAttrs: !1,
@@ -4730,7 +4720,7 @@ const ms = /* @__PURE__ */ Q({
   if (!t)
     return;
   Vs();
-  const n = Object.keys(s.modifiers).find((r) => ["top", "bottom", "left", "right"].includes(r)) || "bottom", l = X(pa, {
+  const n = Object.keys(s.modifiers).find((r) => ["top", "bottom", "left", "right"].includes(r)) || "bottom", l = X(Es, {
     content: t,
     direction: n,
     attachParent: o,
@@ -4764,42 +4754,42 @@ const ms = /* @__PURE__ */ Q({
 };
 export {
   Ks as NAvatar,
-  An as NBanner,
+  gn as NBanner,
   Pt as NButton,
   Gs as NCalendar,
-  Za as NCard,
-  sl as NCheckbox,
-  ia as NChip,
-  Js as NDrawer,
+  za as NCard,
+  Zs as NCheckbox,
+  Xa as NChip,
+  Xs as NDrawer,
   cl as NFooter,
-  rl as NForm,
+  Js as NForm,
   ul as NHeader,
   z as NIcon,
-  il as NImage,
-  al as NInputCombo,
+  qs as NImage,
+  nl as NInputCombo,
   zt as NInputField,
-  nl as NInputSelect,
-  tl as NInputText,
-  ms as NList,
+  al as NInputSelect,
+  sl as NInputText,
+  $s as NList,
   Je as NListItem,
   dt as NLoading,
   ht as NMenu,
-  _n as NModal,
-  vs as NPopover,
-  ol as NRadio,
-  Xs as NTab,
-  Zs as NTabs,
-  us as NToast,
-  ll as NToggle,
-  pa as NTooltip,
-  Sn as useComponentStack,
-  qs as useDialog,
-  hn as useFloating,
-  In as useFocusable,
+  Dn as NModal,
+  ys as NPopover,
+  ll as NRadio,
+  ol as NTab,
+  rl as NTabs,
+  ds as NToast,
+  il as NToggle,
+  Es as NTooltip,
+  _n as useComponentStack,
+  Qs as useDialog,
+  An as useFloating,
+  Sn as useFocusable,
   Mn as useMenuTransform,
-  Qs as useModal,
-  el as useNotify,
-  Dn as usePausableTimer,
-  Dt as useTeleportContainer,
+  el as useModal,
+  tl as useNotify,
+  hn as usePausableTimer,
+  Mt as useTeleportContainer,
   dl as vTooltip
 };

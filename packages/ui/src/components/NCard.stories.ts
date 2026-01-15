@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite'
 import { ref } from 'vue'
-import NIcon from './NIcon.vue'
 import NButton from './NButton.vue'
 import NCard from './NCard.vue'
-import NTooltip from './NTooltip.vue'
+import NIcon from './NIcon.vue'
 import NInputText from './NInputText.vue'
+import NTooltip from './NTooltip.vue'
 
 const meta = {
     title: 'UI/NCard',
@@ -167,7 +167,8 @@ export const Disabled: Story = {
             }
             return { args, handleClick }
         },
-        template: '<NCard v-bind="args" class="w-96" href="#" disabled @click="handleClick">I am a clickable card</NCard>'
+        template:
+            '<NCard v-bind="args" class="w-96" href="#" disabled @click="handleClick">I am a clickable card</NCard>'
     })
 }
 

@@ -75,10 +75,9 @@ declare const __VLS_base: import("vue").DefineComponent<__VLS_PublicProps, {}, {
     items: NListItemData[];
     valueField: string;
     childrenField: string;
-    debounce: number;
+    closeDropdownOnSelected: boolean;
     dropdownIcon: string;
     dropdownIconClass: string | string[] | object;
-    closeDropdownOnSelected: boolean;
     labelField: string;
     useInput: boolean;
     clearable: boolean;
@@ -86,6 +85,7 @@ declare const __VLS_base: import("vue").DefineComponent<__VLS_PublicProps, {}, {
     blurOnSelected: boolean;
     chipProps: Record<string, any>;
     valueClass: string | string[] | object;
+    debounce: number;
 }, {}, {}, {}, string, import("vue").ComponentProvideOptions, false, {}, any>;
 declare const __VLS_export: __VLS_WithSlots<typeof __VLS_base, __VLS_Slots>;
 declare const _default: typeof __VLS_export;

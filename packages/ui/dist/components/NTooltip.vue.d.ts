@@ -51,6 +51,9 @@ declare const __VLS_base: import("vue").DefineComponent<__VLS_PublicProps, {
     tag: string;
     overlay: boolean;
     content: string;
+    direction: NTooltipDirection;
+    fit: boolean;
+    position: NTooltipPosition;
     showDelay: number;
     hideDelay: number;
     persistent: boolean;
@@ -58,13 +61,10 @@ declare const __VLS_base: import("vue").DefineComponent<__VLS_PublicProps, {
     triggerByFocus: boolean;
     triggerByInteraction: boolean;
     allowClickToHide: boolean;
-    direction: NTooltipDirection;
-    position: NTooltipPosition;
     margin: number;
     offset: [number, number];
     autoReposition: boolean;
     stacked: boolean;
-    fit: boolean;
 }, {}, {}, {}, string, import("vue").ComponentProvideOptions, false, {}, any>;
 declare const __VLS_export: __VLS_WithSlots<typeof __VLS_base, __VLS_Slots>;
 declare const _default: typeof __VLS_export;

@@ -15,7 +15,7 @@
             "runtimeExecutable": "pnpm",
             "runtimeArgs": [
                 "--filter",
-                "ui",
+                "@nui/ui",
                 "storybook:dev",
                 "-p",
                 "9000"
@@ -31,7 +31,7 @@
             "runtimeExecutable": "pnpm",
             "runtimeArgs": [
                 "--filter",
-                "@packages/doc-web",
+                "@nui/doc-web",
                 "docs:dev"
             ],
             "skipFiles": [

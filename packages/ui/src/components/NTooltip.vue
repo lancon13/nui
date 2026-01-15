@@ -202,7 +202,7 @@
         parentEl.value = getParentElement()
         updateAttachParent()
     })
-    
+
     // Watch for prop changes to update the resolved element
     watch(() => props.attachParent, updateAttachParent)
 
@@ -211,7 +211,7 @@
 
 <style lang="css">
     @reference 'tailwindcss';
-    @reference '../styles/index.css';
+    @reference '../styles/components-index.css';
 
     @layer components {
         .n-tooltip-overlay {

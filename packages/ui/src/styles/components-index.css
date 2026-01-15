@@ -1,5 +1,6 @@
 @layer theme, component;
 
+@import 'tailwindcss' layer(theme);
 @import './libs/theme.css' layer(theme);
 @import './libs/typography.css' layer(theme);
 @import './libs/nui-core.css' layer(components);

@@ -135,10 +135,7 @@
 
     const compClasses = computed(() => ['n-checkbox'])
     const containerClasses = computed(() => ['n-checkbox-container'])
-    const wrapperClasses = computed(() => [
-        'n-checkbox-wrapper',
-        props.size ? `n-checkbox--${props.size}` : ''
-    ])
+    const wrapperClasses = computed(() => ['n-checkbox-wrapper', props.size ? `n-checkbox--${props.size}` : ''])
     const labelClasses = computed(() => ['n-checkbox-label'])
     const iconClasses = computed(() => resolveClassProp(props.iconClass, props.prependIconClass))
 
@@ -171,7 +168,7 @@
 
 <style lang="css">
     @reference 'tailwindcss';
-    @reference '../styles/index.css';
+    @reference '../styles/components-index.css';
 
     @layer components {
         .n-checkbox-wrapper {

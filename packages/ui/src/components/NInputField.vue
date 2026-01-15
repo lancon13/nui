@@ -163,7 +163,7 @@
 
 <style lang="css">
     @reference 'tailwindcss';
-    @reference '../styles/index.css';
+    @reference '../styles/components-index.css';
 
     @layer components {
         .n-input-field-wrapper {

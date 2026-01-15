@@ -33,11 +33,11 @@ declare const __VLS_base: import("vue").DefineComponent<__VLS_PublicProps, {}, {
     "timer-pause": () => any;
     "timer-resume": () => any;
 }, string, import("vue").PublicProps, Readonly<__VLS_PublicProps> & Readonly<{
-    "onUpdate:modelValue"?: ((value: boolean) => any) | undefined;
     "onTimer-begin"?: (() => any) | undefined;
     "onTimer-end"?: (() => any) | undefined;
     "onTimer-pause"?: (() => any) | undefined;
     "onTimer-resume"?: (() => any) | undefined;
+    "onUpdate:modelValue"?: ((value: boolean) => any) | undefined;
 }>, {
     tag: string;
     duration: number;

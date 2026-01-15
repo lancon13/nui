@@ -80,7 +80,7 @@
 <script setup lang="ts">
     /* eslint-disable no-unused-vars, @typescript-eslint/no-explicit-any */
     import { computed, HTMLAttributes, useAttrs, useSlots } from 'vue'
-    import { wrapTextNode, resolveClassProp } from '../helpers/dom'
+    import { resolveClassProp, wrapTextNode } from '../helpers/dom'
     import { generatePseudoRandomKey } from '../helpers/tools'
     import NIcon from './NIcon.vue'
 
@@ -128,10 +128,7 @@
 
     const compClasses = computed(() => ['n-radio'])
     const containerClasses = computed(() => ['n-radio-container'])
-    const wrapperClasses = computed(() => [
-        'n-radio-wrapper',
-        props.size ? `n-radio--${props.size}` : ''
-    ])
+    const wrapperClasses = computed(() => ['n-radio-wrapper', props.size ? `n-radio--${props.size}` : ''])
     const labelClasses = computed(() => ['n-radio-label'])
     const iconClasses = computed(() => resolveClassProp(props.iconClass, props.prependIconClass))
 
@@ -159,7 +156,7 @@
 
 <style lang="css">
     @reference 'tailwindcss';
-    @reference '../styles/index.css';
+    @reference '../styles/components-index.css';
 
     @layer components {
         .n-radio-wrapper {

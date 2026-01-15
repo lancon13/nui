@@ -129,7 +129,7 @@
 
 <style lang="css">
     @reference 'tailwindcss';
-    @reference '../styles/index.css';
+    @reference '../styles/components-index.css';
 
     @layer components {
         .n-drawer-overlay {
@@ -159,7 +159,7 @@
         .n-drawer {
             @apply absolute z-1000;
             @apply transition-[opacity,translate] duration-200 ease-in-out;
-            
+
             &.n-drawer--direction-top {
                 @apply w-full top-0 left-0 -translate-y-full;
             }

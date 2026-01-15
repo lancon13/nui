@@ -143,20 +143,20 @@
 
 <style lang="css">
     @reference 'tailwindcss';
-    @reference '../styles/index.css';
+    @reference '../styles/components-index.css';
 
     @layer components {
         .n-banner {
             /* Base */
             @apply relative
-                flex flex-col gap-2 
-                bg-text text-text-invert
-                rounded-element
-                border-2 border-transparent
-                outline-0
-                px-4 py-2
-                transition-all duration-200 ease-in-out
-                overflow-hidden;
+            flex flex-col gap-2 
+            bg-text text-text-invert
+            rounded-element
+            border-2 border-transparent
+            outline-0
+            px-4 py-2
+            transition-all duration-200 ease-in-out
+            overflow-hidden;
 
             /* Content Layout */
             .n-banner-label {
@@ -172,7 +172,7 @@
             /* Progress Bar */
             .n-banner-progress {
                 @apply absolute bottom-0 left-0 right-0 h-1 
-                       w-full bg-current/25;
+                   w-full bg-current/25;
 
                 .n-banner-progress-bar {
                     @apply h-full w-full origin-left bg-current/50;
@@ -244,14 +244,14 @@
                 }
             }
         }
-    }
 
-    @keyframes n-banner-progress-shrink {
-        from {
-            transform: scaleX(1);
-        }
-        to {
-            transform: scaleX(0);
+        @keyframes n-banner-progress-shrink {
+            from {
+                transform: scaleX(1);
+            }
+            to {
+                transform: scaleX(0);
+            }
         }
     }
 </style>

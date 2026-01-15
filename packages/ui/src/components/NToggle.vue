@@ -139,10 +139,7 @@
 
     const compClasses = computed(() => ['n-toggle'])
     const containerClasses = computed(() => ['n-toggle-container'])
-    const wrapperClasses = computed(() => [
-        'n-toggle-wrapper',
-        props.size ? `n-toggle--${props.size}` : ''
-    ])
+    const wrapperClasses = computed(() => ['n-toggle-wrapper', props.size ? `n-toggle--${props.size}` : ''])
     const labelClasses = computed(() => ['n-toggle-label'])
 
     // Split attributes: class/style go to wrapper, others to input
@@ -170,7 +167,7 @@
 
 <style lang="css">
     @reference 'tailwindcss';
-    @reference '../styles/index.css';
+    @reference '../styles/components-index.css';
 
     @layer components {
         .n-toggle-wrapper {

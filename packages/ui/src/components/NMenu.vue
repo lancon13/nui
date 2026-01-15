@@ -1,7 +1,7 @@
 <template>
     <n-popover ref="popoverRef" :class="compClasses" v-bind="compBind">
         <component :is="props.listTag" :class="['n-list', props.listClass]" role="menu">
-            <template v-for="(node, index) in slotDefaultNodes" :key="node.key ?? index">
+            <template v-for="(node, index) in slotDefaultNodes" :key="(node as any).key ?? index">
                 <component :is="node" />
             </template>
         </component>
@@ -185,7 +185,7 @@
 
 <style lang="css">
     @reference 'tailwindcss';
-    @reference '../styles/index.css';
+    @reference '../styles/components-index.css';
 
     @layer components {
         .n-menu {

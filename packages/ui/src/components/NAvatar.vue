@@ -95,21 +95,21 @@
 
 <style lang="css">
     @reference 'tailwindcss';
-    @reference '../styles/index.css';
+    @reference '../styles/components-index.css';
 
     @layer components {
         .n-avatar {
             /* Base */
             @apply relative
-                aspect-square
-                inline-flex items-center justify-center
-                bg-text text-text-invert
-                text-center
-                font-semibold leading-none
-                rounded-element
-                overflow-hidden
-                p-2.5
-                transition-all duration-200 ease-in-out;
+            aspect-square
+            inline-flex items-center justify-center
+            bg-text text-text-invert
+            text-center
+            font-semibold leading-none
+            rounded-element
+            overflow-hidden
+            p-2.5
+            transition-all duration-200 ease-in-out;
 
             /* Sizer */
             .n-avatar-sizer {

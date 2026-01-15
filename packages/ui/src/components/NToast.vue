@@ -112,7 +112,7 @@
         const { 'aria-live': ariaLive, 'aria-atomic': ariaAtomic, role: roleAttr, ...remainingAttrs } = attrs
 
         // Also exclude them from props rest if present (since NToastProps extends HTMLAttributes)
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars, @typescript-eslint/no-explicit-any
         const { 'aria-live': pAl, 'aria-atomic': pAa, role: pR, ...cleanRest } = rest as any
 
         return { ...cleanRest, ...remainingAttrs }
@@ -185,7 +185,7 @@
 
 <style lang="css">
     @reference 'tailwindcss';
-    @reference '../styles/index.css';
+    @reference '../styles/components-index.css';
 
     @layer components {
         .n-toast-overlay {
