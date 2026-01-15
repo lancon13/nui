@@ -43,7 +43,7 @@ declare var __VLS_2: `calendar-header-${number}`, __VLS_3: {
     index: number;
     calendarIndex: number;
 }, __VLS_13: {
-    day: import("../helpers").CalendarDay;
+    day: import("..").CalendarDay;
     calendarIndex: number;
 }, __VLS_15: {
     index: number;
