@@ -124,7 +124,7 @@
                 px-4 py-2
                 transition-all duration-200 ease-in-out;
 
-            @apply hover:opacity-80;
+            @apply hover:opacity-80 hover:scale-105;
             @apply disabled:opacity-80 disabled:hover:opacity-80 disabled:cursor-not-allowed;
 
             &:not(.n-tab--loading) {

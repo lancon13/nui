@@ -130,7 +130,8 @@
                 transition-all duration-200 ease-in-out;
 
             /* Interaction States */
-            @apply hover:opacity-80;
+            @apply hover:opacity-80 hover:scale-105;
+            @apply active:scale-95;
             @apply disabled:opacity-80 disabled:hover:opacity-80 disabled:cursor-not-allowed;
 
             &:not(.n-button--loading) {

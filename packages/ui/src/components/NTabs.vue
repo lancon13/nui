@@ -174,6 +174,7 @@
 
             &.individual > .n-tab {
                 @apply rounded-element border-r-2;
+                @apply active:scale-95;
             }
 
             &.separator > .n-tab:not(.n-tab--active) + .n-tab {
