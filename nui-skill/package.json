@@ -1,0 +1,9 @@
+{
+  "name": "@nui/skill",
+  "version": "1.0.0",
+  "private": false,
+  "files": [
+    "SKILL.md",
+    "reference.md"
+  ]
+}

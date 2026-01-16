@@ -9,15 +9,22 @@ NUI is a modern, comprehensive Vue 3 UI component library powered by Tailwind CS
 -   📘 **TypeScript**: Fully typed for better developer experience.
 -   🧩 **Rich Component Set**: Includes Buttons, Forms, Overlays, Data Display, and more.
 -   🛠 **Composables**: Useful composition functions like `useDialog`, `useNotify`, etc.
+-   🤖 **AI Skill**: Bundled with a Gemini CLI skill to help you build UI faster.
 
 ## Installation
 
 ```bash
-npm install @nui/ui
+npm install @nui/ui @nui/helpers
 # or
-pnpm add @nui/ui
-# or
-yarn add @nui/ui
+pnpm add @nui/ui @nui/helpers
+```
+
+### AI Skill Setup
+
+If you use the Gemini CLI, you can add the NUI skill to your project:
+
+```bash
+npm install @nui/skill
 ```
 
 ## Usage
